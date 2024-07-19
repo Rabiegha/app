@@ -1,24 +1,18 @@
 import React, {useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../../../../colors/colors';
-import CustomSwitch from '../../elements/Switch';
 import axios from 'axios';
 import {useEvent} from '../../../context/EventContext';
-import {BASE_URL} from '../../../config/config';
+import CustomSwitch from '../../elements/Switch';
+import { BASE_URL } from '../../../config/config';
 
-const {width} = Dimensions.get('window');
-
-const ListItem = React.memo(({item, searchQuery, onUpdateAttendee}) => {
+const ListItem = React.memo(({item, searchQuery}) => {
   const navigation = useNavigation();
   const {triggerListRefresh} = useEvent();
 
+  // Convert attendee_status to boolean for the initial state of the switch
+  // Assuming attendee_status is 1 for "on" and 0 for "off"
   const initialSwitchState = item.attendee_status == 1;
   const [isSwitchOn, setIsSwitchOn] = React.useState(initialSwitchState);
 
@@ -26,17 +20,38 @@ const ListItem = React.memo(({item, searchQuery, onUpdateAttendee}) => {
     setIsSwitchOn(newValue);
     const newAttendeeStatus = newValue ? 1 : 0;
 
-    const updatedAttendee = {
-      ...item,
+    // Construct the payload for the API call
+    const payload = {
+      event_id: item.event_id,
+      attendee_id: item.id,
       attendee_status: newAttendeeStatus,
     };
+    console.log(payload.attendee_status);
+
+    // API endpoint pour chngerle status
+    const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${payload.event_id}&attendee_id=${payload.attendee_id}&attendee_status=${payload.attendee_status}`;
 
     try {
-      await onUpdateAttendee(updatedAttendee); // Call the update function passed from List
-      triggerListRefresh(); // Refresh the list after updating
+      // Example of a POST request to update the attendee status
+      // You might need to adjust headers or the request format based on your API's specifications
+      const response = await axios.post(url);
+
+      // Check if the update was successful
+      if (response.data.status) {
+        console.log(
+          'Attendee status updated successfully:',
+          response.data.message,
+        );
+      } else {
+        console.error(
+          'Failed to update attendee status:',
+          response.data.message,
+        );
+      }
     } catch (error) {
       console.error('Error updating attendee status:', error);
     }
+    triggerListRefresh();
   };
 
   const highlightSearch = (text, query) => {
@@ -71,7 +86,6 @@ const ListItem = React.memo(({item, searchQuery, onUpdateAttendee}) => {
       email: item.email,
       phone: item.phone,
       attendeeStatus: item.attendee_status,
-      jobTitle: item.designation,
       organization: item.organization,
     });
   };
@@ -96,9 +110,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.greyCream,
     borderRadius: 10,
     padding: 10,
-    width: width * 0.9,
+    width: '100%',
     marginBottom: 10,
-    height: 55,
   },
   itemName: {
     fontSize: 16,

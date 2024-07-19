@@ -13,6 +13,9 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 const MenuScreen = ({navigation}) => {
   const {isLoading, logout} = useContext(AuthContext);
+  const handleLogout = () => {
+/*     logout(); */
+  };
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setBarStyle('light-content');
@@ -53,9 +56,6 @@ const MenuScreen = ({navigation}) => {
     },
     // Add more sections as needed
   ];
-  const handleLogout = () => {
-    logout();
-  };
   return (
     <View style={globalStyle.backgroundBlack}>
       <Spinner visible={isLoading} />

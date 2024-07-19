@@ -3,11 +3,6 @@ import React, {createContext, useState} from 'react';
 import {BASE_URL} from '../config/config';
 import {MMKV} from 'react-native-mmkv';
 import {Buffer} from 'buffer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  CommonActions,
-  useNavigationContainerRef,
-} from '@react-navigation/native';
 
 const storage = new MMKV();
 const encodeBase64 = value => Buffer.from(value).toString('base64');
@@ -15,7 +10,6 @@ const encodeBase64 = value => Buffer.from(value).toString('base64');
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
-  const navigationRef = useNavigationContainerRef();
   const [userInfo, setUserInfo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userStatus, setUserStatus] = useState(false);
@@ -23,7 +17,6 @@ export const AuthProvider = ({children}) => {
   const [currentUserId, setCurrentUserId] = useState(
     storage.getString('current_user_login_details_id'),
   );
-  const [isDemoMode, setIsDemoMode] = useState(false); // Ajout de l'état pour le mode démo
 
   const login = async (email, password) => {
     const encUserName = encodeURIComponent(encodeBase64(email));
@@ -51,14 +44,14 @@ export const AuthProvider = ({children}) => {
           response.data.user_details.current_user_login_details_id.toString(),
         );
         setUserStatus(userStatus);
-        /*         console.log('Valeurs stockées dans MMKV:', {
+        console.log('Valeurs stockées dans MMKV:', {
           email: userInfo.email,
           user_id: userInfo.user_id,
           full_name: userInfo.full_name,
           login_status: true,
           current_user_login_details_id:
             response.data.user_details.current_user_login_details_id,
-        }); */
+        });
       } else {
         console.error(
           'Erreur lors de la connexion: structure de réponse incorrecte',
@@ -78,15 +71,6 @@ export const AuthProvider = ({children}) => {
   const logout = async () => {
     setIsLoading(true);
     try {
-      if (isDemoMode) {
-        // Si le mode démo est activé, simplement désactiver le mode démo et naviguer vers la connexion
-        setIsDemoMode(false);
-        setUserStatus(false);
-        setUserInfo({});
-        await AsyncStorage.clear();
-        setIsLoading(false);
-        return;
-      }
       if (!currentUserId) {
         console.log('Aucun utilisateur connecté trouvé.');
         return;
@@ -105,13 +89,6 @@ export const AuthProvider = ({children}) => {
         storage.set('current_user_login_details_id', '');
         setUserStatus(false);
         setUserInfo({});
-        await AsyncStorage.clear();
-        navigationRef.current?.dispatch(
-          CommonActions.reset({
-            index: 1,
-            routes: [{name: 'Login'}],
-          }),
-        );
       } else {
         console.log('Échec de la déconnexion');
       }
@@ -127,18 +104,7 @@ export const AuthProvider = ({children}) => {
 
   return (
     <AuthContext.Provider
-      value={{
-        login,
-        userInfo,
-        isLoading,
-        userStatus,
-        logout,
-        fail,
-        resetFail,
-        isDemoMode,
-        setIsDemoMode,
-        navigationRef,
-      }}>
+      value={{login, userInfo, isLoading, userStatus, logout, fail, resetFail}}>
       {children}
     </AuthContext.Provider>
   );

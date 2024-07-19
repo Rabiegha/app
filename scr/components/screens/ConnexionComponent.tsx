@@ -1,19 +1,11 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {
-  View,
-  ScrollView,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, ScrollView, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import colors from '../../../colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import showPasswordIcon from '../../assets/images/icons/Vu.png';
 import hidePasswordIcon from '../../assets/images/icons/Pas-vu.png';
 import FailComponent from '../elements/notifications/FailComponent';
 import LargeButton from '../elements/buttons/LargeButton';
-import {AuthContext} from '../../context/AuthContext';
 
 const ConnexionComponent = ({
   userName,
@@ -24,7 +16,6 @@ const ConnexionComponent = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [success, setSuccess] = useState(null);
-  const {isDemoMode, toggleDemoMode} = useContext(AuthContext);
 
   return (
     <ScrollView

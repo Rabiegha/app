@@ -1,13 +1,13 @@
 import React from 'react';
-import {ScrollView, StyleSheet, View, Image, Text} from 'react-native';
+import {ScrollView, StyleSheet, View, Image} from 'react-native';
 import LabelValueComponent from '../elements/LabelValueComponent';
 import LargeButton from '../elements/buttons/LargeButton';
 import colors from '../../../colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
 import ScanIcon from '../../assets/images/icons/Scan.png';
-import EditIcon from '../../assets/images/icons/Modifier.png';
-import HoldButton from '../elements/buttons/HoldButton';
+import SuppIcon from '../../assets/images/icons/Supp.png';
+
 
 const MoreComponent = ({
   firstName,
@@ -16,15 +16,11 @@ const MoreComponent = ({
   phone,
   attendeeStatus,
   organization,
-  JobTitle,
   See,
   handleButton,
   Share,
-  loading,
-  modify
 }) => {
-  console.log('Current attendeeStatus:', attendeeStatus);
-  console.log('Current attendeeStatus:', JobTitle);
+  console.log(firstName, lastName, email);
 
   function insertSpaceBetweenPairs(str) {
     if (str == null) {
@@ -51,14 +47,15 @@ const MoreComponent = ({
     }
   }
 
-  const parsedAttendeeStatus = Number(attendeeStatus);
-
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}>
       <View style={styles.imageContainer}>
-        <Image source={userIcon} style={styles.image} />
+        <Image
+          source={userIcon}
+          style={styles.image}
+        />
       </View>
       <View style={styles.topButtonsContainer}>
         <SmallButton
@@ -68,49 +65,43 @@ const MoreComponent = ({
           tintColor={colors.greyCream}
         />
         <SmallButton
-          imageSource={EditIcon}
-          pressHandler={modify}
-          backgroundColor={colors.greyCream}
-          tintColor={colors.darkGrey}
+          imageSource={SuppIcon}
+          pressHandler={Share}
+          backgroundColor={colors.red}
+          tintColor="white"
         />
       </View>
       <LabelValueComponent
         label="Nom:"
         value={firstName && lastName ? `${firstName} ${lastName}` : '- '}
-        modifyDisplay="none"
+        value2={undefined}
       />
       <LabelValueComponent
         label="Adresse mail:"
         value={email ? email : '-'}
-        modifyDisplay="none"
+        value2={undefined}
       />
       <LabelValueComponent
         label="Téléphone:"
         value={phone ? insertSpaceBetweenPairs(phone) : '-'}
+        value2={undefined}
       />
       <LabelValueComponent
         label="Entreprise:"
         value={organization ? organization : '-'}
+        value2={undefined}
       />
-      <LabelValueComponent
-        label="Job Title:"
-        value={JobTitle ? JobTitle : '-'}
-      />
-      {/*<Text>Status: {attendeeStatus}</Text> */}
-      {parsedAttendeeStatus === 0 ? (
+      {attendeeStatus == 0 ? (
         <LargeButton
           title="Check-in"
           onPress={() => handleButton(1)}
           backgroundColor={colors.green}
-          loading={loading} // Pass loading prop
         />
       ) : (
-        <HoldButton
+        <LargeButton
           title="Undo Check-in"
           onPress={() => handleButton(0)}
           backgroundColor={colors.red}
-          holdDuration={1000} // Duration to hold the button for 3 seconds
-          loading={loading} // Pass loading prop
         />
       )}
     </ScrollView>
@@ -119,8 +110,9 @@ const MoreComponent = ({
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 30,
+    paddingBottom: 100,
     alignItems: 'center',
-    height: 830,
   },
   imageContainer: {
     marginBottom: 10,
@@ -130,9 +122,13 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 40,
   },
+  name: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   topButtonsContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 35,
   },
 });
 

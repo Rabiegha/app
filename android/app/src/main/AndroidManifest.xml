@@ -3,6 +3,9 @@
           package="com.choyou.attendee">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <!-- Required -->
 <uses-permission android:name="android.permission.CAMERA" />
 
@@ -13,6 +16,12 @@
 <!-- Include this only if you are planning to use the microphone for video recording -->
 <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+<!-- Features -->
+<uses-feature android:name="android.hardware.camera" android:required="false" />
+<uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+<uses-feature android:name="android.hardware.microphone" android:required="false" />
+
 
     <application
       android:name=".MainApplication"

@@ -6,8 +6,6 @@ import SmallButton from '../elements/buttons/SmallButton';
 import emptyGif from '../../assets/images/empty.gif';
 import downloadIcon from '../../assets/images/icons/Download.png';
 import printIcon from '../../assets/images/icons/Print.png';
-import Gif from 'react-native-gif';
-import FastImage from 'react-native-fast-image';
 
 const BadgeComponent = ({imageUri, share, download, print}) => {
   const [imageLoaded, setImageLoaded] = useState(true);
@@ -23,11 +21,10 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
           />
         ) : (
           <View style={styles.noDataView}>
-            <FastImage source={emptyGif} style={styles.gifStyle} />
-            {/*             <Image
+            <Image
               source={emptyGif}
               style={styles.gifStyle}
-            /> */}
+            />
           </View>
         )}
       </View>
@@ -51,7 +48,6 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
             title="Envoyer"
             onPress={share}
             backgroundColor={colors.green}
-            loading={undefined}
           />
         </View>
       )}

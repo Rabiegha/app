@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGreen,
     paddingVertical: 15,
     paddingHorizontal: 15,
-    zIndex: 500,
+    zIndex: 50,
     marginHorizontal: 20,
   },
   textNotification: {

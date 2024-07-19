@@ -14,6 +14,7 @@ const ScannerComponent = () => {
   const [alertVisible, setAlertVisible] = useState(false);
   const {triggerListRefresh} = useEvent();
   const {eventId} = useEvent();
+  console.log('eventId11', eventId);
 
   // Définir 'handleBackPress' correctement à l'intérieur du composant pour accéder à 'navigation'
   const handleBackPress = () => {

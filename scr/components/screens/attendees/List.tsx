@@ -1,17 +1,10 @@
-import React, {
-  useContext,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
   StyleSheet,
   View,
   Image,
-  Button,
 } from 'react-native';
 import ListItem from './ListItem';
 import axios from 'axios';
@@ -19,211 +12,102 @@ import {useEvent} from '../../../context/EventContext';
 import colors from '../../../../colors/colors';
 import {BASE_URL} from '../../../config/config';
 import useUserId from '../../../hooks/useUserId';
-import {Attendee} from '../../../interfaces/interfaces.tsx';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {demoEvents} from '../../../demo/demoEvents';
-import {AuthContext} from '../../../context/AuthContext.tsx';
 import emptyIcon from '../../../assets/images/empty.gif';
-
-import {useFocusEffect} from '@react-navigation/native';
-import FastImage from 'react-native-fast-image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
-  const [filteredData, setFilteredData] = useState<Attendee[]>([]);
-  const [allAttendees, setAllAttendees] = useState<Attendee[]>([]);
+  const [filteredData, setFilteredData] = useState([]);
   const flatListRef = useRef(null);
   const [totalAttendees, setTotalAttendees] = useState(0);
   const [totalCheckedAttendees, setTotalCheckedAttendees] = useState(0);
-  const {refreshList, triggerListRefresh, updateAttendee, attendeesRefreshKey} =
-    useEvent();
+  const {refreshList} = useEvent();
   const {eventId} = useEvent();
+  console.log('eventId', eventId);
   const [hasData, setHasData] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useUserId();
-  const {isDemoMode} = useContext(AuthContext);
+
+  // Callback function to handle switch toggle in ListItem
+  const handleSwitchToggle = () => {
+    // Update your data here based on the itemId and newValue
+  };
+
   useEffect(() => {
-    console.log('eventId', eventId);
-  });
-  /*   console.log(isDemoMode); */
+    const fetchAllEventAttendeeDetails = async () => {
+      setIsLoading(true);
+      try {
+        // URL de l'API pour afficher la liste des participants
+        const url = `${BASE_URL}/ajax_get_event_attendee_details/?event_id=${eventId}&current_user_login_details_id=${userId}&status_id=2`;
+        const url1 = `${BASE_URL}/ajax_get_event_attendee_details/?event_id=${eventId}&current_user_login_details_id=${userId}&status_id=2`;
+        const response = await axios.get(url);
+        const response1 = await axios.get(url1);
 
-  const expirationTimeInMillis = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
+        if (response.data.status) {
+          let attendees = response.data.event_attendee_details;
+          let attendees1 = response1.data.event_attendee_details;
 
-  const storeData = async (key, value) => {
-    try {
-      const timestampedData = {
-        data: value,
-        timestamp: Date.now(),
-      };
-      await AsyncStorage.setItem(key, JSON.stringify(timestampedData));
-      console.log(`Stored data for key: ${key}`);
-    } catch (e) {
-      console.error('Error saving data', e);
-    }
-  };
-
-  const getData = async (key, expirationTimeInMillis) => {
-    try {
-      const value = await AsyncStorage.getItem(key);
-      if (value !== null) {
-        const parsedData = JSON.parse(value);
-        const currentTime = Date.now();
-        if (currentTime - parsedData.timestamp < expirationTimeInMillis) {
-          console.log(`Data for key: ${key} is up-to-date`);
-          return parsedData.data;
-        } else {
-          // Supprimer les données si elles sont obsolètes
-          await AsyncStorage.removeItem(key);
-          console.log(`Data for key: ${key} expired and removed`);
-        }
-      }
-    } catch (e) {
-      console.error('Error retrieving data', e);
-    }
-    return null;
-  };
-
-  const clearLocalData = async () => {
-    try {
-      await AsyncStorage.removeItem(`attendees_${eventId}`);
-      setFilteredData([]);
-      setAllAttendees([]);
-      setTotalAttendees(0);
-      setTotalCheckedAttendees(0);
-      setHasData(false);
-      triggerListRefresh();
-    } catch (e) {
-      console.error('Error clearing local data', e);
-    }
-  };
-
-  const fetchAllEventAttendeeDetails = async () => {
-    setIsLoading(true);
-    try {
-      let attendees = await getData(
-        `attendees_${eventId}`,
-        expirationTimeInMillis,
-      );
-      if (!attendees) {
-        if (isDemoMode) {
-          const selectedEvent = demoEvents.find(
-            event => event.event_id === eventId,
-          );
-          if (selectedEvent) {
-            attendees = selectedEvent.participants;
-            await storeData(`attendees_${eventId}`, attendees);
-          }
-        } else {
-          const urlNotCheckedIn = `${BASE_URL}/ajax_get_event_attendee_details/?event_id=${eventId}&current_user_login_details_id=${userId}&attendee_status=0&status_id=`;
-
-          try {
-            const responseNotCheckedIn = await axios.get(urlNotCheckedIn);
-
-            attendees = [];
-            if (responseNotCheckedIn.data.status) {
-              attendees = responseNotCheckedIn.data.event_attendee_details;
+          // Appliquez les filtres basés sur filterCriteria ici
+          if (filterCriteria) {
+            if (filterCriteria.status === 'checked-in') {
+              attendees = attendees.filter(
+                attendee => attendee.attendee_status == 1,
+              );
+            } else if (filterCriteria.status === 'not-checked-in') {
+              attendees = attendees.filter(
+                attendee => attendee.attendee_status == 0,
+              );
             }
-            await storeData(`attendees_${eventId}`, attendees);
-          } catch (error) {
-            console.error(
-              'Error fetching data from server, using local data:',
-              error,
-            );
+            // Ajoutez ici toute logique de filtrage supplémentaire
           }
+
+          // Triez les participants pour que ceux avec attendee_status = 2 soient en bas
+          attendees.sort((a, b) => {
+            if (a.attendee_status == 1 && b.attendee_status != 1) {
+              return 1;
+            }
+            if (b.attendee_status == 1 && a.attendee_status != 1) {
+              return -1;
+            }
+            return 0; // Aucun changement dans l'ordre pour les autres cas
+          });
+
+          // Filtrez davantage par searchQuery si fourni
+          attendees = attendees.filter(attendee =>
+            `${attendee.first_name} ${attendee.last_name}`
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()),
+          );
+
+          setFilteredData(attendees);
+          setTotalAttendees(attendees1.length);
+          setTotalCheckedAttendees(
+            attendees1.filter(a => a.attendee_status === '1').length,
+          );
+          setHasData(attendees.length > 0);
+        } else {
+          setHasData(false);
         }
+      } catch (error) {
+        console.error('Error fetching attendee details:', error);
+        setHasData(false);
+      } finally {
+        setIsLoading(false);
       }
-
-      // Stocker toutes les données des participants pour les calculs globaux
-      setAllAttendees(attendees || []);
-      setTotalAttendees(attendees ? attendees.length : 0);
-      setTotalCheckedAttendees(
-        attendees ? attendees.filter(a => a.attendee_status == 1).length : 0,
-      );
-
-      // Appliquez les filtres basés sur filterCriteria ici
-      let filteredAttendees = attendees || [];
-      if (filterCriteria.status === 'checked-in') {
-        filteredAttendees = filteredAttendees.filter(
-          attendee => attendee.attendee_status == 1,
-        );
-      } else if (filterCriteria.status === 'not-checked-in') {
-        filteredAttendees = filteredAttendees.filter(
-          attendee => attendee.attendee_status == 0,
-        );
-      }
-
-      // Triez les participants pour que ceux avec attendee_status = 0 soient en haut
-      filteredAttendees.sort((a, b) => a.attendee_status - b.attendee_status);
-
-      // Filtrez davantage par searchQuery si fourni
-      filteredAttendees = filteredAttendees.filter(attendee =>
-        `${attendee.first_name} ${attendee.last_name}`
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()),
-      );
-
-      setFilteredData(filteredAttendees);
-      setHasData(filteredAttendees.length > 0);
-      /*       console.log('Filtered attendees data:', filteredAttendees); */
-    } catch (error) {
-      console.error('Error fetching attendee details:', error);
-      setHasData(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // clearLocalData
-  useFocusEffect(
-    useCallback(() => {
-      clearLocalData();
-
-      return () => {
-        // Any cleanup can be done here
-      };
-    }, [eventId]),
-  );
-
-  useEffect(() => {
+    };
     fetchAllEventAttendeeDetails();
-  }, [
-    eventId,
-    searchQuery,
-    refreshList,
-    filterCriteria,
-    isDemoMode,
-    attendeesRefreshKey,
-  ]);
+  }, [eventId, searchQuery, refreshList, filterCriteria]);
 
   useEffect(() => {
+    // Update progress only after fetching and state updates to avoid premature calculation
     const ratio =
       totalAttendees > 0 ? (totalCheckedAttendees / totalAttendees) * 100 : 0;
     onUpdateProgress(totalAttendees, totalCheckedAttendees, ratio);
-    clearLocalData;
   }, [totalAttendees, totalCheckedAttendees, onUpdateProgress]);
 
-  const handleUpdateAttendee = async updatedAttendee => {
-    try {
-      // Mettre à jour l'attendee localement
-      const updatedAttendees = allAttendees.map(attendee =>
-        attendee.id === updatedAttendee.id ? updatedAttendee : attendee,
-      );
-      setAllAttendees(updatedAttendees);
-      await storeData(`attendees_${eventId}`, updatedAttendees);
-
-      // Mettre à jour l'attendee sur le serveur
-      const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${updatedAttendee.event_id}&attendee_id=${updatedAttendee.id}&attendee_status=${updatedAttendee.attendee_status}`;
-      await axios.post(url);
-
-      // Rafraîchir les données affichées
-      triggerListRefresh();
-    } catch (error) {
-      console.error('Error updating attendee', error);
-    }
-  };
+  // Calculate the ratio of checked-in attendees to the total number of attendees
 
   return (
     <View style={styles.list}>
-      {/*       <Button title="Clear Local Data" onPress={clearLocalData} /> */}
       {isLoading ? (
         <ActivityIndicator color={colors.green} size="large" />
       ) : hasData ? (
@@ -236,14 +120,13 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
             <ListItem
               item={item}
               searchQuery={searchQuery}
-              onUpdateAttendee={handleUpdateAttendee} // Pass the update function to ListItem
+              onSwitchToggle={handleSwitchToggle}
             />
           )}
         />
       ) : (
         <View style={styles.noDataView}>
-          <FastImage source={emptyIcon} style={styles.gifStyle} />
-          {/*           <Image source={emptyIcon} style={styles.gifStyle} /> */}
+          <Image source={emptyIcon} style={styles.gifStyle} />
         </View>
       )}
     </View>
@@ -255,16 +138,11 @@ const styles = StyleSheet.create({
     height: 600,
   },
   contentContainer: {
-    paddingBottom: 300,
+    paddingBottom: 200, // Adjust this value based on the height of your bottom tab bar
   },
   gifStyle: {
     height: 300,
     width: 300,
-  },
-  noDataView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

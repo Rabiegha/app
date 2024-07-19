@@ -68,7 +68,7 @@ const BadgeScreen = ({route, navigation}) => {
         RNFetchBlob.ios.previewDocument(res.data);
       }
 
-      //console.log('The file has been downloaded to:', filePath);
+      console.log('The file has been downloaded to:', filePath);
       Alert.alert(
         'Download Complete',
         'The file has been downloaded successfully.',

@@ -1,44 +1,20 @@
+// MenuScreen.js
 import React from 'react';
-import {View, StyleSheet, Linking} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import MenuListComponent from '../components/screens/MenuListComponent';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
 import colors from '../../colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
-import WebView from 'react-native-webview';
 
 const AboutScreen = ({navigation}) => {
   const sections = [
     {
       title: 'Menu',
       buttons: [
-        {
-          title: 'Règles de la Maison',
-          action: () =>
-            navigation.navigate('WebView', {
-              url: 'https://attendee-app.fr/R%C3%A8gles-de-la-Maison.html',
-            }),
-        },
-        {
-          title: 'Politique de confidentialité',
-          action: () =>
-            navigation.navigate('WebView', {
-              url: 'https://attendee-app.fr/politique-de-confidentialite.html',
-            }),
-        },
-        {
-          title: "conditions d'utilisation",
-          action: () =>
-            navigation.navigate('WebView', {
-              url: "https://attendee-app.fr/conditions-d'utilisation.html",
-            }),
-        },
-        /*         {
-          title: 'Cookies',
-          action: () =>
-            navigation.navigate('WebView', {
-              url: 'https://choyou.fr/privacystatement.html',
-            }),
-        }, */
+        {title: 'House rules', action: () => navigation.navigate('Attendees')},
+        {title: 'Privacy policy', action: () => navigation.navigate('Add')},
+        {title: 'Terms of use', action: () => navigation.navigate('Scann')},
+        {title: 'Cookies', action: () => navigation.navigate('Scann')},
       ],
     },
   ];

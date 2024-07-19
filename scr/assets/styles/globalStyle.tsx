@@ -1,4 +1,4 @@
-import {Platform, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import colors from '../../../colors/colors';
 
 const globalStyle = StyleSheet.create({
@@ -11,7 +11,7 @@ const globalStyle = StyleSheet.create({
     flex: 1,
   },
   container: {
-    paddingTop: Platform.OS === 'ios' ? 90 : 50,
+    paddingTop: 70,
     paddingLeft: 20,
     paddingRight: 20,
   },
@@ -19,13 +19,14 @@ const globalStyle = StyleSheet.create({
     width: '100%',
     backgroundColor: colors.greyCream,
     borderRadius: 10,
-    marginTop: 10,
+    marginVertical: 10,
     padding: 15,
+    paddingBottom: 20,
+    paddingTop: 20,
     fontSize: 15,
     borderWidth: 1,
     borderColor: colors.grey,
-    height: 50,
-    lineHeight: 20,
+    height: 62,
   },
 });
 

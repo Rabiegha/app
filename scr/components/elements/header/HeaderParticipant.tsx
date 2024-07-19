@@ -1,12 +1,12 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet, SafeAreaView, Platform} from 'react-native';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import colors from '../../../../colors/colors';
 import Retour from '../../../assets/images/icons/Retour.png';
 import Filtre from '../../../assets/images/icons/Filtre.png';
 
 const HeaderParticipants = ({onLeftPress, Title, onRightPress}) => {
   return (
-    <SafeAreaView style={styles.headerContainer}>
+    <View style={styles.headerContainer}>
       <TouchableOpacity onPress={onLeftPress} style={styles.backButton}>
         <Image source={Retour} style={styles.buttonImage} />
       </TouchableOpacity>
@@ -14,18 +14,19 @@ const HeaderParticipants = ({onLeftPress, Title, onRightPress}) => {
       <TouchableOpacity onPress={onRightPress} style={styles.backButton}>
         <Image source={Filtre} style={styles.buttonImageBlack} />
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   headerContainer: {
-    top: Platform.OS === 'ios' ? 50 : 0,
+    top: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 20,
+    paddingHorizontal: 20,
     paddingTop: 12,
+    position: 'relative',
     maxHeight: 60,
     height: 60,
     zIndex: 10,

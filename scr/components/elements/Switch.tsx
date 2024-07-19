@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    display: 'none',
   },
   switchLabel: {
     marginRight: 10,
