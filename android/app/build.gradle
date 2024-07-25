@@ -74,13 +74,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.choyou.attendee"
+    namespace "com.attendee"
     defaultConfig {
-        applicationId "com.choyou.attendee"
+        applicationId "com.attendee"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.1"
+        versionCode 1
+        versionName "1.0"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
     }
     signingConfigs {
@@ -118,4 +118,3 @@ dependencies {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
-/* apply plugin: 'com.google.android.gms.strict-version-matcher-plugin' */

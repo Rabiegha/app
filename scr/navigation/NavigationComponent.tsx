@@ -49,6 +49,8 @@ import Ajouts from '../assets/images/icons/Ajouts.png';
 import Scan from '../assets/images/icons/Scan.png';
 import Profil from '../assets/images/icons/Profil.png';
 import Outils from '../assets/images/icons/Outils.png';
+import WebViewScreen from '../screens/WebView';
+import EditScreen from '../screens/Edit';
 
 const storage = new MMKV();
 const Tab = createBottomTabNavigator();
@@ -295,15 +297,15 @@ function TabNavigator() {
   );
 }
 function AppNavigator() {
-  const {userStatus} = useContext(AuthContext);
-  console.log('rrrr', userStatus);
+  const {userStatus, isDemoMode} = useContext(AuthContext);
+  //console.log('rrrr', userStatus);
   const userStatus1 = storage.getString('user_id');
-  console.log('rrrr', userStatus1);
+  //console.log('rrrr', userStatus1);
 
   return (
     <EventProvider>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        {userStatus1 ? (
+        {userStatus1 || isDemoMode ? (
           <Stack.Screen name="Events" component={EventsScreen} />
         ) : (
           <Stack.Screen name="Connexion" component={ConnexionScreen} />
@@ -319,8 +321,10 @@ function AppNavigator() {
           }}
         />
         <Stack.Screen name="More" component={MoreScreen} />
+        <Stack.Screen name="Edit" component={EditScreen} />
         <Stack.Screen name="Badge" component={BadgeScreen} />
         <Stack.Screen name="About" component={AboutScreen} />
+        <Stack.Screen name="WebView" component={WebViewScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
         <Stack.Screen name="Avenir" component={EventAvenirScreen} />
         <Stack.Screen name="Passees" component={EventPasseesScreen} />

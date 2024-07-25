@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   ScrollView,
@@ -7,143 +7,159 @@ import {
   Text,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import globalStyle from '../../assets/styles/globalStyle';
 import SuccessComponent from '../elements/notifications/SuccessComponent';
 import FailComponent from '../elements/notifications/FailComponent';
-import {useFocusEffect} from '@react-navigation/native';
-import axios from 'axios';
-import {useRoute} from '@react-navigation/native';
 import {CheckBox} from 'react-native-elements';
 import colors from '../../../colors/colors';
-import {useEvent} from '../../context/EventContext';
-import PhoneInput from '../elements/PhoneNumberInput';
-import {BASE_URL} from '../../config/config';
 import notChecked from '../../assets/images/icons/Not-checked.png';
 import Checked from '../../assets/images/icons/Checked.png';
 
-const AddAttendeesComponent = ({onPress}) => {
-  const [nom, setNom] = useState('');
-  const [prenom, setPrenom] = useState('');
-  const [email, setEmail] = useState('');
-  const [numeroTelephone, setNumeroTelephone] = useState('');
-  const [societe, setSociete] = useState('');
-  const [success, setSuccess] = useState(null);
-  const [CheckedIn, setCheckedIn] = useState('1');
-  const route = useRoute();
-  const [isChecked, setIsChecked] = useState(false);
-  const resetFields = () => {
-    setNom('');
-    setPrenom('');
-    setEmail('');
-    setNumeroTelephone('');
-    setSociete('');
-  };
-  const {secretCode} = useEvent();
-  const {triggerListRefresh} = useEvent();
-  console.log(secretCode);
+const AddAttendeesComponent = ({
+  onPress,
+  handleCheckboxPress,
+  setNom,
+  setPrenom,
+  setEmail,
+  setSociete,
+  setJobTitle,
+  setSuccess,
+  setNumeroTelephone,
+  nom,
+  prenom,
+  email,
+  societe,
+  jobTitle,
+  isChecked,
+  success,
+  numeroTelephone,
+  inputErrors,
+  resetInputError,
+}) => {
+  useEffect(() => {
+    console.log('Success value:', success);
+  }, [success]);
 
-  const handleEnregistrer = async () => {
-    // Logique pour traiter les données du formulaire
-    const attendeeData = {
-      send_confirmation_mail_ems_yn: 0,
-      generate_qrcode: 0,
-      generate_badge: 0,
-      send_badge_yn: 0,
-      // Plus d'options...
-      ems_secret_code: secretCode,
-      salutation: '',
-      first_name: prenom,
-      last_name: nom,
-      email: email,
-      phone: numeroTelephone,
-      organization: societe,
-      designation: '',
-      status_id: '2',
-      attendee_status: CheckedIn,
-    };
-
-    try {
-      // URL de l'API pour ajouter un participants
-      const url = `${BASE_URL}/add_attendee/?ems_secret_code=${attendeeData.ems_secret_code}&salutation=${attendeeData.salutation}&first_name=${attendeeData.first_name}&last_name=${attendeeData.last_name}&email=${attendeeData.email}&phone=33${attendeeData.phone}&organization=${attendeeData.organization}&designation=88&status_id=${attendeeData.status_id}&attendee_status=${attendeeData.attendee_status}`;
-
-      const response = await axios.post(url);
-
-      if (response.data.status) {
-        console.log('Enregistrement réussi:', response.data);
-        setSuccess(true);
-        resetFields();
-        triggerListRefresh();
-      } else {
-        console.error('Enregistrement échoué:', response.data.message);
-        setSuccess(false);
-      }
-    } catch (error) {
-      console.error("Erreur lors de l'enregistrement:", error);
-      setSuccess(false);
-    }
-  };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // Réinitialiser isVisible à false lorsque l'écran est défocus
-      return () => setSuccess(null);
-    }, []),
-  );
-  const handleCheckboxPress = () => {
-    setIsChecked(!isChecked);
-    // Toggle between 1 and 2 for CheckedIn
-    const newCheckedIn = CheckedIn == 1 ? 0 : 1;
-    setCheckedIn(newCheckedIn);
-    console.log(newCheckedIn);
-  };
   return (
     <View
       style={styles.wrapper}
       contentContainerStyle={styles.contentContainer}>
-      {success === true && (
+{/*       {true && (
         <SuccessComponent
+          style={styles.notif}
           onClose={() => setSuccess(null)}
           text={'Participant ajouté avec succès'}
         />
       )}
       {success === false && (
         <FailComponent
+          style={styles.notif}
           onClose={() => setSuccess(null)}
           text={'Participant non ajouté'}
         />
-      )}
+      )} */}
 
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled">
         <TextInput
-          style={globalStyle.input}
+          style={[
+            globalStyle.input,
+            inputErrors.nom && {
+              backgroundColor: colors.lightRed,
+              borderColor: colors.red,
+            },
+          ]}
           placeholder="Nom"
-          placeholderTextColor={colors.grey}
+          placeholderTextColor={inputErrors.nom ? colors.red : colors.grey}
           value={nom}
-          onChangeText={text => setNom(text)}
+          onChangeText={text => {
+            setNom(text);
+            resetInputError('nom');
+          }}
         />
+        <Text style={[styles.error, {opacity: inputErrors.nom ? 1 : 0}]}>
+          Ce champ est requis *
+        </Text>
         <TextInput
-          style={globalStyle.input}
+          style={[
+            globalStyle.input,
+            inputErrors.prenom && {
+              backgroundColor: colors.lightRed,
+              borderColor: colors.red,
+            },
+          ]}
           placeholder="Prénom"
-          placeholderTextColor={colors.grey}
+          placeholderTextColor={inputErrors.prenom ? colors.red : colors.grey}
           value={prenom}
-          onChangeText={text => setPrenom(text)}
+          onChangeText={text => {
+            setPrenom(text);
+            resetInputError('prenom');
+          }}
         />
+        <Text style={[styles.error, {opacity: inputErrors.prenom ? 1 : 0}]}>
+          Ce champ est requis *
+        </Text>
         <TextInput
-          style={globalStyle.input}
+          style={[
+            globalStyle.input,
+            inputErrors.email && {
+              backgroundColor: colors.lightRed,
+              borderColor: colors.red,
+            },
+          ]}
           placeholder="Email"
-          placeholderTextColor={colors.grey}
+          placeholderTextColor={inputErrors.email ? colors.red : colors.grey}
           value={email}
-          onChangeText={text => setEmail(text)}
+          onChangeText={text => {
+            setEmail(text);
+            resetInputError('email');
+          }}
           keyboardType="email-address"
         />
-        <PhoneInput
-          phoneNumber={numeroTelephone}
-          onChangeText={text => setNumeroTelephone(text)}
+        <Text style={[styles.error, {opacity: inputErrors.email ? 1 : 0}]}>
+          Veuillez entrer une adresse email valide *
+        </Text>
+        <TextInput
+          style={[
+            globalStyle.input,
+            inputErrors.numeroTelephone && {
+              backgroundColor: colors.lightRed,
+              borderColor: colors.red,
+            },
+          ]}
+          placeholder="Téléphone"
+          placeholderTextColor={
+            inputErrors.numeroTelephone ? colors.red : colors.grey
+          }
+          value={numeroTelephone}
+          onChangeText={text => {
+            setNumeroTelephone(text);
+            resetInputError('numeroTelephone');
+          }}
+          keyboardType="numeric"
         />
+        <Text
+          style={[
+            styles.error,
+            {opacity: inputErrors.numeroTelephone ? 1 : 0},
+          ]}>
+          Veuillez entrer un numéro de téléphone valide *
+        </Text>
+        {/*  <PhoneInput
+          phoneNumber={numeroTelephone}
+          placeholder="Téléphone"
+          placeholderTextColor={
+            inputErrors.numeroTelephone ? colors.red : colors.grey
+          }
+          onChangeText={text => {
+            setNumeroTelephone(text);
+            resetInputError('numeroTelephone');
+          }}
+        /> */}
         <TextInput
           style={globalStyle.input}
           placeholderTextColor={colors.grey}
@@ -151,20 +167,17 @@ const AddAttendeesComponent = ({onPress}) => {
           value={societe}
           onChangeText={text => setSociete(text)}
         />
+        <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
+        <TextInput
+          style={globalStyle.input}
+          placeholderTextColor={colors.grey}
+          placeholder="Job Title"
+          value={jobTitle}
+          onChangeText={text => setJobTitle(text)}
+        />
         <CheckBox
           title={'Check-in'}
           checkedIcon={
-            <Image
-              source={Checked}
-              resizeMode="contain"
-              style={{
-                width: 20,
-                height: 20,
-                tintColor: colors.darkerGrey,
-              }}
-            />
-          }
-          uncheckedIcon={
             <Image
               source={notChecked}
               resizeMode="contain"
@@ -175,13 +188,24 @@ const AddAttendeesComponent = ({onPress}) => {
               }}
             />
           }
+          uncheckedIcon={
+            <Image
+              source={Checked}
+              resizeMode="contain"
+              style={{
+                width: 20,
+                height: 20,
+                tintColor: colors.darkerGrey,
+              }}
+            />
+          }
           checked={isChecked}
           onPress={handleCheckboxPress}
           containerStyle={styles.checkBoxContainer}
           textStyle={styles.checkBoxText}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleEnregistrer}>
+        <TouchableOpacity style={styles.button} onPress={onPress}>
           <Text style={styles.buttonText}>Enregistrer</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -191,12 +215,11 @@ const AddAttendeesComponent = ({onPress}) => {
 
 const styles = StyleSheet.create({
   container: {
-    top: 40,
+    top: 30,
     flexGrow: 1,
     padding: 20,
     width: '100%',
-    height: 800,
-    paddingBottom: 120,
+    height: 900,
   },
   wrapper: {
     top: 25,
@@ -230,6 +253,16 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: 300,
+  },
+  error: {
+    color: colors.red,
+    fontSize: 10,
+    margin: 0,
+    padding: 0,
+    marginTop: 5,
+  },
+  notif: {
+    zIndex: 100,
   },
 });
 

@@ -21,7 +21,7 @@ import FiltreComponent from '../components/filtre/FiltreComponent';
 
 const AttendeesScreen = () => {
   const {eventName} = useEvent();
-  console.log('eventId', eventName);
+  //console.log('eventId', eventName);
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setBarStyle('dark-content'); // Set status bar style to light-content

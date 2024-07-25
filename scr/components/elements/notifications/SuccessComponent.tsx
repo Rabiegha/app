@@ -48,7 +48,7 @@ const SuccessComponent = ({onClose, text}) => {
 const styles = StyleSheet.create({
   notification: {
     position: 'absolute',
-    top: 0,
+    top: 70,
     left: 0,
     right: 0,
     flexDirection: 'row',
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGreen,
     paddingVertical: 15,
     paddingHorizontal: 15,
-    zIndex: 50,
+    zIndex: 500,
     marginHorizontal: 20,
   },
   textNotification: {

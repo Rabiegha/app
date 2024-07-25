@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import colors from '../../colors/colors';
-import {useEvent} from '../context/EventContext';
+import {View, StyleSheet} from 'react-native';
 import axios from 'axios';
 import Share from 'react-native-share';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
 import MoreComponent from '../components/screens/MoreComponent';
 import globalStyle from '../assets/styles/globalStyle';
+import colors from '../../colors/colors';
 import {BASE_URL, EMS_URL} from '../config/config';
+import {useEvent} from '../context/EventContext';
 
 const MoreScreen = ({route, navigation}) => {
-  const {triggerListRefresh} = useEvent();
+  const {triggerListRefresh, updateAttendee} = useEvent();
 
   const {
     eventId,
@@ -19,42 +19,56 @@ const MoreScreen = ({route, navigation}) => {
     lastName,
     email,
     phone,
-    organization,
+    jobTitle,
     attendeeStatus,
+    organization,
   } = route.params;
-  console.log(firstName, lastName, email, attendeeStatus, organization);
+
   const [localAttendeeStatus, setLocalAttendeeStatus] =
     useState(attendeeStatus);
+  const [loading, setLoading] = useState(false);
 
-  const {itemName} = route.params || {};
+  useEffect(() => {
+    // Effect to trigger list refresh when localAttendeeStatus changes
+    const updatedAttendee = {
+      id: attendeeId,
+      attendee_status: localAttendeeStatus,
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      phone: phone,
+      jobTitle: jobTitle,
+      event_id: eventId,
+    };
+    updateAttendee(eventId, updatedAttendee);
+    triggerListRefresh();
+  }, [localAttendeeStatus]);
+
   const handleBackPress = () => {
     navigation.goBack();
   };
+
   const handleBadgePress = () => {
     navigation.navigate('Badge', {
       attendeeId: attendeeId,
       eventId: eventId,
     });
   };
-  const handleButton = async () => {
-    console.log('handleButton appelé');
-    // Calcul de `updatedStatus` basé sur `localAttendeeStatus` au lieu de `attendeeStatus`
-    const updatedStatus = localAttendeeStatus === 0 ? 1 : 0;
-    console.log(`Mise à jour du status : ${updatedStatus}`);
 
-    // URL de l'API pour switcher le status
-    const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${eventId}&attendee_id=${attendeeId}&attendee_status=${updatedStatus}`;
+  const handleButton = async status => {
+    console.log('handleButton called');
+    setLoading(true);
+    console.log(`Updating status to: ${status}`);
 
-    triggerListRefresh();
+    const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${eventId}&attendee_id=${attendeeId}&attendee_status=${status}`;
 
     try {
       const response = await axios.post(url);
 
       if (response.data.status) {
-        // Mise à jour de l'état local avec `updatedStatus`
-        console.log('Avant la mise à jour :', localAttendeeStatus);
-        setLocalAttendeeStatus(updatedStatus);
-        console.log('Après la mise à jour :', localAttendeeStatus);
+        console.log('Before updating local state:', localAttendeeStatus);
+        setLocalAttendeeStatus(status);
+        console.log('After updating local state:', status);
       } else {
         console.error(
           'Failed to update attendee status:',
@@ -63,21 +77,36 @@ const MoreScreen = ({route, navigation}) => {
       }
     } catch (error) {
       console.error('Error updating attendee status:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const pdf = `${EMS_URL}/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
+
   const sendPdf = async () => {
     try {
-      const shareResponse = await Share.open({
+      await Share.open({
         url: pdf,
         type: 'application/pdf',
       });
-      console.log(shareResponse);
     } catch (error) {
       console.error(error);
     }
   };
+  const goToEdit = () => {
+    navigation.navigate('Edit', {
+      attendeeId: attendeeId,
+      eventId: eventId,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      jobTitle: jobTitle,
+      organization: organization,
+    });
+  };
+
   return (
     <View style={globalStyle.backgroundWhite}>
       <HeaderComponent
@@ -92,10 +121,13 @@ const MoreScreen = ({route, navigation}) => {
           lastName={lastName}
           email={email}
           phone={phone}
-          organization={organization}
+          JobTitle={jobTitle}
           attendeeStatus={localAttendeeStatus}
+          organization={organization}
           handleButton={handleButton}
           Share={sendPdf}
+          loading={loading}
+          modify={goToEdit}
         />
       </View>
     </View>

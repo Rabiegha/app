@@ -1,10 +1,18 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  SafeAreaView,
+  Platform,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../../../../colors/colors';
 import retourIcon from '../../../assets/images/icons/Retour.png';
 
-const HeaderComponent = ({title, handlePress, color}) => {
+const HeaderComponent = ({title, handlePress, color, backgroundColor}) => {
   const navigation = useNavigation();
 
   const handleGoBack = () => {
@@ -12,22 +20,23 @@ const HeaderComponent = ({title, handlePress, color}) => {
   };
 
   return (
-    <View style={styles.headerContainer}>
+    <SafeAreaView
+      style={[styles.headerContainer, {backgroundColor: backgroundColor}]}>
       <TouchableOpacity onPress={handlePress} style={styles.backButton}>
         <Image source={retourIcon} style={styles.buttonImage} />
       </TouchableOpacity>
       <Text style={[styles.title, {color}]}>{title}</Text>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   headerContainer: {
-    top: 20,
+    top: Platform.OS === 'ios' ? 50 : 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    marginHorizontal: 20,
     paddingTop: 12,
     position: 'relative',
     maxHeight: 60,
@@ -38,7 +47,7 @@ const styles = StyleSheet.create({
     top: 25,
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: colors.darkGrey,
     position: 'absolute',
     left: 0,
     right: 0,

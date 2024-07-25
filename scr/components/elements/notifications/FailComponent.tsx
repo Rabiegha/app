@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     left: 0,
+    top: 70,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightRed,
     paddingVertical: 15,
     paddingHorizontal: 15,
-    zIndex: 50,
+    zIndex: 500,
     marginHorizontal: 20,
   },
   textNotification: {
