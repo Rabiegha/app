@@ -1,5 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, Text, Button, StyleSheet, StatusBar} from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  StatusBar,
+  TouchableOpacity,
+} from 'react-native';
 import ConnexionComponent from '../components/screens/ConnexionComponent';
 import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../assets/styles/globalStyle';
@@ -10,8 +17,11 @@ import FailComponent from '../components/elements/notifications/FailComponent';
 const ConnexionScreen = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
-  const {isLoading, login, fail, resetFail} = useContext(AuthContext);
+  const {isLoading, login, fail, resetFail, setIsDemoMode} =
+    useContext(AuthContext);
+
   useEffect(() => {
     StatusBar.setBarStyle('dark-content');
     return () => {
@@ -19,6 +29,11 @@ const ConnexionScreen = () => {
       StatusBar.setBarStyle('default');
     };
   }, []);
+
+  const handleDemoLogin = () => {
+    setIsDemoMode(true); // Activez le mode démo
+    navigation.navigate('Events'); // Naviguez vers l'écran des événements
+  };
 
   return (
     <View style={[globalStyle.backgroundWhite, styles.container]}>
@@ -43,6 +58,13 @@ const ConnexionScreen = () => {
             resetFail();
           }}
         />
+        <View style={styles.demoModeContainer}>
+          <TouchableOpacity
+            onPress={handleDemoLogin}
+            style={styles.demoModeButton}>
+            <Text style={styles.demoModeText}>Activer le mode démo</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -63,6 +85,19 @@ const styles = StyleSheet.create({
     top: 180,
     left: 0,
     right: 0,
+  },
+  demoModeContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  demoModeButton: {
+    padding: 10,
+    backgroundColor: '#007bff',
+    borderRadius: 5,
+  },
+  demoModeText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

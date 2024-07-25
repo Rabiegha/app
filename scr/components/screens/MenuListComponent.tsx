@@ -4,8 +4,7 @@ import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import colors from '../../../colors/colors';
 import Acceder from '../../assets/images/icons/Acceder.png';
 
-const MenuListComponent = ({ sections: initialSections }) => {
-  const [sections, setSections] = useState(initialSections);
+const MenuListComponent = ({ sections }) => {
   return (
     <View>
       {sections.map((section, index) => (

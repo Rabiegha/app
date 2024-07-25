@@ -1,5 +1,6 @@
 import React, {createContext, useContext, useState, useEffect} from 'react';
 import {MMKV} from 'react-native-mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EventContext = createContext();
 
@@ -12,16 +13,17 @@ export const EventProvider = ({children}) => {
   const [eventDetails, setEventDetails] = useState({
     secretCode: '',
     eventId: '',
+    eventName: '',
   });
   const [statsAvenir, setStatsAvenir] = useState({
-    totale: '',
+    totaleAvenir: '',
   });
   const [statsPassees, setStatsPassees] = useState({
-    totale: '',
+    totalePassees: '',
   });
-
-  // Initialisation de l'état de connexion avec false
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [refreshList, setRefreshList] = useState(false);
+  const [attendeesRefreshKey, setAttendeesRefreshKey] = useState(0);
 
   useEffect(() => {
     const storedStatus = storage.getBoolean('login_status');
@@ -40,29 +42,64 @@ export const EventProvider = ({children}) => {
       eventName: newEventName,
     });
   };
+
   const updateStatsAvenir = ({newTotaleAvenir}) => {
     setStatsAvenir({
       totaleAvenir: newTotaleAvenir,
     });
     console.log('newTotaleAvenir', newTotaleAvenir);
   };
+
   const updateStatsPassees = ({newTotalePassees}) => {
     setStatsPassees({
-      totalePassees: newTotalePassees, // Correction de l'assignation
+      totalePassees: newTotalePassees,
     });
     console.log('newTotalePassees', newTotalePassees);
   };
 
-  // Fonction pour mettre à jour l'état de connexion
   const login = status => {
     setIsLoggedIn(status);
-    // Stocker également l'état dans MMKV
     storage.set('login_status', status.toString());
   };
 
-  const [refreshList, setRefreshList] = useState(false);
   const triggerListRefresh = () => {
-    setRefreshList(prev => !prev); // Toggle to force refresh
+    setAttendeesRefreshKey(prevKey => prevKey + 1);
+/*     console.log('List refresh triggered, new attendeesRefreshKey:', attendeesRefreshKey + 1); */
+  };
+
+  const updateAttendee = async (eventId, updatedAttendee) => {
+    console.log('Updating attendee locally:', updatedAttendee);
+    const key = `attendees_${eventId}`;
+    const value = await AsyncStorage.getItem(key);
+    if (value !== null) {
+      let parsedData = JSON.parse(value);
+      if (!Array.isArray(parsedData)) {
+        parsedData = [];
+      }
+      const updatedData = parsedData.map(attendee =>
+        attendee.id === updatedAttendee.id ? updatedAttendee : attendee,
+      );
+      await AsyncStorage.setItem(key, JSON.stringify(updatedData));
+      console.log('Local attendee updated, triggering list refresh');
+      triggerListRefresh();
+    }
+  };
+
+  const addAttendee = async (eventId, newAttendee) => {
+    console.log('Adding new attendee locally:', newAttendee);
+    const key = `attendees_${eventId}`;
+    const value = await AsyncStorage.getItem(key);
+    let parsedData = [];
+    if (value !== null) {
+      parsedData = JSON.parse(value);
+      if (!Array.isArray(parsedData)) {
+        parsedData = [];
+      }
+    }
+    parsedData.push(newAttendee);
+    await AsyncStorage.setItem(key, JSON.stringify(parsedData));
+    console.log('New attendee added locally, triggering list refresh');
+    triggerListRefresh();
   };
 
   return (
@@ -78,6 +115,9 @@ export const EventProvider = ({children}) => {
         setStatsAvenir,
         updateStatsAvenir,
         setStatsPassees,
+        updateAttendee,
+        addAttendee,
+        attendeesRefreshKey,
       }}>
       {children}
     </EventContext.Provider>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, Image, StyleSheet, SafeAreaView, Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../../../../colors/colors';
 import SmallButton from '../buttons/SmallButton';
@@ -8,7 +8,7 @@ import logOutIcon from '../../../assets/images/icons/Log-out.png';
 
 const HeaderEvent = ({onLeftPress, onRightPress, opacity}) => {
   return (
-    <View style={styles.headerContainer}>
+    <SafeAreaView style={styles.headerContainer}>
       <TouchableOpacity
         onPress={onLeftPress}
         style={[styles.backButton, {opacity: opacity}]}>
@@ -17,17 +17,17 @@ const HeaderEvent = ({onLeftPress, onRightPress, opacity}) => {
       <TouchableOpacity onPress={onRightPress} style={styles.backButton}>
         <Image source={logOutIcon} style={styles.buttonImage} />
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   headerContainer: {
-    top: 20,
+    top: Platform.OS === 'ios' ? 50 : 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    marginHorizontal: 20,
     paddingTop: 12,
     position: 'relative',
     maxHeight: 60,

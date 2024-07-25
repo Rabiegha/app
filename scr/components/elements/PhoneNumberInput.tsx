@@ -9,49 +9,48 @@ import {
   FlatList,
   Dimensions,
   TouchableWithoutFeedback,
-  ScrollView,
   StyleSheet,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import down from '../../assets/images/down.png';
 import globalStyle from '../../assets/styles/globalStyle';
-import colors from '../../../colors/colors';
+import {countryData} from '../../assets/countryData';
 
-const {width, height} = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
-const PhoneInput = ({phoneNumber, onChangeText}) => {
+const PhoneInput = ({
+  phoneNumber,
+  onChangeText,
+  placeholder,
+  placeholderTextColor,
+}) => {
   const [areas, setAreas] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [localPhoneNumber, setLocalPhoneNumber] = useState(selectedArea?.dial_code);
 
-  // Fetch codes from restcountries API
+  // Load the country data directly from the file
   useEffect(() => {
-    fetch('https://restcountries.com/v2/all')
-      .then(response => response.json())
-      .then(data => {
-        let areaData = data.map(item => {
-          return {
-            code: item.alpha2Code,
-            name: item.name,
-            alpha2Code: item.alpha2Code.toLowerCase(),
-            callingCode: `+${item.callingCodes}`,
-            flag: `https://flagcdn.com/40x30/${item.alpha2Code.toLowerCase()}.png`,
-          };
-        });
-        setAreas(areaData);
-        if (areaData.length > 0) {
-          let defaultData = areaData.filter(a => a.code == 'FR');
-
-          if (defaultData.length > 0) {
-            setSelectedArea(defaultData[0]);
-          }
-        }
-      });
+    setAreas(countryData);
+    if (countryData.length > 0) {
+      let defaultData = countryData.filter(a => a.code == 'FR');
+      if (defaultData.length > 0) {
+        setSelectedArea(defaultData[0]);
+      }
+    }
   }, []);
+
   useEffect(() => {
-    // Opérations à exécuter suite à la mise à jour de selectedArea
-    console.log('Nouvelle zone sélectionnée:', selectedArea);
+    if (selectedArea) {
+      setLocalPhoneNumber(''); // Reset phone number when country code changes
+      onChangeText(selectedArea.dial_code);
+    }
   }, [selectedArea]);
+
+  // Handle the change in the phone number input
+  const handlePhoneNumberChange = text => {
+    setLocalPhoneNumber(text);
+    onChangeText(selectedArea.dial_code + text);
+  };
 
   // Render countries codes modal
   const renderAreasCodesModal = () => {
@@ -59,7 +58,7 @@ const PhoneInput = ({phoneNumber, onChangeText}) => {
       return (
         <TouchableOpacity
           style={{
-            padding: 10,
+            paddingVertical: 10,
             flexDirection: 'row',
           }}
           onPress={() => {
@@ -67,9 +66,9 @@ const PhoneInput = ({phoneNumber, onChangeText}) => {
             setModalVisible(false);
           }}>
           <Image
-            source={{uri: item.flag}}
+            source={item.flag}
             style={{
-              height: 30,
+              height: 20,
               width: 30,
               marginRight: 10,
             }}
@@ -118,14 +117,14 @@ const PhoneInput = ({phoneNumber, onChangeText}) => {
       <View style={styles.inputContainer}>
         <TouchableOpacity
           style={styles.countryCodeButton}
-          onPress={() => setModalVisible(true)}>
+          /* onPress={() => setModalVisible(true)} */>
           <View style={styles.countryCodeIconContainer}>
             <Image source={down} style={styles.countryCodeIcon} />
           </View>
 
           <View style={styles.countryFlagContainer}>
             <Image
-              source={{uri: selectedArea?.flag}}
+              source={selectedArea?.flag}
               resizeMode="contain"
               style={styles.countryFlag}
             />
@@ -133,18 +132,18 @@ const PhoneInput = ({phoneNumber, onChangeText}) => {
 
           <View style={styles.countryCodeTextContainer}>
             <Text style={styles.countryCodeText}>
-              {selectedArea?.callingCode}
+              {selectedArea?.dial_code}
             </Text>
           </View>
         </TouchableOpacity>
         <TextInput
           style={styles.phoneNumberInput}
-          placeholder="Numéro de téléphone"
-          placeholderTextColor={colors.grey}
+          placeholder={placeholder}
+          placeholderTextColor={placeholderTextColor}
           selectionColor="#111"
           keyboardType="numeric"
-          value={phoneNumber}
-          onChangeText={onChangeText}
+          value={localPhoneNumber}
+          onChangeText={handlePhoneNumberChange}
         />
       </View>
       {renderAreasCodesModal()}
@@ -161,6 +160,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     fontSize: 12,
+    marginRight: 5,
   },
   countryCodeIconContainer: {
     justifyContent: 'center',

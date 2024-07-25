@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, StyleSheet, Animated, StatusBar} from 'react-native';
+import {View, StyleSheet, Animated, StatusBar, Platform} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import EventPasseesScreen from './EventsPassees';
 import EventAvenirScreen from './EventsAvenir';
@@ -27,7 +27,11 @@ function MyTabs({searchQuery, onEventSelect}) {
           height: 14,
           borderRadius: 15,
         },
-        tabBarStyle: {backgroundColor: 'white', elevation: 0},
+        tabBarStyle: {
+          backgroundColor: 'white',
+          elevation: 0,
+          marginHorizontal: 20,
+        },
         tabBarLabelStyle: {fontSize: 14, fontWeight: 'bold'},
         tabBarPressColor: 'transparent',
       }}>
@@ -99,9 +103,14 @@ const EventsScreen = () => {
     navigation.navigate('Tabs', {screen: 'Attendees'});
   };
 
-  const {isLoading, logout} = useContext(AuthContext);
+  const {isLoading, logout, isDemoMode} = useContext(AuthContext);
   const handleGoBack = () => {
-    logout();
+    if (isDemoMode) {
+      logout(); // Déconnecter et désactiver le mode démo
+    } else {
+      logout(); // Déconnecter normalement
+    }
+    navigation.navigate('Connexion'); // Naviguer vers l'écran de connexion
   };
 
   const [opacity, setOpacity] = useState(0);
@@ -123,9 +132,8 @@ const EventsScreen = () => {
           onRightPress={handleGoBack}
           opacity={opacity}
         />
-        <View style={[globalStyle.backgroundWhite, globalStyle.container]}>
+        <View style={styles.container}>
           <Search onChange={text => setSearchQuery(text)} value={searchQuery} />
-          <MyTabs searchQuery={searchQuery} onEventSelect={handleEventSelect} />
           {/* <Modal
             animationType="none"
             transparent={true}
@@ -153,12 +161,18 @@ const EventsScreen = () => {
             </TouchableOpacity>
           </Modal> */}
         </View>
+        <MyTabs searchQuery={searchQuery} onEventSelect={handleEventSelect} />
       </View>
     </NavigationContainer>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    paddingTop: Platform.OS === 'ios' ? 90 : 50,
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
   title: {
     fontSize: 20,
     color: '#000',

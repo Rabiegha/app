@@ -18,6 +18,6 @@
     "lib": ["es2017"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "babel.config.js", "mmetro.config.js, "jejest.config.js,
+  "exclude": ["node_modules__", "babel.config.js", "mmetro.config.js, "jejest.config.js,
   "extends": "@react-native/typescript-config/tsconfig.json"
 }
