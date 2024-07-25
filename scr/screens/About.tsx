@@ -9,7 +9,7 @@ import WebView from 'react-native-webview';
 const AboutScreen = ({navigation}) => {
   const sections = [
     {
-      title: 'Menus',
+      title: 'Menu',
       buttons: [
         {
           title: 'Règles de la Maison',
