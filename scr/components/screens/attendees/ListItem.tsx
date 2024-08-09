@@ -19,16 +19,23 @@ import Accepted from '../../../assets/images/icons/Accepted.png';
 const {width} = Dimensions.get('window');
 
 const ListItem = React.memo(
-  ({item, searchQuery, onUpdateAttendee, onSwipeableOpen}) => {
+  ({
+    item,
+    searchQuery,
+    onUpdateAttendee,
+    onSwipeableOpen,
+    onPressedit,
+    onPresscheck,
+  }) => {
     const navigation = useNavigation();
     const {triggerListRefresh} = useEvent();
     const swipeableRef = useRef(null);
 
     const initialSwitchState = item.attendee_status == 1;
-    const [isSwitchOn, setIsSwitchOn] = useState(initialSwitchState);
+    const [isCheckedIn, setIsCheckedIn] = useState(initialSwitchState);
 
     const handleSwitchToggle = async newValue => {
-      setIsSwitchOn(newValue);
+      setIsCheckedIn(newValue);
       const newAttendeeStatus = newValue ? 1 : 0;
 
       const updatedAttendee = {
@@ -102,14 +109,12 @@ const ListItem = React.memo(
               {transform: [{translateX: action1TranslateX}]},
             ]}>
             <TouchableOpacity
-              onPress={() => {
-                // Perform your first action here, like delete or archive
-              }}
+              onPress={handleItemPress}
               style={[
                 styles.rightActionButton,
                 {backgroundColor: colors.darkGrey, zIndex: 10},
               ]}>
-              <Text style={styles.actionText}>Action 1</Text>
+              <Text style={styles.actionText}>Profil</Text>
             </TouchableOpacity>
           </Animated.View>
           <Animated.View
@@ -118,14 +123,15 @@ const ListItem = React.memo(
               {transform: [{translateX: action2TranslateX}]},
             ]}>
             <TouchableOpacity
-              onPress={() => {
-                // Perform your second action here
-              }}
+              onPress={handleSwitchToggle}
               style={[
                 styles.rightActionButton,
                 {backgroundColor: colors.green},
+                {backgroundColor: isCheckedIn ? colors.red : colors.green},
               ]}>
-              <Text style={[styles.actionText, {zIndex: 5}]}>Action 2</Text>
+              <Text style={[styles.actionText, {zIndex: 5}]}>
+                {isCheckedIn ? 'Uncheck' : 'Check'}
+              </Text>
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -139,9 +145,10 @@ const ListItem = React.memo(
         onSwipeableWillOpen={() => {
           onSwipeableOpen(swipeableRef);
         }}
-        onSwipeableRightOpen={() => {
-          // Trigger the action when swipe is fully opened
-          console.log('Action 2 triggered');
+        onSwipeableOpen={direction => {
+          if (direction === 'right') {
+            onSwipeableOpen(swipeableRef);
+          }
         }}>
         <TouchableWithoutFeedback onPress={handleItemPress}>
           <View style={styles.listItemContainer}>
@@ -151,7 +158,7 @@ const ListItem = React.memo(
                 searchQuery,
               )}
             </Text>
-            {isSwitchOn && (
+            {isCheckedIn && (
               <Image
                 source={Accepted}
                 resizeMode="contain"
@@ -163,7 +170,7 @@ const ListItem = React.memo(
               />
             )}
             <CustomSwitch
-              value={isSwitchOn}
+              value={isCheckedIn}
               onValueChange={handleSwitchToggle}
             />
           </View>
@@ -211,6 +218,7 @@ const styles = StyleSheet.create({
   actionText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 12,
   },
 });
 

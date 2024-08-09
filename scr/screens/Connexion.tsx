@@ -18,10 +18,10 @@ const ConnexionScreen = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
+  const [success, setSuccess] = useState(null);
 
   const {isLoading, login, fail, resetFail, setIsDemoMode} =
     useContext(AuthContext);
-
   useEffect(() => {
     StatusBar.setBarStyle('dark-content');
     return () => {
@@ -37,6 +37,12 @@ const ConnexionScreen = () => {
 
   return (
     <View style={[globalStyle.backgroundWhite, styles.container]}>
+      {success === false && (
+        <FailComponent
+          onClose={() => setSuccess(null)}
+          text={"Mot de passe ou nom d'utilisateur incorrect"}
+        />
+      )}
       <Spinner visible={isLoading} />
       {fail === true && (
         <View style={styles.failComponentContainer}>
@@ -58,13 +64,13 @@ const ConnexionScreen = () => {
             resetFail();
           }}
         />
-        <View style={styles.demoModeContainer}>
+{/*         <View style={styles.demoModeContainer}>
           <TouchableOpacity
             onPress={handleDemoLogin}
             style={styles.demoModeButton}>
             <Text style={styles.demoModeText}>Activer le mode démo</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </View>
   );
