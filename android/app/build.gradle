@@ -74,13 +74,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.attendee"
+    namespace "com.choyou.attendeeApp"
     defaultConfig {
-        applicationId "com.attendee"
+        applicationId "com.choyou.attendeeApp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.0.1"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
     }
     signingConfigs {
@@ -90,6 +90,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('/Users/apple/Desktop/apps/attendee/the-key')
+            storePassword 'Attendee'
+            keyAlias 'the-key'
+            keyPassword 'Attendee'
+        }
     }
     buildTypes {
         debug {
@@ -98,9 +104,9 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            minifyEnabled
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

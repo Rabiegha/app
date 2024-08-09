@@ -105,11 +105,7 @@ const EventsScreen = () => {
 
   const {isLoading, logout, isDemoMode} = useContext(AuthContext);
   const handleGoBack = () => {
-    if (isDemoMode) {
-      logout(); // Déconnecter et désactiver le mode démo
-    } else {
-      logout(); // Déconnecter normalement
-    }
+    logout();
     navigation.navigate('Connexion'); // Naviguer vers l'écran de connexion
   };
 

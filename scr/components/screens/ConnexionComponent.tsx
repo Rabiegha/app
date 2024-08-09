@@ -31,12 +31,12 @@ const ConnexionComponent = ({
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled">
-      {success === false && (
+      {/* {success === false && (
         <FailComponent
           onClose={() => setSuccess(null)}
           text={"Mot de passe ou nom d'utilisateur incorrect"}
         />
-      )}
+      )} */}
       <TextInput
         style={globalStyle.input}
         placeholder="Nom d'utilisateur"

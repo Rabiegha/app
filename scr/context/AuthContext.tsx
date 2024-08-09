@@ -109,7 +109,7 @@ export const AuthProvider = ({children}) => {
         navigationRef.current?.dispatch(
           CommonActions.reset({
             index: 1,
-            routes: [{name: 'Login'}],
+            routes: [{name: 'Connexion'}],
           }),
         );
       } else {

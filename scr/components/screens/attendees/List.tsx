@@ -10,48 +10,44 @@ import {
   FlatList,
   StyleSheet,
   View,
-  Image,
-  Button,
 } from 'react-native';
 import ListItem from './ListItem';
 import axios from 'axios';
-import {useEvent} from '../../../context/EventContext';
+import { useEvent } from '../../../context/EventContext';
 import colors from '../../../../colors/colors';
-import {BASE_URL} from '../../../config/config';
+import { BASE_URL } from '../../../config/config';
 import useUserId from '../../../hooks/useUserId';
-import {Attendee} from '../../../interfaces/interfaces.tsx';
+import { Attendee } from '../../../interfaces/interfaces.tsx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {demoEvents} from '../../../demo/demoEvents';
-import {AuthContext} from '../../../context/AuthContext.tsx';
+import { demoEvents } from '../../../demo/demoEvents';
+import { AuthContext } from '../../../context/AuthContext.tsx';
 import emptyIcon from '../../../assets/images/empty.gif';
 
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
 
-const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
+const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
   const [openSwipeable, setOpenSwipeable] = useState(null);
+
   const handleSwipeableOpen = swipeable => {
-    if (openSwipeable && openSwipeable.current) {
+    if (openSwipeable && openSwipeable.current && openSwipeable !== swipeable) {
       openSwipeable.current.close();
     }
     setOpenSwipeable(swipeable);
   };
+
   const [filteredData, setFilteredData] = useState<Attendee[]>([]);
   const [allAttendees, setAllAttendees] = useState<Attendee[]>([]);
   const flatListRef = useRef(null);
   const [totalAttendees, setTotalAttendees] = useState(0);
   const [totalCheckedAttendees, setTotalCheckedAttendees] = useState(0);
-  const {refreshList, triggerListRefresh, updateAttendee, attendeesRefreshKey} =
+  const { refreshList, triggerListRefresh, updateAttendee, attendeesRefreshKey } =
     useEvent();
-  const {eventId} = useEvent();
+  const { eventId } = useEvent();
   const [hasData, setHasData] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useUserId();
-  const {isDemoMode} = useContext(AuthContext);
-  useEffect(() => {
-    console.log('eventId', eventId);
-  });
-  /*   console.log(isDemoMode); */
+  const { isDemoMode } = useContext(AuthContext);
 
   const expirationTimeInMillis = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
 
@@ -78,7 +74,6 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
           console.log(`Data for key: ${key} is up-to-date`);
           return parsedData.data;
         } else {
-          // Supprimer les données si elles sont obsolètes
           await AsyncStorage.removeItem(key);
           console.log(`Data for key: ${key} expired and removed`);
         }
@@ -139,14 +134,12 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
         }
       }
 
-      // Stocker toutes les données des participants pour les calculs globaux
       setAllAttendees(attendees || []);
       setTotalAttendees(attendees ? attendees.length : 0);
       setTotalCheckedAttendees(
         attendees ? attendees.filter(a => a.attendee_status == 1).length : 0,
       );
 
-      // Appliquez les filtres basés sur filterCriteria ici
       let filteredAttendees = attendees || [];
       if (filterCriteria.status === 'checked-in') {
         filteredAttendees = filteredAttendees.filter(
@@ -158,10 +151,8 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
         );
       }
 
-      // Triez les participants pour que ceux avec attendee_status = 0 soient en haut
       filteredAttendees.sort((a, b) => a.attendee_status - b.attendee_status);
 
-      // Filtrez davantage par searchQuery si fourni
       filteredAttendees = filteredAttendees.filter(attendee =>
         `${attendee.first_name} ${attendee.last_name}`
           .toLowerCase()
@@ -170,7 +161,6 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
 
       setFilteredData(filteredAttendees);
       setHasData(filteredAttendees.length > 0);
-      /*       console.log('Filtered attendees data:', filteredAttendees); */
     } catch (error) {
       console.error('Error fetching attendee details:', error);
       setHasData(false);
@@ -179,14 +169,11 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
     }
   };
 
-  // clearLocalData
   useFocusEffect(
     useCallback(() => {
       clearLocalData();
 
-      return () => {
-        // Any cleanup can be done here
-      };
+      return () => {};
     }, [eventId]),
   );
 
@@ -205,23 +192,19 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
     const ratio =
       totalAttendees > 0 ? (totalCheckedAttendees / totalAttendees) * 100 : 0;
     onUpdateProgress(totalAttendees, totalCheckedAttendees, ratio);
-    clearLocalData;
   }, [totalAttendees, totalCheckedAttendees, onUpdateProgress]);
 
   const handleUpdateAttendee = async updatedAttendee => {
     try {
-      // Mettre à jour l'attendee localement
       const updatedAttendees = allAttendees.map(attendee =>
         attendee.id === updatedAttendee.id ? updatedAttendee : attendee,
       );
       setAllAttendees(updatedAttendees);
       await storeData(`attendees_${eventId}`, updatedAttendees);
 
-      // Mettre à jour l'attendee sur le serveur
       const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${updatedAttendee.event_id}&attendee_id=${updatedAttendee.id}&attendee_status=${updatedAttendee.attendee_status}`;
       await axios.post(url);
 
-      // Rafraîchir les données affichées
       triggerListRefresh();
     } catch (error) {
       console.error('Error updating attendee', error);
@@ -230,7 +213,6 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
 
   return (
     <View style={styles.list}>
-      {/*       <Button title="Clear Local Data" onPress={clearLocalData} /> */}
       {isLoading ? (
         <ActivityIndicator color={colors.green} size="large" />
       ) : hasData ? (
@@ -239,11 +221,11 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
           contentContainerStyle={styles.contentContainer}
           data={filteredData}
           keyExtractor={item => `${item.id}_${item.attendee_status}`}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <ListItem
               item={item}
               searchQuery={searchQuery}
-              onUpdateAttendee={handleUpdateAttendee} // Pass the update function to ListItem
+              onUpdateAttendee={handleUpdateAttendee}
               onSwipeableOpen={handleSwipeableOpen}
             />
           )}
@@ -251,7 +233,6 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
       ) : (
         <View style={styles.noDataView}>
           <FastImage source={emptyIcon} style={styles.gifStyle} />
-          {/*           <Image source={emptyIcon} style={styles.gifStyle} /> */}
         </View>
       )}
     </View>

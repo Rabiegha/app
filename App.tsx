@@ -10,13 +10,14 @@ import React from 'react';
 import AppNavigator from './scr/navigation/NavigationComponent';
 import {EventProvider} from './scr/context/EventContext';
 import {AuthProvider} from './scr/context/AuthContext';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {navigationRef} from './scr/navigation/RootNavigation';
 
 function App() {
   return (
     <AuthProvider>
       <EventProvider>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <GestureHandlerRootView style={{flex: 1}}>
             <AppNavigator />
           </GestureHandlerRootView>
