@@ -36,7 +36,7 @@ const FiltreDetailsComponent = ({
             <View
               style={[
                 styles.checkbox,
-                filterCriteria.status === option.status && styles.checked,
+                filterCriteria.status == option.status && styles.checked,
               ]}
             />
             <Text style={styles.optionText}>{option.label}</Text>

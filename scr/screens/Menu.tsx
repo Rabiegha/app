@@ -4,7 +4,7 @@ import {View, StyleSheet, StatusBar} from 'react-native';
 import colors from '../../colors/colors';
 import LogOutButton from '../components/elements/buttons/LogOutButton';
 import {logoutUser} from '../services/Api/Login-out';
-import {useFocusEffect} from '@react-navigation/native';
+import {CommonActions, useFocusEffect} from '@react-navigation/native';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
 import globalStyle from '../assets/styles/globalStyle';
 import MenuListComponent from '../components/screens/MenuListComponent';
@@ -53,8 +53,14 @@ const MenuScreen = ({navigation}) => {
     },
     // Add more sections as needed
   ];
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{name: 'Connexion'}],
+      }),
+    );
   };
   return (
     <View style={globalStyle.backgroundBlack}>

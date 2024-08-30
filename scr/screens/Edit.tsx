@@ -8,6 +8,10 @@ import axios from 'axios';
 import {BASE_URL} from '../config/config';
 import EditComponent from '../components/screens/EditComponent';
 import useUserId from '../hooks/useUserId';
+import colors from '../../colors/colors';
+import SuccessComponent from '../components/elements/notifications/SuccessComponent';
+import FailComponent from '../components/elements/notifications/FailComponent';
+import {updateAttendee} from '../services/serviceApi.tsx';
 
 const EditScreen = ({navigation, route}) => {
   useFocusEffect(
@@ -152,10 +156,22 @@ const EditScreen = ({navigation, route}) => {
     <View style={globalStyle.backgroundWhite}>
       <HeaderComponent
         title="Modifier"
-        color={undefined}
+        color={colors.darkGrey}
         handlePress={handleGoBack}
         backgroundColor={'white'}
       />
+      {success === true && (
+        <SuccessComponent
+          onClose={() => setSuccess(null)}
+          text={'Modification enregisreè'}
+        />
+      )}
+      {success === false && (
+        <FailComponent
+          onClose={() => setSuccess(null)}
+          text={'Modification non enregistrée'}
+        />
+      )}
       <EditComponent
         onPress={handleEnregistrer}
         style={[globalStyle.container, {marginTop: 50}]}

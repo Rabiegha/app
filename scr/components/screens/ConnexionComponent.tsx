@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   togglePasswordButton: {
     position: 'absolute',
     right: 0,
-    top: 0,
+    top: 10,
     bottom: 0,
     justifyContent: 'center',
     paddingHorizontal: 10,

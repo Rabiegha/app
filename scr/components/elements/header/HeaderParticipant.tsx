@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
     maxHeight: 60,
     height: 60,
     zIndex: 10,
+    backgroundColor: 'white',
   },
   backButton: {
     padding: 10,

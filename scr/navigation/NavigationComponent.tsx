@@ -310,7 +310,6 @@ function AppNavigator() {
         ) : (
           <Stack.Screen name="Connexion" component={ConnexionScreen} />
         )}
-
         <Stack.Screen
           name="Tabs"
           component={TabNavigator}

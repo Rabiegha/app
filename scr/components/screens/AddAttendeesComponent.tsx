@@ -46,7 +46,7 @@ const AddAttendeesComponent = ({
     <View
       style={styles.wrapper}
       contentContainerStyle={styles.contentContainer}>
-{/*       {true && (
+      {/*       {true && (
         <SuccessComponent
           style={styles.notif}
           onClose={() => setSuccess(null)}

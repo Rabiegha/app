@@ -181,7 +181,6 @@ const AttendeesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent: 'center',
   },
   modalOverlay: {
     flex: 1,

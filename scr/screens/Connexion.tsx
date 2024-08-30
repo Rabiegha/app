@@ -64,13 +64,6 @@ const ConnexionScreen = () => {
             resetFail();
           }}
         />
-{/*         <View style={styles.demoModeContainer}>
-          <TouchableOpacity
-            onPress={handleDemoLogin}
-            style={styles.demoModeButton}>
-            <Text style={styles.demoModeText}>Activer le mode démo</Text>
-          </TouchableOpacity>
-        </View> */}
       </View>
     </View>
   );
@@ -88,7 +81,7 @@ const styles = StyleSheet.create({
   },
   failComponentContainer: {
     position: 'absolute',
-    top: 180,
+    top: 100,
     left: 0,
     right: 0,
   },

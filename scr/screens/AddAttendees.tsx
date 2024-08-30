@@ -135,7 +135,7 @@ const AddAttendeesScreen = ({navigation}) => {
     <View style={[globalStyle.backgroundWhite, styles.wrap]}>
       <HeaderComponent
         title="Modifier"
-        color={undefined}
+        color={colors.darkGrey}
         handlePress={handleGoBack}
         backgroundColor={'white'}
       />

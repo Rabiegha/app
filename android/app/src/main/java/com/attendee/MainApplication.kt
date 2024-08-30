@@ -1,4 +1,4 @@
-package com.choyou.attendeeApp
+package com.choyou.attendeeApplication
 
 import android.app.Application
 import com.facebook.react.PackageList

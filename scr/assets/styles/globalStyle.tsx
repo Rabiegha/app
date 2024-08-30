@@ -26,6 +26,7 @@ const globalStyle = StyleSheet.create({
     borderColor: colors.grey,
     height: 50,
     lineHeight: 20,
+    color: colors.darkGrey,
   },
 });
 

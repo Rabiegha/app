@@ -57,7 +57,7 @@ const EditAttendeesComponent = ({
     <View
       style={styles.wrapper}
       contentContainerStyle={styles.contentContainer}>
-      {success === true && (
+      {/*       {success === true && (
         <SuccessComponent
           onClose={() => setSuccess(null)}
           text={'Modifications enregistrées'}
@@ -68,7 +68,7 @@ const EditAttendeesComponent = ({
           onClose={() => setSuccess(null)}
           text={'Participant non ajouté'}
         />
-      )}
+      )} */}
 
       <ScrollView
         contentContainerStyle={styles.container}
@@ -186,9 +186,11 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 5,
     marginLeft: 10,
+    color: colors.darkGrey,
   },
   textNom: {
     marginLeft: 10,
+    color: colors.darkGrey,
   },
   container: {
     top: 30,

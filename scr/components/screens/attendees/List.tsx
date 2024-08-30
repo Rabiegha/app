@@ -108,7 +108,7 @@ const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
       if (!attendees) {
         if (isDemoMode) {
           const selectedEvent = demoEvents.find(
-            event => event.event_id === eventId,
+            event => event.event_id == eventId,
           );
           if (selectedEvent) {
             attendees = selectedEvent.participants;
@@ -141,11 +141,11 @@ const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
       );
 
       let filteredAttendees = attendees || [];
-      if (filterCriteria.status === 'checked-in') {
+      if (filterCriteria.status == 'checked-in') {
         filteredAttendees = filteredAttendees.filter(
           attendee => attendee.attendee_status == 1,
         );
-      } else if (filterCriteria.status === 'not-checked-in') {
+      } else if (filterCriteria.status == 'not-checked-in') {
         filteredAttendees = filteredAttendees.filter(
           attendee => attendee.attendee_status == 0,
         );
@@ -197,7 +197,7 @@ const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
   const handleUpdateAttendee = async updatedAttendee => {
     try {
       const updatedAttendees = allAttendees.map(attendee =>
-        attendee.id === updatedAttendee.id ? updatedAttendee : attendee,
+        attendee.id == updatedAttendee.id ? updatedAttendee : attendee,
       );
       setAllAttendees(updatedAttendees);
       await storeData(`attendees_${eventId}`, updatedAttendees);

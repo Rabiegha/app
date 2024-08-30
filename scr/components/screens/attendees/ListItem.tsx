@@ -35,16 +35,15 @@ const ListItem = React.memo(
     const [isCheckedIn, setIsCheckedIn] = useState(initialSwitchState);
 
     const handleSwitchToggle = async newValue => {
-      setIsCheckedIn(newValue);
-      const newAttendeeStatus = newValue ? 1 : 0;
-
-      const updatedAttendee = {
-        ...item,
-        attendee_status: newAttendeeStatus,
-      };
-
       try {
-        await onUpdateAttendee(updatedAttendee); // Call the update function passed from List
+        const newAttendeeStatus = item.attendee_status == 1 ? 0 : 1;
+        setIsCheckedIn(newAttendeeStatus == 1);
+        const updatedAttendee = {
+          ...item,
+          attendee_status: newAttendeeStatus,
+        };
+        await onUpdateAttendee(updatedAttendee);
+        console.log('After status', updatedAttendee);
         triggerListRefresh(); // Refresh the list after updating
       } catch (error) {
         console.error('Error updating attendee status:', error);
@@ -158,7 +157,7 @@ const ListItem = React.memo(
                 searchQuery,
               )}
             </Text>
-            {isCheckedIn && (
+            {isCheckedIn ? (
               <Image
                 source={Accepted}
                 resizeMode="contain"
@@ -168,11 +167,9 @@ const ListItem = React.memo(
                   tintColor: colors.green,
                 }}
               />
+            ) : (
+              <View style={{width: 20, height: 20}} />
             )}
-            <CustomSwitch
-              value={isCheckedIn}
-              onValueChange={handleSwitchToggle}
-            />
           </View>
         </TouchableWithoutFeedback>
       </Swipeable>
@@ -184,11 +181,11 @@ const styles = StyleSheet.create({
   listItemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '100%',
     alignItems: 'center',
     backgroundColor: colors.greyCream,
     borderRadius: 10,
     padding: 10,
-    width: width * 0.89,
     marginBottom: 10,
     height: 55,
   },

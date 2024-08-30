@@ -19,9 +19,8 @@ const MoreComponent = ({
   JobTitle,
   See,
   handleButton,
-  Share,
   loading,
-  modify
+  modify,
 }) => {
   console.log('Current attendeeStatus:', attendeeStatus);
   console.log('Current attendeeStatus:', JobTitle);
@@ -97,7 +96,7 @@ const MoreComponent = ({
         value={JobTitle ? JobTitle : '-'}
       />
       {/*<Text>Status: {attendeeStatus}</Text> */}
-      {parsedAttendeeStatus === 0 ? (
+      {parsedAttendeeStatus == 0 ? (
         <LargeButton
           title="Check-in"
           onPress={() => handleButton(1)}

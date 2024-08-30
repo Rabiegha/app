@@ -64,7 +64,7 @@ export const EventProvider = ({children}) => {
 
   const triggerListRefresh = () => {
     setAttendeesRefreshKey(prevKey => prevKey + 1);
-/*     console.log('List refresh triggered, new attendeesRefreshKey:', attendeesRefreshKey + 1); */
+    /*     console.log('List refresh triggered, new attendeesRefreshKey:', attendeesRefreshKey + 1); */
   };
 
   const updateAttendee = async (eventId, updatedAttendee) => {
@@ -77,7 +77,7 @@ export const EventProvider = ({children}) => {
         parsedData = [];
       }
       const updatedData = parsedData.map(attendee =>
-        attendee.id === updatedAttendee.id ? updatedAttendee : attendee,
+        attendee.id == updatedAttendee.id ? updatedAttendee : attendee,
       );
       await AsyncStorage.setItem(key, JSON.stringify(updatedData));
       console.log('Local attendee updated, triggering list refresh');

@@ -13,7 +13,7 @@ const LabelValueComponent = ({label, value, value2, modifyDisplay, modify}) => {
           {value} {value2}
         </Text>
       </View>
-     {/*  <TouchableOpacity
+      {/*  <TouchableOpacity
         onPress={modify}
         style={[styles.editButton, {display: modifyDisplay}]}>
         <Image source={modifier} style={styles.buttonImage} />
@@ -37,9 +37,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: colors.darkGrey,
   },
   value: {
     fontSize: 14,
+    color: colors.darkGrey,
   },
   buttonImage: {
     width: 23,

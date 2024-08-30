@@ -5472,6 +5472,11 @@ loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.4.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
+lottie-react-native@^6.7.2:
+  version "6.7.2"
+  resolved "https://registry.npmjs.org/lottie-react-native/-/lottie-react-native-6.7.2.tgz"
+  integrity sha512-MZVx6N1EeO/EaSx8T44mJ0aHc5Mqee+xIfWwszni0oz8U2wlHdaWGjES44dHxaxgAp/0dRaFt3PkpZ6egTzcBg==
+
 lru-cache@^5.1.1:
   version "5.1.1"
   resolved "https://registry.npmjs.org/lru-cache/-/lru-cache-5.1.1.tgz"
@@ -6595,6 +6600,11 @@ react-native-vector-icons@>7.0.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
+react-native-video@^6.4.5:
+  version "6.4.5"
+  resolved "https://registry.npmjs.org/react-native-video/-/react-native-video-6.4.5.tgz"
+  integrity sha512-pq0oD/lm0NZv/nkQtNy2Bq1eG1+nlb9vVNgdeIz7twDhxLpqiwv4ef39UQlUHfPdnTa9fDyAke6VBc+0ogNjfA==
+
 react-native-webview@^13.10.4:
   version "13.10.4"
   resolved "https://registry.npmjs.org/react-native-webview/-/react-native-webview-13.10.4.tgz"
@@ -6603,7 +6613,7 @@ react-native-webview@^13.10.4:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
 
-react-native-windows@>=0.62, react-native-windows@>=0.70.0:
+react-native-windows@>=0.62, react-native-windows@>=0.63.x, react-native-windows@>=0.70.0:
   version "0.73.11"
   resolved "https://registry.npmjs.org/react-native-windows/-/react-native-windows-0.73.11.tgz"
   integrity sha512-SS9GysV9qAOCk88TujvxzHOuc8JR3xjAgCYOu9wsZ0ZBBZsNQlNb7rV0pfvXD2O11tq+C1zF+L0Z44bJ+lMZ0g==
@@ -6650,7 +6660,7 @@ react-native-windows@>=0.62, react-native-windows@>=0.70.0:
     ws "^6.2.2"
     yargs "^17.6.2"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@^0.73.0, react-native@>=0.42.0, react-native@>=0.48.4, react-native@>=0.57, react-native@>=0.60.0, react-native@>=0.69.9, react-native@>=0.70.0, react-native@>=0.71.0, "react-native@>=0.8.0 || 0.8.0-rc || 0.8.0-rc.2 || 0.9.0-rc || 0.10.1", react-native@0.73.6:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@^0.73.0, react-native@>=0.42.0, react-native@>=0.46, react-native@>=0.48.4, react-native@>=0.57, react-native@>=0.60.0, react-native@>=0.69.9, react-native@>=0.70.0, react-native@>=0.71.0, "react-native@>=0.8.0 || 0.8.0-rc || 0.8.0-rc.2 || 0.9.0-rc || 0.10.1", react-native@0.73.6:
   version "0.73.6"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.73.6.tgz"
   integrity sha512-oqmZe8D2/VolIzSPZw+oUd6j/bEmeRHwsLn1xLA5wllEYsZ5zNuMsDus235ONOnCRwexqof/J3aztyQswSmiaA==
