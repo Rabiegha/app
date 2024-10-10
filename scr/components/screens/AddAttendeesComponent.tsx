@@ -16,6 +16,8 @@ import {CheckBox} from 'react-native-elements';
 import colors from '../../../colors/colors';
 import notChecked from '../../assets/images/icons/Not-checked.png';
 import Checked from '../../assets/images/icons/Checked.png';
+import {Picker} from '@react-native-picker/picker';
+import {Dropdown} from 'react-native-element-dropdown';
 
 const AddAttendeesComponent = ({
   onPress,
@@ -37,9 +39,13 @@ const AddAttendeesComponent = ({
   numeroTelephone,
   inputErrors,
   resetInputError,
+  attendeeTypes,
+  selectedAttendeeType,
+  setSelectedAttendeeType,
 }) => {
   useEffect(() => {
     console.log('Success value:', success);
+    console.log('attendee types:', attendeeTypes);
   }, [success]);
 
   return (
@@ -65,6 +71,7 @@ const AddAttendeesComponent = ({
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled">
+        {/* Nom */}
         <TextInput
           style={[
             globalStyle.input,
@@ -84,6 +91,7 @@ const AddAttendeesComponent = ({
         <Text style={[styles.error, {opacity: inputErrors.nom ? 1 : 0}]}>
           Ce champ est requis *
         </Text>
+        {/* Prénom */}
         <TextInput
           style={[
             globalStyle.input,
@@ -103,6 +111,27 @@ const AddAttendeesComponent = ({
         <Text style={[styles.error, {opacity: inputErrors.prenom ? 1 : 0}]}>
           Ce champ est requis *
         </Text>
+        {/* Menu déroulant pour sélectionner le type d'attendee */}
+        <Dropdown
+          style={[styles.dropdown, globalStyle.input]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={attendeeTypes}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="Attendee Type"
+          searchPlaceholder="Search..."
+          value={selectedAttendeeType}
+          onChange={item => {
+            setSelectedAttendeeType(item.value);
+          }}
+        />
+        <Text style={[styles.error, {opacity: 0}]} />
+        {/* Email */}
         <TextInput
           style={[
             globalStyle.input,
@@ -123,6 +152,7 @@ const AddAttendeesComponent = ({
         <Text style={[styles.error, {opacity: inputErrors.email ? 1 : 0}]}>
           Veuillez entrer une adresse email valide *
         </Text>
+        {/* Téléphone */}
         <TextInput
           style={[
             globalStyle.input,
@@ -160,6 +190,7 @@ const AddAttendeesComponent = ({
             resetInputError('numeroTelephone');
           }}
         /> */}
+        {/* Societe */}
         <TextInput
           style={globalStyle.input}
           placeholderTextColor={colors.grey}
@@ -168,6 +199,7 @@ const AddAttendeesComponent = ({
           onChangeText={text => setSociete(text)}
         />
         <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
+        {/* Job Title */}
         <TextInput
           style={globalStyle.input}
           placeholderTextColor={colors.grey}
@@ -175,6 +207,7 @@ const AddAttendeesComponent = ({
           value={jobTitle}
           onChangeText={text => setJobTitle(text)}
         />
+        {/* Checked-in or not */}
         <CheckBox
           title={'Check-in'}
           checkedIcon={
@@ -263,6 +296,25 @@ const styles = StyleSheet.create({
   },
   notif: {
     zIndex: 100,
+  },
+  picker: {
+    marginRight: -15,
+    marginTop: -30,
+    height: 50,
+  },
+  label: {
+    color: colors.grey,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+    color: colors.darkGrey,
+  },
+  placeholderStyle: {
+    color: colors.grey,
   },
 });
 

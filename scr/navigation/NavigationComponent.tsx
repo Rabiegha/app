@@ -34,6 +34,7 @@ import AttendeesScreen from '../screens/Attendees';
 import BadgeScreen from '../screens/Badge';
 import AboutScreen from '../screens/About';
 import HelpScreen from '../screens/Help';
+import PrintresListScreen from '../screens/PrintersList';
 import ConnexionScreen from '../screens/Connexion';
 import {NavigationContainer} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -42,15 +43,16 @@ import EventAvenirScreen from '../screens/EventsAvenir';
 import EventPasseesScreen from '../screens/EventsPassees';
 import {EventProvider, useEvent} from '../context/EventContext';
 import {MMKV} from 'react-native-mmkv';
-import ProfilScreen from '../screens/Profil';
+import PrintScreen from '../screens/Print';
 import {AuthContext} from '../context/AuthContext';
 import Participant from '../assets/images/icons/Participant.png';
 import Ajouts from '../assets/images/icons/Ajouts.png';
 import Scan from '../assets/images/icons/Scan.png';
-import Profil from '../assets/images/icons/Profil.png';
+import Print from '../assets/images/icons/Print.png';
 import Outils from '../assets/images/icons/Outils.png';
 import WebViewScreen from '../screens/WebView';
 import EditScreen from '../screens/Edit';
+import PaperFormat from '../screens/PaperFormat';
 
 const storage = new MMKV();
 const Tab = createBottomTabNavigator();
@@ -236,17 +238,17 @@ function TabNavigator() {
         />
 
         <Tab.Screen
-          name="Profil"
-          component={ProfilScreen}
+          name="Print"
+          component={PrintScreen}
           options={{
             tabBarIcon: ({focused}) => (
               <View style={styles.navBarIcons}>
                 <Image
-                  source={Profil}
+                  source={Print}
                   resizeMode="contain"
                   style={{
-                    width: 30,
-                    height: 30,
+                    width: 23,
+                    height: 32,
                     tintColor: focused ? colors.green : colors.greyCream,
                   }}
                 />
@@ -255,7 +257,7 @@ function TabNavigator() {
                     color: focused ? colors.green : colors.greyCream,
                     fontSize: 8,
                   }}>
-                  Profil
+                  Imprimer
                 </Text>
               </View>
             ),
@@ -303,39 +305,39 @@ function AppNavigator() {
   //console.log('rrrr', userStatus1);
 
   return (
-    <EventProvider>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        {userStatus1 || isDemoMode ? (
-          <Stack.Screen name="Events" component={EventsScreen} />
-        ) : (
-          <Stack.Screen name="Connexion" component={ConnexionScreen} />
-        )}
-        <Stack.Screen
-          name="Tabs"
-          component={TabNavigator}
-          options={{
-            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            headerShown: false,
-            gestureEnabled: false, // Disable gestures for this screen
-          }}
-        />
-        <Stack.Screen name="More" component={MoreScreen} />
-        <Stack.Screen name="Edit" component={EditScreen} />
-        <Stack.Screen name="Badge" component={BadgeScreen} />
-        <Stack.Screen name="About" component={AboutScreen} />
-        <Stack.Screen name="WebView" component={WebViewScreen} />
-        <Stack.Screen name="Help" component={HelpScreen} />
-        <Stack.Screen name="Avenir" component={EventAvenirScreen} />
-        <Stack.Screen name="Passees" component={EventPasseesScreen} />
-        <Stack.Screen
-          name="Menu"
-          component={MenuScreen}
-          options={{
-            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          }}
-        />
-      </Stack.Navigator>
-    </EventProvider>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      {userStatus1 || isDemoMode ? (
+        <Stack.Screen name="Events" component={EventsScreen} />
+      ) : (
+        <Stack.Screen name="Connexion" component={ConnexionScreen} />
+      )}
+      <Stack.Screen
+        name="Tabs"
+        component={TabNavigator}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          headerShown: false,
+          gestureEnabled: false, // Disable gestures for this screen
+        }}
+      />
+      <Stack.Screen name="More" component={MoreScreen} />
+      <Stack.Screen name="Edit" component={EditScreen} />
+      <Stack.Screen name="Badge" component={BadgeScreen} />
+      <Stack.Screen name="About" component={AboutScreen} />
+      <Stack.Screen name="Printers" component={PrintresListScreen} />
+      <Stack.Screen name="PaperFormat" component={PaperFormat} />
+      <Stack.Screen name="WebView" component={WebViewScreen} />
+      <Stack.Screen name="Help" component={HelpScreen} />
+      <Stack.Screen name="Avenir" component={EventAvenirScreen} />
+      <Stack.Screen name="Passees" component={EventPasseesScreen} />
+      <Stack.Screen
+        name="Menu"
+        component={MenuScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+    </Stack.Navigator>
   );
 }
 

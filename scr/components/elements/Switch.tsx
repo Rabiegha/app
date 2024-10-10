@@ -8,7 +8,7 @@ const CustomSwitch = ({value, onValueChange}) => {
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{false: 'gray', true: colors.green}}
+        trackColor={{false: colors.grey, true: colors.green}}
       />
     </View>
   );
@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    display: 'none',
   },
   switchLabel: {
     marginRight: 10,

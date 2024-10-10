@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Alert, StatusBar, StyleSheet, View} from 'react-native';
 import AddAttendeesComponent from '../components/screens/AddAttendeesComponent';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
@@ -11,6 +11,8 @@ import {useRoute} from '@react-navigation/native';
 import colors from '../../colors/colors';
 import FailComponent from '../components/elements/notifications/FailComponent';
 import SuccessComponent from '../components/elements/notifications/SuccessComponent';
+import {getAttendeeTypes, addAttendee} from '../services/serviceApi';
+import useUserId from '../hooks/useUserId';
 
 const AddAttendeesScreen = ({navigation}) => {
   useFocusEffect(
@@ -20,6 +22,10 @@ const AddAttendeesScreen = ({navigation}) => {
     }, []),
   );
 
+  //User id
+  const [userId, setUserId] = useUserId();
+
+  //form variables
   const [nom, setNom] = useState('');
   const [prenom, setPrenom] = useState('');
   const [email, setEmail] = useState('');
@@ -31,7 +37,10 @@ const AddAttendeesScreen = ({navigation}) => {
   const route = useRoute();
   const [isChecked, setIsChecked] = useState(false);
   const [inputErrors, setInputErrors] = useState({});
+  const [dropdownOptions, setDropdownOptions] = useState([]);
+  const [selectedAttendeeType, setSelectedAttendeeType] = useState([]);
 
+  //function to reset fields
   const resetFields = () => {
     setNom('');
     setPrenom('');
@@ -42,12 +51,17 @@ const AddAttendeesScreen = ({navigation}) => {
     setInputErrors({});
   };
 
+  //the secret code
   const {secretCode} = useEvent();
   const {triggerListRefresh} = useEvent();
 
   const resetInputError = field => {
     setInputErrors(prevErrors => ({...prevErrors, [field]: false}));
   };
+
+  //handle enregister
+
+  //N.B deplace the end pont call to the service file.
 
   const handleEnregistrer = async () => {
     const errors = {};
@@ -58,6 +72,9 @@ const AddAttendeesScreen = ({navigation}) => {
     }
     if (!prenom) {
       errors.prenom = true;
+    }
+    if (!email) {
+      errors.email = true;
     }
     // Validate phone number (starts with 0 and has at least 10 digits)
     if (!numeroTelephone == '') {
@@ -96,39 +113,67 @@ const AddAttendeesScreen = ({navigation}) => {
       jobTitle: jobTitle,
       status_id: '2',
       attendee_status: CheckedIn,
+      attendee_types: selectedAttendeeType,
     };
 
     try {
-      const url = `${BASE_URL}/add_attendee/?ems_secret_code=${attendeeData.ems_secret_code}&salutation=${attendeeData.salutation}&first_name=${attendeeData.first_name}&last_name=${attendeeData.last_name}&email=${attendeeData.email}&phone=${attendeeData.phone}&organization=${attendeeData.organization}&designation=${attendeeData.jobTitle}&attendee_status=${attendeeData.attendee_status}`;
+      const response = await addAttendee(attendeeData);
 
-      const response = await axios.post(url);
-
-      if (response.data.status) {
+      if (response) {
         setSuccess(true);
         resetFields();
         triggerListRefresh();
-      } else {
-        setSuccess(false);
       }
     } catch (error) {
       setSuccess(false);
     }
   };
 
+  //checked-in or not handler
   const handleCheckboxPress = () => {
     setIsChecked(!isChecked);
     const newCheckedIn = CheckedIn == 1 ? 0 : 1;
     setCheckedIn(newCheckedIn);
   };
 
+  //set success to null
   useFocusEffect(
     React.useCallback(() => {
       return () => setSuccess(null);
     }, []),
   );
 
+  //navigate back
   const handleGoBack = () => {
     navigation.navigate('Attendees');
+  };
+
+  //get atttendee types
+  useEffect(() => {
+    if (userId) {
+      populateAttendeeTypeDropdown();
+    }
+  }, [userId]);
+
+  const populateAttendeeTypeDropdown = async () => {
+    const currentUserLoginDetailsId = userId;
+    try {
+      const attendeeTypes = await getAttendeeTypes(currentUserLoginDetailsId);
+      const formatedData = [
+        {label: 'Aucun', value: null},
+        ...attendeeTypes.map(item => ({
+          label: item.name,
+          value: item.id,
+        })),
+      ];
+
+      setDropdownOptions(formatedData);
+
+      //console.log to test
+      console.log('options', dropdownOptions);
+    } catch (error) {
+      console.error('Failed to populate attendee type dropdown:', error);
+    }
   };
 
   return (
@@ -172,6 +217,9 @@ const AddAttendeesScreen = ({navigation}) => {
         success={success}
         inputErrors={inputErrors}
         resetInputError={resetInputError}
+        attendeeTypes={dropdownOptions}
+        selectedAttendeeType={selectedAttendeeType}
+        setSelectedAttendeeType={setSelectedAttendeeType}
       />
     </View>
   );

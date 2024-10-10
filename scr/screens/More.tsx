@@ -110,7 +110,7 @@ const MoreScreen = ({route, navigation}) => {
   return (
     <View style={globalStyle.backgroundWhite}>
       <HeaderComponent
-        title={'Profil'}
+        title={'Print'}
         handlePress={handleBackPress}
         color={colors.darkGrey}
       />

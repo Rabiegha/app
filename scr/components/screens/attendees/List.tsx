@@ -241,7 +241,7 @@ const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
 
 const styles = StyleSheet.create({
   list: {
-    height: 600,
+    paddingBottom: 120,
   },
   contentContainer: {
     paddingBottom: 300,

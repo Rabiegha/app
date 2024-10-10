@@ -103,7 +103,7 @@
 	 email (* mandatory, only if want to send email), 
 	 phone, 
 	 organization, 
-	 designation, 
+	 designation,
 	 status_id => 1 : Awaiting approval, 2 : Approved, 
 	 attendee_status => make status_id = 2, attendee_status = 1, for instant add attendee and attendee_status = checked in
 	 

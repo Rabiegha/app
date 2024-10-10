@@ -39,7 +39,7 @@ const MenuScreen = ({navigation}) => {
         },
         {title: 'Scan', action: () => navigation.navigate('Scann')},
         {
-          title: 'Profile',
+          title: 'Print',
           action: () => navigation.navigate('Profil'),
         },
       ],

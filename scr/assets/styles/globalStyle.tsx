@@ -17,6 +17,7 @@ const globalStyle = StyleSheet.create({
   },
   input: {
     width: '100%',
+    color: colors.darkGrey,
     backgroundColor: colors.greyCream,
     borderRadius: 10,
     marginTop: 10,
@@ -26,7 +27,6 @@ const globalStyle = StyleSheet.create({
     borderColor: colors.grey,
     height: 50,
     lineHeight: 20,
-    color: colors.darkGrey,
   },
 });
 

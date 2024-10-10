@@ -49,7 +49,6 @@ const ScannerComponent = () => {
           setAlertVisible(true);
           if (response.data.status === true) {
             SetModalMessage('Participation enregistrée.');
-            console.error('xxxx', payload.event_id, payload.name);
             setIsAccepted(true);
             console.log(data);
             setTimeout(() => {

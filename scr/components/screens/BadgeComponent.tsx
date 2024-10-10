@@ -47,14 +47,14 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
               tintColor={colors.darkGrey}
             />
           </View>
-          <LargeButton
-            title="Envoyer"
-            onPress={share}
-            backgroundColor={colors.green}
-            loading={undefined}
-          />
         </View>
       )}
+      <LargeButton
+        title="Envoyer"
+        onPress={share}
+        backgroundColor={colors.green}
+        loading={undefined}
+      />
     </View>
   );
 };

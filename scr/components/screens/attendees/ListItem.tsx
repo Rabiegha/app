@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,21 @@ import {
   Dimensions,
   Animated,
   Image,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../../../../colors/colors';
-import CustomSwitch from '../../elements/Switch';
 import {useEvent} from '../../../context/EventContext';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Accepted from '../../../assets/images/icons/Accepted.png';
+import usePrint from '../../../hooks/usePrint';
+import {useNodePrint} from '../../../hooks/useNodePrint';
+import {Buffer} from 'buffer';
+import RNFS from 'react-native-fs';
+import {useSelector} from 'react-redux';
+import {setPrintStatus} from '../../../redux/printerSlice';
+import {useDispatch} from 'react-redux';
+import usePrintDocument from '../../../hooks/usePrintDocument';
 
 const {width} = Dimensions.get('window');
 
@@ -30,9 +38,18 @@ const ListItem = React.memo(
     const navigation = useNavigation();
     const {triggerListRefresh} = useEvent();
     const swipeableRef = useRef(null);
+    const {handlePrint} = usePrint();
+    const {sendPrintJob} = useNodePrint();
+
+    const dispatch = useDispatch();
 
     const initialSwitchState = item.attendee_status == 1;
     const [isCheckedIn, setIsCheckedIn] = useState(initialSwitchState);
+
+    // selectedWiFiPrinters
+    const selectedWiFiPrinters = useSelector(
+      state => state.printers.selectedWiFiPrinters,
+    );
 
     const handleSwitchToggle = async newValue => {
       try {
@@ -87,6 +104,25 @@ const ListItem = React.memo(
       });
     };
 
+    // selectedNodePrinter
+    const selectedNodePrinter = useSelector(
+      state => state.printers.selectedNodePrinter,
+    );
+
+    const nodePrinterId = selectedNodePrinter?.id; // Get printer ID and fileType from context
+
+    useEffect(() => {
+      /*       console.log('Selected Node Printer ID:', nodePrinterId); */
+    }, [nodePrinterId]);
+
+    // Utiliser la fonction d'impression réutilisable
+
+    const {printDocument} = usePrintDocument(item.id);
+
+    const handlePrintDocument = () => {
+      printDocument(item); // Passer l'objet 'item' comme paramètre
+    };
+
     const renderRightActions = (progress, dragX) => {
       const action1TranslateX = dragX.interpolate({
         inputRange: [-145, -80, 0],
@@ -108,12 +144,12 @@ const ListItem = React.memo(
               {transform: [{translateX: action1TranslateX}]},
             ]}>
             <TouchableOpacity
-              onPress={handleItemPress}
+              onPress={handlePrintDocument}
               style={[
                 styles.rightActionButton,
                 {backgroundColor: colors.darkGrey, zIndex: 10},
               ]}>
-              <Text style={styles.actionText}>Profil</Text>
+              <Text style={styles.actionText}>Print</Text>
             </TouchableOpacity>
           </Animated.View>
           <Animated.View
