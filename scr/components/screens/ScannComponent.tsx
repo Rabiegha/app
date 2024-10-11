@@ -9,6 +9,7 @@ import {EventProvider, useEvent} from '../../context/EventContext';
 import CustomMarker from '../elements/CustomMarker';
 import {BASE_URL} from '../../config/config';
 import ScanModal from '../modals/ScanModal';
+import scanAttendee from '../../services/serviceApi';
 
 const ScannerComponent = () => {
   const navigation = useNavigation();
@@ -29,20 +30,49 @@ const ScannerComponent = () => {
     triggerListRefresh();
   };
 
-  const onSuccess = e => {
+  const onSuccess = async e => {
     if (!alertVisible) {
       const data = e.data;
-      const payload = {
+      /* const payload = {
         event_id: eventId,
         name: '',
         email: '',
         organization: '',
         uid: '',
-      };
+      }; */
 
-      // URL de l'API pour enregistrer les participants en scannant le code QR
-      const apiUrl = `${BASE_URL}/ajax_join_attendee/?event_id=${payload.event_id}&content=${data}`;
-      axios
+      try {
+        const response = await scanAttendee(eventId, data);
+        setAlertVisible(true);
+        if (response.status === true) {
+          SetModalMessage('Participation enregistrée.');
+          setIsAccepted(true);
+        } else {
+          SetModalMessage("Impossible d'enregistrer la participation.");
+          setIsAccepted(false);
+        }
+
+        setTimeout(() => {
+          setAlertVisible(false);
+          triggerListRefresh();
+          navigation.navigate('Attendees');
+        }, 2000);
+      } catch (error) {
+        console.error("Erreur lors de l'enregistrement:", error);
+        setAlertVisible(true);
+        setIsAccepted(false);
+        SetModalMessage("Impossible d'enregistrer la participation.");
+        setTimeout(() => {
+          setAlertVisible(false);
+          triggerListRefresh();
+          navigation.navigate('Attendees');
+        }, 2000);
+      }
+    }
+    // URL de l'API pour enregistrer les participants en scannant le code QR
+    /*       const apiUrl = `${BASE_URL}/ajax_join_attendee/?event_id=${payload.event_id}&content=${data}`; */
+
+    /*       axios
         .post(apiUrl, payload)
         .then(response => {
           // Succès de l'enregistrement, afficher une alerte ou effectuer d'autres actions
@@ -83,8 +113,7 @@ const ScannerComponent = () => {
             triggerListRefresh();
             navigation.navigate('Attendees');
           }, 2000);
-        });
-    }
+        }); */
   };
 
   useEffect(() => {
