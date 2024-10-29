@@ -11,6 +11,9 @@ const colors = {
   darkerGrey: '#151515',
   red: '#EC7373',
   lightRed: '#F9C5C9',
+  detailsBlue: '#2E73B2',
+  detailsGreen: '#77CB8F',
+  detailOrange: '#E89F3C',
 };
 
 export default colors;

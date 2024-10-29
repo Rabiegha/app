@@ -1,16 +1,90 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Image} from 'react-native';
+import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
+import totalAttendeeIcon from '../../assets/images/icons/totalAttendees.png';
+import checkedInIcon from '../../assets/images/icons/checkedIn.png';
+import notCheckedIcon from '../../assets/images/icons/notCheckedIn.png';
+import colors from '../../../colors/colors';
 
-const ProfileComponent = () => {
+const ProfileComponent = ({
+  showDetails,
+  totalAttendees,
+  totalCheckedIn,
+  totalNotCheckedIn,
+}) => {
+  const data = [
+    {
+      backgroundColor: colors.detailsBlue,
+      label: 'Total des participants',
+      value: totalAttendees,
+      source: totalAttendeeIcon,
+    },
+    {
+      backgroundColor: colors.detailsGreen,
+      label: 'Checked In',
+      value: totalCheckedIn,
+      source: checkedInIcon,
+    },
+    {
+      backgroundColor: colors.detailOrange,
+      label: 'Not Checked In',
+      value: totalNotCheckedIn,
+      source: notCheckedIcon,
+    },
+  ];
   return (
     <View style={styles.container}>
-      <View>
-        <Image />
-        <View>Totale des enregistrements</View>
-      </View>
+      {data.map((item, index) => {
+        return (
+          <View key={index} style={styles.elementContainer}>
+            <View
+              style={[styles.imageContainer, {backgroundColor: item.backgroundColor}]}>
+              <Image
+                style={[styles.image]}
+                source={item.source}
+                resizeMode="contain"
+              />
+            </View>
+            <TouchableOpacity
+              onPress={showDetails}
+              style={styles.textContainer}>
+              <Text style={styles.label}>{item.label}</Text>
+              <Text style={styles.value}>{item.value}</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      })}
     </View>
   );
 };
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  elementContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  imageContainer: {
+    borderRadius: 20,
+    padding: 20,
+  },
+  image: {
+    width: 32,
+    height: 32,
+    tintColor: 'white',
+  },
+  textContainer: {
+    justifyContent: 'center',
+    paddingHorizontal: 30,
+    backgroundColor: colors.greyCream,
+    borderRadius: 20,
+    width: 280,
+  },
+  label: {
+    fontWeight: '800',
+    fontSize: 16,
+  },
+  value: {
+    color: colors.green,
+  },
+});
 
 export default ProfileComponent;
