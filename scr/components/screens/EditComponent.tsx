@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -12,6 +12,7 @@ import SuccessComponent from '../elements/notifications/SuccessComponent';
 import FailComponent from '../elements/notifications/FailComponent';
 import colors from '../../../colors/colors';
 import {useFocusEffect} from '@react-navigation/native';
+import {Dropdown} from 'react-native-element-dropdown';
 
 const EditAttendeesComponent = ({
   onPress,
@@ -21,6 +22,8 @@ const EditAttendeesComponent = ({
   setNumeroTelephone,
   setSociete,
   setJobTitle,
+  setType,
+  setTypeId,
   setSuccess,
   nom,
   prenom,
@@ -28,9 +31,12 @@ const EditAttendeesComponent = ({
   numeroTelephone,
   societe,
   jobTitle,
+  type,
+  typeId,
   success,
   inputErrors,
   resetInputError,
+  attendeeTypes,
 }) => {
   // Helper function to limit phone number to 9 digits
   const handlePhoneNumberChange = text => {
@@ -52,6 +58,9 @@ const EditAttendeesComponent = ({
       return () => {};
     }, []),
   );
+  useEffect(() => {
+    console.log('type', type);
+  }, [type]);
 
   return (
     <View
@@ -74,6 +83,7 @@ const EditAttendeesComponent = ({
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled">
+        {/* Non */}
         <Text style={styles.textNom}>Nom</Text>
         <TextInput
           style={[
@@ -93,6 +103,7 @@ const EditAttendeesComponent = ({
           editable={false}
         />
         <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
+        {/* Prenom */}
         <Text style={styles.text}>Prénom</Text>
         <TextInput
           style={[
@@ -112,6 +123,36 @@ const EditAttendeesComponent = ({
           editable={false}
         />
         <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
+        {/* Type */}
+        <Text style={styles.text}>Type</Text>
+        <Dropdown
+          style={globalStyle.input}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={attendeeTypes}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={`${type}`}
+          searchPlaceholder="Search..."
+          value={typeId}
+          onChange={item => {
+            setTypeId(item.value);
+            setType(item.label);
+            console.log('selected type id', typeId);
+          }}
+          renderItem={item => (
+            <View style={styles.item}>
+              <Text style={styles.itemText}>{item.label}</Text>
+              <View style={[styles.colorBox, {backgroundColor: item.color}]} />
+            </View>
+          )}
+        />
+        <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
+        {/* Email */}
         <Text style={styles.text}>Email</Text>
         <TextInput
           style={[
@@ -132,6 +173,7 @@ const EditAttendeesComponent = ({
         <Text style={[styles.error, {opacity: inputErrors.email ? 1 : 0}]}>
           Veuillez entrer une adresse email valide *
         </Text>
+        {/* Telephone */}
         <Text style={styles.text}>Téléphone</Text>
         <TextInput
           style={[
@@ -158,6 +200,7 @@ const EditAttendeesComponent = ({
           ]}>
           Veuillez entrer un numéro de téléphone valide *
         </Text>
+        {/* Societe */}
         <Text style={styles.text}>Société</Text>
         <TextInput
           style={globalStyle.input}
@@ -166,6 +209,7 @@ const EditAttendeesComponent = ({
           onChangeText={text => setSociete(text)}
         />
         <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
+        {/* Job title */}
         <Text style={styles.text}>Job Title</Text>
         <TextInput
           style={[globalStyle.input]}
@@ -197,7 +241,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 20,
     width: '100%',
-    height: 900,
+    height: '120%',
   },
   wrapper: {
     top: 25,
@@ -238,6 +282,29 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
     marginTop: 5,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+    color: colors.darkGrey,
+  },
+  placeholderStyle: {
+    color: colors.grey,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  colorBox: {
+    width: 5,
+    height: 20,
+    marginRight: 10,
+    borderRadius: 3, // pour avoir des coins légèrement arrondis
   },
 });
 

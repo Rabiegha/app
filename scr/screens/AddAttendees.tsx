@@ -13,6 +13,7 @@ import FailComponent from '../components/elements/notifications/FailComponent';
 import SuccessComponent from '../components/elements/notifications/SuccessComponent';
 import {getAttendeeTypes, addAttendee} from '../services/serviceApi';
 import useUserId from '../hooks/useUserId';
+import useAttendeeTypeDropdown from '../hooks/useAttendeeTypesDropdown';
 
 const AddAttendeesScreen = ({navigation}) => {
   useFocusEffect(
@@ -37,8 +38,7 @@ const AddAttendeesScreen = ({navigation}) => {
   const route = useRoute();
   const [isChecked, setIsChecked] = useState(false);
   const [inputErrors, setInputErrors] = useState({});
-  const [dropdownOptions, setDropdownOptions] = useState([]);
-  const [selectedAttendeeType, setSelectedAttendeeType] = useState([]);
+  const [selectedAttendeeType, setSelectedAttendeeType] = useState('');
 
   //function to reset fields
   const resetFields = () => {
@@ -113,7 +113,7 @@ const AddAttendeesScreen = ({navigation}) => {
       jobTitle: jobTitle,
       status_id: '2',
       attendee_status: CheckedIn,
-      attendee_types: selectedAttendeeType,
+      attendee_type_id: selectedAttendeeType,
     };
 
     try {
@@ -123,6 +123,7 @@ const AddAttendeesScreen = ({navigation}) => {
         setSuccess(true);
         resetFields();
         triggerListRefresh();
+        setSelectedAttendeeType(null);
       }
     } catch (error) {
       setSuccess(false);
@@ -148,33 +149,16 @@ const AddAttendeesScreen = ({navigation}) => {
     navigation.navigate('Attendees');
   };
 
-  //get atttendee types
+/*   //get atttendee types
   useEffect(() => {
     if (userId) {
       populateAttendeeTypeDropdown();
     }
-  }, [userId]);
+  }, [userId]); */
 
-  const populateAttendeeTypeDropdown = async () => {
-    const currentUserLoginDetailsId = userId;
-    try {
-      const attendeeTypes = await getAttendeeTypes(currentUserLoginDetailsId);
-      const formatedData = [
-        {label: 'Aucun', value: null},
-        ...attendeeTypes.map(item => ({
-          label: item.name,
-          value: item.id,
-        })),
-      ];
+  //populateAttendeeTypeDropdown
 
-      setDropdownOptions(formatedData);
-
-      //console.log to test
-      console.log('options', dropdownOptions);
-    } catch (error) {
-      console.error('Failed to populate attendee type dropdown:', error);
-    }
-  };
+  const dropdownOptions = useAttendeeTypeDropdown();
 
   return (
     <View style={[globalStyle.backgroundWhite, styles.wrap]}>

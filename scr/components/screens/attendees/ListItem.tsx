@@ -101,6 +101,8 @@ const ListItem = React.memo(
         attendeeStatus: item.attendee_status,
         jobTitle: item.designation,
         organization: item.organization,
+        type: item.attendee_type_name,
+        typeId: item.attendee_type_id,
       });
     };
 

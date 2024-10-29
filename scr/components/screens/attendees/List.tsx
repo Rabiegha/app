@@ -5,28 +5,27 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
 import ListItem from './ListItem';
 import axios from 'axios';
-import { useEvent } from '../../../context/EventContext';
+import {useEvent} from '../../../context/EventContext';
 import colors from '../../../../colors/colors';
-import { BASE_URL } from '../../../config/config';
+import {BASE_URL} from '../../../config/config';
 import useUserId from '../../../hooks/useUserId';
-import { Attendee } from '../../../interfaces/interfaces.tsx';
+import {Attendee} from '../../../interfaces/interfaces.tsx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { demoEvents } from '../../../demo/demoEvents';
-import { AuthContext } from '../../../context/AuthContext.tsx';
+import {demoEvents} from '../../../demo/demoEvents';
+import {AuthContext} from '../../../context/AuthContext.tsx';
 import emptyIcon from '../../../assets/images/empty.gif';
+import {
+  fetchEventAttendeeList,
+  registrationSummaryDetails,
+} from '../../../services/serviceApi.tsx';
 
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
 
-const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
+const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
   const [openSwipeable, setOpenSwipeable] = useState(null);
 
   const handleSwipeableOpen = swipeable => {
@@ -36,18 +35,18 @@ const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
     setOpenSwipeable(swipeable);
   };
 
-  const [filteredData, setFilteredData] = useState<Attendee[]>([]);
-  const [allAttendees, setAllAttendees] = useState<Attendee[]>([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [allAttendees, setAllAttendees] = useState([]);
   const flatListRef = useRef(null);
   const [totalAttendees, setTotalAttendees] = useState(0);
   const [totalCheckedAttendees, setTotalCheckedAttendees] = useState(0);
-  const { refreshList, triggerListRefresh, updateAttendee, attendeesRefreshKey } =
+  const {refreshList, triggerListRefresh, updateAttendee, attendeesRefreshKey} =
     useEvent();
-  const { eventId } = useEvent();
+  const {eventId} = useEvent();
   const [hasData, setHasData] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useUserId();
-  const { isDemoMode } = useContext(AuthContext);
+  const {isDemoMode} = useContext(AuthContext);
 
   const expirationTimeInMillis = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
 
@@ -115,30 +114,27 @@ const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
             await storeData(`attendees_${eventId}`, attendees);
           }
         } else {
-          const urlNotCheckedIn = `${BASE_URL}/ajax_get_event_attendee_details/?event_id=${eventId}&current_user_login_details_id=${userId}&attendee_status=0&status_id=`;
-
           try {
-            const responseNotCheckedIn = await axios.get(urlNotCheckedIn);
+            attendees = await fetchEventAttendeeList(userId, eventId);
 
-            attendees = [];
-            if (responseNotCheckedIn.data.status) {
-              attendees = responseNotCheckedIn.data.event_attendee_details;
+            if (attendees) {
+              await storeData(`attendees_${eventId}`, attendees);
+            } else {
+              attendees = [];
             }
-            await storeData(`attendees_${eventId}`, attendees);
           } catch (error) {
             console.error(
               'Error fetching data from server, using local data:',
               error,
             );
+            attendees = [];
           }
         }
       }
 
       setAllAttendees(attendees || []);
-      setTotalAttendees(attendees ? attendees.length : 0);
-      setTotalCheckedAttendees(
-        attendees ? attendees.filter(a => a.attendee_status == 1).length : 0,
-      );
+
+      //Filter
 
       let filteredAttendees = attendees || [];
       if (filterCriteria.status == 'checked-in') {
@@ -169,6 +165,23 @@ const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
     }
   };
 
+  //Registration summary
+
+  const FetchRegistrationSummary = async () => {
+    try {
+      let response = await registrationSummaryDetails(userId, eventId);
+      if (response.status) {
+        setTotalAttendees(response.total_registered);
+        setTotalCheckedAttendees(response.total_attended);
+        console.log('total regitred', response.total_registered);
+      } else {
+        console.log('Error fetching data');
+      }
+    } catch (error) {
+      console.error('Error fetching registration summary', error);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       clearLocalData();
@@ -179,6 +192,7 @@ const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
 
   useEffect(() => {
     fetchAllEventAttendeeDetails();
+    FetchRegistrationSummary();
   }, [
     eventId,
     searchQuery,
@@ -221,7 +235,7 @@ const List = ({ searchQuery, onUpdateProgress, filterCriteria }) => {
           contentContainerStyle={styles.contentContainer}
           data={filteredData}
           keyExtractor={item => `${item.id}_${item.attendee_status}`}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <ListItem
               item={item}
               searchQuery={searchQuery}

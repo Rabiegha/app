@@ -22,6 +22,8 @@ const MoreScreen = ({route, navigation}) => {
     jobTitle,
     attendeeStatus,
     organization,
+    type,
+    typeId,
   } = route.params;
 
   const [localAttendeeStatus, setLocalAttendeeStatus] =
@@ -38,6 +40,8 @@ const MoreScreen = ({route, navigation}) => {
       email: email,
       phone: phone,
       jobTitle: jobTitle,
+      type: type,
+      typeId: typeId,
       event_id: eventId,
     };
     updateAttendee(eventId, updatedAttendee);
@@ -104,8 +108,14 @@ const MoreScreen = ({route, navigation}) => {
       phone: phone,
       jobTitle: jobTitle,
       organization: organization,
+      type: type,
+      typeId: typeId,
     });
   };
+
+  useEffect(() => {
+    console.log('', type);
+  }, [type]);
 
   return (
     <View style={globalStyle.backgroundWhite}>
@@ -125,9 +135,10 @@ const MoreScreen = ({route, navigation}) => {
           attendeeStatus={localAttendeeStatus}
           organization={organization}
           handleButton={handleButton}
-          Share={sendPdf}
+          share={sendPdf}
           loading={loading}
           modify={goToEdit}
+          type={type}
         />
       </View>
     </View>

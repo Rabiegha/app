@@ -21,6 +21,7 @@ const MoreComponent = ({
   handleButton,
   loading,
   modify,
+  type,
 }) => {
   console.log('Current attendeeStatus:', attendeeStatus);
   console.log('Current attendeeStatus:', JobTitle);
@@ -73,6 +74,7 @@ const MoreComponent = ({
           tintColor={colors.darkGrey}
         />
       </View>
+      <LabelValueComponent label="Type:" value={type ? type : '-'} />
       <LabelValueComponent
         label="Nom:"
         value={firstName && lastName ? `${firstName} ${lastName}` : '- '}
@@ -119,7 +121,7 @@ const MoreComponent = ({
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    height: 830,
+    height: '110%',
   },
   imageContainer: {
     marginBottom: 10,

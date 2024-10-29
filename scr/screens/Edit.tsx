@@ -11,7 +11,8 @@ import useUserId from '../hooks/useUserId';
 import colors from '../../colors/colors';
 import SuccessComponent from '../components/elements/notifications/SuccessComponent';
 import FailComponent from '../components/elements/notifications/FailComponent';
-import {updateAttendee} from '../services/serviceApi.tsx';
+import {editAttendee} from '../services/serviceApi.tsx';
+import useAttendeeTypeDropdown from '../hooks/useAttendeeTypesDropdown.tsx';
 
 const EditScreen = ({navigation, route}) => {
   useFocusEffect(
@@ -23,6 +24,7 @@ const EditScreen = ({navigation, route}) => {
   const [userId, setUserId] = useUserId();
   const [success, setSuccess] = useState(null);
   const {secretCode, eventId, updateAttendee, triggerListRefresh} = useEvent();
+  const [attendeeTypes, setAttendeeTypes] = useState([]);
 
   const {
     attendeeId,
@@ -32,6 +34,8 @@ const EditScreen = ({navigation, route}) => {
     phone,
     organization,
     jobTitle,
+    type,
+    typeId,
   } = route.params;
 
   const [nomModify, setNomModify] = useState(lastName);
@@ -40,6 +44,8 @@ const EditScreen = ({navigation, route}) => {
   const [numeroTelephoneModify, setNumeroTelephoneModify] = useState(phone);
   const [societeModify, setSocieteModify] = useState(organization);
   const [jobTitleModify, setJobTitleModify] = useState(jobTitle);
+  const [typeModify, setTypeModify] = useState(type);
+  const [typeIdModify, setTypeIdModify] = useState(typeId);
   const [inputErrors, setInputErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -58,13 +64,9 @@ const EditScreen = ({navigation, route}) => {
     if (!prenomModify) {
       errors.prenom = true;
     }
-    // Validate phone number (starts with 0 and has at least 9 digits)
-    /*     if (numeroTelephoneModify) {
-      const phoneRegex = /^0\d{8,}$/;
-      if (!phoneRegex.test(numeroTelephoneModify)) {
-        errors.numeroTelephone = true;
-      }
-    } */
+    if (!prenomModify) {
+      errors.type = true;
+    }
 
     // Validate email format
     if (emailModify) {
@@ -88,30 +90,41 @@ const EditScreen = ({navigation, route}) => {
       send_badge_yn: 0,
       // Plus d'options...
       ems_secret_code: secretCode,
+      userId: userId,
       salutation: '',
+      attendeeId: attendeeId,
       first_name: prenomModify,
       last_name: nomModify,
       email: emailModify,
       phone: numeroTelephoneModify,
       organization: societeModify,
       jobTitle: jobTitleModify,
+      typeId: typeIdModify,
       status_id: '2',
     };
 
     try {
-      // URL de l'API pour ajouter un participants
-      const url = `${BASE_URL}/ajax_update_attendee/?current_user_login_details_id=${userId}&attendee_id=${attendeeId}&first_name=${attendeeData.first_name}&last_name=${attendeeData.last_name}&email=${attendeeData.email}&phone=${attendeeData.phone}&organization=${attendeeData.organization}&designation=${attendeeData.jobTitle}`;
+      const response = await editAttendee(attendeeData);
 
-      const response = await axios.post(url);
-
-      if (response.data.status) {
-        console.log('Enregistrement réussi:', response.data);
+      if (response) {
+        console.log('Enregistrement réussi:');
         setSuccess(true);
-        await updateAttendee(eventId, {...attendeeData, id: attendeeId});
         triggerListRefresh();
         resetFields();
+        updateAttendee(eventId, {
+          id: attendeeId,
+          attendee_status: '2', // or the updated status
+          first_name: prenomModify,
+          last_name: nomModify,
+          email: emailModify,
+          phone: numeroTelephoneModify,
+          jobTitle: jobTitleModify,
+          type: typeModify,
+          typeId: typeIdModify,
+          event_id: eventId,
+        });
       } else {
-        console.error('Enregistrement échoué:', response.data.message);
+        console.error('Enregistrement échoué:');
         setSuccess(false);
       }
     } catch (error) {
@@ -131,7 +144,7 @@ const EditScreen = ({navigation, route}) => {
     console.log('attendeeId', attendeeId);
   });
 
-  const handleGoBack = updatedAttendee => {
+  const handleGoBack = () => {
     navigation.navigate('More', {
       eventId: eventId,
       attendeeId: attendeeId,
@@ -141,6 +154,8 @@ const EditScreen = ({navigation, route}) => {
       phone: numeroTelephoneModify,
       organization: societeModify,
       jobTitle: jobTitleModify,
+      type: typeModify,
+      typeId: typeIdModify,
     });
   };
 
@@ -151,6 +166,8 @@ const EditScreen = ({navigation, route}) => {
       return newErrors;
     });
   };
+  // Use the custom hook
+  const dropdownOptions = useAttendeeTypeDropdown();
 
   return (
     <View style={globalStyle.backgroundWhite}>
@@ -180,8 +197,12 @@ const EditScreen = ({navigation, route}) => {
         email={emailModify}
         societe={societeModify}
         jobTitle={jobTitleModify}
-        success={success}
         numeroTelephone={numeroTelephoneModify}
+        type={typeModify}
+        typeId={typeId}
+        success={success}
+        inputErrors={inputErrors}
+        attendeeTypes={dropdownOptions}
         setNom={setNomModify}
         setPrenom={setPrenomModify}
         setEmail={setEmailModify}
@@ -189,7 +210,8 @@ const EditScreen = ({navigation, route}) => {
         setSociete={setSocieteModify}
         setJobTitle={setJobTitleModify}
         setSuccess={setSuccess}
-        inputErrors={inputErrors}
+        setType={setTypeModify}
+        setTypeId={setTypeIdModify}
         resetInputError={resetInputError}
       />
     </View>

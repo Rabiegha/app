@@ -91,7 +91,7 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file('/Users/apple/Desktop/apps/attendee/the-key')
+            storeFile file('the-key')
             storePassword 'Attendee'
             keyAlias 'the-key'
             keyPassword 'Attendee'

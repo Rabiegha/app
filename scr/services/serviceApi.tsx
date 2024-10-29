@@ -15,8 +15,8 @@ export const updateAttendee = async (userId, attendeeId, attendeeData) => {
 
 //Scan to update status
 
-export const scanAttendee = async (eventId, data) => {
-  const apiUrl = `${BASE_URL}/ajax_join_attendee/?event_id=${eventId}&content=${data}`;
+export const scanAttendee = async (userId, eventId, data) => {
+  const apiUrl = `${BASE_URL}/ajax_join_attendee/?current_user_login_details_id=${userId}&event_id=${eventId}&content=${data}`;
   try {
     const response = await axios.post(apiUrl, payload);
     return response.data;
@@ -71,9 +71,10 @@ export const addAttendee = async attendeeData => {
     jobTitle,
     attendee_status,
     status_id,
+    attendee_type_id,
   } = attendeeData;
   try {
-    const url = `${BASE_URL}/add_attendee/?ems_secret_code=${ems_secret_code}&salutation=${salutation}&first_name=${first_name}&last_name=${last_name}&email=${email}&phone=${phone}&organization=${organization}&designation=${jobTitle}&attendee_status=${attendee_status}&status_id=${status_id}`;
+    const url = `${BASE_URL}/add_attendee/?ems_secret_code=${ems_secret_code}&salutation=${salutation}&first_name=${first_name}&last_name=${last_name}&email=${email}&phone=${phone}&organization=${organization}&designation=${jobTitle}&attendee_status=${attendee_status}&status_id=${status_id}&attendee_type_id=${attendee_type_id}`;
 
     const response = await axios.post(url);
 
@@ -87,6 +88,75 @@ export const addAttendee = async attendeeData => {
     throw error;
   }
 };
+
+// Edit attendee
+
+export const editAttendee = async attendeeData => {
+  const {
+    userId,
+    attendeeId,
+    first_name,
+    last_name,
+    email,
+    phone,
+    organization,
+    jobTitle,
+    typeId,
+  } = attendeeData;
+
+  try {
+    const url = `${BASE_URL}/ajax_update_attendee/?current_user_login_details_id=${userId}&attendee_id=${attendeeId}&first_name=${first_name}&last_name=${last_name}&email=${email}&phone=${phone}&organization=${organization}&designation=${jobTitle}&attendee_type_id=${typeId}`;
+
+    const response = await axios.post(url);
+
+    if (response.data.status) {
+      return response.data;
+    } else {
+      throw new Error('Erreur lors de l’ajout de l’attendee.');
+    }
+  } catch (error) {
+    console.error('Erreur lors de l’ajout de l’attendee:', error);
+    throw error;
+  }
+};
+
+// Attendees list
+
+export const fetchEventAttendeeList = async (userId, eventId) => {
+  const url = `${BASE_URL}/ajax_get_event_attendee_details/?current_user_login_details_id=${userId}&event_id=${eventId}&attendee_status=0&status_id=`;
+
+  try {
+    const response = await axios.get(url);
+    if (response.data && response.data.event_attendee_details) {
+      console.log('list fetched succesfully');
+      return response.data.event_attendee_details;
+    } else {
+      console.log('list not fetched');
+    }
+  } catch (error) {
+    console.error('Error fetching data from server, using local data:', error);
+  }
+};
+
+// REGISTRATION SUMMARY DETAILS
+
+export const registrationSummaryDetails = async (userId, eventId) => {
+  const url = `${BASE_URL}/ajax_get_dashboard_registration_summary/?current_user_login_details_id=${userId}&event_id=${eventId}`;
+
+  try {
+    const response = await axios.get(url);
+    if (response.data) {
+      console.log('Registration summary details fetched sucefully');
+      return response.data;
+    } else {
+      console.log('Registration summary details not fetched');
+    }
+  } catch (error) {
+    console.error('Error fetching data from server, using local data:', error);
+  }
+};
+
+//*************************$$$$$$$$$$$**************$$$$$$$$$$$$$********************$$$$$$$$$$$$$$$$$$*****************/
 
 // Fetch Wi-Fi printers
 export const getWifiPrinters = () => {

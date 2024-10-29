@@ -78,6 +78,7 @@ const EventListScreen = ({searchQuery, onEventSelect}) => {
   useFocusEffect(
     useCallback(() => {
       clearLocalData();
+      console.log('user id', userId);
 
       return () => {
         // Any cleanup can be done here

@@ -42,6 +42,10 @@ const MenuScreen = ({navigation}) => {
           title: 'Print',
           action: () => navigation.navigate('Profil'),
         },
+        {
+          title: 'Event details',
+          action: () => navigation.navigate('EventDetails'),
+        },
       ],
     },
     {

@@ -42,10 +42,12 @@ const AddAttendeesComponent = ({
   attendeeTypes,
   selectedAttendeeType,
   setSelectedAttendeeType,
+  attendeeColor,
 }) => {
   useEffect(() => {
     console.log('Success value:', success);
     console.log('attendee types:', attendeeTypes);
+    console.log('attendee color:', attendeeColor);
   }, [success]);
 
   return (
@@ -113,7 +115,7 @@ const AddAttendeesComponent = ({
         </Text>
         {/* Menu déroulant pour sélectionner le type d'attendee */}
         <Dropdown
-          style={[styles.dropdown, globalStyle.input]}
+          style={globalStyle.input}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
@@ -128,7 +130,14 @@ const AddAttendeesComponent = ({
           value={selectedAttendeeType}
           onChange={item => {
             setSelectedAttendeeType(item.value);
+            console.log('selected type id', selectedAttendeeType);
           }}
+          renderItem={item => (
+            <View style={styles.item}>
+              <Text style={styles.itemText}>{item.label}</Text>
+              <View style={[styles.colorBox, {backgroundColor: item.color}]} />
+            </View>
+          )}
         />
         <Text style={[styles.error, {opacity: 0}]} />
         {/* Email */}
@@ -315,6 +324,18 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     color: colors.grey,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  colorBox: {
+    width: 5,
+    height: 20,
+    marginRight: 10,
+    borderRadius: 3, // pour avoir des coins légèrement arrondis
   },
 });
 
