@@ -54,6 +54,7 @@ import WebViewScreen from '../screens/WebView';
 import EditScreen from '../screens/Edit';
 import PaperFormat from '../screens/PaperFormat';
 import EventDetailsScreen from '../screens/EventDetails';
+import EventDetailsPerTypeScreen from '../screens/EventDetailsPerType';
 
 const storage = new MMKV();
 const Tab = createBottomTabNavigator();
@@ -332,6 +333,10 @@ function AppNavigator() {
       <Stack.Screen name="Avenir" component={EventAvenirScreen} />
       <Stack.Screen name="Passees" component={EventPasseesScreen} />
       <Stack.Screen name="EventDetails" component={EventDetailsScreen} />
+      <Stack.Screen
+        name="EventDetailsPerType"
+        component={EventDetailsPerTypeScreen}
+      />
       <Stack.Screen
         name="Menu"
         component={MenuScreen}

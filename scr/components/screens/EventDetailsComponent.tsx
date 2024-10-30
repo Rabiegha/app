@@ -5,11 +5,13 @@ import checkedInIcon from '../../assets/images/icons/checkedIn.png';
 import notCheckedIcon from '../../assets/images/icons/notCheckedIn.png';
 import colors from '../../../colors/colors';
 
-const ProfileComponent = ({
-  showDetails,
+const EventDetailsPerTypeComponent = ({
   totalAttendees,
   totalCheckedIn,
   totalNotCheckedIn,
+  totalAttendeesAction,
+  checkedInAction,
+  notCheckedOInAction,
 }) => {
   const data = [
     {
@@ -17,18 +19,21 @@ const ProfileComponent = ({
       label: 'Total des participants',
       value: totalAttendees,
       source: totalAttendeeIcon,
+      action: totalAttendeesAction,
     },
     {
       backgroundColor: colors.detailsGreen,
       label: 'Checked In',
       value: totalCheckedIn,
       source: checkedInIcon,
+      action: checkedInAction,
     },
     {
       backgroundColor: colors.detailOrange,
       label: 'Not Checked In',
       value: totalNotCheckedIn,
       source: notCheckedIcon,
+      action: notCheckedOInAction,
     },
   ];
   return (
@@ -37,7 +42,10 @@ const ProfileComponent = ({
         return (
           <View key={index} style={styles.elementContainer}>
             <View
-              style={[styles.imageContainer, {backgroundColor: item.backgroundColor}]}>
+              style={[
+                styles.imageContainer,
+                {backgroundColor: item.backgroundColor},
+              ]}>
               <Image
                 style={[styles.image]}
                 source={item.source}
@@ -45,7 +53,7 @@ const ProfileComponent = ({
               />
             </View>
             <TouchableOpacity
-              onPress={showDetails}
+              onPress={item.action}
               style={styles.textContainer}>
               <Text style={styles.label}>{item.label}</Text>
               <Text style={styles.value}>{item.value}</Text>
@@ -87,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileComponent;
+export default EventDetailsPerTypeComponent;
