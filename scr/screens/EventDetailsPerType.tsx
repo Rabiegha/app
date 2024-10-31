@@ -6,7 +6,6 @@ import globalStyle from '../assets/styles/globalStyle.tsx';
 import colors from '../../colors/colors.ts';
 import EventDetailsPerTypeComponent from '../components/screens/EventDetailsPerTypeComponent.tsx';
 import useDetailsPerType from '../hooks/useDetailsPerType.tsx';
-import PieChart from 'react-native-pie-chart';
 
 const EventDetailsPerTypeScreen = ({route}) => {
   const navigation = useNavigation();
@@ -37,10 +36,6 @@ const EventDetailsPerTypeScreen = ({route}) => {
       data = [];
   }
 
-  const widthAndHeight = 250;
-  const series = [123, 321, 123, 789, 537];
-  const sliceColor = ['#fbd203', '#ffb300', '#ff9100', '#ff6c00', '#ff3c00'];
-
   return (
     <View style={globalStyle.backgroundWhite}>
       <HeaderComponent
@@ -49,13 +44,13 @@ const EventDetailsPerTypeScreen = ({route}) => {
         handlePress={goBack}
         backgroundColor={'white'}
       />
-      <PieChart
+      {/*       <PieChart
         widthAndHeight={widthAndHeight}
         series={series}
         sliceColor={sliceColor}
         coverRadius={0.45}
         coverFill={'#FFF'}
-      />
+      /> */}
       <View style={globalStyle.container}>
         {loading ? (
           <ActivityIndicator size="large" color="#00ff00" />
