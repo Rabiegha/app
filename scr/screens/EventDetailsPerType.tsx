@@ -1,24 +1,29 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {ActivityIndicator, StatusBar, Text, View} from 'react-native';
+import {ActivityIndicator, Dimensions, Text, View} from 'react-native';
 import HeaderComponent from '../components/elements/header/HeaderComponent.tsx';
 import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../assets/styles/globalStyle.tsx';
 import colors from '../../colors/colors.ts';
 import EventDetailsPerTypeComponent from '../components/screens/EventDetailsPerTypeComponent.tsx';
 import useDetailsPerType from '../hooks/useDetailsPerType.tsx';
+/* import { PieChart } from 'react-native-chart-kit'; */
+
+const screenWidth = Dimensions.get('window').width;
+
 
 const EventDetailsPerTypeScreen = ({route}) => {
   const navigation = useNavigation();
   const {details, loading, error} = useDetailsPerType();
 
+
   const goBack = () => {
     navigation.goBack();
   };
 
-  const {state} = route.params;
+  const {state, total} = route.params;
 
   useEffect(() => {
-    console.log('detail per type', details);
+    console.log('total', total);
     console.log('state', state);
   }, [details, state]);
   let data;
@@ -36,6 +41,11 @@ const EventDetailsPerTypeScreen = ({route}) => {
       data = [];
   }
 
+  const data1 = [
+    { name: 'A', population: 40, color: 'red', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+    { name: 'B', population: 60, color: 'blue', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+  ];
+
   return (
     <View style={globalStyle.backgroundWhite}>
       <HeaderComponent
@@ -44,12 +54,21 @@ const EventDetailsPerTypeScreen = ({route}) => {
         handlePress={goBack}
         backgroundColor={'white'}
       />
-      {/*       <PieChart
-        widthAndHeight={widthAndHeight}
-        series={series}
-        sliceColor={sliceColor}
-        coverRadius={0.45}
-        coverFill={'#FFF'}
+      {/* <PieChart
+        data={data1}
+        width={screenWidth}
+        height={220}
+        chartConfig={{
+          backgroundColor: '#1cc910',
+          backgroundGradientFrom: '#eff3ff',
+          backgroundGradientTo: '#efefef',
+          decimalPlaces: 2,
+          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        }}
+        accessor="population"
+        backgroundColor="transparent"
+        paddingLeft="15"
+        absolute
       /> */}
       <View style={globalStyle.container}>
         {loading ? (

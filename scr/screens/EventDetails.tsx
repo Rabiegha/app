@@ -3,36 +3,41 @@ import {ActivityIndicator, StatusBar, Text, View} from 'react-native';
 import HeaderComponent from '../components/elements/header/HeaderComponent.tsx';
 import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../assets/styles/globalStyle.tsx';
-import useUserId from '../hooks/useUserId.js';
 import colors from '../../colors/colors.ts';
 import EventDetailsComponent from '../components/screens/EventDetailsComponent.tsx';
 import useRegistrationData from '../hooks/useRegistrationData.tsx';
-import useDetailsPerType from '../hooks/useDetailsPerType.tsx';
 
 const EventDetailsScreen = () => {
   const navigation = useNavigation();
   const {summary, loading, error} = useRegistrationData();
-  const {details, loading1, error1} = useDetailsPerType();
+  const totalAttendees = summary.totalAttendees;
+  const totalCheckedIn = summary.totalCheckedIn;
+  const totalNotCheckedIn = summary.totalNotCheckedIn;
   const goBack = () => {
     navigation.goBack();
   };
 
   const handlePress = dataType => {
     let state;
+    let total;
     switch (dataType) {
       case 'registered':
         state = 'registered';
+        total = totalAttendees;
         break;
       case 'attended':
         state = 'attended';
+        total = totalCheckedIn;
         break;
       case 'not_attended':
-        state = 'attended';
+        state = 'not_attended';
+        total = totalNotCheckedIn;
         break;
       default:
         state = null;
+        total = null;
     }
-    navigation.navigate('EventDetailsPerType', {state});
+    navigation.navigate('EventDetailsPerType', {state, total});
   };
 
   return (
@@ -50,9 +55,9 @@ const EventDetailsScreen = () => {
           <Text>Error: {error}</Text>
         ) : (
           <EventDetailsComponent
-            totalAttendees={summary.totalAttendees}
-            totalCheckedIn={summary.totalCheckedIn}
-            totalNotCheckedIn={summary.totalNotCheckedIn}
+            totalAttendees={totalAttendees}
+            totalCheckedIn={totalCheckedIn}
+            totalNotCheckedIn={totalNotCheckedIn}
             totalAttendeesAction={() => handlePress('registered')}
             checkedInAction={() => handlePress('attended')}
             notCheckedOInAction={() => handlePress('not_attended')}

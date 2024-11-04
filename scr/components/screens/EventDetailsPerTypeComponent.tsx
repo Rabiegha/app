@@ -4,10 +4,6 @@ import colors from '../../../colors/colors';
 import {ScrollView} from 'react-native-gesture-handler';
 
 const EventDetailsComponent = ({data}) => {
-
-  useEffect(() => {
-    console.log('data per type', data);
-  }, [data]);
   return (
     <ScrollView>
       <Text style={styles.title}>Participants par type</Text>
@@ -16,7 +12,7 @@ const EventDetailsComponent = ({data}) => {
           <View key={index} style={styles.itemContainer}>
             <View style={styles.left}>
               <View
-                style={[styles.point, {backgroundColor: item.backgroundColor}]}
+                style={[styles.point, {backgroundColor: item.background_color}]}
               />
               <Text style={styles.label}>{item.label}</Text>
             </View>
