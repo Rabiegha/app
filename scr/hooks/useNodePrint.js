@@ -2,7 +2,7 @@
 import useState from 'react';
 import {sendPrintJob as sendPrintService} from '../services/serviceApi'; // Import the print service
 import {useDispatch, useSelector} from 'react-redux';
-import {setPrintStatus} from '../redux/printerSlice';
+import {setPrintStatus} from '../redux/slices/printerSlice';
 
 export const useNodePrint = () => {
   const dispatch = useDispatch();

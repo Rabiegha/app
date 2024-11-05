@@ -1,7 +1,7 @@
 import {React, useState, useEffect} from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {selectPaperFormat, setOption} from '../../../redux/printerSlice';
+import {selectPaperFormat, setOption} from '../../../redux/slices/printerSlice';
 import colors from '../../../../colors/colors';
 
 export const PaperFormatComponent = () => {

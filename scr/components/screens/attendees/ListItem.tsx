@@ -20,7 +20,7 @@ import {useNodePrint} from '../../../hooks/useNodePrint';
 import {Buffer} from 'buffer';
 import RNFS from 'react-native-fs';
 import {useSelector} from 'react-redux';
-import {setPrintStatus} from '../../../redux/printerSlice';
+import {setPrintStatus} from '../../../redux/slices/printerSlice';
 import {useDispatch} from 'react-redux';
 import usePrintDocument from '../../../hooks/usePrintDocument';
 

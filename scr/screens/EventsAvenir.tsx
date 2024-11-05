@@ -23,7 +23,7 @@ import {demoEvents} from '../demo/demoEvents';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FastImage from 'react-native-fast-image';
 
-const EventListScreen = ({searchQuery, onEventSelect}) => {
+const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
   const [userId, setUserId] = useUserId();
   const [hasData, setHasData] = useState(false);
   const [eventDetails, setEventDetails] = useState([]);
@@ -286,4 +286,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventListScreen;
+export default EventAvenirScreen;

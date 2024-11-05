@@ -173,6 +173,23 @@ export const fetchDetailsByType = async (userId, eventId) => {
   }
 };
 
+//Get events list
+
+export const fetchEventDetails = async (userId, isEventFrom) => {
+  const url = `${BASE_URL}/ajax_get_event_details/?current_user_login_details_id=${userId}&is_event_from=${isEventFrom}`;
+
+  try {
+    const response = await axios.get(url);
+    if (response.data.satatus && response.data.event_details) {
+      return response.data;
+    } else {
+      console.log('Events list not fetched');
+    }
+  } catch (error) {
+    console.log('Error fetching events list from past', error);
+  }
+};
+
 //*************************$$$$$$$$$$$**************$$$$$$$$$$$$$********************$$$$$$$$$$$$$$$$$$*****************/
 
 // Fetch Wi-Fi printers

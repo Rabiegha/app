@@ -24,7 +24,7 @@ import FastImage from 'react-native-fast-image';
 const EventPasseesScreen = ({searchQuery, onEventSelect}) => {
   const [userId, setUserId] = useUserId();
   const [eventDetails, setEventDetails] = useState([]);
-  const [hasData, setHasData] = useState(false);
+  const [hasData, setHasData] = useState(false); //To show empty gif or not
   const [isLoading, setIsLoading] = useState(true);
   const {updateStatsPassees} = useEvent();
   const {isDemoMode} = useContext(AuthContext);

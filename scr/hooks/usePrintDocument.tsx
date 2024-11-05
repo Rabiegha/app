@@ -5,7 +5,7 @@ import {Alert} from 'react-native';
 import {Buffer} from 'buffer';
 import RNFS from 'react-native-fs';
 import {useDispatch, useSelector} from 'react-redux';
-import {setPrintStatus} from '../redux/printerSlice';
+import {setPrintStatus} from '../redux/slices/printerSlice';
 import {useNodePrint} from './useNodePrint';
 import {useEvent} from '../context/EventContext';
 

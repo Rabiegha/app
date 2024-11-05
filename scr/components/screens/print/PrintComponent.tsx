@@ -9,7 +9,7 @@ import Paysage from '../../../assets/images/icons/Paysage.png';
 import Portrait from '../../../assets/images/icons/Portrait.png';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {setOption, resetStore} from '../../../redux/printerSlice';
+import {setOption, resetStore} from '../../../redux/slices/printerSlice';
 import {
   selectOrientation,
   selectDpi,

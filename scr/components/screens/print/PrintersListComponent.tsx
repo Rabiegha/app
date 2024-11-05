@@ -10,7 +10,7 @@ import {
   deselectWiFiPrinter,
   selectNodePrinter,
   deselectNodePrinter,
-} from '../../../redux/printerSlice';
+} from '../../../redux/slices/printerSlice';
 import colors from '../../../../colors/colors';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {getNodePrinters} from '../../../services/serviceApi';
