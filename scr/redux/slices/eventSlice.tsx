@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {demoEvents} from '../../demo/demoEvents';
 import {fetchEventDetails} from '../../services/serviceApi';
+import {useEffect} from 'react';
 
 const initialState = {
   events: [],
@@ -19,8 +20,15 @@ export const fetchEvents = createAsyncThunk(
         let combinedEvents = [];
         for (const isEventFrom of isEventFromList) {
           const response = await fetchEventDetails(userId, isEventFrom);
-          if (response.data.satatus && response.data.event_details) {
-            combinedEvents = combinedEvents.concat(response.data.event_details);
+          try {
+            if (response.status && response.event_details) {
+              combinedEvents = combinedEvents.concat(response.event_details);
+            }
+          } catch (error) {
+            console.error(
+              `Failed to fetch events for isEventFrom=${isEventFrom}:`,
+              error.message,
+            );
           }
         }
         return {events: combinedEvents, timeStamp: Date.now()};
@@ -37,7 +45,7 @@ const eventSlice = createSlice({
   reducers: {
     clearEvents: state => {
       state.events = [];
-      state.timestamp = null;
+      state.timeStamp = null;
     },
   },
   extraReducers: builder => {
@@ -49,11 +57,11 @@ const eventSlice = createSlice({
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.loading = false;
         state.events = action.payload.events;
-        state.timestamp = action.payload.timestamp;
+        state.timeStamp = action.payload.timeStamp;
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Failed to fetch events';
       });
   },
 });

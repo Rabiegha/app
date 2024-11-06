@@ -14,7 +14,7 @@ import {
   selectOrientation,
   selectDpi,
   selectAutoPrint,
-} from '../../../redux/printerSelectors';
+} from '../../../redux/selectors/printerSelectors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PrintComponent = () => {

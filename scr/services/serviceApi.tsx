@@ -180,13 +180,15 @@ export const fetchEventDetails = async (userId, isEventFrom) => {
 
   try {
     const response = await axios.get(url);
-    if (response.data.satatus && response.data.event_details) {
+    if (response.data.status && response.data.event_details) {
       return response.data;
     } else {
       console.log('Events list not fetched');
+      throw new Error('Events list not fetched');
     }
   } catch (error) {
     console.log('Error fetching events list from past', error);
+    throw error;
   }
 };
 
