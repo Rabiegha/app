@@ -184,7 +184,7 @@ export const fetchEventDetails = async (userId, isEventFrom) => {
       return response.data;
     } else {
       console.log('Events list not fetched');
-      throw new Error('Events list not fetched');
+      return [];
     }
   } catch (error) {
     console.log('Error fetching events list from past', error);
@@ -192,7 +192,7 @@ export const fetchEventDetails = async (userId, isEventFrom) => {
   }
 };
 
-//*************************$$$$$$$$$$$**************$$$$$$$$$$$$$********************$$$$$$$$$$$$$$$$$$*****************/
+//*************************$$$$$$$$$$$**************$$$$$$$  Print  $$$$$$********************$$$$$$$$$$$$$$$$$$*****************/
 
 // Fetch Wi-Fi printers
 export const getWifiPrinters = () => {
@@ -231,7 +231,7 @@ export const getPrinterImage = printerModel => {
 const printNodeInstance = axios.create({
   baseURL: PRINT_NODE_URL,
   headers: {
-    Authorization: `Basic ${base64ApiKey}`, // Basic Authentication Header
+    Authorization: `Basic ${base64ApiKey}`,
     'Content-Type': 'application/json',
   },
 });
@@ -257,7 +257,7 @@ export const getNodePrinters = async () => {
   }
 };
 
-// send print job
+// Send node print job
 
 export const sendPrintJob = async (printerId, fileType, fileBase64) => {
   try {

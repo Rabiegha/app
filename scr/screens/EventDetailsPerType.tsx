@@ -1,20 +1,24 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {ActivityIndicator, Dimensions, Text, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  ActivityIndicator,
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import HeaderComponent from '../components/elements/header/HeaderComponent.tsx';
 import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../assets/styles/globalStyle.tsx';
 import colors from '../../colors/colors.ts';
 import EventDetailsPerTypeComponent from '../components/screens/EventDetailsPerTypeComponent.tsx';
 import useDetailsPerType from '../hooks/useDetailsPerType.tsx';
-/* import { PieChart } from 'react-native-chart-kit'; */
+import PieChart from 'react-native-pie-chart';
 
-const screenWidth = Dimensions.get('window').width;
-
+const widthAndHeight = 230;
 
 const EventDetailsPerTypeScreen = ({route}) => {
   const navigation = useNavigation();
   const {details, loading, error} = useDetailsPerType();
-
 
   const goBack = () => {
     navigation.goBack();
@@ -26,6 +30,7 @@ const EventDetailsPerTypeScreen = ({route}) => {
     console.log('total', total);
     console.log('state', state);
   }, [details, state]);
+
   let data;
   switch (state) {
     case 'registered':
@@ -41,10 +46,13 @@ const EventDetailsPerTypeScreen = ({route}) => {
       data = [];
   }
 
-  const data1 = [
-    { name: 'A', population: 40, color: 'red', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-    { name: 'B', population: 60, color: 'blue', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-  ];
+  let series = [];
+  let sliceColor = [];
+
+  if (data && data.length > 0) {
+    series = data.map(item => item.y);
+    sliceColor = data.map(item => item.background_color);
+  }
 
   return (
     <View style={globalStyle.backgroundWhite}>
@@ -54,33 +62,76 @@ const EventDetailsPerTypeScreen = ({route}) => {
         handlePress={goBack}
         backgroundColor={'white'}
       />
-      {/* <PieChart
-        data={data1}
-        width={screenWidth}
-        height={220}
-        chartConfig={{
-          backgroundColor: '#1cc910',
-          backgroundGradientFrom: '#eff3ff',
-          backgroundGradientTo: '#efefef',
-          decimalPlaces: 2,
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }}
-        accessor="population"
-        backgroundColor="transparent"
-        paddingLeft="15"
-        absolute
-      /> */}
-      <View style={globalStyle.container}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#00ff00" />
-        ) : error ? (
-          <Text>Error: {error}</Text>
-        ) : (
-          <EventDetailsPerTypeComponent data={data} />
-        )}
-      </View>
+      <ScrollView
+        style={styles.screenWrapper}
+        contentContainerStyle={{flexGrow: 1}}>
+        <View style={globalStyle.container}>
+          <View style={styles.list}>
+            {loading ? (
+              <ActivityIndicator size="large" color="#00ff00" />
+            ) : error ? (
+              <Text>Error: {error}</Text>
+            ) : (
+              <View>
+                <View style={styles.chartContainer}>
+                  <PieChart
+                    widthAndHeight={widthAndHeight}
+                    series={series}
+                    sliceColor={sliceColor}
+                    coverRadius={0.75}
+                    coverFill={'#FFF'}
+                  />
+                  <View style={styles.chartText}>
+                    <Text style={styles.titleTotalText}>
+                      Total des enregistrements
+                    </Text>
+                    <Text style={styles.totalText}>{total}</Text>
+                  </View>
+                </View>
+                <EventDetailsPerTypeComponent data={data} />
+              </View>
+            )}
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  chartContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    width: widthAndHeight,
+    height: widthAndHeight,
+    alignSelf: 'center',
+    marginBottom: 40,
+  },
+  chartText: {
+    position: 'absolute',
+  },
+  titleTotalText: {
+    fontSize: 13,
+    color: colors.darkGrey,
+    textAlign: 'center',
+    width: 140,
+  },
+  totalText: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: colors.green,
+    textAlign: 'center',
+  },
+  list: {
+    marginBottom: 50,
+  },
+  noDataText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: colors.darkGrey,
+  },
+});
 
 export default EventDetailsPerTypeScreen;
