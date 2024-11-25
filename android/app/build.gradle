@@ -1,6 +1,9 @@
+apply plugin: "com.facebook.react.rootproject"
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+
+
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -79,7 +82,7 @@ android {
         applicationId "com.choyou.attendeeApplication"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
+        versionCode 14
         versionName "1.0.1"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
     }
@@ -104,7 +107,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            minifyEnabled
+            minifyEnabled true
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -114,7 +117,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    implementation("com.facebook.react:flipper-integration")
+    implementation("com.facebook.react:flipper-integration:$reactNativeVersion")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
