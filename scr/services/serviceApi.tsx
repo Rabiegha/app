@@ -184,7 +184,7 @@ export const fetchEventDetails = async (userId, isEventFrom) => {
       return response.data;
     } else {
       console.log('Events list not fetched');
-      throw new Error('Events list not fetched');
+      return [];
     }
   } catch (error) {
     console.log('Error fetching events list from past', error);
@@ -264,8 +264,8 @@ export const sendPrintJob = async (printerId, fileType, fileBase64) => {
     const data = {
       printerId: printerId,
       title: 'Print Job From Attendee',
-      contentType: fileType,
-      content: fileBase64,
+      contentType: 'pdf_base64',
+      content: "JVBERi0xLjMKMyAwIG9iago8PC9UeXBlIC9QYWdlCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyAyIDAgUgovQ29udGVudHMgNCAwIFI+PgplbmRvYmoKNCAwIG9iago8PC9GaWx0ZXIgL0ZsYXRlRGVjb2RlIC9MZW5ndGggMTM0Pj4Kc3RyZWFtCnicTcw7DsIwEIThPqeYEprFtuwstDxSUFH4BskGjEKITCK4sm9BjECiHX3zGxwLRY7xLLYeq0pDG1IKvsXB58m4NVkGbxwxwzdYVKG+BIk47Ss0Ai+PcQl//XpdGrIaXDJZ8/E7qQNmhKmHvOQ2dJJ/7V/mnPoUE4b7FLMaZ02/5hvv5i2/CmVuZHN0cmVhbQplbmRvYmoKMSAwIG9iago8PC9UeXBlIC9QYWdlcwovS2lkcyBbMyAwIFIgXQovQ291bnQgMQovTWVkaWFCb3ggWzAgMCA1OTUuMjggODQxLjg5XQo+PgplbmRvYmoKNSAwIG9iago8PC9UeXBlIC9Gb250Ci9CYXNlRm9udCAvSGVsdmV0aWNhCi9TdWJ0eXBlIC9UeXBlMQovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwo+PgplbmRvYmoKMiAwIG9iago8PAovUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0KL0ZvbnQgPDwKL0YxIDUgMCBSCj4+Ci9YT2JqZWN0IDw8Cj4+Cj4+CmVuZG9iago2IDAgb2JqCjw8Ci9Qcm9kdWNlciAoUHlGUERGIDEuNy4yIGh0dHA6Ly9weWZwZGYuZ29vZ2xlY29kZS5jb20vKQovQ3JlYXRpb25EYXRlIChEOjIwMjQxMTI1MTMyMzM3KQo+PgplbmRvYmoKNyAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMSAwIFIKL09wZW5BY3Rpb24gWzMgMCBSIC9GaXRIIG51bGxdCi9QYWdlTGF5b3V0IC9PbmVDb2x1bW4KPj4KZW5kb2JqCnhyZWYKMCA4CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDI5MSAwMDAwMCBuIAowMDAwMDAwNDc0IDAwMDAwIG4gCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA4NyAwMDAwMCBuIAowMDAwMDAwMzc4IDAwMDAwIG4gCjAwMDAwMDA1NzggMDAwMDAgbiAKMDAwMDAwMDY4NyAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDgKL1Jvb3QgNyAwIFIKL0luZm8gNiAwIFIKPj4Kc3RhcnR4cmVmCjc5MAolJUVPRgo=",
       source: 'Attendee App',
     };
     const response = await printNodeInstance.post('/printjobs', data);

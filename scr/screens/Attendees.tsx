@@ -120,12 +120,6 @@ const AttendeesScreen = () => {
         </View>
       )}
       <View style={[globalStyle.container, styles.container]}>
-        <Search
-          style={styles.search}
-          onChange={text => setSearchQuery(text)}
-          value={searchQuery}
-        />
-
         <ProgressText
           totalCheckedAttendees={checkedInAttendees}
           totalAttendees={totalListAttendees}

@@ -71,6 +71,7 @@ const PrintersList = () => {
       console.log(`Deselecting PrintNode printer: ${printer.name}`);
       dispatch(deselectNodePrinter());
     } else {
+      console.log('selected printer id', selectedNodePrinter.id);
       console.log(`Selecting PrintNode printer: ${printer.name}`);
       dispatch(selectNodePrinter(printer));
     }

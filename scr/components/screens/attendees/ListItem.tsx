@@ -114,7 +114,7 @@ const ListItem = React.memo(
     const nodePrinterId = selectedNodePrinter?.id; // Get printer ID and fileType from context
 
     useEffect(() => {
-      /*       console.log('Selected Node Printer ID:', nodePrinterId); */
+      console.log('Selected Node Printer ID:', nodePrinterId);
     }, [nodePrinterId]);
 
     // Utiliser la fonction d'impression réutilisable
