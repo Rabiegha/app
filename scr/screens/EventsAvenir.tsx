@@ -81,7 +81,7 @@ const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
     ) {
       dispatch(fetchEvents({userId, isEventFromList, isDemoMode}));
     } else {
-      console.error('event list not fetched');
+      /* console.error('event list not fetched'); */
     }
   }, [
     dispatch,
@@ -145,8 +145,6 @@ const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
   const eventsToday = events.filter(event => {
     const eventDateStr = event.nice_start_datetime;
     const eventDate = parseDateString(eventDateStr);
-
-    console.log(eventDate);
 
     if (isNaN(eventDate)) {
       console.warn('Invalid event date:', eventDateStr);

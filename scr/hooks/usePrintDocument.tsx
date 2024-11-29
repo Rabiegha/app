@@ -9,8 +9,8 @@ import {setPrintStatus} from '../redux/slices/printerSlice';
 import {useNodePrint} from './useNodePrint';
 import {useEvent} from '../context/EventContext';
 
-const usePrintDocument = attendeeId => {
-  const {eventId} = useEvent();
+const usePrintDocument = () => {
+  const eventId = useEvent();
   const dispatch = useDispatch();
   const {sendPrintJob} = useNodePrint();
 
@@ -27,13 +27,13 @@ const usePrintDocument = attendeeId => {
   };
 
   const printDocument = useCallback(
-    async item => {
+    async attendeeId => {
       const documentUrl = `https://ems.choyou.fr/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
 
       if (!nodePrinterId) {
         console.error('No printer selected.');
         dispatch(setPrintStatus('No printer selected'));
-        Alert.alert('Error', 'Please select a printer before printing.');
+/*         Alert.alert('Error', 'Please select a printer before printing.'); */
         return;
       }
 
@@ -62,20 +62,21 @@ const usePrintDocument = attendeeId => {
 
         console.log('Document sent to printer successfully!');
         dispatch(setPrintStatus('Print successful'));
-        Alert.alert('Success', 'Document sent to the printer successfully!');
+/*         Alert.alert('Success', 'Document sent to the printer successfully!'); */
       } catch (error) {
         console.error(
           'Error printing document:',
           error.response ? error.response.data : error.message,
         );
         dispatch(setPrintStatus('Error printing document'));
-        Alert.alert(
+/*         Alert.alert(
           'Error',
           'There was an issue sending the document to the printer.',
-        );
+        ); */
+        throw error;
       }
     },
-    [nodePrinterId, sendPrintJob, dispatch],
+    [eventId, nodePrinterId, sendPrintJob, dispatch],
   );
 
   return {printDocument};

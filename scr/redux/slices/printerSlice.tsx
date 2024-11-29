@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   selectedWiFiPrinter: [],
@@ -15,6 +15,29 @@ const initialState = {
     autoPrint: true,
   },
 };
+
+// Actions asynchrones
+export const selectNodePrinterAsync = createAsyncThunk(
+  'printers/selectNodePrinterAsync',
+  async (printer, {dispatch}) => {
+    // Simuler un délai asynchrone
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Dispatch de l'action synchrone
+    dispatch(selectNodePrinter(printer));
+  },
+);
+
+export const deselectNodePrinterAsync = createAsyncThunk(
+  'printers/deselectNodePrinterAsync',
+  async (_, {dispatch}) => {
+    // Simuler un délai asynchrone
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Dispatch de l'action synchrone
+    dispatch(deselectNodePrinter());
+  },
+);
 
 const printerSlice = createSlice({
   name: 'printers',

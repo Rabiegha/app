@@ -1,25 +1,32 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, FlatList, StyleSheet, Button, Alert} from 'react-native';
 import {
-  getWifiPrinters,
-  getBluetoothPrinters,
-} from '../../../services/serviceApi'; // Import the service
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   selectWiFiPrinter,
   deselectWiFiPrinter,
   selectNodePrinter,
   deselectNodePrinter,
+  selectNodePrinterAsync,
+  deselectNodePrinterAsync,
 } from '../../../redux/slices/printerSlice';
 import colors from '../../../../colors/colors';
 import Spinner from 'react-native-loading-spinner-overlay';
-import {getNodePrinters} from '../../../services/serviceApi';
+import {getWifiPrinters, getNodePrinters} from '../../../services/serviceApi';
 
 const PrintersList = () => {
   const [wifiPrinters, setWifiPrinters] = useState([]);
   const [nodePrinters, setNodePrinters] = useState([]);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
+  const [loadingWifiPrinters, setLoadingWifiPrinters] = useState(true);
+  const [loadingNodePrinters, setLoadingNodePrinters] = useState(true);
+  const [loadingPrinter, setLoadingPrinter] = useState(false);
 
   // selected wifi printers
   const selectedWiFiPrinters = useSelector(
@@ -35,22 +42,11 @@ const PrintersList = () => {
   useEffect(() => {
     getWifiPrinters()
       .then(data => {
-        console.log('Fetched printers from API:', data); // Log the printers fetched
         setWifiPrinters(data);
       })
       .catch(error => console.error(error))
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingWifiPrinters(false));
   }, []);
-
-  const handleSelectPrinter = printer => {
-    if (selectedWiFiPrinters.some(p => p.name === printer.name)) {
-      console.log(`Deselecting printer: ${printer.name}`); // Log deselect action
-      dispatch(deselectWiFiPrinter(printer));
-    } else {
-      console.log(`Selecting printer: ${printer.name}`); // Log select action7777
-      dispatch(selectWiFiPrinter(printer));
-    }
-  };
 
   // Fetch PRINTNODE printers
   useEffect(() => {
@@ -60,72 +56,139 @@ const PrintersList = () => {
         setNodePrinters(printersList);
       } catch (error) {
         Alert.alert('Unable to fetch printers.', 'Error');
+      } finally {
+        setLoadingNodePrinters(false);
       }
     };
     fetchPrinters();
   }, []);
 
+  // online and offline printers
+  const onlinePrinters = nodePrinters.filter(
+    printer => printer.state === 'online',
+  );
+  const offlinePrinters = nodePrinters.filter(
+    printer => printer.state === 'offline',
+  );
+
   // Handle PrintNode printer selection
-  const handleSelectNodePrinter = printer => {
-    if (selectedNodePrinter && selectedNodePrinter.name === printer.name) {
-      console.log(`Deselecting PrintNode printer: ${printer.name}`);
-      dispatch(deselectNodePrinter());
-    } else {
-      console.log(`Selecting PrintNode printer: ${printer.name}`);
-      dispatch(selectNodePrinter(printer));
+  const handleSelectNodePrinter = async printer => {
+    setLoadingPrinter(true);
+
+    try {
+      if (selectedNodePrinter && selectedNodePrinter.name === printer.name) {
+        await dispatch(deselectNodePrinterAsync());
+      } else {
+        await dispatch(selectNodePrinterAsync(printer));
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to select the printer. Try again.');
+    } finally {
+      setLoadingPrinter(false);
     }
   };
 
+/*   useEffect(() => {
+    const interval = setInterval(() => {
+      fetchPrinters();
+    }, 5000); // Fetch every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []); */
+
   return (
     <View>
-      <Spinner visible={loading} />
+      <Spinner
+        visible={loadingWifiPrinters || loadingNodePrinters || loadingPrinter}
+        textContent="Loading..."
+      />
+      {/* Online Printers */}
       <View style={styles.container}>
-        <Text style={styles.title}>Wi-Fi</Text>
-        {loading ? (
+        <Text style={styles.title}>Online Printers</Text>
+        {loadingNodePrinters ? (
           <Text>Loading printers...</Text>
-        ) : wifiPrinters.length === 0 ? (
-          <Text>No printers available</Text>
+        ) : onlinePrinters.length === 0 ? (
+          <Text>No online printers available</Text>
         ) : (
           <FlatList
-            data={wifiPrinters}
-            keyExtractor={(item, index) => index.toString()}
+            data={onlinePrinters}
+            keyExtractor={item => item.id.toString()}
             renderItem={({item}) => (
-              <View style={styles.printerList}>
-                <Text>{item.name || 'Unknown Printer'}</Text>
-                <Button
-                  title={
-                    selectedWiFiPrinters.some(p => p.name === item.name)
-                      ? 'Deselect'
-                      : 'Select'
-                  }
-                  onPress={() => handleSelectPrinter(item)}
-                />
-              </View>
+              <TouchableOpacity
+                onPress={() => handleSelectNodePrinter(item)}
+                style={[
+                  styles.printerList,
+                  {
+                    backgroundColor:
+                      selectedNodePrinter && selectedNodePrinter.id === item.id
+                        ? colors.detailsGreen
+                        : colors.greyCream,
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.name,
+                    {
+                      color:
+                        selectedNodePrinter &&
+                        selectedNodePrinter.id === item.id
+                          ? 'white'
+                          : colors.darkGrey,
+                      fontWeight:
+                        selectedNodePrinter &&
+                        selectedNodePrinter.id === item.id
+                          ? '800'
+                          : '400',
+                    },
+                  ]}>
+                  {item.name || 'Unknown Printer'}
+                </Text>
+                <Text
+                  style={[
+                    styles.state,
+                    {
+                      color:
+                        selectedNodePrinter &&
+                        selectedNodePrinter.id === item.id
+                          ? 'white'
+                          : colors.darkGrey,
+                      fontWeight:
+                        selectedNodePrinter &&
+                        selectedNodePrinter.id === item.id
+                          ? '800'
+                          : '400',
+                    },
+                  ]}>
+                  {`(${item.state})`}
+                </Text>
+              </TouchableOpacity>
             )}
           />
         )}
       </View>
+
+      {/* Offline Printers */}
       <View style={styles.container}>
-        <Text style={styles.title}>PRINT NODE Printers</Text>
-        {loading ? (
+        <Text style={styles.title}>Offline Printers</Text>
+        {loadingNodePrinters ? (
           <Text>Loading printers...</Text>
-        ) : nodePrinters.length === 0 ? (
-          <Text>No printers available</Text>
+        ) : offlinePrinters.length === 0 ? (
+          <Text>No offline printers available</Text>
         ) : (
           <FlatList
-            data={nodePrinters}
+            data={offlinePrinters}
             keyExtractor={item => item.id.toString()}
             renderItem={({item}) => (
-              <View style={styles.printerList}>
-                <Text>{item.name || 'Unknown Printer'}</Text>
-                <Button
-                  title={
-                    selectedNodePrinter && selectedNodePrinter.id === item.id
-                      ? 'Deselect'
-                      : 'Select'
-                  }
-                  onPress={() => handleSelectNodePrinter(item)}
-                />
+              <View
+                style={[
+                  styles.printerList,
+                  {
+                    backgroundColor: colors.greyCream,
+                  },
+                ]}>
+                <Text style={[styles.name, {color: colors.grey}]}>
+                  {item.name || 'Unknown Printer'}
+                </Text>
               </View>
             )}
           />
@@ -138,9 +201,7 @@ const PrintersList = () => {
 const styles = StyleSheet.create({
   container: {
     borderRadius: 5,
-    backgroundColor: colors.greyCream,
     paddingHorizontal: 15,
-    paddingBottom: 15,
     marginBottom: 15,
   },
   title: {
@@ -151,6 +212,19 @@ const styles = StyleSheet.create({
   },
   printerList: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: colors.greyCream,
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 12,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  state: {
+    fontSize: 12,
+    fontWeight: '200',
   },
 });
 

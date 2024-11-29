@@ -121,10 +121,10 @@ const ListItem = React.memo(
 
     // Print hook
 
-    const {printDocument} = usePrintDocument(item.id);
+    const {printDocument} = usePrintDocument();
 
     const handlePrintDocument = () => {
-      printDocument(item); // Passer l'objet 'item' comme paramètre
+      printDocument(item.id);
     };
 
     const renderRightActions = (progress, dragX) => {

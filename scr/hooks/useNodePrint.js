@@ -20,7 +20,7 @@ export const useNodePrint = () => {
     state => state.printers.selectedOptions.paperFormat,
   );
 
-  const nodePrinterId = selectedNodePrinter?.id; // Get printer ID and fileType from context
+  const nodePrinterId = selectedNodePrinter?.id;
 
   const sendPrintJob = async fileBase64 => {
     if (!nodePrinterId) {
@@ -28,17 +28,20 @@ export const useNodePrint = () => {
       return;
     }
 
+    console.log('Selected paper format:', selectedPaperFormat);
+
     try {
       const printJob = {
         printerId: nodePrinterId,
         title: 'Print Job From Attendee',
-        printType: 'pdf_base64',
-        fileBase64,
+        contentType: 'pdf_base64',
+        content: fileBase64,
+        source: 'Attendee App',
         options: {
           paper: selectedPaperFormat,
           copies: 1,
           color: true,
-          dpi: 600,
+          dpi: '600',
           orientation: 'portrait',
         },
       };

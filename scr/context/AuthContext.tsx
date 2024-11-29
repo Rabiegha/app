@@ -96,7 +96,7 @@ export const AuthProvider = ({children}) => {
         // URL de l'API pour se deconnecter
         `${BASE_URL}/ajax_user_logout/?current_user_login_details_id=${currentUserId}`,
       );
-      console.log(response.data);
+      /* console.log(response.data); */
       if (response.data.status) {
         storage.set('user_id', '');
         console.log('Déconnexion réussie');

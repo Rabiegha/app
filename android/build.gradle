@@ -16,7 +16,7 @@ buildscript {
         classpath ('com.google.android.gms:strict-version-matcher-plugin:1.2.1')
         classpath("com.android.tools.build:gradle:$agpVersion")
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22")
     }
 }
 

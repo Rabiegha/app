@@ -93,7 +93,7 @@ const EventsScreen = () => {
 
   const handleEventSelect = event => {
     const {ems_secret_code, event_id, event_name} = event;
-    console.log(ems_secret_code, event_id);
+    /* console.log(ems_secret_code, event_id); */
     updateEventDetails({
       newSecretCode: ems_secret_code,
       newEventId: event_id,

@@ -18,7 +18,7 @@ export const updateAttendee = async (userId, attendeeId, attendeeData) => {
 export const scanAttendee = async (userId, eventId, data) => {
   const apiUrl = `${BASE_URL}/ajax_join_attendee/?current_user_login_details_id=${userId}&event_id=${eventId}&content=${data}`;
   try {
-    const response = await axios.post(apiUrl, payload);
+    const response = await axios.post(apiUrl);
     return response.data;
   } catch (error) {
     console.error("Erreur lors de l'enregistrement:", error);
@@ -183,7 +183,7 @@ export const fetchEventDetails = async (userId, isEventFrom) => {
     if (response.data.status && response.data.event_details) {
       return response.data;
     } else {
-      console.log('Events list not fetched');
+      /* console.log('Events list not fetched'); */
       return [];
     }
   } catch (error) {
@@ -226,6 +226,7 @@ export const getPrinterImage = printerModel => {
     });
 };
 
+//*************************$$$$$$$$$$$**************$$$$$$$  PrintNode  $$$$$$********************$$$$$$$$$$$$$$$$$$*****************/
 // PrintNode printing
 
 const printNodeInstance = axios.create({
@@ -259,16 +260,9 @@ export const getNodePrinters = async () => {
 
 // Send node print job
 
-export const sendPrintJob = async (printerId, fileType, fileBase64) => {
+export const sendPrintJob = async printJob => {
   try {
-    const data = {
-      printerId: printerId,
-      title: 'Print Job From Attendee',
-      contentType: fileType,
-      content: fileBase64,
-      source: 'Attendee App',
-    };
-    const response = await printNodeInstance.post('/printjobs', data);
+    const response = await printNodeInstance.post('/printjobs', printJob);
     return response.data;
   } catch (error) {
     console.error('Error sending print job:', error);
