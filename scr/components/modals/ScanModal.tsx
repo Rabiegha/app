@@ -1,11 +1,21 @@
 import React, {useState} from 'react';
-import {Modal, View, Text, StyleSheet, Image} from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import acceptedImage from '../../assets/images/Accepted.png';
 import rejectedImage from '../../assets/images/Rejected.png';
+import printingImage from '../../assets/images/icons/Print.png';
+import printingAnimation from '../../assets/animations/printing.json';
+import LottieView from 'lottie-react-native';
 import colors from '../../../colors/colors';
 
-const ScanModal = ({onClose, message, visible, isAccepted}) => {
-/*   const visible = true;
+const ScanModal = ({onClose, visible, status}) => {
+  /*   const visible = true;
   const isAccepted = true; */
   return (
     <Modal
@@ -13,15 +23,36 @@ const ScanModal = ({onClose, message, visible, isAccepted}) => {
       visible={visible}
       animationType="slide"
       onRequestClose={onClose}>
-      <View style={styles.modalBackground}>
-        <View style={styles.modalContent}>
-          <Text style={styles.text}>{message}</Text>
-          <Image
-            source={isAccepted ? acceptedImage : rejectedImage}
-            style={styles.image}
-          />
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.modalBackground}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View style={styles.modalContent}>
+              <Text style={styles.text}>
+                {status === 'approved'
+                  ? 'Participation enregistrée.'
+                  : status === 'printing'
+                  ? 'Sending print job'
+                  : "Impossible d'enregistrer la participation"}
+              </Text>
+              {/*           <LottieView
+                source={require('../../assets/animations/printing.json')}
+                autoPlay
+                loop
+              /> */}
+              <Image
+                source={
+                  status === 'approved'
+                    ? acceptedImage
+                    : status === 'printing'
+                    ? printingImage
+                    : rejectedImage
+                }
+                style={styles.image}
+              />
+            </View>
+          </TouchableWithoutFeedback>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

@@ -8,11 +8,7 @@ import {
   TextInput,
   Image,
 } from 'react-native';
-import axios from 'axios';
 import colors from '../../../colors/colors';
-import {BASE_URL} from '../../config';
-import {onPress} from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
-
 const CommentModal = ({
   visible,
   onClose,
