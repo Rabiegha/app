@@ -190,9 +190,9 @@ const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
     });
   }
 
-  useEffect(() => {
+/*   useEffect(() => {
     console.log('sections', sections);
-  }, [sections]);
+  }, [sections]); */
 
   const handleClearData = () => {
     dispatch(clearEvents());
@@ -322,10 +322,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   sectionHeader: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: 'white',
   },
   sectionHeaderText: {
+    paddingVertical: 10,
     fontSize: 21,
     fontWeight: '800',
     color: colors.darkGrey,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   futureSectionHeader: {
-    marginTop: 20, // Adjust this value to control the space between sections
+    marginTop: 20,
   },
 });
 

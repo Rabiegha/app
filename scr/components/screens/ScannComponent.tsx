@@ -10,6 +10,8 @@ import ScanModal from '../modals/ScanModal';
 import {scanAttendee} from '../../services/serviceApi';
 import usePrintDocument from '../../hooks/usePrintDocument';
 import useUserId from '../../hooks/useUserId';
+import {useSelector} from 'react-redux';
+import {selectPrintStatus} from '../../redux/selectors/printerSelectors';
 
 const ScannerComponent = () => {
   const navigation = useNavigation();
@@ -28,6 +30,10 @@ const ScannerComponent = () => {
   const handleBackPress = () => {
     navigation.goBack();
   };
+
+  // Access the print status from Redux
+
+  const printStatus = useSelector(selectPrintStatus);
 
   // Reset modal visibility on screen focus
   useEffect(() => {
@@ -50,12 +56,11 @@ const ScannerComponent = () => {
     }
 
     setScanStatus('scanning');
+    await delay(500);
 
     try {
       const response = await scanAttendee(userId, eventId, data);
       console.log('API Response:', response);
-
-      await delay(1000);
       if (response.status === true) {
         const attendee = response.attendee_details;
         setAttendeeData({
@@ -63,18 +68,33 @@ const ScannerComponent = () => {
           name: attendee.attendee_name,
         });
         setScanStatus('found');
-        await delay(1000);
+
+        await delay(500);
+
         setModalVisible(true);
         setScanStatus('approved');
         triggerListRefresh();
 
+        // **Start the printing process**
+
         await delay(2000);
+
         setScanStatus('printing');
+
         await printDocument(attendee.attendee_id);
 
+        // **Wait for the print process to complete**
+
         await delay(3000);
-        resetScanner();
-        navigation.navigate('Attendees');
+
+        if (printStatus === 'Print successful') {
+          resetScanner();
+          navigation.navigate('Attendees');
+        } else {
+          console.error('Printing failed, staying on the screen.');
+          setScanStatus('error');
+          resetScanner();
+        }
       } else {
         setScanStatus('not_found');
 
@@ -104,6 +124,7 @@ const ScannerComponent = () => {
           title="Scan QR Code"
           color={colors.greyCream}
           handlePress={handleBackPress}
+          backgroundColor={undefined}
         />
         <RNCamera
           ref={cameraRef}

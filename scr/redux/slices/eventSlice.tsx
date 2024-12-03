@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {demoEvents} from '../../demo/demoEvents';
 import {fetchEventDetails} from '../../services/serviceApi';
-import {useEffect} from 'react';
 
 const initialState = {
   events: [],

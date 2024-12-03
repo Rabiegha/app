@@ -8,3 +8,8 @@ export const selectDpi = state => state.printers.selectedOptions.dpi;
 
 export const selectAutoPrint = state =>
   state.printers.selectedOptions.autoPrint;
+
+export const selectPrintStatus = state => state.printers.printStatus;
+
+export const selectSelectedNodePrinter = state =>
+  state.printers.selectedNodePrinter;

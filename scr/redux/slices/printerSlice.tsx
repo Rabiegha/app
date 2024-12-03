@@ -3,7 +3,7 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 const initialState = {
   selectedWiFiPrinter: [],
   selectedNodePrinter: null,
-  defaultPrinter: [],
+  defaultPrinter: null,
   printStatus: '',
   selectedOptions: {
     paperFormat: null,
@@ -53,7 +53,6 @@ const printerSlice = createSlice({
     },
     setDefaultWiFiPrinter: (state, action) => {
       state.defaultPrinter = action.payload;
-      // Réinitialiser les options lors de la sélection d'une nouvelle imprimante
       state.selectedOptions = {
         paperFormat: null,
         orientation: 'portrait',

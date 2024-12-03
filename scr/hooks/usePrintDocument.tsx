@@ -10,7 +10,7 @@ import {useNodePrint} from './useNodePrint';
 import {useEvent} from '../context/EventContext';
 
 const usePrintDocument = () => {
-  const eventId = useEvent();
+  const eventDetails = useEvent();
   const dispatch = useDispatch();
   const {sendPrintJob} = useNodePrint();
 
@@ -21,23 +21,43 @@ const usePrintDocument = () => {
 
   const nodePrinterId = selectedNodePrinter?.id;
 
+
+  const eventId = eventDetails.eventId;
+
   // Fonction pour convertir ArrayBuffer en Base64
   const arrayBufferToBase64 = buffer => {
     return Buffer.from(buffer).toString('base64');
   };
 
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
   const printDocument = useCallback(
     async attendeeId => {
       const documentUrl = `https://ems.choyou.fr/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
 
-      if (!nodePrinterId) {
-        console.error('No printer selected.');
-        dispatch(setPrintStatus('No printer selected'));
-/*         Alert.alert('Error', 'Please select a printer before printing.'); */
-        return;
-      }
-
       try {
+        //check if the printer is selected
+        if (!nodePrinterId) {
+          console.error('No printer selected.');
+          dispatch(setPrintStatus('No printer selected'));
+          /*         Alert.alert('Error', 'Please select a printer before printing.'); */
+          return;
+        }
+
+        //check if the file existes
+/* 
+        const headResponse = await fetch(documentUrl, {method: 'HEAD'});
+        if (!headResponse.ok) {
+          console.error('File does not exist.');
+          dispatch(setPrintStatus('No file exists'));
+          return;
+        }
+ */
+        // **Update print status to 'Sending print job'**
+        dispatch(setPrintStatus('Sending print job'));
+
+        // **Fetch and encode the document**
+
         let base64String = '';
         if (documentUrl.startsWith('file://')) {
           // Si le document est local
@@ -56,23 +76,19 @@ const usePrintDocument = () => {
           base64String = arrayBufferToBase64(arrayBuffer);
           console.log('Online file encoded to Base64');
         }
-
         // Envoyer le document à l'imprimante via useNodePrint
+        await delay(2000);
         await sendPrintJob(base64String);
 
         console.log('Document sent to printer successfully!');
         dispatch(setPrintStatus('Print successful'));
-/*         Alert.alert('Success', 'Document sent to the printer successfully!'); */
+        /*         Alert.alert('Success', 'Document sent to the printer successfully!'); */
       } catch (error) {
         console.error(
           'Error printing document:',
           error.response ? error.response.data : error.message,
         );
         dispatch(setPrintStatus('Error printing document'));
-/*         Alert.alert(
-          'Error',
-          'There was an issue sending the document to the printer.',
-        ); */
         throw error;
       }
     },
