@@ -1,5 +1,3 @@
-// src/components/modals/ScanModal.js
-
 import React from 'react';
 import {
   Modal,
@@ -8,26 +6,35 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {useSelector} from 'react-redux';
 import LottieView from 'lottie-react-native';
-import printingAnimation from '../../assets/animations/Printing.json';
 import acceptedAnimation from '../../assets/animations/Accepted.json';
 import rejectedAnimation from '../../assets/animations/Rejected.json';
+import printingAnimation from '../../assets/animations/Printing.json';
 import noFileAnimation from '../../assets/animations/Rejected.json';
 import noPrinterAnimation from '../../assets/animations/Rejected.json';
 import colors from '../../../colors/colors';
 
-const ScanModal = ({onClose, visible}) => {
-  const printStatus = useSelector(state => state.printers.printStatus);
-  /*   const visible = true;
-  const printStatus = 'Print successful'; */
+const ScanModal = ({onClose, visible, status}) => {
+  if (!visible || !status) {
+    return null;
+  }
 
   let message = '';
   let animationSource = null;
   let shouldLoop = false;
   let height = 100;
 
-  switch (printStatus) {
+  switch (status) {
+    // Scan statuses
+    case 'approved':
+      message = 'Participation enregistrée.';
+      animationSource = acceptedAnimation;
+      break;
+    case 'rejected':
+      message = "Impossible d'enregistrer la participation";
+      animationSource = rejectedAnimation;
+      break;
+    // Print statuses
     case 'No file exists':
       message = 'No file exists for this attendee.';
       animationSource = noFileAnimation;
@@ -37,10 +44,11 @@ const ScanModal = ({onClose, visible}) => {
       animationSource = noPrinterAnimation;
       break;
     case 'Sending print job':
+    case 'printing':
       message = 'Sending print job...';
       animationSource = printingAnimation;
-      height = 150;
       shouldLoop = true;
+      height = 150;
       break;
     case 'Print successful':
       message = 'Print job done successfully!';
@@ -59,7 +67,7 @@ const ScanModal = ({onClose, visible}) => {
   return (
     <Modal
       transparent={true}
-      visible={visible && printStatus !== ''}
+      visible={visible && status !== ''}
       animationType="slide"
       onRequestClose={onClose}>
       <TouchableWithoutFeedback onPress={onClose}>
@@ -87,15 +95,21 @@ const styles = StyleSheet.create({
   modalBackground: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center', // Center vertically
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
     width: '80%',
     backgroundColor: 'white',
-    top: '40%',
     padding: 20,
     alignItems: 'center',
     borderRadius: 10,
+    // Optional shadow for better visibility
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   text: {
     marginBottom: 10,
@@ -103,8 +117,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   animation: {
-    height: 200,
     width: 200,
+    height: 200,
   },
 });
 

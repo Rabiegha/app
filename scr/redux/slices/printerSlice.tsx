@@ -66,16 +66,23 @@ const printerSlice = createSlice({
 
     //printerNode Printer actions
     selectNodePrinter: (state, action) => {
-      state.selectedNodePrinter = action.payload;
+      const printer = action.payload;
+      state.selectedNodePrinter = printer;
+
+      // Determine the default paper format based on printer capabilities
+      const defaultPaperFormat = printer.capabilities.paperFormats
+        ? printer.capabilities.paperFormats[0] // First supported format
+        : 'A4'; // Fallback to 'A4' if not specified
+
       // Réinitialiser les options lors de la sélection d'une nouvelle imprimante
       state.selectedOptions = {
-        paperFormat: null,
+        paperFormat: defaultPaperFormat,
         orientation: 'portrait',
         dpi: 300,
         color: action.payload.capabilities.color || false,
         duplex: action.payload.capabilities.duplex ? 'none' : 'unsupported',
         copies: 1,
-        autoPrint: false,
+        autoPrint: false, 
       };
     },
     deselectNodePrinter: state => {

@@ -75,8 +75,6 @@ const ScannerComponent = () => {
         setScanStatus('approved');
         triggerListRefresh();
 
-        // **Start the printing process**
-
         await delay(2000);
 
         setScanStatus('printing');

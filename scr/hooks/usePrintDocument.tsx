@@ -45,14 +45,14 @@ const usePrintDocument = () => {
         }
 
         //check if the file existes
-/* 
+
         const headResponse = await fetch(documentUrl, {method: 'HEAD'});
         if (!headResponse.ok) {
           console.error('File does not exist.');
           dispatch(setPrintStatus('No file exists'));
           return;
         }
- */
+
         // **Update print status to 'Sending print job'**
         dispatch(setPrintStatus('Sending print job'));
 
@@ -77,10 +77,13 @@ const usePrintDocument = () => {
           console.log('Online file encoded to Base64');
         }
         // Envoyer le document à l'imprimante via useNodePrint
-        await delay(2000);
         await sendPrintJob(base64String);
 
+        dispatch(setPrintStatus('Job completed, finalizing...'));
+
         console.log('Document sent to printer successfully!');
+
+        await delay(2000);
         dispatch(setPrintStatus('Print successful'));
         /*         Alert.alert('Success', 'Document sent to the printer successfully!'); */
       } catch (error) {
