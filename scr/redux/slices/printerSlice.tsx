@@ -68,6 +68,8 @@ const printerSlice = createSlice({
       const printer = action.payload;
       state.selectedNodePrinter = printer;
 
+      state.printStatus = '';
+
       // Determine the default paper format based on printer capabilities
       const defaultPaperFormat =
         printer.capabilities?.paperFormats?.[0] || 'A4';
@@ -84,6 +86,7 @@ const printerSlice = createSlice({
     },
     deselectNodePrinter: state => {
       state.selectedNodePrinter = null;
+      state.printStatus = '';
     },
 
     setDefaultNodePrinter: (state, action) => {
