@@ -80,7 +80,7 @@ android {
         applicationId "com.choyou.attendeeApplication"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
+        versionCode 15
         versionName "1.0.1"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
     }
@@ -94,7 +94,7 @@ android {
         release {
             storeFile file('the-key')
             storePassword 'Attendee'
-            keyAlias 'the-key'
+            keyAlias 'key0'
             keyPassword 'Attendee'
         }
     }

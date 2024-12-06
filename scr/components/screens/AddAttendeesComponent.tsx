@@ -45,9 +45,9 @@ const AddAttendeesComponent = ({
   attendeeColor,
 }) => {
   useEffect(() => {
-    console.log('Success value:', success);
+/*     console.log('Success value:', success);
     console.log('attendee types:', attendeeTypes);
-    console.log('attendee color:', attendeeColor);
+    console.log('attendee color:', attendeeColor); */
   }, [success]);
 
   return (
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     top: 25,
   },
   button: {
-    backgroundColor: '#77CB8F',
+    backgroundColor: colors.green,
     borderRadius: 10,
     padding: 15,
     width: '100%',

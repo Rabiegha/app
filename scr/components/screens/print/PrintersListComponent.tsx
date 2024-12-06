@@ -77,24 +77,20 @@ const PrintersList = () => {
 
     try {
       if (selectedNodePrinter && selectedNodePrinter.name === printer.name) {
-        await dispatch(deselectNodePrinterAsync());
+        await dispatch(deselectNodePrinterAsync()).unwrap();
       } else {
-        await dispatch(selectNodePrinterAsync(printer));
+        await dispatch(selectNodePrinterAsync(printer)).unwrap();
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to select the printer. Try again.');
+      Alert.alert('Error', 'Opperation failed. Try again.');
     } finally {
       setLoadingPrinter(false);
     }
   };
 
-/*   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchPrinters();
-    }, 5000); // Fetch every 5 seconds
-
-    return () => clearInterval(interval);
-  }, []); */
+  useEffect(() => {
+    console.log('Updated selectedNodePrinter:', selectedNodePrinter?.id);
+  }, [selectedNodePrinter]);
 
   return (
     <View>

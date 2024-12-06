@@ -1,7 +1,6 @@
 // src/hooks/usePrintDocument.js
 
 import {useCallback} from 'react';
-import {Alert} from 'react-native';
 import {Buffer} from 'buffer';
 import RNFS from 'react-native-fs';
 import {useDispatch, useSelector} from 'react-redux';
@@ -20,8 +19,6 @@ const usePrintDocument = () => {
   );
 
   const nodePrinterId = selectedNodePrinter?.id;
-
-
   const eventId = eventDetails.eventId;
 
   // Fonction pour convertir ArrayBuffer en Base64
@@ -29,35 +26,30 @@ const usePrintDocument = () => {
     return Buffer.from(buffer).toString('base64');
   };
 
-  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
   const printDocument = useCallback(
     async attendeeId => {
       const documentUrl = `https://ems.choyou.fr/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
 
       try {
-        //check if the printer is selected
+        // Vérifier si l'imprimante est sélectionnée
         if (!nodePrinterId) {
           console.error('No printer selected.');
-          dispatch(setPrintStatus('No printer selected'));
-          /*         Alert.alert('Error', 'Please select a printer before printing.'); */
+          dispatch(setPrintStatus('Error printing'));
           return;
         }
 
-        //check if the file existes
-
+        // Vérifier si le fichier existe
         const headResponse = await fetch(documentUrl, {method: 'HEAD'});
         if (!headResponse.ok) {
           console.error('File does not exist.');
-          dispatch(setPrintStatus('No file exists'));
+          dispatch(setPrintStatus('Error printing'));
           return;
         }
 
-        // **Update print status to 'Sending print job'**
+        // Mettre à jour le statut d'impression à 'Sending print job'
         dispatch(setPrintStatus('Sending print job'));
 
-        // **Fetch and encode the document**
-
+        // Récupérer et encoder le document
         let base64String = '';
         if (documentUrl.startsWith('file://')) {
           // Si le document est local
@@ -70,29 +62,26 @@ const usePrintDocument = () => {
           console.log('Fetching document from URL:', documentUrl);
           const response = await fetch(documentUrl);
           if (!response.ok) {
-            throw new Error(`Failed to fetch document: ${response.statusText}`);
+            console.error(`Failed to fetch document: ${response.statusText}`);
+            dispatch(setPrintStatus('Error printing'));
+            return;
           }
           const arrayBuffer = await response.arrayBuffer();
           base64String = arrayBufferToBase64(arrayBuffer);
           console.log('Online file encoded to Base64');
         }
+
         // Envoyer le document à l'imprimante via useNodePrint
         await sendPrintJob(base64String);
 
-        dispatch(setPrintStatus('Job completed, finalizing...'));
-
-        console.log('Document sent to printer successfully!');
-
-        await delay(2000);
         dispatch(setPrintStatus('Print successful'));
-        /*         Alert.alert('Success', 'Document sent to the printer successfully!'); */
       } catch (error) {
         console.error(
           'Error printing document:',
           error.response ? error.response.data : error.message,
         );
-        dispatch(setPrintStatus('Error printing document'));
-        throw error;
+        dispatch(setPrintStatus('Error printing'));
+        // Ne pas relancer l'erreur pour éviter les rejets non gérés
       }
     },
     [eventId, nodePrinterId, sendPrintJob, dispatch],

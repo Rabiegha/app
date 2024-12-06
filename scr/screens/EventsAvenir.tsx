@@ -142,7 +142,13 @@ const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
     },
   ];
 
-  const eventsToday = events.filter(event => {
+  const filteredEvents = events
+    ? events.filter(event =>
+        event.event_name.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : [];
+
+  const eventsToday = filteredEvents.filter(event => {
     const eventDateStr = event.nice_start_datetime;
     const eventDate = parseDateString(eventDateStr);
 
@@ -154,7 +160,7 @@ const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
     return eventDate.toDateString() === today.toDateString();
   });
 
-  const futureEvents = events.filter(event => {
+  const futureEvents = filteredEvents.filter(event => {
     const eventDateStr = event.nice_start_datetime;
     const eventDate = parseDateString(eventDateStr);
 
@@ -165,12 +171,6 @@ const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
 
     return eventDate > today;
   });
-
-  const filteredEvents = events
-    ? events.filter(event =>
-        event.event_name.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : [];
 
   const sections = [];
 
@@ -190,7 +190,7 @@ const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
     });
   }
 
-/*   useEffect(() => {
+  /*   useEffect(() => {
     console.log('sections', sections);
   }, [sections]); */
 

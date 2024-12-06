@@ -5,14 +5,14 @@ const initialState = {
   selectedNodePrinter: null,
   defaultPrinter: null,
   printStatus: '',
+  autoPrint: true,
   selectedOptions: {
     paperFormat: null,
     orientation: 'portrait',
-    dpi: 300,
+    dpi: 600,
     color: true,
     duplex: 'none',
     copies: 1,
-    autoPrint: true,
   },
 };
 
@@ -56,11 +56,10 @@ const printerSlice = createSlice({
       state.selectedOptions = {
         paperFormat: null,
         orientation: 'portrait',
-        dpi: 300,
+        dpi: 600,
         color: action.payload.capabilities.color || false,
         duplex: action.payload.capabilities.duplex ? 'none' : 'unsupported',
         copies: 1,
-        autoPrint: false,
       };
     },
 
@@ -70,19 +69,17 @@ const printerSlice = createSlice({
       state.selectedNodePrinter = printer;
 
       // Determine the default paper format based on printer capabilities
-      const defaultPaperFormat = printer.capabilities.paperFormats
-        ? printer.capabilities.paperFormats[0] // First supported format
-        : 'A4'; // Fallback to 'A4' if not specified
+      const defaultPaperFormat =
+        printer.capabilities?.paperFormats?.[0] || 'A4';
 
       // Réinitialiser les options lors de la sélection d'une nouvelle imprimante
       state.selectedOptions = {
         paperFormat: defaultPaperFormat,
         orientation: 'portrait',
-        dpi: 300,
+        dpi: 600,
         color: action.payload.capabilities.color || false,
         duplex: action.payload.capabilities.duplex ? 'none' : 'unsupported',
         copies: 1,
-        autoPrint: false, 
       };
     },
     deselectNodePrinter: state => {
@@ -96,6 +93,12 @@ const printerSlice = createSlice({
     // Statut d'impression
     setPrintStatus: (state, action) => {
       state.printStatus = action.payload;
+    },
+
+    //auto print
+
+    setAutoPrint: (state, action) => {
+      state.autoPrint = action.payload;
     },
 
     //les options
@@ -118,6 +121,7 @@ export const {
   deselectNodePrinter,
   setDefaultNodePrinter,
   setPrintStatus,
+  setAutoPrint,
   setOption,
   resetStore,
 } = printerSlice.actions;

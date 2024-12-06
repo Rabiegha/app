@@ -26,11 +26,6 @@ const EventDetailsPerTypeScreen = ({route}) => {
 
   const {state, total} = route.params;
 
-  useEffect(() => {
-    console.log('total', total);
-    console.log('state', state);
-  }, [details, state]);
-
   let data;
   switch (state) {
     case 'registered':
@@ -50,6 +45,12 @@ const EventDetailsPerTypeScreen = ({route}) => {
   let sliceColor = [];
 
   if (data && data.length > 0) {
+    data = data.map(item => ({
+      ...item,
+      background_color: item.background_color
+        ? item.background_color
+        : colors.grey,
+    }));
     series = data.map(item => item.y);
     sliceColor = data.map(item => item.background_color);
   }

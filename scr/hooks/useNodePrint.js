@@ -3,21 +3,28 @@ import useState from 'react';
 import {sendPrintJob as sendPrintService} from '../services/serviceApi'; // Import the print service
 import {useDispatch, useSelector} from 'react-redux';
 import {setPrintStatus} from '../redux/slices/printerSlice';
+import {
+  selectOrientation,
+  selectDpi,
+  selectAutoPrint,
+  selectPaperFormat,
+  selectSelectedNodePrinter,
+} from '../redux/selectors/printerSelectors';
 
 export const useNodePrint = () => {
+  //selectors
+  const orientation = useSelector(selectOrientation);
+  const dpi = useSelector(selectDpi);
+  const selectedPaperFormat = useSelector(selectPaperFormat);
+
+  // selectedNodePrinter
+  const selectedNodePrinter = useSelector(selectSelectedNodePrinter);
+
+  //
   const dispatch = useDispatch();
   // selectedWiFiPrinters
   const selectedWiFiPrinters = useSelector(
     state => state.printers.selectedWiFiPrinter,
-  );
-
-  // selectedNodePrinter
-  const selectedNodePrinter = useSelector(
-    state => state.printers.selectedNodePrinter,
-  );
-
-  const selectedPaperFormat = useSelector(
-    state => state.printers.selectedOptions.paperFormat,
   );
 
   const nodePrinterId = selectedNodePrinter?.id;
@@ -41,8 +48,8 @@ export const useNodePrint = () => {
           paper: selectedPaperFormat,
           copies: 1,
           color: true,
-          dpi: '600',
-          orientation: 'portrait',
+          dpi: dpi.toString(),
+          orientation: orientation,
         },
       };
 

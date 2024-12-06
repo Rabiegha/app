@@ -6,8 +6,7 @@ export const selectOrientation = state =>
 
 export const selectDpi = state => state.printers.selectedOptions.dpi;
 
-export const selectAutoPrint = state =>
-  state.printers.selectedOptions.autoPrint;
+export const selectAutoPrint = state => state.printers.autoPrint;
 
 export const selectPrintStatus = state => state.printers.printStatus;
 

@@ -24,6 +24,7 @@ const ProfilScreen = ({route, navigation}) => {
           firstName={undefined}
           lastName={undefined}
           email={undefined}
+          navigateBack={handleGoBack}
         />
       </View>
     </View>

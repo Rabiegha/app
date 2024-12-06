@@ -1,3 +1,5 @@
+// src/modals/ScanModal.js
+
 import React from 'react';
 import {
   Modal,
@@ -10,11 +12,9 @@ import LottieView from 'lottie-react-native';
 import acceptedAnimation from '../../assets/animations/Accepted.json';
 import rejectedAnimation from '../../assets/animations/Rejected.json';
 import printingAnimation from '../../assets/animations/Printing.json';
-import noFileAnimation from '../../assets/animations/Rejected.json';
-import noPrinterAnimation from '../../assets/animations/Rejected.json';
 import colors from '../../../colors/colors';
 
-const ScanModal = ({onClose, visible, status}) => {
+const ScanModal = ({ onClose, visible, status }) => {
   if (!visible || !status) {
     return null;
   }
@@ -25,24 +25,20 @@ const ScanModal = ({onClose, visible, status}) => {
   let height = 100;
 
   switch (status) {
-    // Scan statuses
+    // Statuts de scan
+    case 'error':
+      message = "Une erreur est survenue pendant l'enregistrement";
+      animationSource = rejectedAnimation;
+      break;
     case 'approved':
       message = 'Participation enregistrée.';
       animationSource = acceptedAnimation;
       break;
-    case 'rejected':
-      message = "Impossible d'enregistrer la participation";
+    case 'not_found':
+      message = 'Not found.';
       animationSource = rejectedAnimation;
       break;
-    // Print statuses
-    case 'No file exists':
-      message = 'No file exists for this attendee.';
-      animationSource = noFileAnimation;
-      break;
-    case 'No printer selected':
-      message = 'No printer selected. Please select a printer first.';
-      animationSource = noPrinterAnimation;
-      break;
+    // Statuts d'impression
     case 'Sending print job':
     case 'printing':
       message = 'Sending print job...';
@@ -54,8 +50,12 @@ const ScanModal = ({onClose, visible, status}) => {
       message = 'Print job done successfully!';
       animationSource = acceptedAnimation;
       break;
-    case 'Error printing document':
+    case 'Error printing':
       message = 'Error sending print job.';
+      animationSource = rejectedAnimation;
+      break;
+    case 'No printer selected':
+      message = 'No printer selected. Please select a printer first.';
       animationSource = rejectedAnimation;
       break;
     default:
@@ -80,7 +80,7 @@ const ScanModal = ({onClose, visible, status}) => {
                   source={animationSource}
                   autoPlay
                   loop={shouldLoop}
-                  style={[styles.animation, {height: height}]}
+                  style={[styles.animation, { height: height }]}
                 />
               )}
             </View>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   modalBackground: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center', // Center vertically
+    justifyContent: 'center', // Centrer verticalement
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
@@ -104,9 +104,9 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     borderRadius: 10,
-    // Optional shadow for better visibility
+    // Ombre optionnelle pour une meilleure visibilité
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,

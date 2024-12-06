@@ -9,21 +9,16 @@ import Paysage from '../../../assets/images/icons/Paysage.png';
 import Portrait from '../../../assets/images/icons/Portrait.png';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {setOption, resetStore} from '../../../redux/slices/printerSlice';
+import {setOption, setAutoPrint} from '../../../redux/slices/printerSlice';
 import {
   selectOrientation,
   selectDpi,
   selectAutoPrint,
 } from '../../../redux/selectors/printerSelectors';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const PrintComponent = () => {
+const PrintComponent = ({navigateBack}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
-/*   useEffect(() => {
-    dispatch(resetStore());
-  }, []); */
 
   //navigation
   const navigateToPrinters = () => {
@@ -39,14 +34,11 @@ const PrintComponent = () => {
   const dpi = useSelector(selectDpi);
   const autoPrint = useSelector(selectAutoPrint);
 
-  // Effet pour vérifier l'état initial d'Auto Print
-  useEffect(() => {
-    console.log('Auto Print initial:', autoPrint);
-  }, []);
+  const dpiPercentage = Math.round((dpi * 100) / 600);
 
   // Fonction pour gérer le toggle du switch Auto Print
   const handleSwitchToggle = () => {
-    dispatch(setOption({optionName: 'autoPrint', value: !autoPrint}));
+    dispatch(setAutoPrint(!autoPrint));
     console.log('Auto Print mis à jour:', !autoPrint);
   };
   //options
@@ -58,8 +50,29 @@ const PrintComponent = () => {
   };
 
   // Fonction pour sélectionner le DPI
-  const handleSelectDpi = value => {
-    dispatch(setOption({optionName: 'dpi', value}));
+  const dpiValues = [0, 150, 300, 450, 600];
+
+  const handleSelectDpi = valueIndex => {
+    if (valueIndex < 1) {
+      // Prevent selecting values below 25%
+      valueIndex = 1;
+    }
+    const selectedDpi = dpiValues[valueIndex]; // Map index to DPI value
+    dispatch(setOption({optionName: 'dpi', value: selectedDpi}));
+  };
+
+  const getResolutionText = dpiPercentage => {
+    if (dpiPercentage === 0) {
+      return 'Très basse résolution';
+    } else if (dpiPercentage <= 25) {
+      return 'Basse résolution';
+    } else if (dpiPercentage <= 50) {
+      return 'Résolution moyenne';
+    } else if (dpiPercentage <= 75) {
+      return 'Haute résolution';
+    } else {
+      return 'Très haute résolution';
+    }
   };
 
   return (
@@ -202,23 +215,27 @@ const PrintComponent = () => {
           {flexDirection: 'column', paddingTop: 17, marginBottom: 25},
         ]}>
         <View style={styles.ResolutionWrapper}>
-          <Text style={styles.title}>Qualité d'impression: {dpi}%</Text>
-          <Text style={styles.textResolution}>Haute résolution {dpi}%</Text>
+          <Text style={styles.title}>
+            Qualité d'impression: {dpiPercentage}%
+          </Text>
+          <Text style={styles.textResolution}>
+            {getResolutionText(dpiPercentage)}
+          </Text>
         </View>
         <Slider
           style={{width: '100%', marginBottom: 0}}
-          minimumValue={1} // Minimum quality value
-          maximumValue={100} // Maximum quality value
+          minimumValue={0}
+          maximumValue={dpiValues.length - 1}
           minimumTrackTintColor={colors.green}
           maximumTrackTintColor={colors.darkGrey}
           step={1}
-          value={dpi} // Bind the current quality value
-          onValueChange={handleSelectDpi} // Update the value on change
+          value={dpiValues.indexOf(dpi)} // Bind the current quality value
+          onValueChange={valueIndex => handleSelectDpi(valueIndex)} // Update the value on change
         />
       </View>
       <LargeButton
         title={'Appliquer'}
-        onPress={undefined}
+        onPress={navigateBack}
         backgroundColor={colors.green}
         loading={undefined}
       />

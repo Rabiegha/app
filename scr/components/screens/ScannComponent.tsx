@@ -1,44 +1,48 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {Text, View, StyleSheet, Animated} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {RNCamera} from 'react-native-camera';
+// src/components/ScannerComponent.js
+
+import React, { useState, useEffect, useRef } from 'react';
+import { Text, View, StyleSheet, Animated } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { RNCamera } from 'react-native-camera';
 import HeaderComponent from '../elements/header/HeaderComponent';
 import colors from '../../../colors/colors';
-import {EventProvider, useEvent} from '../../context/EventContext';
+import { EventProvider, useEvent } from '../../context/EventContext';
 import CustomMarker from '../elements/CustomMarker';
 import ScanModal from '../modals/ScanModal';
-import {scanAttendee} from '../../services/serviceApi';
+import { scanAttendee } from '../../services/serviceApi';
 import usePrintDocument from '../../hooks/usePrintDocument';
 import useUserId from '../../hooks/useUserId';
-import {useSelector} from 'react-redux';
-import {selectPrintStatus} from '../../redux/selectors/printerSelectors';
+import { useSelector } from 'react-redux';
+import {
+  selectPrintStatus,
+  selectAutoPrint,
+} from '../../redux/selectors/printerSelectors';
 
 const ScannerComponent = () => {
   const navigation = useNavigation();
-  const {triggerListRefresh, eventId} = useEvent();
+  const { triggerListRefresh, eventId } = useEvent();
   const cameraRef = useRef(null);
   const scanAnimation = useRef(new Animated.Value(0)).current;
-  const [markerColor, setMarkerColor] = useState('white');
+  const [markerColor] = useState('white');
   const [modalVisible, setModalVisible] = useState(false);
   const [attendeeData, setAttendeeData] = useState(null);
   const [scanStatus, setScanStatus] = useState('idle');
 
-  const {userId} = useUserId();
-  const {printDocument} = usePrintDocument();
-
-  // Handle the back press
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
-
-  // Access the print status from Redux
+  const { userId } = useUserId();
+  const { printDocument } = usePrintDocument();
 
   const printStatus = useSelector(selectPrintStatus);
+  const autoPrint = useSelector(selectAutoPrint);
+  const selectedNodePrinter = useSelector(state => state.printers.selectedNodePrinter);
 
-  // Reset modal visibility on screen focus
+  useEffect(() => {
+    const nodePrinterId = selectedNodePrinter?.id;
+    console.log('Updated selectedNodePrinter in ScannerComponent:', nodePrinterId);
+  }, [selectedNodePrinter]);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      setModalVisible(false);
+      resetScanner();
     });
     return unsubscribe;
   }, [navigation]);
@@ -48,9 +52,10 @@ const ScannerComponent = () => {
     setModalVisible(false);
     setScanStatus('idle');
   };
+
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-  const onBarCodeRead = async ({data}) => {
+  const onBarCodeRead = async ({ data }) => {
     if (scanStatus !== 'idle' || modalVisible) {
       return;
     }
@@ -77,30 +82,21 @@ const ScannerComponent = () => {
 
         await delay(2000);
 
-        setScanStatus('printing');
-
-        await printDocument(attendee.attendee_id);
-
-        // **Wait for the print process to complete**
-
-        await delay(3000);
-
-        if (printStatus === 'Print successful') {
+        if (autoPrint) {
+          setScanStatus('printing');
+          await delay(3000);
+          await printDocument(attendee.attendee_id);
+          // Ne pas vérifier printStatus ici ; la logique est gérée par useEffect ci-dessous
+        } else {
           resetScanner();
           navigation.navigate('Attendees');
-        } else {
-          console.error('Printing failed, staying on the screen.');
-          setScanStatus('error');
-          resetScanner();
         }
       } else {
         setScanStatus('not_found');
-
         await delay(3000);
         resetScanner();
       }
     } catch (error) {
-      // Network or other errors
       console.error('Error during scanning:', error);
       setModalVisible(true);
       setScanStatus('error');
@@ -109,10 +105,39 @@ const ScannerComponent = () => {
     }
   };
 
-  // Handle modal close
+  // Réagir aux changements de printStatus et scanStatus
+  useEffect(() => {
+    if (scanStatus === 'printing') {
+      console.log(`Current printStatus: ${printStatus}`);
+      if (printStatus === 'Print successful') {
+        console.log('Print was successful.');
+        setScanStatus('Print successful');
+        // Garder le modal ouvert pour afficher le succès
+        setTimeout(() => {
+          resetScanner();
+          navigation.navigate('Attendees');
+        }, 2000); // 2 secondes pour afficher le message
+      } else if (printStatus === 'Error printing') {
+        console.log('Print encountered an error.');
+        setScanStatus('Error printing');
+        console.error('Printing failed, staying on the screen.');
+        // Garder le modal ouvert pour afficher l'erreur
+        setTimeout(() => {
+          resetScanner();
+        }, 2000); // 2 secondes pour afficher le message d'erreur
+      }
+    }
+  }, [printStatus, scanStatus, navigation]);
+
+  // Gestion de la fermeture du modal
   const handleModalClose = () => {
-    setModalVisible(false);
+    resetScanner();
     triggerListRefresh();
+  };
+
+  // Définition correcte de handleBackPress à l'intérieur du composant
+  const handleBackPress = () => {
+    navigation.goBack();
   };
 
   return (
@@ -148,12 +173,11 @@ const ScannerComponent = () => {
                 style={[
                   styles.popupContainer,
                   {
-                    backgroundColor:
-                      scanStatus === 'not_found' ? colors.red : colors.green, // Dynamic background color
+                    backgroundColor: scanStatus === 'not_found' ? colors.red : colors.green,
                   },
                 ]}>
                 <Text style={styles.popupText}>
-                  {scanStatus === 'not_found' ? 'Not found' : attendeeData.name}
+                  {scanStatus === 'not_found' ? 'Not found' : attendeeData?.name}
                 </Text>
               </View>
             )}
