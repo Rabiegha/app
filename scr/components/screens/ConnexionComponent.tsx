@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import showPasswordIcon from '../../assets/images/icons/Vu.png';
 import hidePasswordIcon from '../../assets/images/icons/Pas-vu.png';

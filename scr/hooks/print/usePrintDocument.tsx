@@ -4,9 +4,9 @@ import {useCallback} from 'react';
 import {Buffer} from 'buffer';
 import RNFS from 'react-native-fs';
 import {useDispatch, useSelector} from 'react-redux';
-import {setPrintStatus} from '../redux/slices/printerSlice';
+import {setPrintStatus} from '../../redux/slices/printerSlice';
 import {useNodePrint} from './useNodePrint';
-import {useEvent} from '../context/EventContext';
+import {useEvent} from '../../context/EventContext';
 
 const usePrintDocument = () => {
   const eventDetails = useEvent();

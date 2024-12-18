@@ -1,26 +1,26 @@
 // src/components/ScannerComponent.js
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Animated } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { RNCamera } from 'react-native-camera';
+import React, {useState, useEffect, useRef} from 'react';
+import {Text, View, StyleSheet, Animated} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {RNCamera} from 'react-native-camera';
 import HeaderComponent from '../elements/header/HeaderComponent';
-import colors from '../../../colors/colors';
-import { EventProvider, useEvent } from '../../context/EventContext';
+import colors from '../../assets/colors/colors';
+import {EventProvider, useEvent} from '../../context/EventContext';
 import CustomMarker from '../elements/CustomMarker';
 import ScanModal from '../modals/ScanModal';
-import { scanAttendee } from '../../services/serviceApi';
-import usePrintDocument from '../../hooks/usePrintDocument';
+import {scanAttendee} from '../../services/scanAttendeeService';
+import usePrintDocument from '../../hooks/print/usePrintDocument';
 import useUserId from '../../hooks/useUserId';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import {
   selectPrintStatus,
   selectAutoPrint,
 } from '../../redux/selectors/printerSelectors';
 
-const ScannerComponent = () => {
+const ScanComponent = () => {
   const navigation = useNavigation();
-  const { triggerListRefresh, eventId } = useEvent();
+  const {triggerListRefresh, eventId} = useEvent();
   const cameraRef = useRef(null);
   const scanAnimation = useRef(new Animated.Value(0)).current;
   const [markerColor] = useState('white');
@@ -28,16 +28,21 @@ const ScannerComponent = () => {
   const [attendeeData, setAttendeeData] = useState(null);
   const [scanStatus, setScanStatus] = useState('idle');
 
-  const { userId } = useUserId();
-  const { printDocument } = usePrintDocument();
+  const {userId} = useUserId();
+  const {printDocument} = usePrintDocument();
 
   const printStatus = useSelector(selectPrintStatus);
   const autoPrint = useSelector(selectAutoPrint);
-  const selectedNodePrinter = useSelector(state => state.printers.selectedNodePrinter);
+  const selectedNodePrinter = useSelector(
+    state => state.printers.selectedNodePrinter,
+  );
 
   useEffect(() => {
     const nodePrinterId = selectedNodePrinter?.id;
-    console.log('Updated selectedNodePrinter in ScannerComponent:', nodePrinterId);
+    console.log(
+      'Updated selectedNodePrinter in ScannerComponent:',
+      nodePrinterId,
+    );
   }, [selectedNodePrinter]);
 
   useEffect(() => {
@@ -55,7 +60,7 @@ const ScannerComponent = () => {
 
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-  const onBarCodeRead = async ({ data }) => {
+  const onBarCodeRead = async ({data}) => {
     if (scanStatus !== 'idle' || modalVisible) {
       return;
     }
@@ -173,11 +178,14 @@ const ScannerComponent = () => {
                 style={[
                   styles.popupContainer,
                   {
-                    backgroundColor: scanStatus === 'not_found' ? colors.red : colors.green,
+                    backgroundColor:
+                      scanStatus === 'not_found' ? colors.red : colors.green,
                   },
                 ]}>
                 <Text style={styles.popupText}>
-                  {scanStatus === 'not_found' ? 'Not found' : attendeeData?.name}
+                  {scanStatus === 'not_found'
+                    ? 'Not found'
+                    : attendeeData?.name}
                 </Text>
               </View>
             )}
@@ -225,4 +233,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScannerComponent;
+export default ScanComponent;

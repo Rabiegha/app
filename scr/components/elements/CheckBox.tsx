@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {CheckBox} from 'react-native-elements';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import CheckedIcon from '../../assets/images/icons/Checked.png';
 
 const CheckBoxComponent = ({key, isChecked, onPress, title}) => {

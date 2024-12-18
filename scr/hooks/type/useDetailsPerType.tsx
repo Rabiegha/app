@@ -1,9 +1,9 @@
 // useLiveData.js
 
 import {useState, useEffect} from 'react';
-import {fetchDetailsByType} from '../services/serviceApi';
-import useUserId from './useUserId';
-import {useEvent} from '../context/EventContext';
+import {fetchDetailsByType} from '../../services/detailsPerTypeService';
+import useUserId from '.././useUserId';
+import {useEvent} from '../../context/EventContext';
 
 const useDetailsPerType = () => {
   const [details, setDetails] = useState({

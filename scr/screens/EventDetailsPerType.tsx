@@ -9,9 +9,9 @@ import {
 import HeaderComponent from '../components/elements/header/HeaderComponent.tsx';
 import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../assets/styles/globalStyle.tsx';
-import colors from '../../colors/colors.ts';
+import colors from '../assets/colors/colors';
 import EventDetailsPerTypeComponent from '../components/screens/EventDetailsPerTypeComponent.tsx';
-import useDetailsPerType from '../hooks/useDetailsPerType.tsx';
+import useDetailsPerType from '../hooks/type/useDetailsPerType.tsx';
 import PieChart from 'react-native-pie-chart';
 
 const widthAndHeight = 230;

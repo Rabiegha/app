@@ -5,11 +5,11 @@ import HeaderComponent from '../components/elements/header/HeaderComponent';
 import {useFocusEffect} from '@react-navigation/native';
 import globalStyle from '../assets/styles/globalStyle';
 import {useEvent} from '../context/EventContext';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import FailComponent from '../components/elements/notifications/FailComponent';
 import SuccessComponent from '../components/elements/notifications/SuccessComponent';
 import {addAttendee} from '../services/addAttendeeService';
-import useAttendeeTypeDropdown from '../hooks/useAttendeeTypesDropdown';
+import useAttendeeTypeDropdown from '../hooks/type/useAttendeeTypesDropdown';
 
 const AddAttendeesScreen = ({navigation}) => {
   useFocusEffect(
@@ -140,15 +140,6 @@ const AddAttendeesScreen = ({navigation}) => {
   const handleGoBack = () => {
     navigation.navigate('Attendees');
   };
-
-/*   //get atttendee types
-  useEffect(() => {
-    if (userId) {
-      populateAttendeeTypeDropdown();
-    }
-  }, [userId]); */
-
-  //populateAttendeeTypeDropdown
 
   const dropdownOptions = useAttendeeTypeDropdown();
 

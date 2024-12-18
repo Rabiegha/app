@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, TextInput, StyleSheet, Dimensions, Image} from 'react-native';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import RechercherIcon from '../../assets/images/icons/Rechercher.png';
 
 const windowWidth = Dimensions.get('window').width;

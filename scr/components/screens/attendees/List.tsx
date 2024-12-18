@@ -9,7 +9,7 @@ import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
 import ListItem from './ListItem';
 import axios from 'axios';
 import {useEvent} from '../../../context/EventContext';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 import {BASE_URL} from '../../../config/config';
 import useUserId from '../../../hooks/useUserId';
 import {Attendee} from '../../../interfaces/interfaces.tsx';
@@ -17,10 +17,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {demoEvents} from '../../../demo/demoEvents';
 import {AuthContext} from '../../../context/AuthContext.tsx';
 import emptyIcon from '../../../assets/images/empty.gif';
-import {
-  fetchEventAttendeeList,
-  registrationSummaryDetails,
-} from '../../../services/serviceApi.tsx';
+import {registrationSummaryDetails} from '../../../services/registrationSummaryDetailsService';
+import {fetchEventAttendeeList} from '../../../services/getAttendeesList';
 
 import {useFocusEffect} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';

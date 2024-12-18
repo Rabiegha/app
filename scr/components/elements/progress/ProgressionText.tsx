@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 
 const ProgressText = ({totalCheckedAttendees, totalAttendees}) => {
   return (

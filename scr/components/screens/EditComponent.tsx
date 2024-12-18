@@ -10,7 +10,7 @@ import {
 import globalStyle from '../../assets/styles/globalStyle';
 import SuccessComponent from '../elements/notifications/SuccessComponent';
 import FailComponent from '../elements/notifications/FailComponent';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import {useFocusEffect} from '@react-navigation/native';
 import {Dropdown} from 'react-native-element-dropdown';
 

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, Image, View, Text} from 'react-native';
 import LargeButton from '../elements/buttons/LargeButton';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import emptyGif from '../../assets/images/empty.gif';
 import downloadIcon from '../../assets/images/icons/Download.png';

@@ -2,7 +2,7 @@ import React from 'react';
 import {ScrollView, StyleSheet, View, Image, Text} from 'react-native';
 import LabelValueComponent from '../elements/LabelValueComponent';
 import LargeButton from '../elements/buttons/LargeButton';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
 import ScanIcon from '../../assets/images/icons/Scan.png';

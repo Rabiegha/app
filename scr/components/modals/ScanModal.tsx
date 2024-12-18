@@ -12,7 +12,7 @@ import LottieView from 'lottie-react-native';
 import acceptedAnimation from '../../assets/animations/Accepted.json';
 import rejectedAnimation from '../../assets/animations/Rejected.json';
 import printingAnimation from '../../assets/animations/Printing.json';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 
 const ScanModal = ({ onClose, visible, status }) => {
   if (!visible || !status) {

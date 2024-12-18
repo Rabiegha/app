@@ -16,9 +16,10 @@ import {
   selectNodePrinterAsync,
   deselectNodePrinterAsync,
 } from '../../../redux/slices/printerSlice';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 import Spinner from 'react-native-loading-spinner-overlay';
-import {getWifiPrinters, getNodePrinters} from '../../../services/serviceApi';
+import {getNodePrinters} from '../../../services/printNodeService';
+import {getWifiPrinters} from '../../../services/printService';
 
 const PrintersList = () => {
   const [wifiPrinters, setWifiPrinters] = useState([]);

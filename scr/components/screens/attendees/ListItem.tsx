@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -8,48 +8,29 @@ import {
   Dimensions,
   Animated,
   Image,
-  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 import {useEvent} from '../../../context/EventContext';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Accepted from '../../../assets/images/icons/Accepted.png';
-import usePrint from '../../../hooks/usePrint';
-import {useNodePrint} from '../../../hooks/useNodePrint';
-import {Buffer} from 'buffer';
-import RNFS from 'react-native-fs';
 import {useSelector} from 'react-redux';
 import {setPrintStatus} from '../../../redux/slices/printerSlice';
 import {useDispatch} from 'react-redux';
-import usePrintDocument from '../../../hooks/usePrintDocument';
+import usePrintDocument from '../../../hooks/print/usePrintDocument';
 
 const {width} = Dimensions.get('window');
 
 const ListItem = React.memo(
-  ({
-    item,
-    searchQuery,
-    onUpdateAttendee,
-    onSwipeableOpen,
-    onPressedit,
-    onPresscheck,
-  }) => {
+  ({item, searchQuery, onUpdateAttendee, onSwipeableOpen}) => {
     const navigation = useNavigation();
     const {triggerListRefresh} = useEvent();
     const swipeableRef = useRef(null);
-    const {handlePrint} = usePrint();
-    const {sendPrintJob} = useNodePrint();
 
     const dispatch = useDispatch();
 
     const initialSwitchState = item.attendee_status == 1;
     const [isCheckedIn, setIsCheckedIn] = useState(initialSwitchState);
-
-    // selectedWiFiPrinters
-    const selectedWiFiPrinters = useSelector(
-      state => state.printers.selectedWiFiPrinters,
-    );
 
     const handleSwitchToggle = async newValue => {
       try {

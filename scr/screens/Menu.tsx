@@ -1,7 +1,7 @@
 // MenuScreen.js
 import React, {useContext, useEffect} from 'react';
 import {View, StyleSheet, StatusBar} from 'react-native';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import LogOutButton from '../components/elements/buttons/LogOutButton';
 import {logoutUser} from '../services/Api/Login-out';
 import {CommonActions, useFocusEffect} from '@react-navigation/native';
@@ -37,7 +37,7 @@ const MenuScreen = ({navigation}) => {
           title: 'Ajouter un participant',
           action: () => navigation.navigate('Add'),
         },
-        {title: 'Scan', action: () => navigation.navigate('Scann')},
+        {title: 'Scan', action: () => navigation.navigate('Scan')},
         {
           title: 'Print',
           action: () => navigation.navigate('Print'),
@@ -73,6 +73,7 @@ const MenuScreen = ({navigation}) => {
         title={'Outils'}
         color={colors.greyCream}
         handlePress={() => navigation.navigate('Attendees')}
+        backgroundColor={undefined}
       />
       <View style={globalStyle.container}>
         <View style={{top: 60}}>

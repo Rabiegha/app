@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
-import {getAttendeeTypes} from '../services/serviceApi';
-import colors from '../../colors/colors';
-import useUserId from '../hooks/useUserId';
+import {getAttendeeTypes} from '../../services/getAttendeeTypeService';
+import colors from '../../assets/colors/colors';
+import useUserId from '../../hooks/useUserId';
 
 const useAttendeeTypeDropdown = () => {
   const [dropdownOptions, setDropdownOptions] = useState([]);

@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 
 const EventsStats = ({Avenir, Passees, Evenement, width1, width2, width3}) => {
   return (

@@ -1,15 +1,15 @@
 // src/hooks/usePrint.js
 import useState from 'react';
-import {sendPrintJob as sendPrintService} from '../services/serviceApi'; // Import the print service
+import {sendPrintJob as sendPrintService} from '../../services/printNodeService'; // Import the print service
 import {useDispatch, useSelector} from 'react-redux';
-import {setPrintStatus} from '../redux/slices/printerSlice';
+import {setPrintStatus} from '../../redux/slices/printerSlice';
 import {
   selectOrientation,
   selectDpi,
   selectAutoPrint,
   selectPaperFormat,
   selectSelectedNodePrinter,
-} from '../redux/selectors/printerSelectors';
+} from '../../redux/selectors/printerSelectors';
 
 export const useNodePrint = () => {
   //selectors

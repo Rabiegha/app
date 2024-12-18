@@ -2,7 +2,7 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import HeaderComponent from '../elements/header/HeaderComponent';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import FiltreDetailsComponent from './FiltreDetailsComponent';
 import RedBorderButton from '../elements/buttons/RedBorderButton';

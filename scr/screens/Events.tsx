@@ -4,7 +4,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import EventPasseesScreen from './EventsPassees';
 import EventAvenirScreen from './EventsAvenir';
 import {NavigationContainer, useFocusEffect} from '@react-navigation/native';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import Search from '../components/elements/Search';
 import {useNavigation} from '@react-navigation/native';
 import HeaderEvent from '../components/elements/header/HeaderEvent';

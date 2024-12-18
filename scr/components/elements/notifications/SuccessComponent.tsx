@@ -7,9 +7,9 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import colors from '../../../../colors/colors';
 import Verifie from '../../../assets/images/icons/Verifie.png';
 import closeButton from '../../../assets/images/icons/closeButton.png';
+import colors from '../../../assets/colors/colors';
 
 const SuccessComponent = ({onClose, text}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value

@@ -1,7 +1,7 @@
 import React from 'react';
 import {WebView} from 'react-native-webview';
 import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import { useNavigation } from '@react-navigation/native';
 
 const WebViewScreen = ({route}) => {

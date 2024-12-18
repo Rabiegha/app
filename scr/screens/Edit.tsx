@@ -8,11 +8,11 @@ import axios from 'axios';
 import {BASE_URL} from '../config/config';
 import EditComponent from '../components/screens/EditComponent';
 import useUserId from '../hooks/useUserId';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import SuccessComponent from '../components/elements/notifications/SuccessComponent';
 import FailComponent from '../components/elements/notifications/FailComponent';
-import {editAttendee} from '../services/serviceApi.tsx';
-import useAttendeeTypeDropdown from '../hooks/useAttendeeTypesDropdown.tsx';
+import {editAttendee} from '../services/editAttendeeService.tsx';
+import useAttendeeTypeDropdown from '../hooks/type/useAttendeeTypesDropdown.tsx';
 
 const EditScreen = ({navigation, route}) => {
   useFocusEffect(

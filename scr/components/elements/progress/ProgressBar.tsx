@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 import ProgressText from './ProgressionText';
 
 const ProgressBar = ({progress}) => {

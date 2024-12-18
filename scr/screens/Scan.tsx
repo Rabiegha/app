@@ -1,5 +1,5 @@
 import {View, Text, StatusBar} from 'react-native';
-import ScannerComponent from '../components/screens/ScannComponent.tsx';
+import ScanComponent from '../components/screens/ScanComponent.tsx';
 import {useFocusEffect} from '@react-navigation/native';
 import React from 'react';
 
@@ -14,7 +14,7 @@ const QRCodeScannerScreen = () => {
   );
   return (
     <View style={{flex: 1}}>
-      <ScannerComponent />
+      <ScanComponent />
     </View>
   );
 };

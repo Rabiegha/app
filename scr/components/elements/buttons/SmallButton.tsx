@@ -1,7 +1,7 @@
 // CustomButton.js
 import React from 'react';
 import {TouchableOpacity, StyleSheet, Dimensions, Image} from 'react-native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 
 const SmallButton = ({
   imageSource,

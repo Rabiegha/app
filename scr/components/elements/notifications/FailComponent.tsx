@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 import Fermer from '../../../assets/images/icons/Fermer.png';
 import closeButton from '../../../assets/images/icons/closeButton.png';
 

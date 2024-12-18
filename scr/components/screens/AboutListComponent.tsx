@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 
 const AboutListComponent = () => {
   return (

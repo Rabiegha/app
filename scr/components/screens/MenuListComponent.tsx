@@ -1,7 +1,7 @@
 // MenuListComponent.js
 import React, { useState } from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import Acceder from '../../assets/images/icons/Acceder.png';
 
 const MenuListComponent = ({ sections }) => {

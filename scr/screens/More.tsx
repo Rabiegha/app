@@ -5,7 +5,7 @@ import Share from 'react-native-share';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
 import MoreComponent from '../components/screens/MoreComponent';
 import globalStyle from '../assets/styles/globalStyle';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import {BASE_URL, EMS_URL} from '../config/config';
 import {useEvent} from '../context/EventContext';
 

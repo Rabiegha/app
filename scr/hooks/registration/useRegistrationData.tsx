@@ -1,9 +1,9 @@
 // useLiveData.js
 
 import {useState, useEffect} from 'react';
-import {registrationSummaryDetails} from '../services/serviceApi';
-import useUserId from './useUserId';
-import {useEvent} from '../context/EventContext';
+import {registrationSummaryDetails} from '../../services/registrationSummaryDetailsService';
+import useUserId from '../useUserId';
+import {useEvent} from '../../context/EventContext';
 
 const useRegistrationData = () => {
   const [summary, setSummary] = useState({

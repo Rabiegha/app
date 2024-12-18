@@ -1,7 +1,7 @@
 // MenuScreen.js
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
 
@@ -12,8 +12,8 @@ const HelpScreen = ({navigation}) => {
       buttons: [
         {title: 'Participants', action: () => navigation.navigate('Attendees')},
         {title: 'Ajouts', action: () => navigation.navigate('Add')},
-        {title: 'Scan', action: () => navigation.navigate('Scann')},
-        {title: 'Scan', action: () => navigation.navigate('Scann')},
+        {title: 'Scan', action: () => navigation.navigate('Scan')},
+        {title: 'Scan', action: () => navigation.navigate('Scan')},
       ],
     },
     {

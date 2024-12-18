@@ -6,7 +6,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import RNPrint from 'react-native-print';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import BadgeComponent from '../components/screens/BadgeComponent';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
 import { useEvent } from '../context/EventContext';
 import { EMS_URL } from '../config/config';

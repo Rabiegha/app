@@ -2,7 +2,7 @@
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet, Dimensions} from 'react-native';
 import {Image} from 'react-native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 
 const AppliquerButton = ({onPress, Titre}) => {
   return (

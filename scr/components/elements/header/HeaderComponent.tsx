@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 import retourIcon from '../../../assets/images/icons/Retour.png';
 
 const HeaderComponent = ({title, handlePress, color, backgroundColor}) => {

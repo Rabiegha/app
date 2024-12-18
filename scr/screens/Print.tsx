@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
 import {useEvent} from '../context/EventContext';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
 import PrintComponent from '../components/screens/print/PrintComponent';
 

@@ -13,7 +13,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import SuccessComponent from '../elements/notifications/SuccessComponent';
 import FailComponent from '../elements/notifications/FailComponent';
 import {CheckBox} from 'react-native-elements';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import notChecked from '../../assets/images/icons/Not-checked.png';
 import Checked from '../../assets/images/icons/Checked.png';
 import {Picker} from '@react-native-picker/picker';

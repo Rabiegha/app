@@ -1,5 +1,5 @@
 import {Platform, StyleSheet} from 'react-native';
-import colors from '../../../colors/colors';
+import colors from '../colors/colors';
 
 const globalStyle = StyleSheet.create({
   backgroundWhite: {

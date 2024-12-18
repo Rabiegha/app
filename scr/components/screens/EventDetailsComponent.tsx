@@ -3,7 +3,7 @@ import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
 import totalAttendeeIcon from '../../assets/images/icons/totalAttendees.png';
 import checkedInIcon from '../../assets/images/icons/checkedIn.png';
 import notCheckedIcon from '../../assets/images/icons/notCheckedIn.png';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 
 const EventDetailsPerTypeComponent = ({
   totalAttendees,

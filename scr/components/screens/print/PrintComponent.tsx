@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Image, Text, StyleSheet, TouchableOpacity, View} from 'react-native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 import LargeButton from '../../elements/buttons/LargeButton';
 import Acceder from '../../../assets/images/icons/Acceder.png';
 import CustomSwitch from '../../elements/Switch';

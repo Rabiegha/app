@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 
 const HoldButton = ({
   title,

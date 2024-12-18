@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import {ScrollView} from 'react-native-gesture-handler';
 
 const EventDetailsComponent = ({data}) => {

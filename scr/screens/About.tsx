@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet, Linking} from 'react-native';
 import MenuListComponent from '../components/screens/MenuListComponent';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
 import WebView from 'react-native-webview';
 

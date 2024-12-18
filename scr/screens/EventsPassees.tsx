@@ -11,7 +11,7 @@ import axios from 'axios';
 import ListEvents from '../components/screens/events/ListEvents';
 import {useEvent} from '../context/EventContext';
 import {useFocusEffect} from '@react-navigation/native';
-import colors from '../../colors/colors';
+import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
 import {BASE_URL} from '../config/config';
 import useUserId from '../hooks/useUserId';

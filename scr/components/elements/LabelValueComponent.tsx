@@ -1,7 +1,7 @@
 // LabelValueComponent.js
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; // Assuming you're using Expo for icons
-import colors from '../../../colors/colors';
+import colors from '../../assets/colors/colors';
 import modifier from '../../../scr/assets/images/icons/Modifier.png';
 
 const LabelValueComponent = ({label, value, value2, modifyDisplay, modify}) => {

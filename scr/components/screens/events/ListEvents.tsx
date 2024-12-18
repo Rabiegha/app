@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 
 const ListEvents = ({
   eventData,

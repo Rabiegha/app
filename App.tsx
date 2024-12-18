@@ -7,7 +7,7 @@
 
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import AppNavigator from './scr/navigation/NavigationComponent';
+import AppNavigator from './scr/navigation/AppNavigator';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {navigationRef} from './scr/navigation/RootNavigation';
 import AppProviders from './AppProviders';

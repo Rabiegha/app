@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet, SafeAreaView, Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import colors from '../../../../colors/colors';
+import colors from '../../../assets/colors/colors';
 import SmallButton from '../buttons/SmallButton';
 import retourIcon from '../../../assets/images/icons/Retour.png';
 import logOutIcon from '../../../assets/images/icons/Log-out.png';
