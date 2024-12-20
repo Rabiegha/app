@@ -1,24 +1,21 @@
 // useEventsData.js
 import {useEffect, useContext, useCallback} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {
-  selectEvents,
-  selectLoading,
-  selectError,
-  selectTimeStamp,
-} from '../../redux/selectors/eventSelectors';
 import useUserId from '../useUserId';
 import {AuthContext} from '../../context/AuthContext';
-import {fetchFutureEvents, clearFutureEvents} from '../../redux/slices/event/futureEventsSlice';
+import {fetchFutureEvents} from '../../redux/slices/event/futureEventsSlice';
+import {clearFutureEvents} from '../../redux/slices/event/futureEventsSlice';
 
-export default function useEventsData(isEventFromList) {
+export default function useFutureEvents() {
   const expirationTimeInMillis = 24 * 60 * 60 * 1000;
-  const events = useSelector(selectEvents);
-  const loading = useSelector(selectLoading);
-  const error = useSelector(selectError);
-  const timeStamp = useSelector(selectTimeStamp);
 
-  const [userId] = useUserId();
+  const events = useSelector(state => state.futureEvents.events);
+  const loading = useSelector(state => state.futureEvents.loading);
+  const error = useSelector(state => state.futureEvents.error);
+  const timeStamp = useSelector(state => state.futureEvents.timeStamp);
+  const isEventFromList = [1, 2];
+
+  const userId = useUserId();
   const {isDemoMode} = useContext(AuthContext);
   const dispatch = useDispatch();
 

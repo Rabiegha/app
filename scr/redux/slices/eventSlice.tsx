@@ -16,8 +16,11 @@ export const fetchEvents = createAsyncThunk(
       if (isDemoMode) {
         return {events: demoEvents, timeStamp: Date.now()};
       } else {
+        const isEventFromArray = Array.isArray(isEventFromList)
+          ? isEventFromList
+          : [isEventFromList];
         let combinedEvents = [];
-        for (const isEventFrom of isEventFromList) {
+        for (const isEventFrom of isEventFromArray) {
           const response = await fetchEventDetails(userId, isEventFrom);
           try {
             if (response.status && response.event_details) {

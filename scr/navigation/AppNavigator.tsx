@@ -14,8 +14,8 @@ import PrintresListScreen from '../screens/PrintersList';
 import PaperFormat from '../screens/PaperFormat';
 import WebViewScreen from '../screens/WebView';
 import HelpScreen from '../screens/Help';
-import EventAvenirScreen from '../screens/EventsAvenir';
-import EventPasseesScreen from '../screens/EventsPassees';
+import FutureEventsScreen from '../screens/FutureEvents';
+import PastEventsScreen from '../screens/PastEvents';
 import EventDetailsScreen from '../screens/EventDetails';
 import EventDetailsPerTypeScreen from '../screens/EventDetailsPerType';
 import MenuScreen from '../screens/Menu';
@@ -45,8 +45,8 @@ function AppNavigator() {
       <Stack.Screen name="PaperFormat" component={PaperFormat} />
       <Stack.Screen name="WebView" component={WebViewScreen} />
       <Stack.Screen name="Help" component={HelpScreen} />
-      <Stack.Screen name="Avenir" component={EventAvenirScreen} />
-      <Stack.Screen name="Passees" component={EventPasseesScreen} />
+      <Stack.Screen name="Avenir" component={FutureEventsScreen} />
+      <Stack.Screen name="Passees" component={PastEventsScreen} />
       <Stack.Screen name="EventDetails" component={EventDetailsScreen} />
       <Stack.Screen
         name="EventDetailsPerType"

@@ -6,14 +6,14 @@ import ListEvents from '../components/screens/events/ListEvents';
 import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
 
-import useEventsData from '../hooks/event/useEventData';
 import useFilteredAndSectionedEvents from '../hooks/event/useFilteredAndSectionedEvents';
-import EmptyView from '../components/elements/View/EmptyView';
-import ErrorView from '../components/elements/View/ErrorView';
-import LoadingView from '../components/elements/View/LoadingView';
+import ErrorView from '../components/elements/view/ErrorView';
+import LoadingView from '../components/elements/view/LoadingView';
+import EmptyView from '../components/elements/view/EmptyView';
+import useFutureEvents from '../hooks/event/useFutureEvents';
 
-const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
-  const {events, loading, error, clearData} = useEventsData();
+const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
+  const {events, loading, error, clearData} = useFutureEvents();
   const {sections, eventsToday} = useFilteredAndSectionedEvents(
     events,
     searchQuery,
@@ -23,7 +23,7 @@ const EventAvenirScreen = ({searchQuery, onEventSelect}) => {
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setBarStyle('dark-content');
-      /* clearData(); */
+      clearData();
       return () => {
         StatusBar.setBarStyle('dark-content');
       };
@@ -105,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventAvenirScreen;
+export default FutureEventsScreen;

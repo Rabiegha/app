@@ -6,7 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {combineReducers} from 'redux';
 
 import printerReducer from './slices/printerSlice';
-import eventReducer from './slices/eventSlice';
+import pastEventsReducer from './slices/event/pastEventsSlice';
+import futureEventsReducer from './slices/event/futureEventsSlice';
 
 const persistConfig = {
   key: 'root',
@@ -16,7 +17,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   printers: printerReducer,
-  events: eventReducer,
+  pastEvents: pastEventsReducer,
+  futureEvents: futureEventsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

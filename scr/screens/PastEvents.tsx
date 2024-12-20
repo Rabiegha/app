@@ -2,17 +2,14 @@ import React from 'react';
 import {View, StyleSheet, FlatList} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import ListEvents from '../components/screens/events/ListEvents';
-import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
-import useEventsData from '../hooks/event/useEventData';
-import EmptyView from '../components/elements/View/EmptyView';
-import ErrorView from '../components/elements/View/ErrorView';
-import LoadingView from '../components/elements/View/LoadingView';
+import usePastEvents from '../hooks/event/usePastEvents';
+import EmptyView from '../components/elements/view/EmptyView';
+import ErrorView from '../components/elements/view/ErrorView';
+import LoadingView from '../components/elements/view/LoadingView';
 
-const EventPasseesScreen = ({searchQuery, onEventSelect}) => {
-  const {events, loading, error, clearData} = useEventsData({
-    isEventFromList: [0],
-  });
+const PastEventsScreen = ({searchQuery, onEventSelect}) => {
+  const {events, loading, error, clearData} = usePastEvents(0);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -66,4 +63,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventPasseesScreen;
+export default PastEventsScreen;

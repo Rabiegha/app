@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {View, StyleSheet, Animated, StatusBar, Platform} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import EventPasseesScreen from './EventsPassees';
-import EventAvenirScreen from './EventsAvenir';
+import EventPasseesScreen from './PastEvents';
+import EventAvenirScreen from './FutureEvents';
 import {NavigationContainer, useFocusEffect} from '@react-navigation/native';
 import colors from '../assets/colors/colors';
 import Search from '../components/elements/Search';
