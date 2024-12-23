@@ -3,7 +3,7 @@ import {useEffect, useContext, useCallback} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import useUserId from '../useUserId';
 import {AuthContext} from '../../context/AuthContext';
-import {fetchFutureEvents} from '../../redux/slices/event/futureEventsSlice';
+import {fetchFutureEvents} from '../../redux/thunks/event/fetchFutureEventsThunk';
 import {clearFutureEvents} from '../../redux/slices/event/futureEventsSlice';
 
 export default function useFutureEvents() {
