@@ -8,17 +8,19 @@ import {combineReducers} from 'redux';
 import printerReducer from './slices/printerSlice';
 import pastEventsReducer from './slices/event/pastEventsSlice';
 import futureEventsReducer from './slices/event/futureEventsSlice';
+import authReducer from './slices/auth/authSlice';
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['printers'],
+  whitelist: ['printers', 'pastEvents', 'futureEvents', 'auth'],
 };
 
 const rootReducer = combineReducers({
   printers: printerReducer,
   pastEvents: pastEventsReducer,
   futureEvents: futureEventsReducer,
+  auth: authReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -5,14 +5,20 @@ import useUserId from '../useUserId';
 import {AuthContext} from '../../context/AuthContext';
 import {fetchFutureEvents} from '../../redux/thunks/event/fetchFutureEventsThunk';
 import {clearFutureEvents} from '../../redux/slices/event/futureEventsSlice';
+import {
+  selectFutureEvents,
+  selectFutureEventsLoading,
+  selectFutureEventsError,
+  selectFutureEventsTimeStamp,
+} from '../../redux/selectors/event/futureEventsSelectors';
 
 export default function useFutureEvents() {
   const expirationTimeInMillis = 24 * 60 * 60 * 1000;
 
-  const events = useSelector(state => state.futureEvents.events);
-  const loading = useSelector(state => state.futureEvents.loading);
-  const error = useSelector(state => state.futureEvents.error);
-  const timeStamp = useSelector(state => state.futureEvents.timeStamp);
+  const events = useSelector(selectFutureEvents);
+  const loading = useSelector(selectFutureEventsLoading);
+  const error = useSelector(selectFutureEventsError);
+  const timeStamp = useSelector(selectFutureEventsTimeStamp);
   const isEventFromList = [1, 2];
 
   const userId = useUserId();

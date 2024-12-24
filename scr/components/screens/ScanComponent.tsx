@@ -6,7 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 import {RNCamera} from 'react-native-camera';
 import HeaderComponent from '../elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
-import {EventProvider, useEvent} from '../../context/EventContext';
+import {useEvent} from '../../context/EventContext';
 import CustomMarker from '../elements/CustomMarker';
 import ScanModal from '../modals/ScanModal';
 import {scanAttendee} from '../../services/scanAttendeeService';
@@ -16,7 +16,7 @@ import {useSelector} from 'react-redux';
 import {
   selectPrintStatus,
   selectAutoPrint,
-} from '../../redux/selectors/printerSelectors';
+} from '../../redux/selectors/print/printerSelectors';
 
 const ScanComponent = () => {
   const navigation = useNavigation();
@@ -146,58 +146,54 @@ const ScanComponent = () => {
   };
 
   return (
-    <EventProvider>
-      <View style={styles.container}>
-        <HeaderComponent
-          title="Scan QR Code"
-          color={colors.greyCream}
-          handlePress={handleBackPress}
-          backgroundColor={undefined}
-        />
-        <RNCamera
-          ref={cameraRef}
-          style={styles.camera}
-          onBarCodeRead={onBarCodeRead}
-          captureAudio={false}
-          type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.off}
-          androidCameraPermissionOptions={{
-            title: 'Permission to use camera',
-            message: 'We need your permission to use your camera',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}>
-          <View style={styles.overlay}>
-            <CustomMarker
-              markerColor={markerColor}
-              isScanning={scanStatus !== 'idle'}
-              scanAnimation={scanAnimation}
-            />
-            {(scanStatus === 'not_found' || scanStatus === 'found') && (
-              <View
-                style={[
-                  styles.popupContainer,
-                  {
-                    backgroundColor:
-                      scanStatus === 'not_found' ? colors.red : colors.green,
-                  },
-                ]}>
-                <Text style={styles.popupText}>
-                  {scanStatus === 'not_found'
-                    ? 'Not found'
-                    : attendeeData?.name}
-                </Text>
-              </View>
-            )}
-          </View>
-        </RNCamera>
-        <ScanModal
-          visible={modalVisible}
-          onClose={handleModalClose}
-          status={scanStatus}
-        />
-      </View>
-    </EventProvider>
+    <View style={styles.container}>
+      <HeaderComponent
+        title="Scan QR Code"
+        color={colors.greyCream}
+        handlePress={handleBackPress}
+        backgroundColor={undefined}
+      />
+      <RNCamera
+        ref={cameraRef}
+        style={styles.camera}
+        onBarCodeRead={onBarCodeRead}
+        captureAudio={false}
+        type={RNCamera.Constants.Type.back}
+        flashMode={RNCamera.Constants.FlashMode.off}
+        androidCameraPermissionOptions={{
+          title: 'Permission to use camera',
+          message: 'We need your permission to use your camera',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }}>
+        <View style={styles.overlay}>
+          <CustomMarker
+            markerColor={markerColor}
+            isScanning={scanStatus !== 'idle'}
+            scanAnimation={scanAnimation}
+          />
+          {(scanStatus === 'not_found' || scanStatus === 'found') && (
+            <View
+              style={[
+                styles.popupContainer,
+                {
+                  backgroundColor:
+                    scanStatus === 'not_found' ? colors.red : colors.green,
+                },
+              ]}>
+              <Text style={styles.popupText}>
+                {scanStatus === 'not_found' ? 'Not found' : attendeeData?.name}
+              </Text>
+            </View>
+          )}
+        </View>
+      </RNCamera>
+      <ScanModal
+        visible={modalVisible}
+        onClose={handleModalClose}
+        status={scanStatus}
+      />
+    </View>
   );
 };
 

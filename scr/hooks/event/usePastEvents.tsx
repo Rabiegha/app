@@ -5,15 +5,20 @@ import {
 } from '../../redux/slices/event/pastEventsSlice';
 import {useContext, useEffect} from 'react';
 import {AuthContext} from '../../context/AuthContext';
-import {fetchEvents} from '../../redux/slices/eventSlice';
 import useUserId from '../useUserId';
+import {
+  selectPastEvents,
+  selectPastEventsLoading,
+  selectPastEventsError,
+  selectPastEventsTimeStamp,
+} from '../../redux/selectors/event/pastEventsSelectors';
 
 export default function usePastEvents() {
   const expirationTimeInMillis = 24 * 60 * 60 * 1000;
-  const events = useSelector(state => state.pastEvents.events);
-  const loading = useSelector(state => state.pastEvents.loading);
-  const error = useSelector(state => state.pastEvents.error);
-  const timeStamp = useSelector(state => state.futureEvents.timeStamp);
+  const events = useSelector(selectPastEvents);
+  const loading = useSelector(selectPastEventsLoading);
+  const error = useSelector(selectPastEventsError);
+  const timeStamp = useSelector(selectPastEventsTimeStamp);
   const isEventFrom = 0;
 
   const [userId] = useUserId();
@@ -48,5 +53,5 @@ export default function usePastEvents() {
     dispatch(clearPastEvents());
   };
 
-  return {events, loading, error, fetchEvents, clearData};
+  return {events, loading, error, fetchPastEvents, clearData};
 }

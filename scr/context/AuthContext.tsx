@@ -39,26 +39,18 @@ export const AuthProvider = ({children}) => {
       if (userStatus) {
         let userInfo = response.data.user_details;
         setUserInfo(userInfo);
-        storage.set('email', userInfo.email.toString());
-        storage.set('user_id', userInfo.user_id.toString());
-        storage.set('full_name', userInfo.full_name.toString());
-        storage.set('login_status', true);
-        storage.set(
+        await AsyncStorage.setItem('email', userInfo.email.toString());
+        await AsyncStorage.setItem('user_id', userInfo.user_id.toString());
+        await AsyncStorage.setItem('full_name', userInfo.full_name.toString());
+        await AsyncStorage.setItem('login_status', 'true'); // store as a string
+        await AsyncStorage.setItem(
           'current_user_login_details_id',
-          response.data.user_details.current_user_login_details_id.toString(),
+          userInfo.current_user_login_details_id.toString(),
         );
         setCurrentUserId(
           response.data.user_details.current_user_login_details_id.toString(),
         );
         setUserStatus(userStatus);
-        /*         console.log('Valeurs stockées dans MMKV:', {
-          email: userInfo.email,
-          user_id: userInfo.user_id,
-          full_name: userInfo.full_name,
-          login_status: true,
-          current_user_login_details_id:
-            response.data.user_details.current_user_login_details_id,
-        }); */
       } else {
         console.error(
           'Erreur lors de la connexion: structure de réponse incorrecte',
@@ -79,7 +71,6 @@ export const AuthProvider = ({children}) => {
     setIsLoading(true);
     try {
       if (isDemoMode) {
-        // Si le mode démo est activé, simplement désactiver le mode démo et naviguer vers la connexion
         setIsDemoMode(false);
         setUserStatus(false);
         setUserInfo({});

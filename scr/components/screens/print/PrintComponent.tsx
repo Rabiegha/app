@@ -14,7 +14,7 @@ import {
   selectOrientation,
   selectDpi,
   selectAutoPrint,
-} from '../../../redux/selectors/printerSelectors';
+} from '../../../redux/selectors/print/printerSelectors';
 
 const PrintComponent = ({navigateBack}) => {
   const navigation = useNavigation();

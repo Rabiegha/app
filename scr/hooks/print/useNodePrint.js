@@ -9,7 +9,7 @@ import {
   selectAutoPrint,
   selectPaperFormat,
   selectSelectedNodePrinter,
-} from '../../redux/selectors/printerSelectors';
+} from '../../redux/selectors/print/printerSelectors';
 
 export const useNodePrint = () => {
   //selectors

@@ -13,6 +13,8 @@ import globalStyle from '../assets/styles/globalStyle';
 import {AuthContext} from '../context/AuthContext';
 import Spinner from 'react-native-loading-spinner-overlay';
 import FailComponent from '../components/elements/notifications/FailComponent';
+import {loginThunk} from '../redux/thunks/auth/loginThunk';
+import {useDispatch, useSelector} from 'react-redux';
 
 const ConnexionScreen = () => {
   const [userName, setUserName] = useState('');
@@ -20,7 +22,7 @@ const ConnexionScreen = () => {
   const navigation = useNavigation();
   const [success, setSuccess] = useState(null);
 
-  const {isLoading, login, fail, resetFail, setIsDemoMode} =
+  const {isLoading, /* login, */ fail, resetFail, setIsDemoMode} =
     useContext(AuthContext);
   useEffect(() => {
     StatusBar.setBarStyle('dark-content');
@@ -33,6 +35,18 @@ const ConnexionScreen = () => {
   const handleDemoLogin = () => {
     setIsDemoMode(true); // Activez le mode démo
     navigation.navigate('Events'); // Naviguez vers l'écran des événements
+  };
+
+  const dispatch = useDispatch();
+  const handleLogin = (userName, password) => {
+    dispatch(
+      loginThunk({
+        email: userName,
+        password: password,
+      }),
+    );
+
+    resetFail();
   };
 
   return (
@@ -60,7 +74,7 @@ const ConnexionScreen = () => {
           setUserName={text => setUserName(text)}
           setPassword={text => setPassword(text)}
           handleLogin={() => {
-            login(userName, password);
+            handleLogin(userName, password);
             resetFail();
           }}
         />

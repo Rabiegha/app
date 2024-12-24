@@ -6,8 +6,8 @@ export const events = [
     event_name: '1',
     event_team_members: 'Cem Koseoglu, Francoise Faure, Jean-Francois LeNilias',
     event_type_name: 'Webinar',
-    nice_end_datetime: '14/11/2024 11:59 PM',
-    nice_start_datetime: '14/11/2024 09:15 AM',
+    nice_end_datetime: '24/12/2025 11:59 PM',
+    nice_start_datetime: '24/12/2024 09:15 AM',
   },
   {
     description: '',
@@ -16,8 +16,8 @@ export const events = [
     event_name: '1',
     event_team_members: 'Ben Rais, Cem Koseoglu, Corentin Kistler',
     event_type_name: 'Diner',
-    nice_end_datetime: '14/11/2024 11:59 PM',
-    nice_start_datetime: '14/11/2024 06:30 PM',
+    nice_end_datetime: '14/12/2025 11:59 PM',
+    nice_start_datetime: '14/11/2025 06:30 PM',
   },
   {
     description: '',
@@ -26,8 +26,8 @@ export const events = [
     event_name: '1',
     event_team_members: 'Ben Rais, Corentin Kistler',
     event_type_name: 'Other',
-    nice_end_datetime: '20/11/2024 11:59 PM',
-    nice_start_datetime: '20/11/2024 09:30 AM',
+    nice_end_datetime: '20/11/2025 11:59 PM',
+    nice_start_datetime: '20/11/2025 09:30 AM',
   },
   {
     description: '',
@@ -37,6 +37,6 @@ export const events = [
     event_team_members: 'Ben Rais, Corentin Kistler',
     event_type_name: 'Other',
     nice_end_datetime: '05/12/2024 11:59 PM',
-    nice_start_datetime: '03/12/2024 08:00 AM',
+    nice_start_datetime: '03/12/2025 08:00 AM',
   },
 ];
