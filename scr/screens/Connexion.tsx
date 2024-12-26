@@ -1,20 +1,13 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, StatusBar} from 'react-native';
 import ConnexionComponent from '../components/screens/ConnexionComponent';
 import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../assets/styles/globalStyle';
-import {AuthContext} from '../context/AuthContext';
 import Spinner from 'react-native-loading-spinner-overlay';
 import FailComponent from '../components/elements/notifications/FailComponent';
 import {loginThunk} from '../redux/thunks/auth/loginThunk';
 import {useDispatch, useSelector} from 'react-redux';
+import {resetError} from '../redux/slices/auth/authSlice';
 
 const ConnexionScreen = () => {
   const [userName, setUserName] = useState('');
@@ -22,8 +15,10 @@ const ConnexionScreen = () => {
   const navigation = useNavigation();
   const [success, setSuccess] = useState(null);
 
-  const {isLoading, /* login, */ fail, resetFail, setIsDemoMode} =
-    useContext(AuthContext);
+  /*   const {isLoading, login, fail, resetFail, setIsDemoMode} =
+    useContext(AuthContext); */
+
+  const {isLoading, error} = useSelector(state => state.auth);
   useEffect(() => {
     StatusBar.setBarStyle('dark-content');
     return () => {
@@ -38,6 +33,7 @@ const ConnexionScreen = () => {
   };
 
   const dispatch = useDispatch();
+
   const handleLogin = (userName, password) => {
     dispatch(
       loginThunk({
@@ -45,8 +41,7 @@ const ConnexionScreen = () => {
         password: password,
       }),
     );
-
-    resetFail();
+    dispatch(resetError());
   };
 
   return (
@@ -58,10 +53,11 @@ const ConnexionScreen = () => {
         />
       )}
       <Spinner visible={isLoading} />
-      {fail === true && (
+      {error === true && (
         <View style={styles.failComponentContainer}>
           <FailComponent
-            onClose={() => resetFail()}
+            // Instead of resetFail()
+            onClose={() => dispatch(resetError())}
             text={'Erreur de connexion'}
           />
         </View>
@@ -75,7 +71,7 @@ const ConnexionScreen = () => {
           setPassword={text => setPassword(text)}
           handleLogin={() => {
             handleLogin(userName, password);
-            resetFail();
+            dispatch(resetError());
           }}
         />
       </View>

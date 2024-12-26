@@ -12,6 +12,7 @@ import {
   selectPastEventsError,
   selectPastEventsTimeStamp,
 } from '../../redux/selectors/event/pastEventsSelectors';
+import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 
 export default function usePastEvents() {
   const expirationTimeInMillis = 24 * 60 * 60 * 1000;
@@ -21,7 +22,7 @@ export default function usePastEvents() {
   const timeStamp = useSelector(selectPastEventsTimeStamp);
   const isEventFrom = 0;
 
-  const [userId] = useUserId();
+  const userId = useSelector(selectCurrentUserId);
   const {isDemoMode} = useContext(AuthContext);
 
   const dispatch = useDispatch();

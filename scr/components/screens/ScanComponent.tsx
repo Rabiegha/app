@@ -11,12 +11,12 @@ import CustomMarker from '../elements/CustomMarker';
 import ScanModal from '../modals/ScanModal';
 import {scanAttendee} from '../../services/scanAttendeeService';
 import usePrintDocument from '../../hooks/print/usePrintDocument';
-import useUserId from '../../hooks/useUserId';
 import {useSelector} from 'react-redux';
 import {
   selectPrintStatus,
   selectAutoPrint,
 } from '../../redux/selectors/print/printerSelectors';
+import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 
 const ScanComponent = () => {
   const navigation = useNavigation();
@@ -28,7 +28,8 @@ const ScanComponent = () => {
   const [attendeeData, setAttendeeData] = useState(null);
   const [scanStatus, setScanStatus] = useState('idle');
 
-  const {userId} = useUserId();
+  const userId = useSelector(selectCurrentUserId);
+
   const {printDocument} = usePrintDocument();
 
   const printStatus = useSelector(selectPrintStatus);

@@ -13,6 +13,8 @@ import SuccessComponent from '../components/elements/notifications/SuccessCompon
 import FailComponent from '../components/elements/notifications/FailComponent';
 import {editAttendee} from '../services/editAttendeeService.tsx';
 import useAttendeeTypeDropdown from '../hooks/type/useAttendeeTypesDropdown.tsx';
+import {useSelector} from 'react-redux';
+import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors.tsx';
 
 const EditScreen = ({navigation, route}) => {
   useFocusEffect(
@@ -21,11 +23,11 @@ const EditScreen = ({navigation, route}) => {
       return () => {};
     }, []),
   );
-  const [userId, setUserId] = useUserId();
+  userId;
   const [success, setSuccess] = useState(null);
   const {secretCode, eventId, updateAttendee, triggerListRefresh} = useEvent();
   const [attendeeTypes, setAttendeeTypes] = useState([]);
-
+  const userId = useSelector(selectCurrentUserId);
   const {
     attendeeId,
     firstName,

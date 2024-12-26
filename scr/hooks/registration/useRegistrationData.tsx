@@ -2,8 +2,9 @@
 
 import {useState, useEffect} from 'react';
 import {registrationSummaryDetails} from '../../services/registrationSummaryDetailsService';
-import useUserId from '../useUserId';
 import {useEvent} from '../../context/EventContext';
+import {useSelector} from 'react-redux';
+import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 
 const useRegistrationData = () => {
   const [summary, setSummary] = useState({
@@ -14,7 +15,8 @@ const useRegistrationData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [userId] = useUserId();
+  const userId = useSelector(selectCurrentUserId);
+
   const {eventId} = useEvent();
 
   useEffect(() => {

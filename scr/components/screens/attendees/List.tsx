@@ -11,7 +11,7 @@ import axios from 'axios';
 import {useEvent} from '../../../context/EventContext';
 import colors from '../../../assets/colors/colors';
 import {BASE_URL} from '../../../config/config';
-import useUserId from '../../../hooks/useUserId';
+
 import {Attendee} from '../../../interfaces/interfaces.tsx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {demoEvents} from '../../../demo/demoEvents';
@@ -22,6 +22,8 @@ import {fetchEventAttendeeList} from '../../../services/getAttendeesList';
 
 import {useFocusEffect} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
+import {useSelector} from 'react-redux';
+import {selectCurrentUserId} from '../../../redux/selectors/auth/authSelectors.tsx';
 
 const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
   const [openSwipeable, setOpenSwipeable] = useState(null);
@@ -43,8 +45,8 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
   const {eventId} = useEvent();
   const [hasData, setHasData] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [userId, setUserId] = useUserId();
   const {isDemoMode} = useContext(AuthContext);
+  const userId = useSelector(selectCurrentUserId);
 
   const expirationTimeInMillis = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
 

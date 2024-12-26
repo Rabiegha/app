@@ -2,10 +2,12 @@ import {useState, useEffect} from 'react';
 import {getAttendeeTypes} from '../../services/getAttendeeTypeService';
 import colors from '../../assets/colors/colors';
 import useUserId from '../../hooks/useUserId';
+import {useSelector} from 'react-redux';
+import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 
 const useAttendeeTypeDropdown = () => {
   const [dropdownOptions, setDropdownOptions] = useState([]);
-  const [userId] = useUserId();
+  const userId = useSelector(selectCurrentUserId);
 
   useEffect(() => {
     if (userId) {

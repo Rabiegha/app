@@ -21,17 +21,19 @@ import EventDetailsPerTypeScreen from '../screens/EventDetailsPerType';
 import MenuScreen from '../screens/Menu';
 
 import TabNavigator from './TabNavigator';
+import {useSelector} from 'react-redux';
+import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors';
 
 const Stack = createStackNavigator();
 const storage = new MMKV();
 
 function AppNavigator() {
   const {isDemoMode} = useContext(AuthContext);
-  const userStatus = storage.getString('user_id');
+  const userId = useSelector(selectCurrentUserId);
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      {userStatus || isDemoMode ? (
+      {userId || isDemoMode ? (
         <Stack.Screen name="Events" component={EventsScreen} />
       ) : (
         <Stack.Screen name="Connexion" component={ConnexionScreen} />
