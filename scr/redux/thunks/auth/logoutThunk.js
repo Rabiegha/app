@@ -1,6 +1,5 @@
 import axios from 'axios';
-import {BASE_URL} from '../../config/config';
-import {Buffer} from 'buffer';
+import {BASE_URL} from '../../../config/config';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 
 export const logoutThunk = createAsyncThunk(

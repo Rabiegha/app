@@ -13,7 +13,7 @@ const PastEventsScreen = ({searchQuery, onEventSelect}) => {
 
   useFocusEffect(
     React.useCallback(() => {
-/*       clearData(); */
+      /*       clearData(); */
       return () => {};
     }, [clearData]),
   );

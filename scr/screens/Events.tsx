@@ -12,6 +12,9 @@ import globalStyle from '../assets/styles/globalStyle';
 import {useEvent} from '../context/EventContext';
 import {AuthContext} from '../context/AuthContext';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectIsLoading} from '../redux/selectors/auth/authSelectors';
+import { logoutThunk } from '../redux/thunks/auth/logoutThunk';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -86,6 +89,7 @@ const EventsScreen = () => {
     }).start(() => setModalVisible(false));
   };
 
+  const isLoading = useSelector(selectIsLoading);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null);
   const {updateEventDetails} = useEvent();
@@ -103,10 +107,12 @@ const EventsScreen = () => {
     navigation.navigate('Tabs', {screen: 'Attendees'});
   };
 
-  const {isLoading, logout, isDemoMode} = useContext(AuthContext);
+  const dispatch = useDispatch();
+
   const handleGoBack = () => {
-    logout();
-    navigation.navigate('Connexion'); // Naviguer vers l'écran de connexion
+    dispatch(logoutThunk());
+
+    navigation.navigate('Connexion');
   };
 
   const [opacity, setOpacity] = useState(0);

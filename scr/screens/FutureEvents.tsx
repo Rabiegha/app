@@ -23,7 +23,7 @@ const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setBarStyle('dark-content');
-      /*       clearData(); */
+/*       clearData(); */
       return () => {
         StatusBar.setBarStyle('dark-content');
       };
@@ -44,16 +44,6 @@ const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
 
   const handleSelectEvent = event => {
     onEventSelect(event);
-  };
-
-  const handleLogin = (userName, password) => {
-    dispatch(
-      logoutThunk({
-        email: userName,
-        password: password,
-      }),
-    );
-    dispatch(resetError());
   };
 
   return (
