@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {BASE_URL} from '../config/config';
 
-export const fetchEventDetails = async (userId, isEventFrom) => {
+export const fetchEventList = async (userId, isEventFrom) => {
   const url = `${BASE_URL}/ajax_get_event_details/?current_user_login_details_id=${userId}&is_event_from=${isEventFrom}`;
 
   try {

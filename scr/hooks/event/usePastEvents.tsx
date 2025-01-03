@@ -1,11 +1,8 @@
 import {useSelector, useDispatch} from 'react-redux';
-import {
-  fetchPastEvents,
-  clearPastEvents,
-} from '../../redux/slices/event/pastEventsSlice';
+import {clearPastEvents} from '../../redux/slices/event/pastEventsSlice';
+import {fetchPastEvents} from '../../redux/thunks/event/fetchPastEventsThunk';
 import {useContext, useEffect} from 'react';
 import {AuthContext} from '../../context/AuthContext';
-import useUserId from '../useUserId';
 import {
   selectPastEvents,
   selectPastEventsLoading,

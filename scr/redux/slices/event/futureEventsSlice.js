@@ -15,6 +15,7 @@ const futureEventsSlice = createSlice({
     clearFutureEvents: state => {
       state.events = [];
       state.timeStamp = null;
+      state.error = null;
     },
   },
   extraReducers: builder => {

@@ -10,19 +10,32 @@ import pastEventsReducer from './slices/event/pastEventsSlice';
 import futureEventsReducer from './slices/event/futureEventsSlice';
 import authReducer from './slices/auth/authSlice';
 
+// pastEvents
+const pastEventsPersistConfig = {
+  key: 'pastEvents',
+  storage: AsyncStorage,
+  blacklist: ['loading', 'error'], // Only persist 'events' & 'timeStamp'
+};
+
+// futureEvents
+const futureEventsPersistConfig = {
+  key: 'futureEvents',
+  storage: AsyncStorage,
+  blacklist: ['loading', 'error'],
+};
+
+const rootReducer = combineReducers({
+  printers: printerReducer,
+  pastEvents: persistReducer(pastEventsPersistConfig, pastEventsReducer),
+  futureEvents: persistReducer(futureEventsPersistConfig, futureEventsReducer),
+  auth: authReducer,
+});
+
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   whitelist: ['printers', 'pastEvents', 'futureEvents', 'auth'],
 };
-
-const rootReducer = combineReducers({
-  printers: printerReducer,
-  pastEvents: pastEventsReducer,
-  futureEvents: futureEventsReducer,
-  auth: authReducer,
-});
-
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({

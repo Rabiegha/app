@@ -1,5 +1,5 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {fetchEventDetails} from '../../../services/eventsListService';
+import {fetchEventList} from '../../../services/eventsListService';
 import {demoEvents} from '../../../demo/demoEvents';
 
 export const fetchFutureEvents = createAsyncThunk(
@@ -11,7 +11,7 @@ export const fetchFutureEvents = createAsyncThunk(
       } else {
         const combinedEvents = [];
         for (const isEventFrom of isEventFromList) {
-          const response = await fetchEventDetails(userId, isEventFrom);
+          const response = await fetchEventList(userId, isEventFrom);
           if (response.status && response.event_details) {
             combinedEvents.push(...response.event_details);
           }

@@ -30,12 +30,16 @@ const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
     }, [clearData]),
   );
 
+  const handleRetry = () => {
+    clearData();
+  };
+
   if (loading) {
     return <LoadingView />;
   }
 
   if (error) {
-    return <ErrorView error={error} />;
+    return <ErrorView error={error} handleRetry={handleRetry} />;
   }
 
   if (!events || events.length === 0) {
