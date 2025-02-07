@@ -9,11 +9,11 @@ import ErrorView from '../components/elements/view/ErrorView';
 import LoadingView from '../components/elements/view/LoadingView';
 
 const PastEventsScreen = ({searchQuery, onEventSelect}) => {
-  const {events, loading, error, clearData} = usePastEvents(0);
+  const {events, loading, error, clearData} = usePastEvents();
 
   useFocusEffect(
     React.useCallback(() => {
-/*       clearData(); */
+       clearData();
       return () => {};
     }, [clearData]),
   );
@@ -25,13 +25,15 @@ const PastEventsScreen = ({searchQuery, onEventSelect}) => {
     return <LoadingView />;
   }
   if (error) {
-    return <ErrorView error={error} handleRetry={handleRetry} />;
+    return <ErrorView handleRetry={handleRetry} />;
   }
-  if (!events || events.length === 0) {
-    return <EmptyView />;
+  if (events) {
+    if (events.length === 0) {
+      return <EmptyView />;
+    }
   }
 
-  const filteredEvents = events.filter(event =>
+  const filteredEvents = (events ?? []).filter(event =>
     event.event_name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 

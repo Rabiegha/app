@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, StyleSheet, StatusBar, Text, SectionList} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 
@@ -23,7 +23,8 @@ const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setBarStyle('dark-content');
-/*       clearData(); */
+      console.log('the error', error);
+       clearData();
       return () => {
         StatusBar.setBarStyle('dark-content');
       };
@@ -39,11 +40,13 @@ const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
   }
 
   if (error) {
-    return <ErrorView error={error} handleRetry={handleRetry} />;
+    return <ErrorView handleRetry={handleRetry} />;
   }
 
-  if (!events || events.length === 0) {
-    return <EmptyView />;
+  if (events) {
+    if (events.length === 0) {
+      return <EmptyView />;
+    }
   }
 
   const handleSelectEvent = event => {

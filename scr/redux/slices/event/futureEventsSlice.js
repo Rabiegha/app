@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {fetchFutureEvents} from '../../thunks/event/fetchFutureEventsThunk.tsx';
 
 const initialState = {
-  events: [],
+  events: null,
   loading: false,
   error: null,
   timeStamp: null,
@@ -13,9 +13,15 @@ const futureEventsSlice = createSlice({
   initialState,
   reducers: {
     clearFutureEvents: state => {
-      state.events = [];
+      state.events = null;
       state.timeStamp = null;
       state.error = null;
+    },
+    testSetLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    testSetError: (state, action) => {
+      state.error = action.payload;
     },
   },
   extraReducers: builder => {
@@ -31,7 +37,7 @@ const futureEventsSlice = createSlice({
       })
       .addCase(fetchFutureEvents.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to fetch future events';
+        state.error = action.error.message || 'Failed to fetch future events';
       });
   },
 });

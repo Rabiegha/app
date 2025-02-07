@@ -8,6 +8,10 @@ import FailComponent from '../components/elements/notifications/FailComponent';
 import {loginThunk} from '../redux/thunks/auth/loginThunk';
 import {useDispatch, useSelector} from 'react-redux';
 import {resetError} from '../redux/slices/auth/authSlice';
+import {
+  selectError,
+  selectIsLoading,
+} from '../redux/selectors/auth/authSelectors';
 
 const ConnexionScreen = () => {
   const [userName, setUserName] = useState('');
@@ -18,7 +22,8 @@ const ConnexionScreen = () => {
   /*   const {isLoading, login, fail, resetFail, setIsDemoMode} =
     useContext(AuthContext); */
 
-  const {isLoading, error} = useSelector(state => state.auth);
+  const error = useSelector(selectError);
+  const isLoading = useSelector(selectIsLoading);
   useEffect(() => {
     StatusBar.setBarStyle('dark-content');
     return () => {
@@ -27,10 +32,10 @@ const ConnexionScreen = () => {
     };
   }, []);
 
-  const handleDemoLogin = () => {
+  /*   const handleDemoLogin = () => {
     setIsDemoMode(true); // Activez le mode démo
     navigation.navigate('Events'); // Naviguez vers l'écran des événements
-  };
+  }; */
 
   const dispatch = useDispatch();
 
@@ -44,24 +49,25 @@ const ConnexionScreen = () => {
     dispatch(resetError());
   };
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        dispatch(resetError());
+      }, 5000); // Reset error after 5 seconds
+
+      return () => clearTimeout(timer); // Cleanup if component unmounts
+    }
+  }, [error, dispatch]); // Runs when error changes
+
   return (
     <View style={[globalStyle.backgroundWhite, styles.container]}>
-      {success === false && (
+      {error && (
         <FailComponent
-          onClose={() => setSuccess(null)}
+          onClose={() => dispatch(resetError())}
           text={"Mot de passe ou nom d'utilisateur incorrect"}
         />
       )}
       <Spinner visible={isLoading} />
-      {error === true && (
-        <View style={styles.failComponentContainer}>
-          <FailComponent
-            // Instead of resetFail()
-            onClose={() => dispatch(resetError())}
-            text={'Erreur de connexion'}
-          />
-        </View>
-      )}
       <View style={styles.container}>
         <Text style={styles.title}>Log in</Text>
         <ConnexionComponent
@@ -88,12 +94,6 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  failComponentContainer: {
-    position: 'absolute',
-    top: 100,
-    left: 0,
-    right: 0,
   },
   demoModeContainer: {
     marginTop: 20,

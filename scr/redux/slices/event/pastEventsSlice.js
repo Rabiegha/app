@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {fetchPastEvents} from '../../thunks/event/fetchPastEventsThunk';
 
 const initialState = {
-  events: [],
+  events: null,
   loading: false,
   error: null,
   timeStamp: null,
@@ -13,7 +13,7 @@ const pastEventsSlice = createSlice({
   initialState,
   reducers: {
     clearPastEvents: state => {
-      state.events = [];
+      state.events = null;
       state.timeStamp = null;
       state.error = null;
     },
@@ -28,7 +28,6 @@ const pastEventsSlice = createSlice({
         state.loading = false;
         state.events = action.payload.events;
         state.timeStamp = action.payload.timeStamp;
-        state.error = null;
       })
       .addCase(fetchPastEvents.rejected, (state, action) => {
         state.loading = false;

@@ -14,6 +14,7 @@
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-community/slider": "^4.5.2",
+    "@react-native-oh-tpl/react-native-blob-util": "^0.19.6-0.0.16",
     "@react-native-picker/picker": "^2.8.1",
     "@react-navigation/bottom-tabs": "^6.5.12",
     "@react-navigation/material-top-tabs": "^6.6.8",
@@ -52,8 +53,7 @@
     "react-native-webview": "^13.10.4",
     "react-redux": "^9.1.2",
     "redux-logger": "^3.0.6",
-    "redux-persist": "^6.0.0",
-    "rn-fetch-blob": "^0.12.0"
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

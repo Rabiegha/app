@@ -10,7 +10,7 @@ export const fetchEventList = async (userId, isEventFrom) => {
       return response.data;
     } else {
       /* console.log('Events list not fetched'); */
-      return [];
+      throw new Error('Invalid event data from server');
     }
   } catch (error) {
     console.log('Error fetching events list from past', error);
