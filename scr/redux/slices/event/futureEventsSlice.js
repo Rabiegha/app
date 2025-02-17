@@ -16,6 +16,7 @@ const futureEventsSlice = createSlice({
       state.events = null;
       state.timeStamp = null;
       state.error = null;
+      state.loading = null;
     },
     testSetLoading: (state, action) => {
       state.loading = action.payload;
@@ -28,7 +29,6 @@ const futureEventsSlice = createSlice({
     builder
       .addCase(fetchFutureEvents.pending, state => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchFutureEvents.fulfilled, (state, action) => {
         state.loading = false;

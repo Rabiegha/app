@@ -24,7 +24,8 @@ const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
     React.useCallback(() => {
       StatusBar.setBarStyle('dark-content');
       console.log('the error', error);
-       clearData();
+      console.log('the loading', loading);
+       clearData(); 
       return () => {
         StatusBar.setBarStyle('dark-content');
       };

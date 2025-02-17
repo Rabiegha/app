@@ -23,8 +23,8 @@ const MoreComponent = ({
   modify,
   type,
 }) => {
-  console.log('Current attendeeStatus:', attendeeStatus);
-  console.log('Current attendeeStatus:', JobTitle);
+/*   console.log('Current attendeeStatus:', attendeeStatus);
+  console.log('Current attendeeStatus:', JobTitle); */
 
   function insertSpaceBetweenPairs(str) {
     if (str == null) {

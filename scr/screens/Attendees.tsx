@@ -36,6 +36,7 @@ const AttendeesScreen = () => {
   const [success, setSuccess] = useState(false);
   const [totalListAttendees, setTotalListAttendees] = useState(0);
   const [checkedInAttendees, setCheckedInAttendees] = useState(0);
+  const [ratio, setRatio] = useState(0);
   const [filterCriteria, setFilterCriteria] = useState({
     status: 'all', // Possible values: 'all', 'checked-in', 'not-checked-in'
     // You can add more filter criteria here as needed
@@ -76,10 +77,7 @@ const AttendeesScreen = () => {
     }); */
   };
 
-  useEffect(() => {
-    // Calculate progress when totalAttendees or checkedInAttendees change
-    // Progress calculation might need further adjustment based on your logic
-  }, [totalListAttendees, checkedInAttendees]);
+  useEffect(() => {}, [totalListAttendees, checkedInAttendees]);
 
   const [filter, setFilter] = useState({
     status: 'all', // all, checked-in, not checked-in
@@ -89,9 +87,10 @@ const AttendeesScreen = () => {
     setFilter(newFilter);
     closeModal(); // Assuming you want to close the modal on filter apply
   };
-  const updateProgress = (total, checkedIn) => {
+  const updateProgress = (total, checkedIn, ratio) => {
     setTotalListAttendees(total);
     setCheckedInAttendees(checkedIn);
+    setRatio(ratio);
   };
   const clearSearch = () => {
     if (searchQuery !== '') {
@@ -130,9 +129,7 @@ const AttendeesScreen = () => {
           totalCheckedAttendees={checkedInAttendees}
           totalAttendees={totalListAttendees}
         />
-        <ProgressBar
-          progress={(checkedInAttendees / totalListAttendees) * 100}
-        />
+        <ProgressBar progress={ratio} />
         {/*         <TouchableOpacity onPress={showNotification} style={styles.button}>
           <Text style={styles.buttonText}>Afficher la notification</Text>
         </TouchableOpacity> */}

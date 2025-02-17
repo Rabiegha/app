@@ -5,7 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../assets/styles/globalStyle.tsx';
 import colors from '../assets/colors/colors';
 import EventDetailsComponent from '../components/screens/EventDetailsComponent.tsx';
-import useRegistrationData from '../hooks/registration/useRegistrationData.tsx';
+import useRegistrationData from '../hooks/registration/useRegistrationSummary.tsx';
 
 const EventDetailsScreen = () => {
   const navigation = useNavigation();

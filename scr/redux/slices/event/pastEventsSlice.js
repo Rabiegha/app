@@ -16,6 +16,7 @@ const pastEventsSlice = createSlice({
       state.events = null;
       state.timeStamp = null;
       state.error = null;
+      state.loading = null;
     },
   },
   extraReducers: builder => {

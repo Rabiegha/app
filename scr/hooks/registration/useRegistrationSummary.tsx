@@ -6,7 +6,7 @@ import {useEvent} from '../../context/EventContext';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 
-const useRegistrationData = () => {
+const useRegistrationSummary = () => {
   const [summary, setSummary] = useState({
     totalAttendees: 0,
     totalCheckedIn: 0,
@@ -26,6 +26,7 @@ const useRegistrationData = () => {
       try {
         setLoading(true);
         const response = await registrationSummaryDetails(userId, eventId);
+        const parseNumber = num => parseInt(num.replace(/,/g, ''), 10);
         if (response.status && isMounted) {
           setSummary({
             totalAttendees: response.total_registered,
@@ -33,6 +34,10 @@ const useRegistrationData = () => {
             totalNotCheckedIn:
               response.total_registered - response.total_attended,
           });
+          console.log('totalAttendees', response.total_registered);
+          console.log('totalAttendees', summary.totalAttendees);
+          console.log('totalCheckedIn', response.total_attended);
+          console.log('totalCheckedIn', summary.totalCheckedIn);
           setError(null);
         } else {
           throw new Error('Error fetching data');
@@ -50,13 +55,6 @@ const useRegistrationData = () => {
 
     if (userId && eventId) {
       fetchSummary();
-      // Optionally, set up periodic fetching
-      // const intervalId = setInterval(fetchSummary, 5000); // Fetch every 5 seconds
-
-      // return () => {
-      //   isMounted = false;
-      //   clearInterval(intervalId);
-      // };
       return () => {
         isMounted = false;
       };
@@ -66,4 +64,4 @@ const useRegistrationData = () => {
   return {summary, loading, error};
 };
 
-export default useRegistrationData;
+export default useRegistrationSummary;

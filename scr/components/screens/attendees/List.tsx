@@ -18,6 +18,7 @@ import {demoEvents} from '../../../demo/demoEvents';
 import {AuthContext} from '../../../context/AuthContext.tsx';
 import emptyIcon from '../../../assets/images/empty.gif';
 import {registrationSummaryDetails} from '../../../services/registrationSummaryDetailsService';
+import useRegistrationSummary from '../../../hooks/registration/useRegistrationSummary.tsx';
 import {fetchEventAttendeeList} from '../../../services/getAttendeesList';
 
 import {useFocusEffect} from '@react-navigation/native';
@@ -167,20 +168,12 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
 
   //Registration summary
 
-  const FetchRegistrationSummary = async () => {
-    try {
-      let response = await registrationSummaryDetails(userId, eventId);
-      if (response.status) {
-        setTotalAttendees(response.total_registered);
-        setTotalCheckedAttendees(response.total_attended);
-        console.log('total regitred', response.total_registered);
-      } else {
-        console.log('Error fetching data');
-      }
-    } catch (error) {
-      console.error('Error fetching registration summary', error);
-    }
-  };
+  const {summary, loading, error} = useRegistrationSummary(userId, eventId);
+
+  useEffect(() => {
+    setTotalAttendees(summary.totalAttendees);
+    setTotalCheckedAttendees(summary.totalCheckedIn);
+  }, [summary]);
 
   useFocusEffect(
     useCallback(() => {
@@ -192,7 +185,6 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
 
   useEffect(() => {
     fetchAllEventAttendeeDetails();
-    FetchRegistrationSummary();
   }, [
     eventId,
     searchQuery,

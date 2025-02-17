@@ -41,7 +41,7 @@ const ListItem = React.memo(
           attendee_status: newAttendeeStatus,
         };
         await onUpdateAttendee(updatedAttendee);
-        console.log('After status', updatedAttendee);
+/*         console.log('After status', updatedAttendee); */
         triggerListRefresh(); // Refresh the list after updating
       } catch (error) {
         console.error('Error updating attendee status:', error);
