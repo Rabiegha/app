@@ -30,6 +30,7 @@ const rootReducer = combineReducers({
   futureEvents: persistReducer(futureEventsPersistConfig, futureEventsReducer), */
   pastEvents: pastEventsReducer,
   futureEvents: futureEventsReducer,
+  //sydyzudg
   auth: authReducer,
 });
 
