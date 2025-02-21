@@ -14,7 +14,7 @@ import rejectedAnimation from '../../assets/animations/Rejected.json';
 import printingAnimation from '../../assets/animations/Printing.json';
 import colors from '../../assets/colors/colors';
 
-const ScanModal = ({ onClose, visible, status }) => {
+const ScanModal = ({onClose, visible, status}) => {
   if (!visible || !status) {
     return null;
   }
@@ -80,7 +80,7 @@ const ScanModal = ({ onClose, visible, status }) => {
                   source={animationSource}
                   autoPlay
                   loop={shouldLoop}
-                  style={[styles.animation, { height: height }]}
+                  style={[styles.animation, {height: height}]}
                 />
               )}
             </View>
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     // Ombre optionnelle pour une meilleure visibilité
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
