@@ -14,7 +14,7 @@ const pastEventsSlice = createSlice({
   reducers: {
     clearPastEvents: state => {
       state.events = null;
-      state.timeStamp = null;
+/*       state.timeStamp = null; */
       state.error = null;
       state.loading = null;
     },

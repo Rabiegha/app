@@ -30,11 +30,7 @@ export default function useFutureEvents() {
     const currentTime = Date.now();
 
     if (!loading && !error) {
-      if (
-        !events ||
-        events.length === 0 ||
-        currentTime - (timeStamp || 0) > expirationTimeInMillis
-      ) {
+      if (!events || currentTime - (timeStamp || 0) > expirationTimeInMillis) {
         dispatch(fetchFutureEvents({userId, isEventFromList, isDemoMode}));
       }
     }

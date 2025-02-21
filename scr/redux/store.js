@@ -26,8 +26,10 @@ const futureEventsPersistConfig = {
 
 const rootReducer = combineReducers({
   printers: printerReducer,
-  pastEvents: persistReducer(pastEventsPersistConfig, pastEventsReducer),
-  futureEvents: persistReducer(futureEventsPersistConfig, futureEventsReducer),
+/*   pastEvents: persistReducer(pastEventsPersistConfig, pastEventsReducer),
+  futureEvents: persistReducer(futureEventsPersistConfig, futureEventsReducer), */
+  pastEvents: pastEventsReducer,
+  futureEvents: futureEventsReducer,
   auth: authReducer,
 });
 

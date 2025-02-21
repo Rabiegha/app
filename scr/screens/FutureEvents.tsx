@@ -22,13 +22,7 @@ const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
   // Clear data and adjust status bar on focus
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      console.log('the error', error);
-      console.log('the loading', loading);
-       clearData(); 
-      return () => {
-        StatusBar.setBarStyle('dark-content');
-      };
+      clearData();
     }, [clearData]),
   );
 

@@ -13,8 +13,10 @@ const PastEventsScreen = ({searchQuery, onEventSelect}) => {
 
   useFocusEffect(
     React.useCallback(() => {
-/*        clearData(); */
-      return () => {};
+      clearData();
+      console.log('the error', error);
+      console.log('the loading', loading);
+      console.log('the events', events);
     }, [clearData]),
   );
   const handleRetry = () => {

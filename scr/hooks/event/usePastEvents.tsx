@@ -1,7 +1,7 @@
 import {useSelector, useDispatch} from 'react-redux';
 import {clearPastEvents} from '../../redux/slices/event/pastEventsSlice';
 import {fetchPastEvents} from '../../redux/thunks/event/fetchPastEventsThunk';
-import {useContext, useEffect} from 'react';
+import {useCallback, useContext, useEffect} from 'react';
 import {AuthContext} from '../../context/AuthContext';
 import {
   selectPastEvents,
@@ -28,16 +28,13 @@ export default function usePastEvents() {
     const currentTime = Date.now();
 
     if (!loading && !error) {
-      if (
-        !events ||
-        events.length === 0 ||
-        currentTime - (timeStamp || 0) > expirationTimeInMillis
-      ) {
+      if (!events || currentTime - (timeStamp || 0) > expirationTimeInMillis) {
         dispatch(fetchPastEvents({userId, isEventFrom, isDemoMode}));
       }
     }
   }, [
     dispatch,
+    fetchPastEvents,
     userId,
     isEventFrom,
     events,
@@ -47,9 +44,7 @@ export default function usePastEvents() {
     error,
   ]);
 
-  const clearData = () => {
-    dispatch(clearPastEvents());
-  };
+  const clearData = useCallback(() => dispatch(clearPastEvents()), [dispatch]);
 
   return {events, loading, error, fetchPastEvents, clearData};
 }
