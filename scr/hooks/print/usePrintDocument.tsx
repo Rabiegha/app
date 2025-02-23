@@ -30,6 +30,9 @@ const usePrintDocument = () => {
     async attendeeId => {
       const documentUrl = `https://ems.choyou.fr/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
 
+      // Mettre à jour le statut d'impression à 'Sending print job'
+      dispatch(setPrintStatus('Sending print job'));
+
       try {
         // Vérifier si l'imprimante est sélectionnée
         if (!nodePrinterId) {
@@ -45,9 +48,6 @@ const usePrintDocument = () => {
           dispatch(setPrintStatus('Error printing'));
           return;
         }
-
-        // Mettre à jour le statut d'impression à 'Sending print job'
-        dispatch(setPrintStatus('Sending print job'));
 
         // Récupérer et encoder le document
         let base64String = '';
@@ -74,14 +74,27 @@ const usePrintDocument = () => {
         // Envoyer le document à l'imprimante via useNodePrint
         await sendPrintJob(base64String);
 
-        dispatch(setPrintStatus('Print successful'));
+        //success printing
+        setTimeout(() => {
+          dispatch(setPrintStatus('Print successful'));
+        }, 2000);
+
+        //modal close
+        setTimeout(() => {
+          dispatch(setPrintStatus(null)); // Hide modal after 3 sec
+        }, 3000);
       } catch (error) {
+        //error printing
         console.error(
           'Error printing document:',
           error.response ? error.response.data : error.message,
         );
         dispatch(setPrintStatus('Error printing'));
-        // Ne pas relancer l'erreur pour éviter les rejets non gérés
+
+        //modal close
+        setTimeout(() => {
+          dispatch(setPrintStatus(null));
+        }, 3000);
       }
     },
     [eventId, nodePrinterId, sendPrintJob, dispatch],

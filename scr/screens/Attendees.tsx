@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Modal,
+  Text,
   StyleSheet,
   Animated,
   TouchableOpacity,
@@ -18,6 +19,10 @@ import SuccessComponent from '../components/elements/notifications/SuccessCompon
 import {useEvent} from '../context/EventContext';
 import Search from '../components/elements/Search';
 import FiltreComponent from '../components/filtre/FiltreComponent';
+import PrintModal from '../components/modals/PrintModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectPrintStatus} from '../redux/selectors/print/printerSelectors';
+import {setPrintStatus} from '../redux/slices/printerSlice';
 
 const AttendeesScreen = () => {
   const {eventName} = useEvent();
@@ -41,6 +46,11 @@ const AttendeesScreen = () => {
     status: 'all', // Possible values: 'all', 'checked-in', 'not-checked-in'
     // You can add more filter criteria here as needed
   });
+  const [modalPrintVisible, setModalPrintVisible] = useState(false);
+
+  const printStatus = useSelector(selectPrintStatus);
+
+  const dispatch = useDispatch();
 
   const openModal = () => {
     setModalVisible(true);
@@ -103,6 +113,11 @@ const AttendeesScreen = () => {
     } // Reset the search query
   };
 
+  // Gestion de la fermeture du modal
+  const handleModalClose = () => {
+    setModalPrintVisible(false);
+  };
+
   return (
     <View style={globalStyle.backgroundWhite}>
       <HeaderParticipants
@@ -129,6 +144,14 @@ const AttendeesScreen = () => {
           totalCheckedAttendees={checkedInAttendees}
           totalAttendees={totalListAttendees}
         />
+        <View style={styles.printModal}>
+          <Text>hello</Text>
+          <PrintModal
+            onClose={() => dispatch(setPrintStatus(null))}
+            visible={!!printStatus}
+            status={printStatus}
+          />
+        </View>
         <ProgressBar progress={ratio} />
         {/*         <TouchableOpacity onPress={showNotification} style={styles.button}>
           <Text style={styles.buttonText}>Afficher la notification</Text>
@@ -183,6 +206,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  printModal: {
+    flex: 1,
+    position: 'absolute',
   },
   eventName: {
     top: 40,
