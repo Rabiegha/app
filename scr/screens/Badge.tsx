@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Alert, StyleSheet, Platform} from 'react-native';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
 import Share from 'react-native-share';
-import RNPrint from 'react-native-print';
+/* import RNPrint from 'react-native-print'; */
 import BadgeComponent from '../components/screens/BadgeComponent';
 import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';

@@ -50,6 +50,11 @@ export const useNodePrint = () => {
           color: true,
           dpi: dpi.toString(),
           orientation: orientation,
+          pageRanges: '1',
+          blank_page_suppression: true,
+          pages: '1', // Print only page 1
+          collate: false,
+          fit_to_page: true
         },
       };
 
