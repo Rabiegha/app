@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Platform, SafeAreaView} from 'react-native';
+import {View, Platform} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ModalFilter from '../components/modals/ModalFilter';
 
