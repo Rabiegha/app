@@ -1,17 +1,18 @@
 // src/hooks/usePrintDocument.js
 
-import {useCallback} from 'react';
-import {Buffer} from 'buffer';
+import { useCallback } from 'react';
+import { Buffer } from 'buffer';
 import RNFS from 'react-native-fs';
-import {useDispatch, useSelector} from 'react-redux';
-import {setPrintStatus} from '../../redux/slices/printerSlice';
-import {useNodePrint} from './useNodePrint';
-import {useEvent} from '../../context/EventContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPrintStatus } from '../../redux/slices/printerSlice';
+import { useNodePrint } from './useNodePrint';
+import { useEvent } from '../../context/EventContext';
+import { PDFDocument } from 'pdf-lib'; // Import pdf-lib for PDF manipulation
 
 const usePrintDocument = () => {
   const eventDetails = useEvent();
   const dispatch = useDispatch();
-  const {sendPrintJob} = useNodePrint();
+  const { sendPrintJob } = useNodePrint();
 
   // Sélecteur Redux pour récupérer le Node Printer
   const selectedNodePrinter = useSelector(
@@ -24,6 +25,21 @@ const usePrintDocument = () => {
   // Fonction pour convertir ArrayBuffer en Base64
   const arrayBufferToBase64 = buffer => {
     return Buffer.from(buffer).toString('base64');
+  };
+
+  // Fonction pour supprimer les pages blanches supplémentaires
+  const removeExtraPages = async (pdfBytes) => {
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+
+    // Vérifier si le PDF a plus d'une page
+    if (pdfDoc.getPageCount() > 1) {
+      // Supprimer la dernière page (supposée être une page blanche)
+      pdfDoc.removePage(pdfDoc.getPageCount() - 1);
+    }
+
+    // Sauvegarder le PDF modifié
+    const modifiedPdfBytes = await pdfDoc.save();
+    return modifiedPdfBytes;
   };
 
   const printDocument = useCallback(
@@ -42,7 +58,7 @@ const usePrintDocument = () => {
         }
 
         // Vérifier si le fichier existe
-        const headResponse = await fetch(documentUrl, {method: 'HEAD'});
+        const headResponse = await fetch(documentUrl, { method: 'HEAD' });
         if (!headResponse.ok) {
           console.error('File does not exist.');
           dispatch(setPrintStatus('Error printing'));
@@ -71,27 +87,36 @@ const usePrintDocument = () => {
           console.log('Online file encoded to Base64');
         }
 
-        // Envoyer le document à l'imprimante via useNodePrint
-        await sendPrintJob(base64String);
+        // Convertir la chaîne Base64 en Uint8Array pour pdf-lib
+        const pdfBytes = Buffer.from(base64String, 'base64');
 
-        //success printing
+        // Supprimer les pages blanches supplémentaires
+        const cleanedPdfBytes = await removeExtraPages(pdfBytes);
+
+        // Convertir les bytes nettoyés en Base64
+        const cleanedBase64String = Buffer.from(cleanedPdfBytes).toString('base64');
+
+        // Envoyer le document nettoyé à l'imprimante via useNodePrint
+        await sendPrintJob(cleanedBase64String);
+
+        // Success printing
         setTimeout(() => {
           dispatch(setPrintStatus('Print successful'));
         }, 2000);
 
-        //modal close
+        // Modal close
         setTimeout(() => {
           dispatch(setPrintStatus(null)); // Hide modal after 3 sec
         }, 3000);
       } catch (error) {
-        //error printing
+        // Error printing
         console.error(
           'Error printing document:',
           error.response ? error.response.data : error.message,
         );
         dispatch(setPrintStatus('Error printing'));
 
-        //modal close
+        // Modal close
         setTimeout(() => {
           dispatch(setPrintStatus(null));
         }, 3000);
@@ -100,7 +125,7 @@ const usePrintDocument = () => {
     [eventId, nodePrinterId, sendPrintJob, dispatch],
   );
 
-  return {printDocument};
+  return { printDocument };
 };
 
 export default usePrintDocument;

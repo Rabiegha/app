@@ -23,7 +23,7 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
           />
         ) : (
           <View style={styles.noDataView}>
-            <FastImage source={emptyGif} style={styles.gifStyle} />
+{/*             <FastImage source={emptyGif} style={styles.gifStyle} /> */}
             {/*             <Image
               source={emptyGif}
               style={styles.gifStyle}

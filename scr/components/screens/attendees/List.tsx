@@ -238,7 +238,7 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
         />
       ) : (
         <View style={styles.noDataView}>
-          <FastImage source={emptyIcon} style={styles.gifStyle} />
+{/*           <FastImage source={emptyIcon} style={styles.gifStyle} /> */}
         </View>
       )}
     </View>
