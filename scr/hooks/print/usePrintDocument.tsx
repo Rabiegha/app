@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPrintStatus } from '../../redux/slices/printerSlice';
 import { useNodePrint } from './useNodePrint';
 import { useEvent } from '../../context/EventContext';
-import { PDFDocument } from 'pdf-lib'; // Import pdf-lib for PDF manipulation
 
 const usePrintDocument = () => {
   const eventDetails = useEvent();

@@ -264,6 +264,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 13,
     fontWeight: 'bold',
+    color: colors.darkGrey,
   },
   textResolution: {
     fontWeight: '200',
