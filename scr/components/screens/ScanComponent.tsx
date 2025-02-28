@@ -118,7 +118,7 @@ const ScanComponent = () => {
     }
 
       // Autorise un nouveau scan après 3 secondes
-    setTimeout(() => {
+  setTimeout(() => {
     hasScanned.current = false;
   }, 3000);
   };
