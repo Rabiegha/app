@@ -42,11 +42,11 @@ const usePrintDocument = () => {
   };
 
   const printDocument = useCallback(
-    async attendeeId => {
-      const documentUrl = `https://ems.choyou.fr/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
+    async documentUrl => {
 
       // Mettre à jour le statut d'impression à 'Sending print job'
       dispatch(setPrintStatus('Sending print job'));
+
 
       try {
         // Vérifier si l'imprimante est sélectionnée
@@ -109,6 +109,7 @@ const usePrintDocument = () => {
         }, 3000);
       } catch (error) {
         // Error printing
+        console.log('eventid', eventId);
         console.error(
           'Error printing document:',
           error.response ? error.response.data : error.message,

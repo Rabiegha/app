@@ -105,7 +105,7 @@ const ListItem = React.memo(
     const {printDocument} = usePrintDocument();
 
     const handlePrintDocument = () => {
-      printDocument(item.id);
+      printDocument("https://ems.choyou.fr//uploads//badges//349//pdf//117370.pdf");
     };
 
     const renderRightActions = (progress, dragX) => {
