@@ -1,15 +1,19 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 /* import FastImage from 'react-native-fast-image'; */
-import empty from '../../../assets/images/empty.gif';
+import empty from '../../../assets/animations/empty.json';
 import globalStyle from '../../../assets/styles/globalStyle';
+import LottieView from 'lottie-react-native';
 
-// 导出一个默认的EmptyView函数
 export default function EmptyView() {
-  // 返回一个View组件，包含一个FastImage组件
   return (
     <View style={[styles.container, globalStyle.backgroundWhite]}>
-{/*       <FastImage source={empty} style={styles.gifStyle} /> */}
+      <LottieView
+        source={'../../../assets/animations/empty.json'}
+        autoPlay
+        loop={true}
+        style={styles.gifStyle}
+      />
     </View>
   );
 }

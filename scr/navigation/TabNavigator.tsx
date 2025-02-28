@@ -74,7 +74,7 @@ function TabNavigator() {
                   />
                 ),
                 tabBarButton: isMiddle
-                  ? props => <ScanButton {...props} />
+                  ? props => <ScanButton key={props.key} {...props}/>
                   : undefined,
               }}
             />

@@ -27,19 +27,6 @@ const usePrintDocument = () => {
   };
 
   // Fonction pour supprimer les pages blanches supplémentaires
-  const removeExtraPages = async (pdfBytes) => {
-    const pdfDoc = await PDFDocument.load(pdfBytes);
-
-    // Vérifier si le PDF a plus d'une page
-    if (pdfDoc.getPageCount() > 1) {
-      // Supprimer la dernière page (supposée être une page blanche)
-      pdfDoc.removePage(pdfDoc.getPageCount() - 1);
-    }
-
-    // Sauvegarder le PDF modifié
-    const modifiedPdfBytes = await pdfDoc.save();
-    return modifiedPdfBytes;
-  };
 
   const printDocument = useCallback(
     async documentUrl => {
@@ -90,7 +77,7 @@ const usePrintDocument = () => {
         const pdfBytes = Buffer.from(base64String, 'base64');
 
         // Supprimer les pages blanches supplémentaires
-        const cleanedPdfBytes = await removeExtraPages(pdfBytes);
+        const cleanedPdfBytes = await pdfBytes;
 
         // Convertir les bytes nettoyés en Base64
         const cleanedBase64String = Buffer.from(cleanedPdfBytes).toString('base64');

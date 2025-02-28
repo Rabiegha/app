@@ -86,15 +86,13 @@ const PrintersList = () => {
           <Text style={styles.title}>Online Printers</Text>
         </View>
         {loadingNodePrinters ? (
-          <Text>Loading printers...</Text>
-        ) : onlinePrinters.length === 0 ? (
-          <Text>No online printers available</Text>
-        ) : (
+          <Text style={styles.status}>Loading printers...</Text>
+        ) : onlinePrinters.length > 0 ? (
           <FlatList
             data={onlinePrinters}
             keyExtractor={item => item.id.toString()}
             style={{ height: 230 }}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => handleSelectNodePrinter(item)}
                 style={[
@@ -145,6 +143,8 @@ const PrintersList = () => {
               </TouchableOpacity>
             )}
           />
+        ) : (
+          <Text style={styles.emptyMessage}>No online printers available</Text>
         )}
       </View>
 
@@ -155,15 +155,13 @@ const PrintersList = () => {
           <Text style={styles.title}>Offline Printers</Text>
         </View>
         {loadingNodePrinters ? (
-          <Text>Loading printers...</Text>
-        ) : offlinePrinters.length === 0 ? (
-          <Text>No offline printers available</Text>
-        ) : (
+          <Text style={styles.status}>Loading printers...</Text>
+        ) : offlinePrinters.length > 0 ? (
           <FlatList
             data={offlinePrinters}
             keyExtractor={item => item.id.toString()}
             style={{ height: 230 }}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <View
                 style={[
                   styles.printerList,
@@ -171,12 +169,14 @@ const PrintersList = () => {
                     backgroundColor: colors.greyCream,
                   },
                 ]}>
-                <Text style={[styles.name, {color: colors.grey}]}>
+                <Text style={[styles.name, { color: colors.grey }]}>
                   {item.name || 'Unknown Printer'}
                 </Text>
               </View>
             )}
           />
+        ) : (
+          <Text style={styles.emptyMessage}>No offline printers available</Text>
         )}
       </View>
     </View>
@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: colors.darkGrey,
   },
   printerList: {
     flexDirection: 'row',
@@ -228,6 +229,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '200',
   },
+  status: {
+    color: colors.darkGrey,
+  },
+  emptyMessage: {
+    fontSize: 16,
+    color: colors.darkGrey,
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+
 });
 
 export default PrintersList;
