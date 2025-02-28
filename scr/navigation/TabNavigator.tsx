@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Platform, SafeAreaView} from 'react-native';
+import {View, Platform} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ModalFilter from '../components/modals/ModalFilter';
 
@@ -74,7 +74,7 @@ function TabNavigator() {
                   />
                 ),
                 tabBarButton: isMiddle
-                  ? props => <ScanButton {...props} />
+                  ? props => <ScanButton key={props.key} {...props}/>
                   : undefined,
               }}
             />

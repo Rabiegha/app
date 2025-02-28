@@ -22,7 +22,7 @@ import useRegistrationSummary from '../../../hooks/registration/useRegistrationS
 import {fetchEventAttendeeList} from '../../../services/getAttendeesList';
 
 import {useFocusEffect} from '@react-navigation/native';
-import FastImage from 'react-native-fast-image';
+/* import FastImage from 'react-native-fast-image'; */
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../../../redux/selectors/auth/authSelectors.tsx';
 
@@ -238,7 +238,7 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
         />
       ) : (
         <View style={styles.noDataView}>
-          <FastImage source={emptyIcon} style={styles.gifStyle} />
+{/*           <FastImage source={emptyIcon} style={styles.gifStyle} /> */}
         </View>
       )}
     </View>

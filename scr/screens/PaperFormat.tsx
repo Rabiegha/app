@@ -1,7 +1,6 @@
 import {View, Text} from 'react-native';
 import React from 'react';
 import {PaperFormatComponent} from '../components/screens/print/PaperFormatComponent';
-import {colors} from 'react-native-elements';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
 import globalStyle from '../assets/styles/globalStyle';
 

@@ -61,11 +61,18 @@ const ScanComponent = () => {
 
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+  const hasScanned = useRef(false);
+
   const onBarCodeRead = async ({data}) => {
+
+    if (hasScanned.current) return; // Évite les scans multiples
+    hasScanned.current = true;
+
+
+    console.log("🔍 Scanned Data:", data)
     if (scanStatus !== 'idle' || modalVisible) {
       return;
     }
-
     setScanStatus('scanning');
     await delay(500);
 
@@ -109,6 +116,11 @@ const ScanComponent = () => {
       await delay(3000);
       resetScanner();
     }
+
+      // Autorise un nouveau scan après 3 secondes
+    setTimeout(() => {
+    hasScanned.current = false;
+  }, 3000);
   };
 
   // Réagir aux changements de printStatus et scanStatus

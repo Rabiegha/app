@@ -2,13 +2,13 @@ import React from 'react';
 import {View, Alert, StyleSheet, Platform} from 'react-native';
 import HeaderComponent from '../components/elements/header/HeaderComponent';
 import Share from 'react-native-share';
-import RNPrint from 'react-native-print';
 import BadgeComponent from '../components/screens/BadgeComponent';
 import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
 import {useEvent} from '../context/EventContext';
 import {EMS_URL} from '../config/config';
-/* import BlobUtil from '@react-native-oh-tpl/react-native-blob-util'; */
+import BlobUtil from '@react-native-oh-tpl/react-native-blob-util';
+import {downloadAndPrintPdf} from '../hooks/print/downloadAndPrintPdf';
 
 const BadgeScreen = ({route, navigation}) => {
   const {triggerListRefresh} = useEvent();
@@ -34,13 +34,7 @@ const BadgeScreen = ({route, navigation}) => {
     }
   };
 
-  const printPdf = async () => {
-    try {
-      await RNPrint.print({filePath: pdf});
-    } catch (error) {
-      console.error('Error printing PDF:', error);
-    }
-  };
+
 
   /* const downloadPdf = async () => {
     const pdfUrl = `${EMS_URL}/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
@@ -85,8 +79,8 @@ const BadgeScreen = ({route, navigation}) => {
         <BadgeComponent
           imageUri={image}
           share={sendPdf}
+/*           print={printPdf} */
 /*           download={downloadPdf} */
-          print={printPdf}
         />
       </View>
     </View>

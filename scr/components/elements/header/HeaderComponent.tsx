@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  SafeAreaView,
   Platform,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -20,13 +19,13 @@ const HeaderComponent = ({title, handlePress, color, backgroundColor}) => {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={[styles.headerContainer, {backgroundColor: backgroundColor}]}>
       <TouchableOpacity onPress={handlePress} style={styles.backButton}>
         <Image source={retourIcon} style={styles.buttonImage} />
       </TouchableOpacity>
       <Text style={[styles.title, {color}]}>{title}</Text>
-    </SafeAreaView>
+    </View>
   );
 };
 

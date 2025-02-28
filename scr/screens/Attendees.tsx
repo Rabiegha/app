@@ -145,7 +145,6 @@ const AttendeesScreen = () => {
           totalAttendees={totalListAttendees}
         />
         <View style={styles.printModal}>
-          <Text>hello</Text>
           <PrintModal
             onClose={() => dispatch(setPrintStatus(null))}
             visible={!!printStatus}

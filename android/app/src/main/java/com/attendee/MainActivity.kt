@@ -1,4 +1,4 @@
-package com.choyou.attendeeApplication
+package com.attendee
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

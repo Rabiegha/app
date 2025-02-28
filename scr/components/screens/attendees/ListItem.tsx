@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -96,19 +96,23 @@ const ListItem = React.memo(
 
     const nodePrinterId = selectedNodePrinter?.id;
 
+    const badgeurl = item.badge_pdf_url;
+
     useEffect(() => {
+      console.log('badgeurl', badgeurl);
       /*       console.log('Selected Node Printer ID:', nodePrinterId); */
-    }, [nodePrinterId]);
+    }, [nodePrinterId, badgeurl]);
 
     // Print hook
 
     const {printDocument} = usePrintDocument();
 
     const handlePrintDocument = () => {
-      printDocument(item.id);
+      printDocument(badgeurl);
+      handleSwitchToggle();
     };
 
-    const renderRightActions = (progress, dragX) => {
+    const renderRightActions = useCallback((progress, dragX) => {
       const action1TranslateX = dragX.interpolate({
         inputRange: [-145, -80, 0],
         outputRange: [0, 50, 100],
@@ -126,13 +130,13 @@ const ListItem = React.memo(
           <Animated.View
             style={[
               styles.rightAction,
-              {transform: [{translateX: action1TranslateX}]},
+              { transform: [{ translateX: action1TranslateX }] },
             ]}>
             <TouchableOpacity
               onPress={handlePrintDocument}
               style={[
                 styles.rightActionButton,
-                {backgroundColor: colors.darkGrey, zIndex: 10},
+                { backgroundColor: colors.darkGrey, zIndex: 10 },
               ]}>
               <Text style={styles.actionText}>Print</Text>
             </TouchableOpacity>
@@ -140,60 +144,65 @@ const ListItem = React.memo(
           <Animated.View
             style={[
               styles.rightAction,
-              {transform: [{translateX: action2TranslateX}]},
+              { transform: [{ translateX: action2TranslateX }] },
             ]}>
             <TouchableOpacity
               onPress={handleSwitchToggle}
               style={[
                 styles.rightActionButton,
-                {backgroundColor: colors.green},
-                {backgroundColor: isCheckedIn ? colors.red : colors.green},
+                { backgroundColor: isCheckedIn ? colors.red : colors.green },
               ]}>
-              <Text style={[styles.actionText, {zIndex: 5}]}>
+              <Text style={[styles.actionText, { zIndex: 5 }]}>
                 {isCheckedIn ? 'Uncheck' : 'Check'}
               </Text>
             </TouchableOpacity>
           </Animated.View>
         </View>
       );
-    };
+    }, [isCheckedIn]);
+
 
     return (
       <Swipeable
-        ref={swipeableRef}
-        renderRightActions={renderRightActions}
-        onSwipeableWillOpen={() => {
-          onSwipeableOpen(swipeableRef);
-        }}
-        onSwipeableOpen={direction => {
-          if (direction === 'right') {
+          ref={swipeableRef}
+          renderRightActions={renderRightActions}
+          friction={1} // Rend l'animation plus fluide
+          enableTrackpadTwoFingerGesture // Permet le swipe sur Mac avec trackpad
+          overshootRight={false}
+          onSwipeableWillOpen={() => {
             onSwipeableOpen(swipeableRef);
-          }
-        }}>
-        <TouchableWithoutFeedback onPress={handleItemPress}>
-          <View style={styles.listItemContainer}>
-            <Text style={styles.itemName}>
-              {highlightSearch(
-                `${item.first_name} ${item.last_name}`,
-                searchQuery,
+          }}
+          onSwipeableOpen={(direction) => {
+            if (direction === 'right') {
+              onSwipeableOpen(swipeableRef);
+            }
+          }}
+        >
+          <TouchableWithoutFeedback onPress={handleItemPress} accessible={false}>
+            <View style={styles.listItemContainer}>
+              <Text style={styles.itemName}>
+                {highlightSearch(
+                  `${item.first_name} ${item.last_name}`,
+                  searchQuery
+                )}
+              </Text>
+              {isCheckedIn ? (
+                <Image
+                  source={Accepted}
+                  resizeMode="contain"
+                  style={{
+                    width: 20,
+                    height: 20,
+                    tintColor: colors.green,
+                  }}
+                />
+              ) : (
+                <View style={{ width: 20, height: 20 }} />
               )}
-            </Text>
-            {isCheckedIn ? (
-              <Image
-                source={Accepted}
-                resizeMode="contain"
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: colors.green,
-                }}
-              />
-            ) : (
-              <View style={{width: 20, height: 20}} />
-            )}
-          </View>
-        </TouchableWithoutFeedback>
-      </Swipeable>
+            </View>
+          </TouchableWithoutFeedback>
+        </Swipeable>
+
     );
   },
 );

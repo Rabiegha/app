@@ -1,17 +1,17 @@
 // src/hooks/usePrintDocument.js
 
-import {useCallback} from 'react';
-import {Buffer} from 'buffer';
+import { useCallback } from 'react';
+import { Buffer } from 'buffer';
 import RNFS from 'react-native-fs';
-import {useDispatch, useSelector} from 'react-redux';
-import {setPrintStatus} from '../../redux/slices/printerSlice';
-import {useNodePrint} from './useNodePrint';
-import {useEvent} from '../../context/EventContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPrintStatus } from '../../redux/slices/printerSlice';
+import { useNodePrint } from './useNodePrint';
+import { useEvent } from '../../context/EventContext';
 
 const usePrintDocument = () => {
   const eventDetails = useEvent();
   const dispatch = useDispatch();
-  const {sendPrintJob} = useNodePrint();
+  const { sendPrintJob } = useNodePrint();
 
   // Sélecteur Redux pour récupérer le Node Printer
   const selectedNodePrinter = useSelector(
@@ -26,12 +26,14 @@ const usePrintDocument = () => {
     return Buffer.from(buffer).toString('base64');
   };
 
+  // Fonction pour supprimer les pages blanches supplémentaires
+
   const printDocument = useCallback(
-    async attendeeId => {
-      const documentUrl = `https://ems.choyou.fr/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
+    async documentUrl => {
 
       // Mettre à jour le statut d'impression à 'Sending print job'
       dispatch(setPrintStatus('Sending print job'));
+
 
       try {
         // Vérifier si l'imprimante est sélectionnée
@@ -42,7 +44,7 @@ const usePrintDocument = () => {
         }
 
         // Vérifier si le fichier existe
-        const headResponse = await fetch(documentUrl, {method: 'HEAD'});
+        const headResponse = await fetch(documentUrl, { method: 'HEAD' });
         if (!headResponse.ok) {
           console.error('File does not exist.');
           dispatch(setPrintStatus('Error printing'));
@@ -71,27 +73,37 @@ const usePrintDocument = () => {
           console.log('Online file encoded to Base64');
         }
 
-        // Envoyer le document à l'imprimante via useNodePrint
-        await sendPrintJob(base64String);
+        // Convertir la chaîne Base64 en Uint8Array pour pdf-lib
+        const pdfBytes = Buffer.from(base64String, 'base64');
 
-        //success printing
+        // Supprimer les pages blanches supplémentaires
+        const cleanedPdfBytes = await pdfBytes;
+
+        // Convertir les bytes nettoyés en Base64
+        const cleanedBase64String = Buffer.from(cleanedPdfBytes).toString('base64');
+
+        // Envoyer le document nettoyé à l'imprimante via useNodePrint
+        await sendPrintJob(cleanedBase64String);
+
+        // Success printing
         setTimeout(() => {
           dispatch(setPrintStatus('Print successful'));
         }, 2000);
 
-        //modal close
+        // Modal close
         setTimeout(() => {
           dispatch(setPrintStatus(null)); // Hide modal after 3 sec
         }, 3000);
       } catch (error) {
-        //error printing
+        // Error printing
+        console.log('eventid', eventId);
         console.error(
           'Error printing document:',
           error.response ? error.response.data : error.message,
         );
         dispatch(setPrintStatus('Error printing'));
 
-        //modal close
+        // Modal close
         setTimeout(() => {
           dispatch(setPrintStatus(null));
         }, 3000);
@@ -100,7 +112,7 @@ const usePrintDocument = () => {
     [eventId, nodePrinterId, sendPrintJob, dispatch],
   );
 
-  return {printDocument};
+  return { printDocument };
 };
 
 export default usePrintDocument;

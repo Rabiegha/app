@@ -9,10 +9,6 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {
-  selectWiFiPrinter,
-  deselectWiFiPrinter,
-  selectNodePrinter,
-  deselectNodePrinter,
   selectNodePrinterAsync,
   deselectNodePrinterAsync,
 } from '../../../redux/slices/printerSlice';
@@ -29,27 +25,17 @@ const PrintersList = () => {
   const [loadingNodePrinters, setLoadingNodePrinters] = useState(true);
   const [loadingPrinter, setLoadingPrinter] = useState(false);
 
-  // selected wifi printers
-  const selectedWiFiPrinters = useSelector(
-    state => state.printers.selectedPrinters,
-  );
-
-  // selected node printer
   const selectedNodePrinter = useSelector(
     state => state.printers.selectedNodePrinter,
   );
 
-  // Fetch Wi-Fi printers
   useEffect(() => {
     getWifiPrinters()
-      .then(data => {
-        setWifiPrinters(data);
-      })
+      .then(data => setWifiPrinters(data))
       .catch(error => console.error(error))
       .finally(() => setLoadingWifiPrinters(false));
   }, []);
 
-  // Fetch PRINTNODE printers
   useEffect(() => {
     const fetchPrinters = async () => {
       try {
@@ -64,7 +50,6 @@ const PrintersList = () => {
     fetchPrinters();
   }, []);
 
-  // online and offline printers
   const onlinePrinters = nodePrinters.filter(
     printer => printer.state === 'online',
   );
@@ -72,10 +57,8 @@ const PrintersList = () => {
     printer => printer.state === 'offline',
   );
 
-  // Handle PrintNode printer selection
   const handleSelectNodePrinter = async printer => {
     setLoadingPrinter(true);
-
     try {
       if (selectedNodePrinter && selectedNodePrinter.name === printer.name) {
         await dispatch(deselectNodePrinterAsync()).unwrap();
@@ -83,15 +66,11 @@ const PrintersList = () => {
         await dispatch(selectNodePrinterAsync(printer)).unwrap();
       }
     } catch (error) {
-      Alert.alert('Error', 'Opperation failed. Try again.');
+      Alert.alert('Error', 'Operation failed. Try again.');
     } finally {
       setLoadingPrinter(false);
     }
   };
-
-  useEffect(() => {
-    console.log('Updated selectedNodePrinter:', selectedNodePrinter?.id);
-  }, [selectedNodePrinter]);
 
   return (
     <View>
@@ -99,18 +78,21 @@ const PrintersList = () => {
         visible={loadingWifiPrinters || loadingNodePrinters || loadingPrinter}
         textContent="Loading..."
       />
+
       {/* Online Printers */}
       <View style={styles.container}>
-        <Text style={styles.title}>Online Printers</Text>
+        <View style={styles.titleContainer}>
+          <View style={styles.onlineIndicator} />
+          <Text style={styles.title}>Online Printers</Text>
+        </View>
         {loadingNodePrinters ? (
-          <Text>Loading printers...</Text>
-        ) : onlinePrinters.length === 0 ? (
-          <Text>No online printers available</Text>
-        ) : (
+          <Text style={styles.status}>Loading printers...</Text>
+        ) : onlinePrinters.length > 0 ? (
           <FlatList
             data={onlinePrinters}
             keyExtractor={item => item.id.toString()}
-            renderItem={({item}) => (
+            style={{ height: 230 }}
+            renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => handleSelectNodePrinter(item)}
                 style={[
@@ -161,21 +143,25 @@ const PrintersList = () => {
               </TouchableOpacity>
             )}
           />
+        ) : (
+          <Text style={styles.emptyMessage}>No online printers available</Text>
         )}
       </View>
 
       {/* Offline Printers */}
       <View style={styles.container}>
-        <Text style={styles.title}>Offline Printers</Text>
+        <View style={styles.titleContainer}>
+          <View style={styles.offlineIndicator} />
+          <Text style={styles.title}>Offline Printers</Text>
+        </View>
         {loadingNodePrinters ? (
-          <Text>Loading printers...</Text>
-        ) : offlinePrinters.length === 0 ? (
-          <Text>No offline printers available</Text>
-        ) : (
+          <Text style={styles.status}>Loading printers...</Text>
+        ) : offlinePrinters.length > 0 ? (
           <FlatList
             data={offlinePrinters}
             keyExtractor={item => item.id.toString()}
-            renderItem={({item}) => (
+            style={{ height: 230 }}
+            renderItem={({ item }) => (
               <View
                 style={[
                   styles.printerList,
@@ -183,12 +169,14 @@ const PrintersList = () => {
                     backgroundColor: colors.greyCream,
                   },
                 ]}>
-                <Text style={[styles.name, {color: colors.grey}]}>
+                <Text style={[styles.name, { color: colors.grey }]}>
                   {item.name || 'Unknown Printer'}
                 </Text>
               </View>
             )}
           />
+        ) : (
+          <Text style={styles.emptyMessage}>No offline printers available</Text>
         )}
       </View>
     </View>
@@ -201,11 +189,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  onlineIndicator: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: 'green',
+    marginRight: 8,
+  },
+  offlineIndicator: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: 'red',
+    marginRight: 8,
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
+    color: colors.darkGrey,
   },
   printerList: {
     flexDirection: 'row',
@@ -223,6 +229,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '200',
   },
+  status: {
+    color: colors.darkGrey,
+  },
+  emptyMessage: {
+    fontSize: 16,
+    color: colors.darkGrey,
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+
 });
 
 export default PrintersList;

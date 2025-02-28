@@ -45,11 +45,13 @@ export const useNodePrint = () => {
         content: fileBase64,
         source: 'Attendee App',
         options: {
-          paper: selectedPaperFormat,
           copies: 1,
           color: true,
           dpi: dpi.toString(),
           orientation: orientation,
+          pageRanges: '1',
+          pages: 1,
+          sizing: 'none',
         },
       };
 
