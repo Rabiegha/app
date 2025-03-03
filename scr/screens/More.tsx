@@ -8,6 +8,11 @@ import globalStyle from '../assets/styles/globalStyle';
 import colors from '../assets/colors/colors';
 import {BASE_URL, EMS_URL} from '../config/config';
 import {useEvent} from '../context/EventContext';
+import usePrintDocument from '../hooks/print/usePrintDocument';
+import PrintModal from '../components/modals/PrintModal';
+import {setPrintStatus} from '../redux/slices/printerSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPrintStatus } from '../redux/selectors/print/printerSelectors';
 
 const MoreScreen = ({route, navigation}) => {
   const {triggerListRefresh, updateAttendee} = useEvent();
@@ -24,6 +29,7 @@ const MoreScreen = ({route, navigation}) => {
     organization,
     type,
     typeId,
+    badgeurl,
   } = route.params;
 
   const [localAttendeeStatus, setLocalAttendeeStatus] =
@@ -117,6 +123,20 @@ const MoreScreen = ({route, navigation}) => {
     console.log('', type);
   }, [type]);
 
+
+  // Print
+  const dispatch = useDispatch();
+
+  const printStatus = useSelector(selectPrintStatus);
+
+
+  const {printDocument} = usePrintDocument();
+
+  const handlePrintDocument = () => {
+    printDocument(badgeurl);
+  };
+
+
   return (
     <View style={globalStyle.backgroundWhite}>
       <HeaderComponent
@@ -125,6 +145,11 @@ const MoreScreen = ({route, navigation}) => {
         color={colors.darkGrey}
       />
       <View style={[globalStyle.container, styles.profil]}>
+      <PrintModal
+            onClose={() => dispatch(setPrintStatus(null))}
+            visible={!!printStatus}
+            status={printStatus}
+          />
         <MoreComponent
           See={handleBadgePress}
           firstName={firstName}
@@ -136,6 +161,7 @@ const MoreScreen = ({route, navigation}) => {
           organization={organization}
           handleButton={handleButton}
           share={sendPdf}
+          Print={handlePrintDocument}
           loading={loading}
           modify={goToEdit}
           type={type}

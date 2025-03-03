@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     position: 'relative',
     maxHeight: 60,
-    height: 60,
+    height: 80,
     zIndex: 10,
   },
   backButton: {

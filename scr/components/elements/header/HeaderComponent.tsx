@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     paddingTop: 12,
     position: 'relative',
-    maxHeight: 60,
-    height: 60,
+    maxHeight: 100,
+    height: 100,
     zIndex: 10,
   },
   title: {
@@ -53,6 +53,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   backButton: {
+    position: 'absolute',
+    top: 18,
     justifyContent: 'center',
     padding: 10,
     zIndex: 10,
