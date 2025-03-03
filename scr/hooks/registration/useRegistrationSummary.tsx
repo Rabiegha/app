@@ -1,12 +1,10 @@
-// useLiveData.js
+import { useState, useEffect, useCallback } from 'react';
+import { registrationSummaryDetails } from '../../services/registrationSummaryDetailsService';
+import { useEvent } from '../../context/EventContext';
+import { useSelector } from 'react-redux';
+import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 
-import {useState, useEffect} from 'react';
-import {registrationSummaryDetails} from '../../services/registrationSummaryDetailsService';
-import {useEvent} from '../../context/EventContext';
-import {useSelector} from 'react-redux';
-import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
-
-const useRegistrationSummary = () => {
+const useRegistrationSummary = (refreshTrigger) => {
   const [summary, setSummary] = useState({
     totalAttendees: 0,
     totalCheckedIn: 0,
@@ -16,52 +14,59 @@ const useRegistrationSummary = () => {
   const [error, setError] = useState(null);
 
   const userId = useSelector(selectCurrentUserId);
+  const { eventId } = useEvent();
 
-  const {eventId} = useEvent();
+  const fetchSummary = useCallback(async () => {
+    if (!userId || !eventId) return;
 
-  useEffect(() => {
-    let isMounted = true;
+    try {
+      setLoading(true);
+      const response = await registrationSummaryDetails(userId, eventId);
 
-    const fetchSummary = async () => {
-      try {
-        setLoading(true);
-        const response = await registrationSummaryDetails(userId, eventId);
-        const parseNumber = num => parseInt(num.replace(/,/g, ''), 10);
-        if (response.status && isMounted) {
+      // ✅ Ensure API response is valid before updating state
+      if (response && response.status) {
+        const totalRegistered = response.total_registered
+          ? parseInt(response.total_registered.replace(/,/g, ''), 10)
+          : 0;
+
+        const totalAttended = response.total_attended
+          ? parseInt(response.total_attended.replace(/,/g, ''), 10)
+          : 0;
+
+        if (!isNaN(totalRegistered) && !isNaN(totalAttended)) {
           setSummary({
-            totalAttendees: response.total_registered,
-            totalCheckedIn: response.total_attended,
-            totalNotCheckedIn:
-              response.total_registered - response.total_attended,
+            totalAttendees: totalRegistered,
+            totalCheckedIn: totalAttended,
+            totalNotCheckedIn: totalRegistered - totalAttended,
           });
-          console.log('totalAttendees', response.total_registered);
-          console.log('totalAttendees', summary.totalAttendees);
-          console.log('totalCheckedIn', response.total_attended);
-          console.log('totalCheckedIn', summary.totalCheckedIn);
+
           setError(null);
         } else {
-          throw new Error('Error fetching data');
+          throw new Error('Invalid API data format');
         }
-      } catch (err) {
-        if (isMounted) {
-          setError(err.message);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+      } else {
+        throw new Error('Error fetching data');
       }
-    };
-
-    if (userId && eventId) {
-      fetchSummary();
-      return () => {
-        isMounted = false;
-      };
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   }, [userId, eventId]);
 
-  return {summary, loading, error};
+  // Fetch data when eventId changes
+  useEffect(() => {
+    fetchSummary();
+  }, [fetchSummary]);
+
+  // Fetch data when refreshTrigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      fetchSummary();
+    }
+  }, [refreshTrigger]);
+
+  return { summary, loading, error, refetch: fetchSummary };
 };
 
 export default useRegistrationSummary;

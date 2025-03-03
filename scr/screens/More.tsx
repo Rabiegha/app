@@ -148,6 +148,7 @@ const MoreScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   profil: {
     marginTop: -20,
+    height: 1500,
   },
 });
 
