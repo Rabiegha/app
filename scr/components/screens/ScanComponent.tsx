@@ -81,10 +81,12 @@ const ScanComponent = () => {
       console.log('API Response:', response);
       if (response.status === true) {
         const attendee = response.attendee_details;
+
         setAttendeeData({
-          id: attendee.attendee_id,
-          name: attendee.attendee_name,
+          id: attendee?.attendee_id || 'N/A',  // Default fallback
+          name: attendee?.attendee_name || 'Unknown Attendee',
         });
+
         setScanStatus('found');
 
         await delay(500);
@@ -102,7 +104,7 @@ const ScanComponent = () => {
           // Ne pas vérifier printStatus ici ; la logique est gérée par useEffect ci-dessous
         } else {
           resetScanner();
-          navigation.navigate('Attendees');
+          /* navigation.navigate('Attendees'); */
         }
       } else {
         setScanStatus('not_found');
@@ -120,7 +122,7 @@ const ScanComponent = () => {
       // Autorise un nouveau scan après 3 secondes
     setTimeout(() => {
     hasScanned.current = false;
-  }, 3000);
+  }, 2000);
   };
 
   // Réagir aux changements de printStatus et scanStatus

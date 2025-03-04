@@ -7,6 +7,7 @@ import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
 import ScanIcon from '../../assets/images/icons/Scan.png';
 import EditIcon from '../../assets/images/icons/Modifier.png';
+import PrintIcon from '../../assets/images/icons/Print.png';
 import HoldButton from '../elements/buttons/HoldButton';
 
 const MoreComponent = ({
@@ -18,6 +19,7 @@ const MoreComponent = ({
   organization,
   JobTitle,
   See,
+  Print,
   handleButton,
   loading,
   modify,
@@ -70,6 +72,12 @@ const MoreComponent = ({
         <SmallButton
           imageSource={EditIcon}
           pressHandler={modify}
+          backgroundColor={colors.greyCream}
+          tintColor={colors.darkGrey}
+        />
+        <SmallButton
+          imageSource={PrintIcon}
+          pressHandler={Print}
           backgroundColor={colors.greyCream}
           tintColor={colors.darkGrey}
         />
@@ -127,8 +135,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
     borderRadius: 40,
   },
   topButtonsContainer: {

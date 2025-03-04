@@ -20,14 +20,14 @@ const HeaderParticipants = ({onLeftPress, Title, onRightPress}) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    top: Platform.OS === 'ios' ? 50 : 0,
+    top: Platform.OS === 'ios' ? 50 : 25,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: 20,
     paddingTop: 12,
     maxHeight: 60,
-    height: 60,
+    height: 80,
     zIndex: 10,
     backgroundColor: 'white',
   },

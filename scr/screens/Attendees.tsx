@@ -23,12 +23,15 @@ import PrintModal from '../components/modals/PrintModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectPrintStatus} from '../redux/selectors/print/printerSelectors';
 import {setPrintStatus} from '../redux/slices/printerSlice';
+import useRegistrationSummary from '../hooks/registration/useRegistrationSummary';
 
 const AttendeesScreen = () => {
   const {eventName} = useEvent();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   //console.log('eventId', eventName);
   useFocusEffect(
     React.useCallback(() => {
+      setRefreshTrigger(prev => prev + 1); 
       StatusBar.setBarStyle('dark-content'); // Set status bar style to light-content
       return () => {
         // This is useful if this screen has a unique StatusBar style                                                                                                                                                          '); // Reset status bar style when screen loses focus
@@ -97,6 +100,18 @@ const AttendeesScreen = () => {
     setFilter(newFilter);
     closeModal(); // Assuming you want to close the modal on filter apply
   };
+
+  const { summary, loading, error, refetch } = useRegistrationSummary(refreshTrigger);
+  const { totalAttendees, totalCheckedIn } = summary || {};
+
+  useEffect(() => {
+    setTotalListAttendees(totalAttendees);
+    setCheckedInAttendees(totalCheckedIn);
+    const ratio =
+      totalAttendees > 0 ? (totalCheckedIn / totalAttendees) * 100 : 0;
+      setRatio(ratio);
+  }, [totalAttendees, totalCheckedIn]);
+
   const updateProgress = (total, checkedIn, ratio) => {
     setTotalListAttendees(total);
     setCheckedInAttendees(checkedIn);
@@ -115,7 +130,12 @@ const AttendeesScreen = () => {
 
   // Gestion de la fermeture du modal
   const handleModalClose = () => {
-    setModalPrintVisible(false);
+    (false);
+  };
+  
+
+  const handleTriggerRefresh = () => {
+    setRefreshTrigger(prev => prev + 1); // 🔄 This will trigger `useEffect` in useRegistrationSummary
   };
 
   return (
@@ -158,9 +178,10 @@ const AttendeesScreen = () => {
 
         <List
           searchQuery={searchQuery}
-          onUpdateProgress={updateProgress}
           onShowNotification={showNotification}
           filterCriteria={filterCriteria}
+          onTriggerRefresh={handleTriggerRefresh}
+          summary={summary}
         />
 
         <Modal

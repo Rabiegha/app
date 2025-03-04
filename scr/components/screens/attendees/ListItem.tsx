@@ -84,6 +84,7 @@ const ListItem = React.memo(
         organization: item.organization,
         type: item.attendee_type_name,
         typeId: item.attendee_type_id,
+        badgeurl: item.badge_pdf_url,
       });
     };
 
@@ -99,7 +100,7 @@ const ListItem = React.memo(
     const badgeurl = item.badge_pdf_url;
 
     useEffect(() => {
-      console.log('badgeurl', badgeurl);
+/*       console.log('badgeurl', badgeurl); */
       /*       console.log('Selected Node Printer ID:', nodePrinterId); */
     }, [nodePrinterId, badgeurl]);
 

@@ -31,15 +31,15 @@ const HeaderComponent = ({title, handlePress, color, backgroundColor}) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    top: Platform.OS === 'ios' ? 50 : 0,
+    top: Platform.OS === 'ios' ? 50 : 25,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: 20,
     paddingTop: 12,
     position: 'relative',
-    maxHeight: 60,
-    height: 60,
+    maxHeight: 100,
+    height: 100,
     zIndex: 10,
   },
   title: {
@@ -53,6 +53,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   backButton: {
+    position: 'absolute',
+    top: 18,
     justifyContent: 'center',
     padding: 10,
     zIndex: 10,

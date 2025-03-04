@@ -49,13 +49,18 @@ const MenuScreen = ({navigation}) => {
       ],
     },
     {
+      title: 'Paramètres',
+      buttons: [
+        {title: 'Paramètres du scanner', action: () => navigation.navigate('ScanSettings')},
+      ],
+    },
+    {
       title: 'Aide & Support',
       buttons: [
         {title: 'À propos', action: () => navigation.navigate('About')},
         {title: 'Centre d’aide', action: () => navigation.navigate('Help')},
       ],
     },
-    // Add more sections as needed
   ];
   const handleLogout = async () => {
     await logout();
@@ -76,7 +81,7 @@ const MenuScreen = ({navigation}) => {
         backgroundColor={undefined}
       />
       <View style={globalStyle.container}>
-        <View style={{top: 60}}>
+        <View style={styles.container}>
           <MenuListComponent sections={sections} />
           <LogOutButton onPress={handleLogout} />
         </View>
@@ -85,10 +90,8 @@ const MenuScreen = ({navigation}) => {
   );
 };
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  container: {
+    height: 1900,
   },
 });
 

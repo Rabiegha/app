@@ -9,6 +9,7 @@ import printerReducer from './slices/printerSlice';
 import pastEventsReducer from './slices/event/pastEventsSlice';
 import futureEventsReducer from './slices/event/futureEventsSlice';
 import authReducer from './slices/auth/authSlice';
+import scanReducer from '../redux/slices/scanModeSlice';
 
 // pastEvents
 const pastEventsPersistConfig = {
@@ -24,8 +25,14 @@ const futureEventsPersistConfig = {
   blacklist: ['loading', 'error'],
 };
 
+const isKioskModePersistConfig = {
+  key: 'isKioskMode',
+  storage: AsyncStorage,
+};
+
 const rootReducer = combineReducers({
   printers: printerReducer,
+  scan: persistReducer(isKioskModePersistConfig, scanReducer),
   /*   pastEvents: persistReducer(pastEventsPersistConfig, pastEventsReducer),
   futureEvents: persistReducer(futureEventsPersistConfig, futureEventsReducer), */
   pastEvents: pastEventsReducer,

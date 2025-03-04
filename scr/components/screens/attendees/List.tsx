@@ -26,7 +26,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../../../redux/selectors/auth/authSelectors.tsx';
 
-const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
+const List = ({searchQuery, onUpdateProgress, filterCriteria, onTriggerRefresh, summary}) => {
   const [openSwipeable, setOpenSwipeable] = useState(null);
 
   const handleSwipeableOpen = swipeable => {
@@ -39,8 +39,6 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
   const [filteredData, setFilteredData] = useState([]);
   const [allAttendees, setAllAttendees] = useState([]);
   const flatListRef = useRef(null);
-  const [totalAttendees, setTotalAttendees] = useState(0);
-  const [totalCheckedAttendees, setTotalCheckedAttendees] = useState(0);
   const {refreshList, triggerListRefresh, updateAttendee, attendeesRefreshKey} =
     useEvent();
   const {eventId} = useEvent();
@@ -89,8 +87,6 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
       await AsyncStorage.removeItem(`attendees_${eventId}`);
       setFilteredData([]);
       setAllAttendees([]);
-      setTotalAttendees(0);
-      setTotalCheckedAttendees(0);
       setHasData(false);
       triggerListRefresh();
     } catch (e) {
@@ -166,15 +162,6 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
     }
   };
 
-  //Registration summary
-
-  const {summary, loading, error} = useRegistrationSummary(userId, eventId);
-
-  useEffect(() => {
-    setTotalAttendees(summary.totalAttendees);
-    setTotalCheckedAttendees(summary.totalCheckedIn);
-  }, [summary]);
-
   useFocusEffect(
     useCallback(() => {
       clearLocalData();
@@ -194,12 +181,6 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
     attendeesRefreshKey,
   ]);
 
-  useEffect(() => {
-    const ratio =
-      totalAttendees > 0 ? (totalCheckedAttendees / totalAttendees) * 100 : 0;
-    onUpdateProgress(totalAttendees, totalCheckedAttendees, ratio);
-  }, [totalAttendees, totalCheckedAttendees, onUpdateProgress]);
-
   const handleUpdateAttendee = async updatedAttendee => {
     try {
       const updatedAttendees = allAttendees.map(attendee =>
@@ -212,6 +193,7 @@ const List = ({searchQuery, onUpdateProgress, filterCriteria}) => {
       await axios.post(url);
 
       triggerListRefresh();
+      onTriggerRefresh();
     } catch (error) {
       console.error('Error updating attendee', error);
     }

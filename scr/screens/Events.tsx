@@ -171,7 +171,7 @@ const EventsScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Platform.OS === 'ios' ? 90 : 50,
+    paddingTop: Platform.OS === 'ios' ? 90 : 70,
     paddingLeft: 20,
     paddingRight: 20,
   },

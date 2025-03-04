@@ -79,10 +79,10 @@ android {
 
     namespace "com.attendee"
     defaultConfig {
-        applicationId "com.attendee"
+        applicationId "com.choyou.attendeeApplication"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 20
         versionName "1.0"
 
         missingDimensionStrategy 'react-native-camera', 'mlkit'
@@ -95,7 +95,7 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file('new.keystore')
+            storeFile file('attendee-key.jks')
             storePassword 'Attendee'
             keyAlias 'key0'
             keyPassword 'Attendee'

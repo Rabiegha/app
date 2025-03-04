@@ -23,7 +23,7 @@ const HeaderEvent = ({onLeftPress, onRightPress, opacity}) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    top: Platform.OS === 'ios' ? 50 : 0,
+    top: Platform.OS === 'ios' ? 50 : 25,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     position: 'relative',
     maxHeight: 60,
-    height: 60,
+    height: 80,
     zIndex: 10,
   },
   backButton: {
