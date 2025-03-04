@@ -39,18 +39,25 @@ const EditAttendeesComponent = ({
   attendeeTypes,
 }) => {
   // Helper function to limit phone number to 9 digits
-  const handlePhoneNumberChange = text => {
-    // Remove the '+' character if the text starts with '+0'
-    if (text.startsWith('+0')) {
-      text = text.slice(1); // Remove the '+' character, keep the '0'
+
+
+  const handlePhoneNumberChange = (text = '') => {
+    if (typeof text !== 'string') {
+      return; // Prevent errors if text is null or undefined
     }
+
+    // Remove the '+' character if the text starts with '+'
+    if (text.startsWith('+')) {
+      text = text.slice(1); // Remove the '+' character
+    }
+
     // Limit to 9 digits
-    if (text.length <= 9) {
-      setNumeroTelephone(text);
-      resetInputError('numeroTelephone');
-    }
+    setNumeroTelephone(text);
+    resetInputError('numeroTelephone');
+
     return text;
   };
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -136,7 +143,7 @@ const EditAttendeesComponent = ({
           maxHeight={300}
           labelField="label"
           valueField="value"
-          placeholder={`${type}`}
+          placeholder={type ? type : "Sélectionner un type"}
           searchPlaceholder="Search..."
           value={typeId}
           onChange={item => {
@@ -241,7 +248,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 20,
     width: '100%',
-    height: '120%',
+    height: 1300,
   },
   wrapper: {
     top: 25,
@@ -305,6 +312,9 @@ const styles = StyleSheet.create({
     height: 20,
     marginRight: 10,
     borderRadius: 3, // pour avoir des coins légèrement arrondis
+  },
+  itemText: {
+    color: colors.darkGrey,
   },
 });
 
