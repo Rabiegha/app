@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 16,
     marginLeft: 10,
+    color: colors.darkGrey,
   },
   value: {
     color: colors.green,

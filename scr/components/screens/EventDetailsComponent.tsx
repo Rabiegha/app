@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: '800',
     fontSize: 16,
+    color: colors.darkGrey,
   },
   value: {
     color: colors.green,
