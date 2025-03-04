@@ -218,6 +218,7 @@ const AddAttendeesComponent = ({
         />
         {/* Checked-in or not */}
         <CheckBox
+          style={globalStyle.checkBox}
           title={'Check-in'}
           checkedIcon={
             <Image
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 20,
     width: '100%',
-    height: 900,
+    height: 1000,
   },
   wrapper: {
     top: 25,
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     marginLeft: 0,
     marginRight: 0,
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 0,
     padding: 0,
     borderWidth: 0,
@@ -312,7 +313,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   label: {
-    color: colors.grey,
+    color: colors.darkGrey,
   },
   selectedTextStyle: {
     fontSize: 16,
@@ -336,6 +337,9 @@ const styles = StyleSheet.create({
     height: 20,
     marginRight: 10,
     borderRadius: 3, // pour avoir des coins légèrement arrondis
+  },
+  itemText: {
+    color: colors.darkGrey,
   },
 });
 

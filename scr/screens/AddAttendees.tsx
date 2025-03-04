@@ -69,15 +69,15 @@ const AddAttendeesScreen = ({navigation}) => {
       errors.email = true;
     }
     // Validate phone number (starts with 0 and has at least 10 digits)
-    if (!numeroTelephone == '') {
+/*     if (!numeroTelephone == '') {
       const phoneRegex = /^0\d{9,}$/;
       if (!phoneRegex.test(numeroTelephone)) {
         errors.numeroTelephone = true;
       }
-    }
+    } */
 
     // Validate email format
-    if (!email == '') {
+    if (email !== '') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         errors.email = true;
@@ -146,7 +146,7 @@ const AddAttendeesScreen = ({navigation}) => {
   return (
     <View style={[globalStyle.backgroundWhite, styles.wrap]}>
       <HeaderComponent
-        title="Modifier"
+        title="Ajouter"
         color={colors.darkGrey}
         handlePress={handleGoBack}
         backgroundColor={'white'}
