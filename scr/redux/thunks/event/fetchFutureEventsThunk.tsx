@@ -5,43 +5,51 @@ import {demoEvents} from '../../../demo/demoEvents';
 export const fetchFutureEvents = createAsyncThunk(
   'fetchFutureEvents',
   async ({userId, isEventFromList, isDemoMode}, {rejectWithValue}) => {
+    const controller = new AbortController(); // 🚀 Crée un contrôleur pour annuler les requêtes
+    const timeout = setTimeout(() => {
+      controller.abort(); // ⏳ Annule toutes les requêtes après 10s
+      rejectWithValue('Fetch events timeout exceeded');
+    }, 10000);
+
     try {
       if (isDemoMode) {
-        // Return demo events immediately
+        clearTimeout(timeout); // ✅ Annule le timeout si mode démo
         return {events: demoEvents, timeStamp: Date.now()};
       } else {
         const combinedEvents = [];
-        let failedCount = 0; // Track how many fail
+        let failedCount = 0; // Compte le nombre d'échecs
 
         for (const isEventFrom of isEventFromList) {
           try {
-            const response = await fetchEventList(userId, isEventFrom);
-            // If fetchEventList doesn't throw, push in the event_details
+            const response = await fetchEventList(userId, isEventFrom, {
+              signal: controller.signal, // 🔥 Attache le signal d'annulation
+            });
+
             if (response.status && response.event_details) {
               combinedEvents.push(...response.event_details);
             } else {
-              // The response is "invalid", so count it as a failure
               failedCount++;
             }
           } catch (innerError) {
-            // Catch any error thrown by fetchEventList
+            if (innerError.name === 'AbortError') {
+              return rejectWithValue('Request was cancelled due to timeout');
+            }
             console.warn(`Skipping isEventFrom=${isEventFrom}`, innerError);
             failedCount++;
           }
         }
 
-        // If *all* requests fail, return an error
+        clearTimeout(timeout); // ✅ Annule le timeout après exécution réussie
+
         if (failedCount === isEventFromList.length) {
-          // This will make the reducer's rejected case get the error message
-          throw new Error('Failed to fetch any events');
+          return rejectWithValue('Failed to fetch any events');
         }
 
-        // Otherwise, we got partial or full success
         return {events: combinedEvents, timeStamp: Date.now()};
       }
     } catch (error) {
-      // If we get here, *everything* failed
+      clearTimeout(timeout);
       return rejectWithValue(error.message || 'Failed to fetch future events');
     }
-  },
+  }
 );
