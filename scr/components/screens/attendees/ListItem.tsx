@@ -20,6 +20,7 @@ import {useDispatch} from 'react-redux';
 import usePrintDocument from '../../../hooks/print/usePrintDocument';
 
 const {width} = Dimensions.get('window');
+let openSwipeableRef = null;
 
 const ListItem = React.memo(
   ({item, searchQuery, onUpdateAttendee, onSwipeableOpen}) => {
@@ -171,12 +172,12 @@ const ListItem = React.memo(
           enableTrackpadTwoFingerGesture // Permet le swipe sur Mac avec trackpad
           overshootRight={false}
           onSwipeableWillOpen={() => {
-            onSwipeableOpen(swipeableRef);
-          }}
-          onSwipeableOpen={(direction) => {
-            if (direction === 'right') {
-              onSwipeableOpen(swipeableRef);
+            // Close the previously opened Swipeable
+            if (openSwipeableRef && openSwipeableRef !== swipeableRef.current) {
+              openSwipeableRef.close();
             }
+            // Store the newly opened Swipeable
+            openSwipeableRef = swipeableRef.current;
           }}
         >
           <TouchableWithoutFeedback onPress={handleItemPress} accessible={false}>
