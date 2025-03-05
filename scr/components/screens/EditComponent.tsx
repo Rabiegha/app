@@ -193,7 +193,7 @@ const EditAttendeesComponent = ({
           placeholderTextColor={
             inputErrors.numeroTelephone ? colors.red : colors.grey
           }
-          value={numeroTelephone}
+          value={numeroTelephone ?? ""}
           onChangeText={text => {
             setNumeroTelephone(handlePhoneNumberChange(text));
             resetInputError('numero de telephone');
@@ -212,7 +212,7 @@ const EditAttendeesComponent = ({
         <TextInput
           style={globalStyle.input}
           placeholderTextColor={colors.darkGrey}
-          value={societe}
+          value={jobTitle ?? ""}
           onChangeText={text => setSociete(text)}
         />
         <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
@@ -221,7 +221,7 @@ const EditAttendeesComponent = ({
         <TextInput
           style={[globalStyle.input]}
           placeholderTextColor={colors.darkGrey}
-          value={jobTitle}
+          value={jobTitle ?? ""}
           onChangeText={text => setJobTitle(text)}
         />
 
