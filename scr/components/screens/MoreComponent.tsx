@@ -9,6 +9,8 @@ import ScanIcon from '../../assets/images/icons/Scan.png';
 import EditIcon from '../../assets/images/icons/Modifier.png';
 import PrintIcon from '../../assets/images/icons/Print.png';
 import HoldButton from '../elements/buttons/HoldButton';
+import { insertSpaceBetweenPairs } from '../../hooks/useFormat';
+
 
 const MoreComponent = ({
   firstName,
@@ -25,40 +27,13 @@ const MoreComponent = ({
   modify,
   type,
 }) => {
-/*   console.log('Current attendeeStatus:', attendeeStatus);
-  console.log('Current attendeeStatus:', JobTitle); */
 
-  function insertSpaceBetweenPairs(str) {
-    if (str == null) {
-      return '';
-    }
-
-    let removePlus = false;
-
-    if (str.startsWith('+0')) {
-      str = str.slice(1);
-      removePlus = true;
-    }
-
-    if (removePlus) {
-      return str.match(/.{1,2}/g)?.join(' ') || '';
-    } else {
-      var firstThreeChars = str.slice(0, 3);
-      var fourthChar = str.slice(3, 4);
-      var restOfChars = str.slice(4);
-
-      var stringWithSpaces = restOfChars.match(/.{1,2}/g)?.join(' ') || '';
-
-      return firstThreeChars + ' ' + fourthChar + ' ' + stringWithSpaces;
-    }
-  }
-
+  const formattedPhone = insertSpaceBetweenPairs(phone);
   const parsedAttendeeStatus = Number(attendeeStatus);
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}>
+    <View
+      style={styles.container}>
       <View style={styles.imageContainer}>
         <Image source={userIcon} style={styles.image} />
       </View>
@@ -82,66 +57,73 @@ const MoreComponent = ({
           tintColor={colors.darkGrey}
         />
       </View>
-      <LabelValueComponent label="Type:" value={type ? type : '-'} />
-      <LabelValueComponent
-        label="Nom:"
-        value={firstName && lastName ? `${firstName} ${lastName}` : '- '}
-        modifyDisplay="none"
-      />
-      <LabelValueComponent
-        label="Adresse mail:"
-        value={email ? email : '-'}
-        modifyDisplay="none"
-      />
-      <LabelValueComponent
-        label="Téléphone:"
-        value={phone ? insertSpaceBetweenPairs(phone) : '-'}
-      />
-      <LabelValueComponent
-        label="Entreprise:"
-        value={organization ? organization : '-'}
-      />
-      <LabelValueComponent
-        label="Job Title:"
-        value={JobTitle ? JobTitle : '-'}
-      />
+      <ScrollView contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}>
+        <LabelValueComponent label="Type:" value={type ? type : '-'} value2={undefined} />
+        <LabelValueComponent
+          label="Nom:"
+          value={firstName && lastName ? `${firstName} ${lastName}` : '- '}
+          modifyDisplay="none"
+        />
+        <LabelValueComponent
+          label="Adresse mail:"
+          value={email ? email : '-'}
+          modifyDisplay="none"
+        />
+        <LabelValueComponent
+          label="Téléphone:"
+          value={formattedPhone ? formattedPhone : '-'} value2={undefined}        />
+        <LabelValueComponent
+          label="Entreprise:"
+          value={organization ? organization : '-'} value2={undefined}        />
+        <LabelValueComponent
+          label="Job Title:"
+          value={JobTitle ? JobTitle : '-'} value2={undefined}        />
+      </ScrollView>
       {/*<Text>Status: {attendeeStatus}</Text> */}
-      {parsedAttendeeStatus == 0 ? (
-        <LargeButton
-          title="Check-in"
-          onPress={() => handleButton(1)}
-          backgroundColor={colors.green}
-          loading={loading} // Pass loading prop
-        />
-      ) : (
-        <HoldButton
-          title="Undo Check-in"
-          onPress={() => handleButton(0)}
-          backgroundColor={colors.red}
-          holdDuration={1000} // Duration to hold the button for 3 seconds
-          loading={loading} // Pass loading prop
-        />
-      )}
-    </ScrollView>
+      <View style={styles.buttonContainer}>
+        {parsedAttendeeStatus == 0 ? (
+          <LargeButton
+            title="Check-in"
+            onPress={() => handleButton(1)}
+            backgroundColor={colors.green}
+            loading={loading} // Pass loading prop
+          />
+        ) : (
+          <HoldButton
+            title="Undo Check-in"
+            onPress={() => handleButton(0)}
+            backgroundColor={colors.red}
+            holdDuration={1000} // Duration to hold the button for 3 seconds
+            loading={loading} // Pass loading prop
+          />
+        )}
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    height: '110%',
+    position: 'relative',
   },
   imageContainer: {
     marginBottom: 10,
   },
   image: {
-    width: 150,
-    height: 150,
+    width: 180,
+    height: 180,
     borderRadius: 40,
   },
   topButtonsContainer: {
     flexDirection: 'row',
     marginBottom: 20,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    width: '100%',
+    bottom: 0,
   },
 });
 
