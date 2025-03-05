@@ -1,10 +1,9 @@
 // LabelValueComponent.js
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; // Assuming you're using Expo for icons
+import {View, Text, StyleSheet} from 'react-native'; // Assuming you're using Expo for icons
 import colors from '../../assets/colors/colors';
-import modifier from '../../../scr/assets/images/icons/Modifier.png';
 
-const LabelValueComponent = ({label, value, value2, modifyDisplay, modify}) => {
+const LabelValueComponent = ({label, value, value2}) => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -24,7 +23,7 @@ const LabelValueComponent = ({label, value, value2, modifyDisplay, modify}) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 25,
+    marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -34,13 +33,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
     color: colors.darkGrey,
   },
   value: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.darkGrey,
   },
   buttonImage: {

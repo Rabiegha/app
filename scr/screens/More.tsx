@@ -9,10 +9,10 @@ import colors from '../assets/colors/colors';
 import {BASE_URL, EMS_URL} from '../config/config';
 import {useEvent} from '../context/EventContext';
 import usePrintDocument from '../hooks/print/usePrintDocument';
-import PrintModal from '../components/modals/PrintModal';
 import {setPrintStatus} from '../redux/slices/printerSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectPrintStatus } from '../redux/selectors/print/printerSelectors';
+import PrintModal from '../components/elements/modals/PrintModal';
 
 const MoreScreen = ({route, navigation}) => {
   const {triggerListRefresh, updateAttendee} = useEvent();
@@ -174,7 +174,7 @@ const MoreScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   profil: {
     marginTop: -20,
-    height: 1500,
+    height: 1700,
   },
 });
 

@@ -19,11 +19,11 @@ import SuccessComponent from '../components/elements/notifications/SuccessCompon
 import {useEvent} from '../context/EventContext';
 import Search from '../components/elements/Search';
 import FiltreComponent from '../components/filtre/FiltreComponent';
-import PrintModal from '../components/modals/PrintModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectPrintStatus} from '../redux/selectors/print/printerSelectors';
 import {setPrintStatus} from '../redux/slices/printerSlice';
 import useRegistrationSummary from '../hooks/registration/useRegistrationSummary';
+import PrintModal from '../components/elements/modals/PrintModal';
 
 const AttendeesScreen = () => {
   const {eventName} = useEvent();
