@@ -8,7 +8,7 @@ import HeaderComponent from '../elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
 import {useEvent} from '../../context/EventContext';
 import CustomMarker from '../elements/CustomMarker';
-import ScanModal from '../modals/ScanModal';
+import ScanModal from '../elements/modals/ScanModal';
 import {scanAttendee} from '../../services/scanAttendeeService';
 import usePrintDocument from '../../hooks/print/usePrintDocument';
 import {useSelector} from 'react-redux';

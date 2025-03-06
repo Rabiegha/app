@@ -212,7 +212,7 @@ const EditAttendeesComponent = ({
         <TextInput
           style={globalStyle.input}
           placeholderTextColor={colors.darkGrey}
-          value={jobTitle ?? ""}
+          value={societe ?? ""}
           onChangeText={text => setSociete(text)}
         />
         <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>

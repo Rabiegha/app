@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, Platform} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import ModalFilter from '../components/modals/ModalFilter';
+import ModalFilter from '../components/elements/modals/ModalFilter';
 
 import {TabBarIcon} from '../components/navigation/TabComponent';
 import {ScanButton} from '../components/navigation/scanButton';

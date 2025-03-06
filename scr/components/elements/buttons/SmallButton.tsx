@@ -20,8 +20,6 @@ const SmallButton = ({
   );
 };
 
-/* const {width} = Dimensions.get('window'); */
-
 const styles = StyleSheet.create({
   button: {
     borderRadius: 10,

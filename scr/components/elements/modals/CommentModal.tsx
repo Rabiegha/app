@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
 } from 'react-native';
-import colors from '../../assets/colors/colors';
+import colors from '../../../assets/colors/colors';
 const CommentModal = ({
   visible,
   onClose,

@@ -80,7 +80,7 @@ const PrintModal = ({onClose, visible, status}) => {
 
 const styles = StyleSheet.create({
   modalBackground: {
-    flex: 1,
+    flex: 1, 
     alignItems: 'center',
     justifyContent: 'center', // Centrer verticalement
     backgroundColor: 'rgba(0,0,0,0.5)',

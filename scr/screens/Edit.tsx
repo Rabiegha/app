@@ -15,6 +15,7 @@ import {editAttendee} from '../services/editAttendeeService.tsx';
 import useAttendeeTypeDropdown from '../hooks/type/useAttendeeTypesDropdown.tsx';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors.tsx';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const EditScreen = ({navigation, route}) => {
   useFocusEffect(
@@ -191,6 +192,7 @@ const EditScreen = ({navigation, route}) => {
           text={'Modification non enregistrée'}
         />
       )}
+      <Spinner visible={loading} />
       <EditComponent
         onPress={handleEnregistrer}
         style={[globalStyle.container, {marginTop: 50}]}
