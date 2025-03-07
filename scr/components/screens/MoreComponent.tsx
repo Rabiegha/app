@@ -32,15 +32,16 @@ const MoreComponent = ({
   const parsedAttendeeStatus = Number(attendeeStatus);
 
   return (
-    <View
-      style={styles.container}>
+    <ScrollView
+    contentContainerStyle={styles.container}
+    showsVerticalScrollIndicator={false}>
       <View style={styles.imageContainer}>
         <Image source={userIcon} style={styles.image} />
       </View>
       <View style={styles.topButtonsContainer}>
         <SmallButton
-          imageSource={ScanIcon}
-          pressHandler={See}
+          imageSource={PrintIcon}
+          pressHandler={Print}
           backgroundColor={colors.green}
           tintColor={colors.greyCream}
         />
@@ -51,14 +52,13 @@ const MoreComponent = ({
           tintColor={colors.darkGrey}
         />
         <SmallButton
-          imageSource={PrintIcon}
-          pressHandler={Print}
+          imageSource={ScanIcon}
+          pressHandler={See}
           backgroundColor={colors.greyCream}
           tintColor={colors.darkGrey}
         />
       </View>
-      <ScrollView contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}>
+      <View style={styles.container}>
         <LabelValueComponent label="Type:" value={type ? type : '-'} value2={undefined} />
         <LabelValueComponent
           label="Nom:"
@@ -79,9 +79,8 @@ const MoreComponent = ({
         <LabelValueComponent
           label="Job Title:"
           value={JobTitle ? JobTitle : '-'} value2={undefined}        />
-      </ScrollView>
+      </View>
       {/*<Text>Status: {attendeeStatus}</Text> */}
-      <View style={styles.buttonContainer}>
         {parsedAttendeeStatus == 0 ? (
           <LargeButton
             title="Check-in"
@@ -90,16 +89,14 @@ const MoreComponent = ({
             loading={loading} // Pass loading prop
           />
         ) : (
-          <HoldButton
+          <LargeButton
             title="Undo Check-in"
             onPress={() => handleButton(0)}
             backgroundColor={colors.red}
-            holdDuration={1000} // Duration to hold the button for 3 seconds
             loading={loading} // Pass loading prop
           />
         )}
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -112,8 +109,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    width: 180,
-    height: 180,
+    width: 150,
+    height: 150,
     borderRadius: 40,
   },
   topButtonsContainer: {

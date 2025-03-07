@@ -31,7 +31,7 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
           </View>
         )}
       </View>
-      {imageLoaded && (
+{/*       {imageLoaded && (
         <View style={styles.buttonsContainer}>
           <View style={styles.topButtonsContainer}>
             <SmallButton
@@ -48,13 +48,13 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
             />
           </View>
         </View>
-      )}
-      <LargeButton
+      )} */}
+{/*       <LargeButton
         title="Envoyer"
         onPress={share}
         backgroundColor={colors.green}
         loading={undefined}
-      />
+      /> */}
     </View>
   );
 };
@@ -69,11 +69,11 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginRight: 30,
     width: '100%',
+    alignItems: 'center'
   },
   image: {
-    width: '100%',
-    height: 380,
-    borderRadius: 40,
+    width: 190,
+    height: 500,
   },
   imageNotFound: {
     fontSize: 18,
