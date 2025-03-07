@@ -194,7 +194,7 @@ const EditScreen = ({navigation, route}) => {
           text={'Modification non enregistrée'}
         />
       )}
-<Spinner visible={loading} />
+      <Spinner visible={loading} />
       <EditComponent
         onPress={handleEnregistrer}
         style={[globalStyle.container, {marginTop: 50}]}

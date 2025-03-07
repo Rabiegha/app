@@ -10,6 +10,7 @@ import FailComponent from '../components/elements/notifications/FailComponent';
 import SuccessComponent from '../components/elements/notifications/SuccessComponent';
 import {addAttendee} from '../services/addAttendeeService';
 import useAttendeeTypeDropdown from '../hooks/type/useAttendeeTypesDropdown';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const AddAttendeesScreen = ({navigation}) => {
   useFocusEffect(
@@ -19,7 +20,7 @@ const AddAttendeesScreen = ({navigation}) => {
     }, []),
   );
 
-  //form variables
+  // Form variables
   const [nom, setNom] = useState('');
   const [prenom, setPrenom] = useState('');
   const [email, setEmail] = useState('');
@@ -31,8 +32,13 @@ const AddAttendeesScreen = ({navigation}) => {
   const [isChecked, setIsChecked] = useState(false);
   const [inputErrors, setInputErrors] = useState({});
   const [selectedAttendeeType, setSelectedAttendeeType] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  //function to reset fields
+  // Context + custom hooks
+  const {secretCode, triggerListRefresh} = useEvent();
+  const dropdownOptions = useAttendeeTypeDropdown();
+
+  // Reset form fields
   const resetFields = () => {
     setNom('');
     setPrenom('');
@@ -40,24 +46,20 @@ const AddAttendeesScreen = ({navigation}) => {
     setNumeroTelephone('');
     setSociete('');
     setJobTitle('');
+    setSelectedAttendeeType('');
     setInputErrors({});
   };
-
-  //the secret code
-  const {secretCode} = useEvent();
-  const {triggerListRefresh} = useEvent();
 
   const resetInputError = field => {
     setInputErrors(prevErrors => ({...prevErrors, [field]: false}));
   };
 
-  //handle enregister
-
-  //N.B deplace the end pont call to the service file.
-
+  // Validate + call service
   const handleEnregistrer = async () => {
-    const errors = {};
+    // Start loading
+    setLoading(true);
 
+    const errors = {};
     // Validate each field and set errors
     if (!nom) {
       errors.nom = true;
@@ -68,13 +70,6 @@ const AddAttendeesScreen = ({navigation}) => {
     if (!email) {
       errors.email = true;
     }
-    // Validate phone number (starts with 0 and has at least 10 digits)
-/*     if (!numeroTelephone == '') {
-      const phoneRegex = /^0\d{9,}$/;
-      if (!phoneRegex.test(numeroTelephone)) {
-        errors.numeroTelephone = true;
-      }
-    } */
 
     // Validate email format
     if (email !== '') {
@@ -84,12 +79,14 @@ const AddAttendeesScreen = ({navigation}) => {
       }
     }
 
-    // If there are errors, update the state and return
+    // If there are errors, update the state and stop loading
     if (Object.keys(errors).length > 0) {
       setInputErrors(errors);
+      setLoading(false); // <- Stop spinner if validation fails
       return;
     }
 
+    // Build payload for the service
     const attendeeData = {
       send_confirmation_mail_ems_yn: 0,
       generate_qrcode: 0,
@@ -110,38 +107,38 @@ const AddAttendeesScreen = ({navigation}) => {
 
     try {
       const response = await addAttendee(attendeeData);
-
       if (response) {
         setSuccess(true);
         resetFields();
         triggerListRefresh();
-        setSelectedAttendeeType(null);
+      } else {
+        setSuccess(false);
       }
     } catch (error) {
       setSuccess(false);
+    } finally {
+      // Always stop loading
+      setLoading(false);
     }
   };
 
-  //checked-in or not handler
+  // Toggle checked-in status
   const handleCheckboxPress = () => {
     setIsChecked(!isChecked);
-    const newCheckedIn = CheckedIn == 1 ? 0 : 1;
+    const newCheckedIn = CheckedIn === '1' ? '0' : '1';
     setCheckedIn(newCheckedIn);
   };
 
-  //set success to null
   useFocusEffect(
     React.useCallback(() => {
       return () => setSuccess(null);
     }, []),
   );
 
-  //navigate back
+  // Navigate back
   const handleGoBack = () => {
     navigation.navigate('Attendees');
   };
-
-  const dropdownOptions = useAttendeeTypeDropdown();
 
   return (
     <View style={[globalStyle.backgroundWhite, styles.wrap]}>
@@ -151,6 +148,7 @@ const AddAttendeesScreen = ({navigation}) => {
         handlePress={handleGoBack}
         backgroundColor={'white'}
       />
+
       {success === true && (
         <SuccessComponent
           onClose={() => setSuccess(null)}
@@ -163,6 +161,9 @@ const AddAttendeesScreen = ({navigation}) => {
           text={'Participant non ajouté'}
         />
       )}
+
+      <Spinner visible={loading} />
+
       <AddAttendeesComponent
         onPress={handleEnregistrer}
         style={[globalStyle.container, {marginTop: 50}]}
@@ -193,9 +194,6 @@ const AddAttendeesScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    top: 35,
-  },
 });
 
 export default AddAttendeesScreen;
