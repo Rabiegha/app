@@ -153,6 +153,15 @@ const EditAttendeesComponent = ({
         <Text style={[styles.error, {opacity: inputErrors.email ? 1 : 0}]}>
           Veuillez entrer une adresse email valide *
         </Text>
+        {/* Societe */}
+        <Text style={styles.text}>Société</Text>
+        <TextInput
+          style={globalStyle.input}
+          placeholderTextColor={colors.darkGrey}
+          value={societe ?? ""}
+          onChangeText={text => setSociete(text)}
+        />
+        <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
         {/* Type */}
         <Text style={styles.text}>Type</Text>
         <Dropdown
@@ -180,15 +189,6 @@ const EditAttendeesComponent = ({
               <View style={[styles.colorBox, {backgroundColor: item.color}]} />
             </View>
           )}
-        />
-        <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
-        {/* Societe */}
-        <Text style={styles.text}>Société</Text>
-        <TextInput
-          style={globalStyle.input}
-          placeholderTextColor={colors.darkGrey}
-          value={societe ?? ""}
-          onChangeText={text => setSociete(text)}
         />
         <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
         {/* Telephone */}

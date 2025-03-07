@@ -54,20 +54,6 @@ const AddAttendeesComponent = ({
     <View
       style={styles.wrapper}
       contentContainerStyle={styles.contentContainer}>
-      {/*       {true && (
-        <SuccessComponent
-          style={styles.notif}
-          onClose={() => setSuccess(null)}
-          text={'Participant ajouté avec succès'}
-        />
-      )}
-      {success === false && (
-        <FailComponent
-          style={styles.notif}
-          onClose={() => setSuccess(null)}
-          text={'Participant non ajouté'}
-        />
-      )} */}
 
       <ScrollView
         contentContainerStyle={styles.container}
@@ -113,6 +99,36 @@ const AddAttendeesComponent = ({
         <Text style={[styles.error, {opacity: inputErrors.prenom ? 1 : 0}]}>
           Ce champ est requis *
         </Text>
+        {/* Email */}
+        <TextInput
+          style={[
+            globalStyle.input,
+            inputErrors.email && {
+              backgroundColor: colors.lightRed,
+              borderColor: colors.red,
+            },
+          ]}
+          placeholder="Email"
+          placeholderTextColor={inputErrors.email ? colors.red : colors.grey}
+          value={email}
+          onChangeText={text => {
+            setEmail(text);
+            resetInputError('email');
+          }}
+          keyboardType="email-address"
+        />
+        <Text style={[styles.error, {opacity: inputErrors.email ? 1 : 0}]}>
+          Veuillez entrer une adresse email valide *
+        </Text>
+        {/* Societe */}
+        <TextInput
+          style={globalStyle.input}
+          placeholderTextColor={colors.grey}
+          placeholder="Société"
+          value={societe}
+          onChangeText={text => setSociete(text)}
+        />
+        <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
         {/* Menu déroulant pour sélectionner le type d'attendee */}
         <Dropdown
           style={globalStyle.input}
@@ -140,27 +156,6 @@ const AddAttendeesComponent = ({
           )}
         />
         <Text style={[styles.error, {opacity: 0}]} />
-        {/* Email */}
-        <TextInput
-          style={[
-            globalStyle.input,
-            inputErrors.email && {
-              backgroundColor: colors.lightRed,
-              borderColor: colors.red,
-            },
-          ]}
-          placeholder="Email"
-          placeholderTextColor={inputErrors.email ? colors.red : colors.grey}
-          value={email}
-          onChangeText={text => {
-            setEmail(text);
-            resetInputError('email');
-          }}
-          keyboardType="email-address"
-        />
-        <Text style={[styles.error, {opacity: inputErrors.email ? 1 : 0}]}>
-          Veuillez entrer une adresse email valide *
-        </Text>
         {/* Téléphone */}
         <TextInput
           style={[
@@ -199,15 +194,6 @@ const AddAttendeesComponent = ({
             resetInputError('numeroTelephone');
           }}
         /> */}
-        {/* Societe */}
-        <TextInput
-          style={globalStyle.input}
-          placeholderTextColor={colors.grey}
-          placeholder="Société"
-          value={societe}
-          onChangeText={text => setSociete(text)}
-        />
-        <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
         {/* Job Title */}
         <TextInput
           style={globalStyle.input}
