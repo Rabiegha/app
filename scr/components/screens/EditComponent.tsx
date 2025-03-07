@@ -13,6 +13,7 @@ import FailComponent from '../elements/notifications/FailComponent';
 import colors from '../../assets/colors/colors';
 import {useFocusEffect} from '@react-navigation/native';
 import {Dropdown} from 'react-native-element-dropdown';
+import CustomInput from '../elements/CustomInput';
 
 const EditAttendeesComponent = ({
   onPress,
@@ -57,77 +58,30 @@ const EditAttendeesComponent = ({
 
     return text;
   };
-
-
-  useFocusEffect(
-    React.useCallback(() => {
-      handlePhoneNumberChange(numeroTelephone);
-      return () => {};
-    }, []),
-  );
   useEffect(() => {
     console.log('type', type);
   }, [type]);
 
   return (
-    <View
-      style={styles.wrapper}
-      contentContainerStyle={styles.contentContainer}>
-      {/*       {success === true && (
-        <SuccessComponent
-          onClose={() => setSuccess(null)}
-          text={'Modifications enregistrées'}
-        />
-      )}
-      {success === false && (
-        <FailComponent
-          onClose={() => setSuccess(null)}
-          text={'Participant non ajouté'}
-        />
-      )} */}
-
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled">
         {/* Non */}
-        <Text style={styles.textNom}>Nom</Text>
-        <TextInput
-          style={[
-            globalStyle.input,
-            {color: colors.lightGrey},
-            inputErrors.nom && {
-              backgroundColor: colors.lightRed,
-              borderColor: colors.red,
-            },
-          ]}
-          placeholderTextColor={inputErrors.nom ? colors.red : colors.grey}
-          value={nom}
-          onChangeText={text => {
-            setNom(text);
-            resetInputError('nom');
-          }}
-          editable={false}
-        />
-        <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
+        <CustomInput label="Nom" value={nom} onChangeText={(text) => { setNom(text); resetInputError("nom"); } } error={inputErrors.nom} errorMessage={'Champ requis*'} />
+        <Text style={[styles.error, {opacity: inputErrors.nom ? 1 : 0}]}>Champ requis*</Text>
         {/* Prenom */}
-        <Text style={styles.text}>Prénom</Text>
+        <CustomInput label="Prénom" value={prenom} onChangeText={(text) => { setPrenom(text); resetInputError("prenom"); } } error={inputErrors.prenom} errorMessage={'Champ requis*'} />
+        <Text style={[styles.error, {opacity: inputErrors.prenom ? 1 : 0}]}>Champ requis*</Text>
+         {/* Email */}
+        <CustomInput label="Email" value={email} onChangeText={(text) => { setEmail(text); resetInputError("email"); } } error={inputErrors.email} errorMessage={'Veuillez entrer une adresse email valide *'} />
+         {/* Societe */}
+         <Text style={styles.text}>Société</Text>
         <TextInput
-          style={[
-            globalStyle.input,
-            {color: colors.lightGrey},
-            inputErrors.prenom && {
-              backgroundColor: colors.lightRed,
-              borderColor: colors.red,
-            },
-          ]}
-          placeholderTextColor={inputErrors.prenom ? colors.red : colors.grey}
-          value={prenom}
-          onChangeText={text => {
-            setPrenom(text);
-            resetInputError('prenom');
-          }}
-          editable={false}
+          style={globalStyle.input}
+          placeholderTextColor={colors.darkGrey}
+          value={societe ?? ""}
+          onChangeText={text => setSociete(text)}
         />
         <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
         {/* Type */}
@@ -159,77 +113,18 @@ const EditAttendeesComponent = ({
           )}
         />
         <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
-        {/* Email */}
-        <Text style={styles.text}>Email</Text>
-        <TextInput
-          style={[
-            globalStyle.input,
-            inputErrors.email && {
-              backgroundColor: colors.lightRed,
-              borderColor: colors.red,
-            },
-          ]}
-          placeholderTextColor={inputErrors.email ? colors.red : colors.grey}
-          value={email}
-          onChangeText={text => {
-            setEmail(text);
-            resetInputError('email');
-          }}
-          keyboardType="email-address"
-        />
-        <Text style={[styles.error, {opacity: inputErrors.email ? 1 : 0}]}>
-          Veuillez entrer une adresse email valide *
-        </Text>
         {/* Telephone */}
-        <Text style={styles.text}>Téléphone</Text>
-        <TextInput
-          style={[
-            globalStyle.input,
-            inputErrors.numeroTelephone && {
-              backgroundColor: colors.lightRed,
-              borderColor: colors.red,
-            },
-          ]}
-          placeholderTextColor={
-            inputErrors.numeroTelephone ? colors.red : colors.grey
-          }
-          value={numeroTelephone ?? ""}
-          onChangeText={text => {
-            setNumeroTelephone(handlePhoneNumberChange(text));
-            resetInputError('numero de telephone');
-          }}
-          keyboardType="numeric"
-        />
-        <Text
-          style={[
-            styles.error,
-            {opacity: inputErrors.numeroTelephone ? 1 : 0},
-          ]}>
-          Veuillez entrer un numéro de téléphone valide *
-        </Text>
-        {/* Societe */}
-        <Text style={styles.text}>Société</Text>
-        <TextInput
-          style={globalStyle.input}
-          placeholderTextColor={colors.darkGrey}
-          value={societe ?? ""}
-          onChangeText={text => setSociete(text)}
-        />
-        <Text style={[styles.error, {opacity: 0}]}>Champ requis</Text>
+        <CustomInput label="Téléphone" value={numeroTelephone ?? ""} onChangeText={text => {
+          setNumeroTelephone(handlePhoneNumberChange(text));
+          resetInputError('numero de telephone');
+        } } error={undefined} errorMessage={undefined} />
         {/* Job title */}
-        <Text style={styles.text}>Job Title</Text>
-        <TextInput
-          style={[globalStyle.input]}
-          placeholderTextColor={colors.darkGrey}
-          value={jobTitle ?? ""}
-          onChangeText={text => setJobTitle(text)}
-        />
+        <CustomInput label="Job Title" value={jobTitle ?? ""} onChangeText={text => setJobTitle(text)} errorMessage={undefined} error={undefined} />
 
         <TouchableOpacity style={styles.button} onPress={onPress}>
           <Text style={styles.buttonText}>Enregistrer les modifications</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
   );
 };
 
