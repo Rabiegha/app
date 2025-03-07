@@ -25,6 +25,13 @@ const futureEventsPersistConfig = {
   blacklist: ['loading', 'error'],
 };
 
+// Auth
+const authPersistConfig = {
+  key: 'auth',
+  storage: AsyncStorage,
+  blacklist: ['loading', 'error'],
+};
+
 const isKioskModePersistConfig = {
   key: 'isKioskMode',
   storage: AsyncStorage,
@@ -37,8 +44,7 @@ const rootReducer = combineReducers({
   futureEvents: persistReducer(futureEventsPersistConfig, futureEventsReducer), */
   pastEvents: pastEventsReducer,
   futureEvents: futureEventsReducer,
-  //sydyzudg
-  auth: authReducer,
+  auth: persistReducer(authPersistConfig, authReducer),
 });
 
 const persistConfig = {
