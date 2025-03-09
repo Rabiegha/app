@@ -109,10 +109,30 @@ const ListItem = React.memo(
 
     const {printDocument} = usePrintDocument();
 
-    const handlePrintDocument = () => {
-      printDocument(badgeurl);
-      handleSwitchToggle();
+    const handlePrintAndCheckIn = async () => {
+      try {
+        // 1. Always set attendee_status to 1
+        const updatedAttendee = {
+          ...item,
+          attendee_status: 1,
+        };
+    
+        // 2. Reflect this in local state
+        setIsCheckedIn(true);
+    
+        // 3. Call your onUpdateAttendee callback to update server/db
+        await onUpdateAttendee(updatedAttendee);
+    
+        // 4. Trigger a list refresh if needed
+        triggerListRefresh();
+    
+        // 5. Print the badge
+        printDocument(badgeurl);
+      } catch (error) {
+        console.error('Error while printing and checking in:', error);
+      }
     };
+    
 
     const renderRightActions = useCallback((progress, dragX) => {
       const action1TranslateX = dragX.interpolate({
@@ -135,7 +155,7 @@ const ListItem = React.memo(
               { transform: [{ translateX: action1TranslateX }] },
             ]}>
             <TouchableOpacity
-              onPress={handlePrintDocument}
+              onPress={handlePrintAndCheckIn}
               style={[
                 styles.rightActionButton,
                 { backgroundColor: colors.darkGrey, zIndex: 10 },
