@@ -138,9 +138,9 @@ function stripUnneededFields(attendees) {
           if (selectedEvent) {
             attendees = selectedEvent.participants;
 
-            const essentialAttendees = stripUnneededFields(attendees);
+            /* const essentialAttendees = stripUnneededFields(attendees); */
 
-            await storeData(`attendees_${eventId}`, essentialAttendees);
+            await storeData(`attendees_${eventId}`, attendees);
           } else {
             attendees = [];
           }
@@ -187,6 +187,18 @@ function stripUnneededFields(attendees) {
 
           // Return true if `combinedText` includes the query
           return combinedText.includes(query);
+        });
+      }
+
+            // 4) Filter by company if specified
+      //    Only apply if your filterCriteria.company is set
+      if (filterCriteria.company) {
+        filteredAttendees = filteredAttendees.filter(a => {
+          return (
+            a.organization &&
+            a.organization.toLowerCase() ===
+              filterCriteria.company.toLowerCase()
+          );
         });
       }
 
@@ -247,6 +259,7 @@ function stripUnneededFields(attendees) {
     }
     setOpenSwipeable(swipeable);
   };
+  
 
   return (
     <View style={styles.list}>
