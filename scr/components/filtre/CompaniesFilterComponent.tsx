@@ -1,3 +1,5 @@
+// CompaniesFilterComponent.js
+
 import React, { useState } from 'react';
 import {
   View,
@@ -9,55 +11,73 @@ import {
   FlatList,
 } from 'react-native';
 import colors from '../../assets/colors/colors';
-
 import useEventOrganizations from '../../hooks/useEventOrganizations';
 import { useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import { useEvent } from '../../context/EventContext';
 
+// For demonstration, a simple "RedBorderButton" or any custom button
+import RedBorderButton from '../elements/buttons/RedBorderButton';
+
 const CompaniesFilterComponent = ({ filterCriteria, setFilterCriteria }) => {
-  // 1. Get userId & eventId
   const userId = useSelector(selectCurrentUserId);
   const { eventId } = useEvent();
 
-  // 2. Fetch companies with your custom hook
-  const { organizations, loading, error } = useEventOrganizations(userId, eventId);
+  // Our custom hook now returns { organizations, loading, error, refetch }
+  const { organizations, loading, error, refetch } = useEventOrganizations(userId, eventId);
 
-  // 3. Local state for the search query
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 4. Filter the organizations by search query
-  const filteredOrganizations = organizations.filter((companyName) =>
-    companyName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // 5. Handle selecting a company
-  const handleCompanyPress = (companyName) => {
-    setFilterCriteria((prev) => ({
-      ...prev,
-      company: companyName,
-    }));
-  };
-
-  // 6. Handle loading / error states
+  // 1) While loading
   if (loading) {
     return <ActivityIndicator style={{ margin: 16 }} />;
   }
 
+  // 2) If error, show a Retry button
   if (error) {
     return (
-      <Text style={[styles.infoText, { color: 'red' }]}>
-        Error: {error.message || error.toString()}
-      </Text>
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>
+          Oops, there was a problem fetching the companies:
+          {'\n'}
+          {error.message || error.toString()}
+        </Text>
+
+        {/* Retry button */}
+        <RedBorderButton
+          Titre="Retry"
+          color={colors.red}
+          onPress={refetch}
+        />
+      </View>
     );
   }
 
-  // 7. Render the UI
+  // 3) If no error, proceed with data
+  const augmentedCompanies = ['None', ...organizations];
+  const filteredOrganizations = augmentedCompanies.filter(companyName =>
+    companyName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // On press
+  const handleCompanyPress = (companyName) => {
+    if (companyName === 'None') {
+      setFilterCriteria(prev => ({
+        ...prev,
+        company: null,
+      }));
+    } else {
+      setFilterCriteria(prev => ({
+        ...prev,
+        company: companyName,
+      }));
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Companies</Text>
 
-      {/* Search Bar */}
       <TextInput
         style={styles.searchInput}
         placeholder="Search companies..."
@@ -66,27 +86,30 @@ const CompaniesFilterComponent = ({ filterCriteria, setFilterCriteria }) => {
         onChangeText={setSearchQuery}
       />
 
-      {/* FlatList for the scrollable list */}
       {filteredOrganizations.length === 0 ? (
         <Text style={styles.infoText}>No companies match your search.</Text>
       ) : (
         <FlatList
+          nestedScrollEnabled
+          style={{ maxHeight: 200 }}
           data={filteredOrganizations}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item: companyName }) => (
-            <TouchableOpacity
-              style={styles.option}
-              onPress={() => handleCompanyPress(companyName)}
-            >
-              <View
-                style={[
-                  styles.checkbox,
-                  filterCriteria.company === companyName && styles.checked,
-                ]}
-              />
-              <Text style={styles.optionText}>{companyName}</Text>
-            </TouchableOpacity>
-          )}
+          keyExtractor={(item, index) => item + index}
+          renderItem={({ item: companyName }) => {
+            const isNoneSelected = filterCriteria.company == null;
+            const selected = companyName === 'None'
+              ? isNoneSelected
+              : filterCriteria.company === companyName;
+
+            return (
+              <TouchableOpacity
+                style={styles.option}
+                onPress={() => handleCompanyPress(companyName)}
+              >
+                <View style={[styles.checkbox, selected && styles.checked]} />
+                <Text style={styles.optionText}>{companyName}</Text>
+              </TouchableOpacity>
+            );
+          }}
         />
       )}
     </View>
@@ -97,20 +120,29 @@ export default CompaniesFilterComponent;
 
 const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: 20,
     marginTop: 20,
-    height: 200,
+  },
+  // Error area
+  errorContainer: {
+    margin: 16,
+    alignItems: 'center',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 16,
   },
   title: {
     fontSize: 14,
     fontWeight: 'bold',
     color: colors.greyCream,
-    marginBottom: 10,
   },
   infoText: {
     color: colors.greyCream,
     fontSize: 14,
+    marginTop: 10,
   },
-  // Search bar styling
   searchInput: {
     height: 40,
     borderColor: colors.greyCream,
@@ -118,12 +150,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 8,
     color: colors.greyCream,
-    marginBottom: 10,
+    marginVertical: 10,
   },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 4,
   },
   checkbox: {
     height: 20,
