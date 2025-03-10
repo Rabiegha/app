@@ -7,7 +7,9 @@ import emptyGif from '../../assets/images/empty.gif';
 import downloadIcon from '../../assets/images/icons/Download.png';
 import printIcon from '../../assets/images/icons/Print.png';
 import Gif from 'react-native-gif';
-/* import FastImage from 'react-native-fast-image'; */
+import EmptyView from '../elements/view/EmptyView';
+import emptyAnimation from '../../assets/animations/Empty.json';
+import LottieView from 'lottie-react-native';
 
 const BadgeComponent = ({imageUri, share, download, print}) => {
   const [imageLoaded, setImageLoaded] = useState(true);
@@ -15,7 +17,7 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        {imageLoaded ? (
+        {false ? (
           <Image
             source={{uri: imageUri}}
             style={styles.image}
@@ -23,11 +25,12 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
           />
         ) : (
           <View style={styles.noDataView}>
-{/*             <FastImage source={emptyGif} style={styles.gifStyle} /> */}
-            {/*             <Image
-              source={emptyGif}
-              style={styles.gifStyle}
-            /> */}
+            <LottieView
+        source={emptyAnimation}
+        autoPlay
+        loop={true}
+        style={styles.gifStyle}
+      />
           </View>
         )}
       </View>
@@ -69,7 +72,7 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginRight: 30,
     width: '100%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   image: {
     width: 190,
@@ -94,8 +97,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   gifStyle: {
-    height: 300,
-    width: 300,
+    height: 400,
+    width: 400,
   },
 });
 

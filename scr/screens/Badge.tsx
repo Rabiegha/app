@@ -78,8 +78,7 @@ const BadgeScreen = ({route, navigation}) => {
       <View style={globalStyle.container}>
         <BadgeComponent
           imageUri={image}
-          share={sendPdf}
-/*           print={printPdf} */
+          share={sendPdf} download={undefined} print={undefined}/*           print={printPdf} */
 /*           download={downloadPdf} */
         />
       </View>

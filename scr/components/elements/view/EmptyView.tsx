@@ -1,19 +1,22 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-/* import FastImage from 'react-native-fast-image'; */
-import empty from '../../../assets/animations/empty.json';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import emptyAnimation from '../../../assets/animations/Empty.json';
 import globalStyle from '../../../assets/styles/globalStyle';
 import LottieView from 'lottie-react-native';
+import colors from '../../../assets/colors/colors';
 
-export default function EmptyView() {
+export default function EmptyView({handleRetry}) {
   return (
     <View style={[styles.container, globalStyle.backgroundWhite]}>
       <LottieView
-        source={'../../../assets/animations/empty.json'}
+        source={emptyAnimation}
         autoPlay
         loop={true}
         style={styles.gifStyle}
       />
+            <TouchableOpacity style={styles.button} onPress={handleRetry}>
+              <Text style={styles.buttonTexte}>Réessayer</Text>
+            </TouchableOpacity>
     </View>
   );
 }
@@ -21,4 +24,11 @@ export default function EmptyView() {
 const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   gifStyle: {height: 300, width: 300},
+  button: {
+    backgroundColor: colors.green,
+    padding: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonTexte: {color: 'white'},
 });
