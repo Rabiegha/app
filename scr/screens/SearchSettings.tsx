@@ -5,7 +5,7 @@ import colors from '../assets/colors/colors';
 import globalStyle from '../assets/styles/globalStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomSwitch from '../components/elements/Switch';
-import { setSearchByCompanyMode } from '../redux/slices/searchSlice';
+import { setSearchByCompanyMode } from '../redux/slices/searchModeSlice';
 
 const SearchSettingsScreen = ({navigation}) => {
     const dispatch = useDispatch();

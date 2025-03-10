@@ -10,7 +10,7 @@ import pastEventsReducer from './slices/event/pastEventsSlice';
 import futureEventsReducer from './slices/event/futureEventsSlice';
 import authReducer from './slices/auth/authSlice';
 import scanReducer from './slices/scanModeSlice';
-import searchSlice from './slices/searchSlice';
+import searchSlice from './slices/searchModeSlice';
 
 // pastEvents
 const pastEventsPersistConfig = {
