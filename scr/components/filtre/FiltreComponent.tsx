@@ -1,54 +1,95 @@
-// MenuScreen.js
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
+// FiltreComponent.js
+
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import HeaderComponent from '../elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import FiltreDetailsComponent from './FiltreDetailsComponent';
-import RedBorderButton from '../elements/buttons/RedBorderButton';
+import RedBorderButton from '../elements/buttons/RedBorderButton'; // assume we can override styles
 
 const FiltreComponent = ({
-  handlePress,
-  filterCriteria,
-  setFilterCriteria,
+  initialFilter,
+  defaultFilter,
+  onApply,
+  onCancel,
   tout,
   checkedIn,
   notChechkedIn,
 }) => {
-  /* const sections = [
-    {
-      title: 'Etats',
-      buttons: [
-        {title: 'Tous les participants'},
-        {title: 'Checked-in'},
-        {title: 'Not checked-in'},
-      ],
-    },
-  ]; */
+  // Local (temporary) state for filters
+  const [tempFilterCriteria, setTempFilterCriteria] = useState(initialFilter);
+
+  useEffect(() => {
+    setTempFilterCriteria(initialFilter);
+  }, [initialFilter]);
 
   return (
-    <View style={globalStyle.backgroundBlack}>
+    <View style={[styles.rootContainer, globalStyle.backgroundBlack]}>
       <HeaderComponent
         title={'Filtre'}
         color={colors.greyCream}
-        handlePress={handlePress}
+        handlePress={onCancel}
       />
-      <View style={[globalStyle.container, globalStyle.container]}>
-        <View>
-          {filterCriteria && (
-            <FiltreDetailsComponent
-              filterCriteria={filterCriteria}
-              setFilterCriteria={setFilterCriteria}
-              tout={tout}
-              checkedIn={checkedIn}
-              notChechkedIn={notChechkedIn}
-            />
-          )}
+
+      <ScrollView contentContainerStyle={styles.scrollContainer} nestedScrollEnabled
+ >
+        <FiltreDetailsComponent
+          filterCriteria={tempFilterCriteria}
+          setFilterCriteria={setTempFilterCriteria}
+          tout={tout}
+          checkedIn={checkedIn}
+          notChechkedIn={notChechkedIn}
+        />
+
+        {/* Buttons in a column */}
+        <View style={styles.buttonsColumn}>
+          {/* Cancel Button (Red) */}
+          <RedBorderButton
+            onPress={onCancel}
+            Titre={'Cancel'}
+            // Optionally style to make it full-width or something
+            color={colors.red}
+            style={{ width: '100%' }}
+          />
+
+          {/* Apply Button (Green) */}
+          <RedBorderButton
+            onPress={() => onApply(tempFilterCriteria)}
+            Titre={'Apply'}
+            color={colors.green}
+            style={{ width: '100%' }}
+
+          />
         </View>
-        <RedBorderButton onPress={() => handlePress()} Titre={'Fermer'} />
-      </View>
+      </ScrollView>
     </View>
   );
 };
 
 export default FiltreComponent;
+
+const styles = StyleSheet.create({
+  rootContainer: {
+    flex: 1, 
+    position: 'relative',
+    width: '100%',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 20,
+    width: '100%',
+  },
+  buttonsColumn: {
+    flexDirection: 'column',
+    // We can space them out as needed:
+    alignItems: 'center',
+    marginTop: 20,
+    width: '100%',
+    marginBottom: 20,
+  },
+  fullWidthButton: {
+    width: '100%', 
+    marginBottom: 15,
+  },
+});
