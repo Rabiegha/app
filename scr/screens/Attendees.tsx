@@ -25,6 +25,13 @@ import {setPrintStatus} from '../redux/slices/printerSlice';
 import useRegistrationSummary from '../hooks/registration/useRegistrationSummary';
 import PrintModal from '../components/elements/modals/PrintModal';
 
+
+// Define a default set of filters
+const defaultFilterCriteria = {
+  status: 'all',      // 'all', 'checked-in', 'not-checked-in'
+  company: null,      // or an empty string [] if you allow multiple
+};
+
 const AttendeesScreen = () => {
   const {eventName} = useEvent();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -44,11 +51,10 @@ const AttendeesScreen = () => {
   const [success, setSuccess] = useState(false);
   const [totalListAttendees, setTotalListAttendees] = useState(0);
   const [checkedInAttendees, setCheckedInAttendees] = useState(0);
+  const [notCheckedInAttendees, setNotCheckedInAttendees] = useState(0);
   const [ratio, setRatio] = useState(0);
-  const [filterCriteria, setFilterCriteria] = useState({
-    status: 'all', // Possible values: 'all', 'checked-in', 'not-checked-in'
-    // You can add more filter criteria here as needed
-  });
+  const [filterCriteria, setFilterCriteria] = useState(defaultFilterCriteria);
+
   const [modalPrintVisible, setModalPrintVisible] = useState(false);
 
   const printStatus = useSelector(selectPrintStatus);
@@ -102,11 +108,12 @@ const AttendeesScreen = () => {
   };
 
   const { summary, loading, error, refetch } = useRegistrationSummary(refreshTrigger);
-  const { totalAttendees, totalCheckedIn } = summary || {};
+  const { totalAttendees, totalCheckedIn, totalNotCheckedIn } = summary || {};
 
   useEffect(() => {
     setTotalListAttendees(totalAttendees);
     setCheckedInAttendees(totalCheckedIn);
+    setNotCheckedInAttendees(totalNotCheckedIn);
     const ratio =
       totalAttendees > 0 ? (totalCheckedIn / totalAttendees) * 100 : 0;
       setRatio(ratio);
@@ -138,10 +145,31 @@ const AttendeesScreen = () => {
     setRefreshTrigger(prev => prev + 1); // 🔄 This will trigger `useEffect` in useRegistrationSummary
   };
 
+    /**
+   * Decide how the left button acts:
+   * If filters are currently default, do your normal "clearSearch" or go back logic.
+   * Otherwise, reset the filters to default.
+   */
+    const handleLeftPress = () => {
+      if (isDefaultFilter(filterCriteria)) {
+        // If we have the default filters, do your old logic:
+        // either "go back" or "clearSearch"
+        clearSearch();
+      } else {
+        // Reset filters to default
+        setFilterCriteria(defaultFilterCriteria);
+      }
+    };
+  
+    // Utility to check if filters are currently at default
+    const isDefaultFilter = (fc) => {
+      return fc.status === 'all' && !fc.company;
+    };
+
   return (
     <View style={globalStyle.backgroundWhite}>
       <HeaderParticipants
-        onLeftPress={clearSearch}
+        onLeftPress={handleLeftPress}
         onRightPress={openModal}
         Title={eventName}
       />
@@ -200,14 +228,22 @@ const AttendeesScreen = () => {
                   {transform: [{translateX: modalAnimation}]}, // Use the animated value for the translation
                 ]}>
                 {
-                  <FiltreComponent
-                    handlePress={closeModal}
-                    filterCriteria={filterCriteria}
-                    setFilterCriteria={setFilterCriteria}
-                    tout={totalListAttendees}
-                    checkedIn={checkedInAttendees}
-                    notChechkedIn={totalListAttendees - checkedInAttendees}
-                  />
+              <FiltreComponent
+                    // We pass in the *current* filters to show in the modal
+                    initialFilter={filterCriteria}
+                    defaultFilter={defaultFilterCriteria}
+                    onApply={(newFilter) => {
+                      // (1) Apply the new filter
+                      setFilterCriteria(newFilter);
+                      // (2) Close modal
+                      closeModal();
+                    } }
+                    onCancel={() => {
+                      // (1) Reset to default
+                      setFilterCriteria(defaultFilterCriteria);
+                      // (2) Close modal
+                      closeModal();
+                    } } tout={totalListAttendees} checkedIn={checkedInAttendees} notChechkedIn={notCheckedInAttendees}                />
                 }
               </Animated.View>
             </TouchableWithoutFeedback>

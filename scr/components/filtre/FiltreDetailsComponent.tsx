@@ -1,8 +1,7 @@
+// FiltreDetailsComponent.js
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import colors from '../../assets/colors/colors';
-
-// Import our new sub-component
 import CompaniesFilterComponent from './CompaniesFilterComponent';
 
 const FiltreDetailsComponent = ({
@@ -12,16 +11,14 @@ const FiltreDetailsComponent = ({
   checkedIn,
   notChechkedIn,
 }) => {
-  // 1. Existing status options
   const statusOptions = [
-    { status: 'all', label: `Tous les participants (${tout})` },
-    { status: 'checked-in', label: `Checked In (${checkedIn})` },
-    { status: 'not-checked-in', label: `Not Checked In (${notChechkedIn})` },
+    { status: 'all', label: `Tous les participants (${tout || 0})` },
+    { status: 'checked-in', label: `Checked In (${checkedIn || 0})` },
+    { status: 'not-checked-in', label: `Not Checked In (${notChechkedIn || 0})` },
   ];
 
-  // 2. Handler for the status filter
   const handleStatusPress = (newStatus) => {
-    setFilterCriteria((prev) => ({
+    setFilterCriteria(prev => ({
       ...prev,
       status: newStatus,
     }));
@@ -29,12 +26,11 @@ const FiltreDetailsComponent = ({
 
   return (
     <View style={styles.container}>
-      {/* ----- Section 1: Status Filters (États) ----- */}
       <Text style={styles.title}>États</Text>
       <View style={styles.optionsContainer}>
-        {statusOptions.map(({ status, label }, idx) => (
+        {statusOptions.map(({ status, label }) => (
           <TouchableOpacity
-            key={idx}
+            key={status}
             style={styles.option}
             onPress={() => handleStatusPress(status)}
           >
@@ -49,7 +45,7 @@ const FiltreDetailsComponent = ({
         ))}
       </View>
 
-      {/* ----- Section 2: Companies Filter (Separate Component) ----- */}
+      {/* Companies Filter */}
       <CompaniesFilterComponent
         filterCriteria={filterCriteria}
         setFilterCriteria={setFilterCriteria}
@@ -62,7 +58,6 @@ export default FiltreDetailsComponent;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     backgroundColor: colors.darkerGrey,
     borderRadius: 12,
     marginBottom: 20,
@@ -72,9 +67,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.greyCream,
     marginBottom: 10,
+    marginTop: 20,
+    marginLeft: 20,
   },
   optionsContainer: {
-    flexDirection: 'column',
+    paddingHorizontal: 20,
   },
   option: {
     flexDirection: 'row',
