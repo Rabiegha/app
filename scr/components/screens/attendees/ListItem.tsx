@@ -143,7 +143,7 @@ const ListItem = React.memo(
             <Text style={styles.nameText}>{nameHighlighted}</Text>
 
             {/* Company in parentheses, with a different style */}
-            <Text style={styles.companyParen}> (</Text>
+            <Text style={[styles.companyParen, ]}> (</Text>
             <Text style={styles.companyText}>{companyHighlighted}</Text>
             <Text style={styles.companyParen}>)</Text>
           </View>
@@ -272,8 +272,9 @@ const styles = StyleSheet.create({
   },
   // Parentheses around company
   companyParen: {
-    fontSize: 16,
-    color: colors.darkGrey,
+    fontSize: 12,
+    color: colors.grey,
+    fontStyle: 'italic',
   },
   // Text style specifically for the company name
   companyText: {

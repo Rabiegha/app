@@ -23,6 +23,8 @@ import {selectCurrentUserId} from '../../../redux/selectors/auth/authSelectors';
     import from whichever slice you have:
 **/
 import { selectIsSearchByCompanyMode } from '../../../redux/selectors/search/searchSelectors';
+import axios from 'axios';
+import EmptyView from '../../elements/view/EmptyView.tsx';
 // or if you’re directly accessing state.search.isSearchByCompanyMode, see code below
 
 const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
@@ -92,6 +94,35 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
   };
 
   /**
+ * stripUnneededFields
+ * 
+ * Takes an array of full attendee objects and
+ * returns a new array with ONLY essential fields.
+ */
+function stripUnneededFields(attendees) {
+  return attendees.map(att => {
+    return {
+      // Include only the properties you truly need offline:
+      id: att.id,
+      first_name: att.first_name,
+      last_name: att.last_name,
+      attendee_status: att.attendee_status,
+      organization: att.organization,
+      badge_pdf_url: att.badge_pdf_url,
+      // Add or remove fields as needed...
+
+      /**
+       * EXAMPLE: If you don't need large fields like:
+       *  - att.badge_pdf_url
+       *  - att.avatar_base64
+       *  then don't include them.
+       */
+    };
+  });
+}
+
+
+  /**
    * Main function to fetch the attendee list from local storage (if fresh),
    * or from the server if not in local storage or data is expired.
    */
@@ -106,7 +137,10 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
           const selectedEvent = demoEvents.find(event => event.event_id == eventId);
           if (selectedEvent) {
             attendees = selectedEvent.participants;
-            await storeData(`attendees_${eventId}`, attendees);
+
+            const essentialAttendees = stripUnneededFields(attendees);
+
+            await storeData(`attendees_${eventId}`, essentialAttendees);
           } else {
             attendees = [];
           }
@@ -234,9 +268,7 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
           )}
         />
       ) : (
-        <View style={styles.noDataView}>
-          {/* Insert your empty state UI */}
-        </View>
+        <EmptyView handleRetry={undefined}/>
       )}
     </View>
   );
