@@ -1,22 +1,27 @@
-// CustomButton.js
+// RedBorderButton.js
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet, Dimensions} from 'react-native';
-import colors from '../../../assets/colors/colors';
-import {Image} from 'react-native';
 
-const RedBorderButton = ({onPress, Titre}) => {
+const RedBorderButton = ({ onPress, Titre, color, style }) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{Titre}</Text>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.button,
+        {borderColor: color},
+        style // <-- Merge parent style here
+      ]}
+    >
+      <Text style={[styles.buttonText, { color }]}>{Titre}</Text>
     </TouchableOpacity>
   );
 };
 
-const {width} = Dimensions.get('window');
+export default RedBorderButton;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 0,
+    backgroundColor: 'transparent',
     padding: 10,
     borderRadius: 10,
     alignItems: 'center',
@@ -24,14 +29,10 @@ const styles = StyleSheet.create({
     height: 50,
     marginBottom: 7,
     borderWidth: 1,
-    borderColor: colors.red,
     flexDirection: 'row',
   },
   buttonText: {
-    color: colors.red,
     fontSize: 15,
     fontWeight: 'bold',
   },
 });
-
-export default RedBorderButton;
