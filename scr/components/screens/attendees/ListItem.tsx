@@ -14,26 +14,30 @@ import colors from '../../../assets/colors/colors';
 import {useEvent} from '../../../context/EventContext';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Accepted from '../../../assets/images/icons/Accepted.png';
-import {useSelector} from 'react-redux';
-import {setPrintStatus} from '../../../redux/slices/printerSlice';
-import {useDispatch} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import usePrintDocument from '../../../hooks/print/usePrintDocument';
 
 const {width} = Dimensions.get('window');
 let openSwipeableRef = null;
 
 const ListItem = React.memo(
-  ({item, searchQuery, onUpdateAttendee, onSwipeableOpen}) => {
+  ({item, searchQuery, onUpdateAttendee}) => {
     const navigation = useNavigation();
     const {triggerListRefresh} = useEvent();
     const swipeableRef = useRef(null);
-
     const dispatch = useDispatch();
 
+    // Redux: whether to show the company name in search
+    const isSearchByCompanyMode = useSelector(
+      state => state.search.isSearchByCompanyMode
+    );
+
+    // Local "checked in" state
     const initialSwitchState = item.attendee_status == 1;
     const [isCheckedIn, setIsCheckedIn] = useState(initialSwitchState);
 
-    const handleSwitchToggle = async newValue => {
+    // Toggle attendee_status
+    const handleSwitchToggle = async () => {
       try {
         const newAttendeeStatus = item.attendee_status == 1 ? 0 : 1;
         setIsCheckedIn(newAttendeeStatus == 1);
@@ -42,36 +46,30 @@ const ListItem = React.memo(
           attendee_status: newAttendeeStatus,
         };
         await onUpdateAttendee(updatedAttendee);
-/*         console.log('After status', updatedAttendee); */
-        triggerListRefresh(); // Refresh the list after updating
+        triggerListRefresh();
       } catch (error) {
         console.error('Error updating attendee status:', error);
       }
     };
 
-    const highlightSearch = (text, query) => {
-      if (!query.trim()) {
-        return <Text style={{color: 'black'}}>{text}</Text>;
+    // Print & Check-In
+    const {printDocument} = usePrintDocument();
+    const handlePrintAndCheckIn = async () => {
+      try {
+        const updatedAttendee = {
+          ...item,
+          attendee_status: 1,
+        };
+        setIsCheckedIn(true);
+        await onUpdateAttendee(updatedAttendee);
+        triggerListRefresh();
+        printDocument(item.badge_pdf_url);
+      } catch (error) {
+        console.error('Error while printing and checking in:', error);
       }
-
-      const regex = new RegExp(`(${query.trim()})`, 'gi');
-      const parts = text.split(regex);
-
-      return parts
-        .filter(part => part)
-        .map((part, index) =>
-          regex.test(part) ? (
-            <Text key={index} style={{color: colors.green, fontWeight: 'bold'}}>
-              {part}
-            </Text>
-          ) : (
-            <Text key={index} style={{color: 'black'}}>
-              {part}
-            </Text>
-          ),
-        );
     };
 
+    // Navigate to "More" screen on item press
     const handleItemPress = () => {
       navigation.navigate('More', {
         attendeeId: item.id,
@@ -89,145 +87,167 @@ const ListItem = React.memo(
       });
     };
 
-    // selectedNodePrinter
-    const selectedNodePrinter = useSelector(
-      state => state.printers.selectedNodePrinter,
-    );
+    /**
+     * Highlights search matches in green + bold.
+     * If `searchQuery` is empty, just return the original text.
+     * Otherwise, split out the matched parts and wrap them in <Text> with a highlight style.
+     */
+    const highlightSearch = (text, query) => {
+      // If no query, just return text as a single array item
+      if (!query.trim()) {
+        return [text];
+      }
 
-    //Node printer id
+      // Build regex for the query
+      const regex = new RegExp(`(${query.trim()})`, 'gi');
+      // Split the text by the matched portions
+      const parts = text.split(regex);
 
-    const nodePrinterId = selectedNodePrinter?.id;
+      // Map each part to either a highlighted <Text> or a normal <Text>
+      return parts.filter(Boolean).map((part, index) => {
+        const isMatch = regex.test(part);
+        if (isMatch) {
+          return (
+            <Text key={index} style={styles.highlight}>
+              {part}
+            </Text>
+          );
+        }
+        return <Text key={index}>{part}</Text>;
+      });
+    };
 
-    const badgeurl = item.badge_pdf_url;
+    /**
+     * Render the attendee's name and (optionally) their company in *separate* Text elements,
+     * so you can style them differently.
+     */
+    const renderNameWithOptionalCompany = () => {
+      // Build up the highlighted name
+      const nameHighlighted = highlightSearch(
+        `${item.first_name} ${item.last_name}`,
+        searchQuery
+      );
 
-    useEffect(() => {
-/*       console.log('badgeurl', badgeurl); */
-      /*       console.log('Selected Node Printer ID:', nodePrinterId); */
-    }, [nodePrinterId, badgeurl]);
+      // Decide if we should show company, highlight it if we do
+      const shouldShowCompany =
+        isSearchByCompanyMode && item.organization && searchQuery.trim() !== '';
+      if (shouldShowCompany) {
+        const companyHighlighted = highlightSearch(
+          item.organization,
+          searchQuery
+        );
 
-    // Print hook
+        return (
+          <View style={styles.nameRow}>
+            {/* Name */}
+            <Text style={styles.nameText}>{nameHighlighted}</Text>
 
-    const {printDocument} = usePrintDocument();
-
-    const handlePrintAndCheckIn = async () => {
-      try {
-        // 1. Always set attendee_status to 1
-        const updatedAttendee = {
-          ...item,
-          attendee_status: 1,
-        };
-    
-        // 2. Reflect this in local state
-        setIsCheckedIn(true);
-    
-        // 3. Call your onUpdateAttendee callback to update server/db
-        await onUpdateAttendee(updatedAttendee);
-    
-        // 4. Trigger a list refresh if needed
-        triggerListRefresh();
-    
-        // 5. Print the badge
-        printDocument(badgeurl);
-      } catch (error) {
-        console.error('Error while printing and checking in:', error);
+            {/* Company in parentheses, with a different style */}
+            <Text style={styles.companyParen}> (</Text>
+            <Text style={styles.companyText}>{companyHighlighted}</Text>
+            <Text style={styles.companyParen}>)</Text>
+          </View>
+        );
+      } else {
+        // If not showing the company, just render the name
+        return (
+          <View style={styles.nameRow}>
+            <Text style={styles.nameText}>{nameHighlighted}</Text>
+          </View>
+        );
       }
     };
-    
 
-    const renderRightActions = useCallback((progress, dragX) => {
-      const action1TranslateX = dragX.interpolate({
-        inputRange: [-145, -80, 0],
-        outputRange: [0, 50, 100],
-        extrapolate: 'clamp',
-      });
+    // Swipe actions (Print + Check)
+    const renderRightActions = useCallback(
+      (progress, dragX) => {
+        const action1TranslateX = dragX.interpolate({
+          inputRange: [-145, -80, 0],
+          outputRange: [0, 50, 100],
+          extrapolate: 'clamp',
+        });
 
-      const action2TranslateX = dragX.interpolate({
-        inputRange: [-145, -80, 0],
-        outputRange: [0, 0, 50],
-        extrapolate: 'clamp',
-      });
+        const action2TranslateX = dragX.interpolate({
+          inputRange: [-145, -80, 0],
+          outputRange: [0, 0, 50],
+          extrapolate: 'clamp',
+        });
 
-      return (
-        <View style={styles.actionsContainer}>
-          <Animated.View
-            style={[
-              styles.rightAction,
-              { transform: [{ translateX: action1TranslateX }] },
-            ]}>
-            <TouchableOpacity
-              onPress={handlePrintAndCheckIn}
+        return (
+          <View style={styles.actionsContainer}>
+            <Animated.View
               style={[
-                styles.rightActionButton,
-                { backgroundColor: colors.darkGrey, zIndex: 10 },
+                styles.rightAction,
+                {transform: [{translateX: action1TranslateX}]},
               ]}>
-              <Text style={styles.actionText}>Print</Text>
-            </TouchableOpacity>
-          </Animated.View>
-          <Animated.View
-            style={[
-              styles.rightAction,
-              { transform: [{ translateX: action2TranslateX }] },
-            ]}>
-            <TouchableOpacity
-              onPress={handleSwitchToggle}
-              style={[
-                styles.rightActionButton,
-                { backgroundColor: isCheckedIn ? colors.red : colors.green },
-              ]}>
-              <Text style={[styles.actionText, { zIndex: 5 }]}>
-                {isCheckedIn ? 'Uncheck' : 'Check'}
-              </Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
-      );
-    }, [isCheckedIn]);
+              <TouchableOpacity
+                onPress={handlePrintAndCheckIn}
+                style={[
+                  styles.rightActionButton,
+                  {backgroundColor: colors.darkGrey, zIndex: 10},
+                ]}>
+                <Text style={styles.actionText}>Print</Text>
+              </TouchableOpacity>
+            </Animated.View>
 
+            <Animated.View
+              style={[
+                styles.rightAction,
+                {transform: [{translateX: action2TranslateX}]},
+              ]}>
+              <TouchableOpacity
+                onPress={handleSwitchToggle}
+                style={[
+                  styles.rightActionButton,
+                  {backgroundColor: isCheckedIn ? colors.red : colors.green},
+                ]}>
+                <Text style={[styles.actionText, {zIndex: 5}]}>
+                  {isCheckedIn ? 'Uncheck' : 'Check'}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+        );
+      },
+      [isCheckedIn]
+    );
 
     return (
       <Swipeable
-          ref={swipeableRef}
-          renderRightActions={renderRightActions}
-          friction={1} // Rend l'animation plus fluide
-          enableTrackpadTwoFingerGesture // Permet le swipe sur Mac avec trackpad
-          overshootRight={false}
-          onSwipeableWillOpen={() => {
-            // Close the previously opened Swipeable
-            if (openSwipeableRef && openSwipeableRef !== swipeableRef.current) {
-              openSwipeableRef.close();
-            }
-            // Store the newly opened Swipeable
-            openSwipeableRef = swipeableRef.current;
-          }}
-        >
-          <TouchableWithoutFeedback onPress={handleItemPress} accessible={false}>
-            <View style={styles.listItemContainer}>
-              <Text style={styles.itemName}>
-                {highlightSearch(
-                  `${item.first_name} ${item.last_name}`,
-                  searchQuery
-                )}
-              </Text>
-              {isCheckedIn ? (
-                <Image
-                  source={Accepted}
-                  resizeMode="contain"
-                  style={{
-                    width: 20,
-                    height: 20,
-                    tintColor: colors.green,
-                  }}
-                />
-              ) : (
-                <View style={{ width: 20, height: 20 }} />
-              )}
-            </View>
-          </TouchableWithoutFeedback>
-        </Swipeable>
+        ref={swipeableRef}
+        renderRightActions={renderRightActions}
+        friction={1}
+        enableTrackpadTwoFingerGesture
+        overshootRight={false}
+        onSwipeableWillOpen={() => {
+          // Close any previously opened Swipeable
+          if (openSwipeableRef && openSwipeableRef !== swipeableRef.current) {
+            openSwipeableRef.close();
+          }
+          openSwipeableRef = swipeableRef.current;
+        }}>
+        <TouchableWithoutFeedback onPress={handleItemPress} accessible={false}>
+          <View style={styles.listItemContainer}>
+            {renderNameWithOptionalCompany()}
 
+            {/* Check icon */}
+            {isCheckedIn ? (
+              <Image
+                source={Accepted}
+                resizeMode="contain"
+                style={styles.checkedIcon}
+              />
+            ) : (
+              <View style={styles.emptyIconSpace} />
+            )}
+          </View>
+        </TouchableWithoutFeedback>
+      </Swipeable>
     );
-  },
+  }
 );
+
+export default ListItem;
 
 const styles = StyleSheet.create({
   listItemContainer: {
@@ -241,12 +261,42 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 55,
   },
-  itemName: {
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline', // keeps text aligned nicely
+  },
+  // Base text style for the attendee's name
+  nameText: {
     fontSize: 16,
     color: colors.darkGrey,
   },
+  // Parentheses around company
+  companyParen: {
+    fontSize: 16,
+    color: colors.darkGrey,
+  },
+  // Text style specifically for the company name
+  companyText: {
+    fontSize: 12,
+    color: colors.grey,
+    fontStyle: 'italic',
+  },
+  // Style for highlighted portions of the text
+  highlight: {
+    color: colors.green,
+    fontWeight: 'bold',
+  },
+  checkedIcon: {
+    width: 20,
+    height: 20,
+    //tintColor: colors.green,
+  },
+  emptyIconSpace: {
+    width: 20,
+    height: 20,
+  },
   actionsContainer: {
-    width: 140, // Adjust this to fit both action buttons
+    width: 140,
     flexDirection: 'row',
   },
   rightAction: {
@@ -270,5 +320,3 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-
-export default ListItem;
