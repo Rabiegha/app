@@ -24,6 +24,7 @@ import TabNavigator from './TabNavigator';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors';
 import ScanSettingsScreen from '../screens/ScanSettings';
+import SearchSettingsScreen from '../screens/SearchSettings';
 
 const Stack = createStackNavigator();
 const storage = new MMKV();
@@ -52,6 +53,7 @@ function AppNavigator() {
       <Stack.Screen name="Passees" component={PastEventsScreen} />
       <Stack.Screen name="EventDetails" component={EventDetailsScreen} />
       <Stack.Screen name="ScanSettings" component={ScanSettingsScreen} />
+      <Stack.Screen name="SearchSettings" component={SearchSettingsScreen} />
       <Stack.Screen
         name="EventDetailsPerType"
         component={EventDetailsPerTypeScreen}
