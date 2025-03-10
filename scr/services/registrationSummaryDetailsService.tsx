@@ -7,7 +7,7 @@ export const registrationSummaryDetails = async (userId, eventId) => {
   try {
     const response = await axios.get(url);
     if (response.data) {
-      console.log('Registration summary details fetched sucefully');
+      console.log('Registration summary details fetched sucefully', userId);
       return response.data;
     } else {
       console.log('Registration summary details not fetched');

@@ -1,6 +1,9 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import colors from '../../assets/colors/colors';
+
+// Import our new sub-component
+import CompaniesFilterComponent from './CompaniesFilterComponent';
 
 const FiltreDetailsComponent = ({
   filterCriteria,
@@ -9,43 +12,53 @@ const FiltreDetailsComponent = ({
   checkedIn,
   notChechkedIn,
 }) => {
-  // This component now directly receives and updates filterCriteria
+  // 1. Existing status options
+  const statusOptions = [
+    { status: 'all', label: `Tous les participants (${tout})` },
+    { status: 'checked-in', label: `Checked In (${checkedIn})` },
+    { status: 'not-checked-in', label: `Not Checked In (${notChechkedIn})` },
+  ];
 
-  const handleCheckboxPress = newStatus => {
-    // Update filterCriteria based on selected status
-    setFilterCriteria({status: newStatus});
+  // 2. Handler for the status filter
+  const handleStatusPress = (newStatus) => {
+    setFilterCriteria((prev) => ({
+      ...prev,
+      status: newStatus,
+    }));
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Etats</Text>
+      {/* ----- Section 1: Status Filters (États) ----- */}
+      <Text style={styles.title}>États</Text>
       <View style={styles.optionsContainer}>
-        {[
-          {status: 'all', label: `Tous les participants (${tout})`},
-          {status: 'checked-in', label: `Checked In (${checkedIn})`},
-          {
-            status: 'not-checked-in',
-            label: `Not Checked In (${notChechkedIn})`,
-          },
-          // Add more objects here as needed
-        ].map((option, index) => (
+        {statusOptions.map(({ status, label }, idx) => (
           <TouchableOpacity
-            key={index}
+            key={idx}
             style={styles.option}
-            onPress={() => handleCheckboxPress(option.status)}>
+            onPress={() => handleStatusPress(status)}
+          >
             <View
               style={[
                 styles.checkbox,
-                filterCriteria.status == option.status && styles.checked,
+                filterCriteria.status === status && styles.checked,
               ]}
             />
-            <Text style={styles.optionText}>{option.label}</Text>
+            <Text style={styles.optionText}>{label}</Text>
           </TouchableOpacity>
         ))}
       </View>
+
+      {/* ----- Section 2: Companies Filter (Separate Component) ----- */}
+      <CompaniesFilterComponent
+        filterCriteria={filterCriteria}
+        setFilterCriteria={setFilterCriteria}
+      />
     </View>
   );
 };
+
+export default FiltreDetailsComponent;
 
 const styles = StyleSheet.create({
   container: {
@@ -84,5 +97,3 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-
-export default FiltreDetailsComponent;
