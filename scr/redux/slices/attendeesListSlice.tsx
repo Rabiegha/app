@@ -3,31 +3,47 @@ import axios from 'axios';
 import { fetchEventAttendeeList } from '../../services/getAttendeesList';
 import { BASE_URL } from '../../config/config';
 import { demoEvents } from '../../demo/demoEvents';
+import { updateAttendeeStatus } from '../../services/updateAttendeeStatusService';
 
 // Action asynchrone pour récupérer la liste des participants
 export const fetchAttendees = createAsyncThunk(
-  'attendees/fetchAttendees',
-  async ({ userId, eventId, isDemoMode }) => {
-    let attendees = [];
-    if (isDemoMode) {
-      const selectedEvent = demoEvents.find(e => e.event_id == eventId);
-      if (selectedEvent) {
-        attendees = selectedEvent.participants;
+    'attendees/fetchAttendees',
+    async ({ userId, eventId, isDemoMode }, thunkAPI) => {
+      let attendees = [];
+
+      // Create a timeout promise that rejects after 10 seconds
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timed out')), 10000)
+      );
+
+      if (isDemoMode) {
+        const selectedEvent = demoEvents.find(e => e.event_id == eventId);
+        if (selectedEvent) {
+          attendees = selectedEvent.participants;
+        }
+        return attendees;
+      } else {
+        try {
+          // Race the fetch promise with the timeout
+          attendees = await Promise.race([
+            fetchEventAttendeeList(userId, eventId),
+            timeoutPromise,
+          ]);
+          if (!attendees) {attendees = [];}
+          return attendees;
+        } catch (error) {
+          // Reject with a custom error message (e.g., timeout error)
+          return thunkAPI.rejectWithValue(error.message);
+        }
       }
-    } else {
-      attendees = await fetchEventAttendeeList(userId, eventId);
-      if (!attendees) attendees = [];
     }
-    return attendees;
-  }
-);
+  );
 
 // Action asynchrone pour mettre à jour un participant
 export const updateAttendee = createAsyncThunk(
   'attendees/updateAttendee',
   async (updatedAttendee, { dispatch }) => {
-    const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${updatedAttendee.event_id}&attendee_id=${updatedAttendee.id}&attendee_status=${updatedAttendee.attendee_status}`;
-    await axios.post(url);
+    await updateAttendeeStatus(updatedAttendee);
     // On peut aussi déclencher un refresh si besoin ici
     return updatedAttendee;
   }
@@ -52,7 +68,7 @@ const attendeesSlice = createSlice({
       state.data = [];
       state.error = null;
       state.isLoading = false;
-    }
+    },
   },
   extraReducers: builder => {
     builder
@@ -75,7 +91,7 @@ const attendeesSlice = createSlice({
           attendee.id === updated.id ? updated : attendee
         );
       });
-  }
+  },
 });
 
 export const { updateAttendeeLocally, clearAttendees } = attendeesSlice.actions;
