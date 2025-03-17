@@ -8,7 +8,7 @@ import {combineReducers} from 'redux';
 import printerReducer from './slices/printerSlice';
 import pastEventsReducer from './slices/event/pastEventsSlice';
 import futureEventsReducer from './slices/event/futureEventsSlice';
-import authReducer from './slices/auth/authSlice';
+import authReducer from './slices/authSlice';
 import scanReducer from './slices/scanModeSlice';
 import searchSlice from './slices/searchModeSlice';
 

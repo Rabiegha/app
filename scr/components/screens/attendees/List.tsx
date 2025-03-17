@@ -30,7 +30,6 @@ import EmptyView from '../../elements/view/EmptyView.tsx';
 
 const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
   const [openSwipeable, setOpenSwipeable] = useState(null);
-  const [filteredData, setFilteredData] = useState([]);
   const [allAttendees, setAllAttendees] = useState([]);
 
   const flatListRef = useRef(null);
@@ -101,7 +100,7 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
    */
   useFocusEffect(
     useCallback(() => {
-      clearLocalData();
+      /* clearLocalData(); */
       return () => {};
     }, [eventId])
   );

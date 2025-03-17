@@ -7,7 +7,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import FailComponent from '../components/elements/notifications/FailComponent';
 import {loginThunk} from '../redux/thunks/auth/loginThunk';
 import {useDispatch, useSelector} from 'react-redux';
-import {resetError} from '../redux/slices/auth/authSlice';
+import {resetError} from '../redux/slices/authSlice';
 import {
   selectError,
   selectIsLoading,
