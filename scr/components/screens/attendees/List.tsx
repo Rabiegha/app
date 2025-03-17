@@ -10,15 +10,12 @@ import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
 import {useEvent} from '../../../context/EventContext';
 import colors from '../../../assets/colors/colors';
 import {BASE_URL} from '../../../config/config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {demoEvents} from '../../../demo/demoEvents';
 import {AuthContext} from '../../../context/AuthContext.tsx';
-import {fetchEventAttendeeList} from '../../../services/getAttendeesList';
 import {useFocusEffect} from '@react-navigation/native';
 import ListItem from './ListItem';
 
 // Redux
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../../../redux/selectors/auth/authSelectors';
 /** NEW: If your store is set up so that “search” slice has isSearchByCompanyMode,
     import from whichever slice you have:
@@ -26,17 +23,18 @@ import {selectCurrentUserId} from '../../../redux/selectors/auth/authSelectors';
 import { selectIsSearchByCompanyMode } from '../../../redux/selectors/search/searchSelectors';
 import axios from 'axios';
 import EmptyView from '../../elements/view/EmptyView.tsx';
+import { fetchAttendees, updateAttendee, clearAttendees } from '../../../redux/slices/attendeesListSlice.tsx';
 // or if you’re directly accessing state.search.isSearchByCompanyMode, see code below
 
 const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
-  const [openSwipeable, setOpenSwipeable] = useState(null);
-  const [allAttendees, setAllAttendees] = useState([]);
 
-  const flatListRef = useRef(null);
+  const dispatch = useDispatch();
+  const [openSwipeable, setOpenSwipeable] = useState(null);
+/*   const [allAttendees, setAllAttendees] = useState([]); */
   const {refreshList, triggerListRefresh, updateAttendee, attendeesRefreshKey} = useEvent();
   const {eventId} = useEvent();
   const [hasData, setHasData] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isLoading, data: allAttendees } = useSelector(state => state.attendees);
   const {isDemoMode} = useContext(AuthContext);
 
   // Pull userId from Redux
@@ -63,36 +61,8 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
   /**
    * Fetches and sets the raw attendee list (WITHOUT storing to AsyncStorage).
    */
-  const fetchAllEventAttendeeDetails = async () => {
-    setIsLoading(true);
-    try {
-      let attendees = [];
-
-      if (isDemoMode) {
-        // Demo mode uses local “demoEvents” data
-        const selectedEvent = demoEvents.find(e => e.event_id == eventId);
-        if (selectedEvent) {
-          attendees = selectedEvent.participants;
-        }
-      } else {
-        // Real mode fetch from server
-        try {
-          attendees = await fetchEventAttendeeList(userId, eventId);
-          if (!attendees) attendees = [];
-        } catch (error) {
-          console.error('Error fetching data from server:', error);
-          attendees = [];
-        }
-      }
-
-      setAllAttendees(attendees);
-      setHasData(attendees.length > 0);
-    } catch (error) {
-      console.error('Error fetching attendee details:', error);
-      setHasData(false);
-    } finally {
-      setIsLoading(false);
-    }
+  const fetchAllEventAttendeeDetails = () => {
+    dispatch(fetchAttendees({ userId, eventId, isDemoMode }));
   };
 
   /**
@@ -145,27 +115,11 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
     return filteredAttendees;
   }, [allAttendees, debouncedSearchQuery, filterCriteria, isSearchByCompanyMode]);
 
-  /**
-   * Update a single attendee on the server (and locally).
-   */
+  // Gérer la mise à jour d'un participant
   const handleUpdateAttendee = async updatedAttendee => {
-    try {
-      // Update local list in memory
-      const updatedAttendees = allAttendees.map(attendee =>
-        attendee.id === updatedAttendee.id ? updatedAttendee : attendee
-      );
-      setAllAttendees(updatedAttendees);
-
-      // Make server call
-      const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${updatedAttendee.event_id}&attendee_id=${updatedAttendee.id}&attendee_status=${updatedAttendee.attendee_status}`;
-      await axios.post(url);
-
-      // Trigger any external refresh logic
-      triggerListRefresh();
-      onTriggerRefresh?.();
-    } catch (error) {
-      console.error('Error updating attendee', error);
-    }
+    // Mise à jour locale (optimiste) via dispatch
+    dispatch(updateAttendee(updatedAttendee));
+    onTriggerRefresh?.();
   };
 
   const handleSwipeableOpen = swipeable => {
@@ -179,9 +133,8 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
     <View style={styles.list}>
       {isLoading ? (
         <ActivityIndicator color={colors.green} size="large" />
-      ) : hasData ? (
+      ) : filteredData.length ? (
         <FlatList
-          ref={flatListRef}
           contentContainerStyle={styles.contentContainer}
           data={filteredData}
           keyExtractor={item => `${item.id}_${item.attendee_status}`}
