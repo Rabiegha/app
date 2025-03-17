@@ -2,6 +2,7 @@ import axios from 'axios';
 import {BASE_URL} from '../config/config';
 
 export const fetchEventAttendeeList = async (userId, eventId, attendeeId) => {
+  await new Promise(resolve => setTimeout(resolve, 11000));
   const url = `${BASE_URL}/ajax_get_event_attendee_details/?current_user_login_details_id=${userId}&event_id=${eventId}&attendee_id=${attendeeId}`;
 
   try {
