@@ -12,11 +12,11 @@ import {downloadAndPrintPdf} from '../hooks/print/downloadAndPrintPdf';
 
 const BadgeScreen = ({route, navigation}) => {
   const {triggerListRefresh} = useEvent();
-  const {eventId, attendeeId, firstName, lastName} = route.params;
+  const {eventId, attendeeId, firstName, lastName, badgePdfUrl, badgeImageUrl} = route.params;
   console.log('MoreScreen route.params:', route.params);
 
-  const image = `${EMS_URL}/uploads/badges/${eventId}/${attendeeId}.jpg`;
-  const pdf = `${EMS_URL}/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
+  const image = badgeImageUrl;
+  const pdf = badgePdfUrl;
 
   const handleBackPress = () => {
     navigation.goBack();
