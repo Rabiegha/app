@@ -9,6 +9,8 @@ import globalStyle from '../assets/styles/globalStyle';
 import MenuListComponent from '../components/screens/MenuListComponent';
 import {AuthContext} from '../context/AuthContext';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { logoutThunk } from '../redux/thunks/auth/logoutThunk';
+import { useDispatch } from 'react-redux';
 
 const MenuScreen = ({navigation}) => {
   const {isLoading, logout} = useContext(AuthContext);
@@ -50,8 +52,10 @@ const MenuScreen = ({navigation}) => {
     },
   ];
 
-  const handleLogout = async () => {
-    await logout();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logoutThunk());
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
