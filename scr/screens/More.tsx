@@ -29,7 +29,8 @@ const MoreScreen = ({route, navigation}) => {
     organization,
     type,
     typeId,
-    badgeurl,
+    badgePdfUrl,
+    badgeImageUrl,
   } = route.params;
 
   const [localAttendeeStatus, setLocalAttendeeStatus] =
@@ -49,6 +50,8 @@ const MoreScreen = ({route, navigation}) => {
       type: type,
       typeId: typeId,
       event_id: eventId,
+      badge_pdf_url: badgePdfUrl,
+      badge_image_url: badgeImageUrl,
     };
     updateAttendee(eventId, updatedAttendee);
     triggerListRefresh();
@@ -62,6 +65,8 @@ const MoreScreen = ({route, navigation}) => {
     navigation.navigate('Badge', {
       attendeeId: attendeeId,
       eventId: eventId,
+      badgePdfUrl: badgePdfUrl,
+      badgeImageUrl: badgeImageUrl,
     });
   };
 
@@ -92,7 +97,7 @@ const MoreScreen = ({route, navigation}) => {
     }
   };
 
-  const pdf = `${EMS_URL}/uploads/badges/${eventId}/pdf/${attendeeId}.pdf`;
+  const pdf = badgePdfUrl;
 
   const sendPdf = async () => {
     try {
