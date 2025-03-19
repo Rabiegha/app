@@ -2,14 +2,12 @@ import React, {
   useContext,
   useCallback,
   useEffect,
-  useRef,
   useState,
   useMemo,
 } from 'react';
 import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
 import {useEvent} from '../../../context/EventContext';
 import colors from '../../../assets/colors/colors';
-import {BASE_URL} from '../../../config/config';
 import {AuthContext} from '../../../context/AuthContext.tsx';
 import {useFocusEffect} from '@react-navigation/native';
 import ListItem from './ListItem';
@@ -21,7 +19,6 @@ import {selectCurrentUserId} from '../../../redux/selectors/auth/authSelectors';
     import from whichever slice you have:
 **/
 import { selectIsSearchByCompanyMode } from '../../../redux/selectors/search/searchSelectors';
-import axios from 'axios';
 import EmptyView from '../../elements/view/EmptyView.tsx';
 import { fetchAttendees, updateAttendee, clearAttendees } from '../../../redux/slices/attendeesListSlice.tsx';
 // or if you’re directly accessing state.search.isSearchByCompanyMode, see code below
@@ -30,8 +27,7 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
 
   const dispatch = useDispatch();
   const [openSwipeable, setOpenSwipeable] = useState(null);
-/*   const [allAttendees, setAllAttendees] = useState([]); */
-  const {refreshList, triggerListRefresh, updateAttendee, attendeesRefreshKey} = useEvent();
+  const {refreshList, triggerListRefresh, attendeesRefreshKey} = useEvent();
   const {eventId} = useEvent();
   const [hasData, setHasData] = useState(false);
   const { isLoading, data: allAttendees } = useSelector(state => state.attendees);
