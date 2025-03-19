@@ -83,7 +83,8 @@ const ListItem = React.memo(
         organization: item.organization,
         type: item.attendee_type_name,
         typeId: item.attendee_type_id,
-        badgeurl: item.badge_pdf_url,
+        badgePdfUrl: item.badge_pdf_url,
+        badgeImageUrl: item.badge_image_url,
       });
     };
 
@@ -143,7 +144,7 @@ const ListItem = React.memo(
             <Text style={styles.nameText}>{nameHighlighted}</Text>
 
             {/* Company in parentheses, with a different style */}
-            <Text style={[styles.companyParen, ]}> (</Text>
+            <Text style={[styles.companyParen ]}> (</Text>
             <Text style={styles.companyText}>{companyHighlighted}</Text>
             <Text style={styles.companyParen}>)</Text>
           </View>
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
-    height: 55,
+    height: 70,
   },
   nameRow: {
     flexDirection: 'row',
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   actionsContainer: {
-    width: 140,
+    width: 160,
     flexDirection: 'row',
   },
   rightAction: {
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
     marginLeft: 10,
-    width: 60,
+    width: 70,
   },
   actionText: {
     color: 'white',

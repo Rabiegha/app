@@ -17,7 +17,7 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        {false ? (
+        {imageLoaded ? (
           <Image
             source={{uri: imageUri}}
             style={styles.image}
