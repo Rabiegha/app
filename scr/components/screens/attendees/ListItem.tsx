@@ -234,9 +234,10 @@ const ListItem = React.memo(
             {/* Main Content */}
             <View style={styles.contentContainer}>
               {renderNameWithOptionalCompany()}
+            </View>
 
               {/* Check icon */}
-              {/* {isCheckedIn ? (
+               {isCheckedIn && !isTypeModeActive ? (
                 <Image
                   source={Accepted}
                   resizeMode="contain"
@@ -244,9 +245,9 @@ const ListItem = React.memo(
                 />
                 ) : (
                   <View style={styles.emptyIconSpace} />
-                )} */}
-            </View>
-             {/* Colored Rectangle */}
+                )}
+             {/* Colored Indicator */}
+             {isTypeModeActive && (
               <View
                 style={[
                   styles.attendeeTypeIndicator,
@@ -263,6 +264,7 @@ const ListItem = React.memo(
                     <View style={styles.emptyIconSpace} />
                   )}
               </View>
+              )}
           </View>
         </TouchableWithoutFeedback>
       </Swipeable>
@@ -299,7 +301,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,  // Ensures the rest of the content fits properly
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
   },
@@ -332,7 +333,7 @@ const styles = StyleSheet.create({
   checkedIcon: {
     width: 20,
     height: 20,
-    //tintColor: colors.green,
+    margin: 20,
   },
   emptyIconSpace: {
     width: 20,
