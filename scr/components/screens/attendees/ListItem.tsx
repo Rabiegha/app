@@ -19,6 +19,7 @@ import usePrintDocument from '../../../hooks/print/usePrintDocument';
 
 const {width} = Dimensions.get('window');
 let openSwipeableRef = null;
+let isTypeModeActive = true;
 
 const ListItem = React.memo(
   ({item, searchQuery, onUpdateAttendee}) => {
@@ -85,6 +86,7 @@ const ListItem = React.memo(
         typeId: item.attendee_type_id,
         badgePdfUrl: item.badge_pdf_url,
         badgeImageUrl: item.badge_image_url,
+        attendeeTypeBackgroundColor: item.attendee_type_background_color,
       });
     };
 
@@ -221,7 +223,7 @@ const ListItem = React.memo(
         enableTrackpadTwoFingerGesture
         overshootRight={false}
         onSwipeableWillOpen={() => {
-          // Close any previously opened Swipeable
+        // Close any previously opened Swipeable
           if (openSwipeableRef && openSwipeableRef !== swipeableRef.current) {
             openSwipeableRef.close();
           }
@@ -229,18 +231,38 @@ const ListItem = React.memo(
         }}>
         <TouchableWithoutFeedback onPress={handleItemPress} accessible={false}>
           <View style={styles.listItemContainer}>
-            {renderNameWithOptionalCompany()}
+            {/* Main Content */}
+            <View style={styles.contentContainer}>
+              {renderNameWithOptionalCompany()}
 
-            {/* Check icon */}
-            {isCheckedIn ? (
-              <Image
-                source={Accepted}
-                resizeMode="contain"
-                style={styles.checkedIcon}
-              />
-            ) : (
-              <View style={styles.emptyIconSpace} />
-            )}
+              {/* Check icon */}
+              {/* {isCheckedIn ? (
+                <Image
+                  source={Accepted}
+                  resizeMode="contain"
+                  style={styles.checkedIcon}
+                />
+                ) : (
+                  <View style={styles.emptyIconSpace} />
+                )} */}
+            </View>
+             {/* Colored Rectangle */}
+              <View
+                style={[
+                  styles.attendeeTypeIndicator,
+                  {backgroundColor: item.attendee_type_background_color || colors.grey}
+                ]}>
+                  {/* Check icon */}
+                  {isCheckedIn ? (
+                    <Image
+                      source={Accepted}
+                      resizeMode="contain"
+                      style={styles.checkedIconInsideIndicator}
+                    />
+                  ) : (
+                    <View style={styles.emptyIconSpace} />
+                  )}
+              </View>
           </View>
         </TouchableWithoutFeedback>
       </Swipeable>
@@ -258,9 +280,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.greyCream,
     borderRadius: 10,
-    padding: 10,
     marginBottom: 10,
     height: 70,
+    overflow: 'hidden',
+  },
+   attendeeTypeIndicator: {
+    width: 50,  // Width of the rectangle
+    height: '150%',  // Slightly shorter than the list item height
+/*     borderTopRightRadius: 10,
+    borderBottomRightRadius: 10, */
+    marginLeft: 10,
+    marginRight: -5,
+    transform: [{ skewY: '20deg' }],
+/*     opacity: 0.5, */
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contentContainer: {
+    flex: 1,  // Ensures the rest of the content fits properly
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
   },
   nameRow: {
     flexDirection: 'row',
@@ -321,4 +362,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
+  checkedIconInsideIndicator: {
+    width: 20,
+    height: 20,
+    tintColor: 'white',
+  }
 });
