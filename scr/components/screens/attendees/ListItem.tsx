@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   attendeeTypeIndicator: {
-    width: 40,
+    width: 50,
     height: '150%',
     marginLeft: 10,
     marginRight: -5,
