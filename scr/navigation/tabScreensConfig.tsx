@@ -3,6 +3,7 @@ import AddAttendeesScreen from '../screens/AddAttendees';
 import QRCodeScannerScreen from '../screens/Scan';
 import PrintScreen from '../screens/Print';
 import MenuScreen from '../screens/Menu';
+import MenuNavigator from './MenuNavigator';
 
 export default [
   {
@@ -47,7 +48,7 @@ export default [
   },
   {
     name: 'Menu',
-    component: MenuScreen,
+    component: MenuNavigator,
     icon: require('../assets/images/icons/Outils.png'),
     label: 'Menu',
     isMiddle: false,

@@ -56,6 +56,8 @@ function TabNavigator() {
   return (
     <View style={{flex: 1, backgroundColor: colors.darkGrey}}>
       <Tab.Navigator
+        lazy={false}
+        detachInactiveScreens={true}
         screenOptions={({route}) => getScreenOptions(route, keyboardOffset)}>
         {TAB_SCREENS.map(
           ({name, component, icon, label, isMiddle, height, width}) => (

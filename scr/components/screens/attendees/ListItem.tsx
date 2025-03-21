@@ -286,18 +286,6 @@ const styles = StyleSheet.create({
     height: 70,
     overflow: 'hidden',
   },
-   attendeeTypeIndicator: {
-    width: 50,  // Width of the rectangle
-    height: '150%',  // Slightly shorter than the list item height
-/*     borderTopRightRadius: 10,
-    borderBottomRightRadius: 10, */
-    marginLeft: 10,
-    marginRight: -5,
-    transform: [{ skewY: '20deg' }],
-/*     opacity: 0.5, */
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   contentContainer: {
     flex: 1,  // Ensures the rest of the content fits properly
     flexDirection: 'row',
@@ -363,9 +351,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
+  attendeeTypeIndicator: {
+    width: 40,
+    height: '150%',
+    marginLeft: 10,
+    marginRight: -5,
+    transform: [{ skewY: '20deg' }],
+/*     opacity: 0.5, */
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   checkedIconInsideIndicator: {
-    width: 20,
-    height: 20,
+    width: 15,
+    height: 15,
     tintColor: 'white',
   }
 });

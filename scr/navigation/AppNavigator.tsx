@@ -25,6 +25,7 @@ import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors';
 import ScanSettingsScreen from '../screens/ScanSettings';
 import SearchSettingsScreen from '../screens/SearchSettings';
+import MenuNavigator from './MenuNavigator';
 
 const Stack = createStackNavigator();
 const storage = new MMKV();
@@ -44,26 +45,14 @@ function AppNavigator() {
       <Stack.Screen name="More" component={MoreScreen} />
       <Stack.Screen name="Edit" component={EditScreen} />
       <Stack.Screen name="Badge" component={BadgeScreen} />
-      <Stack.Screen name="About" component={AboutScreen} />
       <Stack.Screen name="Printers" component={PrintresListScreen} />
       <Stack.Screen name="PaperFormat" component={PaperFormat} />
       <Stack.Screen name="WebView" component={WebViewScreen} />
-      <Stack.Screen name="Help" component={HelpScreen} />
       <Stack.Screen name="Avenir" component={FutureEventsScreen} />
       <Stack.Screen name="Passees" component={PastEventsScreen} />
-      <Stack.Screen name="EventDetails" component={EventDetailsScreen} />
-      <Stack.Screen name="ScanSettings" component={ScanSettingsScreen} />
-      <Stack.Screen name="SearchSettings" component={SearchSettingsScreen} />
       <Stack.Screen
         name="EventDetailsPerType"
         component={EventDetailsPerTypeScreen}
-      />
-      <Stack.Screen
-        name="Menu"
-        component={MenuScreen}
-        options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-        }}
       />
     </Stack.Navigator>
   );

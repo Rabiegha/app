@@ -138,7 +138,7 @@ const MoreScreen = ({route, navigation}) => {
   const {printDocument} = usePrintDocument();
 
   const handlePrintDocument = () => {
-    printDocument(badgeurl);
+    printDocument(badgePdfUrl);
   };
 
 
