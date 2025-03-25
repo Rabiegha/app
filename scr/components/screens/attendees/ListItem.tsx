@@ -355,8 +355,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: '150%',
     marginLeft: 10,
-    marginRight: -5,
-    transform: [{ skewY: '20deg' }],
+    marginRight: -8,
+    transform: [{ rotate: '20deg' }],
 /*     opacity: 0.5, */
     alignItems: 'center',
     justifyContent: 'center',
