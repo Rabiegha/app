@@ -1,34 +1,22 @@
 import React, {useContext} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {CardStyleInterpolators} from '@react-navigation/stack';
-import {MMKV} from 'react-native-mmkv';
-
 import {AuthContext} from '../context/AuthContext';
 import ConnexionScreen from '../screens/Connexion';
 import EventsScreen from '../screens/Events';
 import MoreScreen from '../screens/More';
 import EditScreen from '../screens/Edit';
 import BadgeScreen from '../screens/Badge';
-import AboutScreen from '../screens/About';
 import PrintresListScreen from '../screens/PrintersList';
 import PaperFormat from '../screens/PaperFormat';
 import WebViewScreen from '../screens/WebView';
-import HelpScreen from '../screens/Help';
 import FutureEventsScreen from '../screens/FutureEvents';
 import PastEventsScreen from '../screens/PastEvents';
-import EventDetailsScreen from '../screens/EventDetails';
 import EventDetailsPerTypeScreen from '../screens/EventDetailsPerType';
-import MenuScreen from '../screens/Menu';
-
 import TabNavigator from './TabNavigator';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors';
-import ScanSettingsScreen from '../screens/ScanSettings';
-import SearchSettingsScreen from '../screens/SearchSettings';
-import MenuNavigator from './MenuNavigator';
 
 const Stack = createStackNavigator();
-const storage = new MMKV();
 
 function AppNavigator() {
   const {isDemoMode} = useContext(AuthContext);
