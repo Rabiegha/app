@@ -3,7 +3,7 @@ import {View, Platform} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ModalFilter from '../components/elements/modals/ModalFilter';
 
-import {TabBarIcon} from '../components/navigation/TabComponent';
+import {TabBarIcon} from '../components/navigation/TabBarIconComponent';
 import {ScanButton} from '../components/navigation/scanButton';
 import colors from '../assets/colors/colors';
 import styles from '../assets/styles/styles'; // Consolidated styles
@@ -29,7 +29,7 @@ function getScreenOptions(route, keyboardOffset) {
       ...(hideTabBar ? {display: 'none'} : {}),
       justifyContent: 'center',
       alignItems: 'center',
-      paddingTop: Platform.OS === 'ios' ? 20 : 0, //to remove
+      paddingTop: Platform.OS === 'ios' ? 20 : 0,
     },
     tabBarItemStyle: {
       justifyContent: 'center',

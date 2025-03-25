@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   navBarIcons: {
     alignItems: 'center',
     justifyContent: 'center',
+    height: '100%',
   },
   label: {
     fontSize: 8,
