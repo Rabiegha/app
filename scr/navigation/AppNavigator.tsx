@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {AuthContext} from '../context/AuthContext';
 import ConnexionScreen from '../screens/Connexion';
 import EventsScreen from '../screens/Events';
@@ -16,7 +16,7 @@ import TabNavigator from './TabNavigator';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 function AppNavigator() {
   const {isDemoMode} = useContext(AuthContext);
