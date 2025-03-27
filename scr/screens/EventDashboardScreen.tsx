@@ -1,16 +1,39 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, Platform, StatusBar} from 'react-native';
+import {NavigationContainer, useFocusEffect} from '@react-navigation/native';
+import HeaderEvent from '../components/elements/header/HeaderEvent';
+import Search from '../components/elements/Search';
+
+import globalStyle from '../assets/styles/globalStyle';
+import {useEvent} from '../context/EventContext';
+import useStatusBarStyle from '../hooks/useStatusBarStyle';
+import EventDashBoardNavigator from '../navigation/EventDashBoardNavigator';
 
 const EventDashboardScreen = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const {eventDetails} = useEvent();
+
+  useStatusBarStyle('dark-content');
+
   return (
-    <View>
-      <Text>EventDashboardScreen</Text>
-    </View>
+    <NavigationContainer independent={true}>
+      <View style={globalStyle.backgroundWhite}>
+        <HeaderEvent title={eventDetails?.newEventName} />
+        <View style={styles.container}>
+          <Search value={searchQuery} onChange={setSearchQuery} />
+        </View>
+        <EventDashBoardNavigator searchQuery={searchQuery} />
+      </View>
+    </NavigationContainer>
   );
 };
 
 const styles = StyleSheet.create({
-    
+  container: {
+    paddingTop: Platform.OS === 'ios' ? 90 : 70,
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
 });
 
 export default EventDashboardScreen;
