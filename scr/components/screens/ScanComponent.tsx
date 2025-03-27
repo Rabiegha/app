@@ -17,6 +17,7 @@ import {
   selectAutoPrint,
 } from '../../redux/selectors/print/printerSelectors';
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ScanComponent = () => {
   const navigation = useNavigation();
@@ -46,12 +47,25 @@ const ScanComponent = () => {
     );
   }, [selectedNodePrinter]);
 
+  //Remplacer ça:
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       resetScanner();
     });
     return unsubscribe;
   }, [navigation]);
+
+  //Par ça:
+
+/*   import { useFocusEffect } from '@react-navigation/native';
+
+      useFocusEffect(
+        React.useCallback(() => {
+          resetScanner();
+        }, [])
+      ); */
+
 
   const resetScanner = () => {
     setAttendeeData(null);
