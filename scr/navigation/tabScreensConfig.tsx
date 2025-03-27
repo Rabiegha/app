@@ -1,14 +1,13 @@
-import AttendeesScreen from '../screens/Attendees';
 import AddAttendeesScreen from '../screens/AddAttendees';
 import QRCodeScannerScreen from '../screens/Scan';
 import PrintScreen from '../screens/Print';
-import MenuScreen from '../screens/Menu';
 import MenuNavigator from './MenuNavigator';
+import EventDashboardScreen from '../screens/EventDashboardScreen';
 
 export default [
   {
     name: 'Attendees',
-    component: AttendeesScreen,
+    component: EventDashboardScreen,
     icon: require('../assets/images/icons/Participant.png'),
     label: 'Participants',
     isMiddle: false,
