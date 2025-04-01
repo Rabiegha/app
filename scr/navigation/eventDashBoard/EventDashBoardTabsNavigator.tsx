@@ -1,0 +1,54 @@
+import React from 'react';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import colors from '../../assets/colors/colors';
+import SessionsListScreen from '../../screens/dashboard/SessionsListScreen';
+import AttendeeListsScreen from '../../screens/dashboard/AttendeeListsScreen';
+
+const Tab = createMaterialTopTabNavigator();
+
+const EventDashboarTabsdNavigator = ({searchQuery}) => {
+  return (
+    <Tab.Navigator
+      initialRouteName="Guest Lists"
+      screenOptions={{
+        tabBarActiveTintColor: colors.green,
+        tabBarInactiveTintColor: colors.grey,
+        tabBarIndicatorStyle: {
+          height: 0,
+        },
+        tabBarStyle: {
+          backgroundColor: 'white',
+          elevation: 0,
+          marginHorizontal: 30,
+          marginTop: 10,
+          borderRadius: 12,
+          overflow: 'hidden',
+        },
+        tabBarItemStyle: {
+          flex: 1,
+        },
+        tabBarLabelStyle: {
+          fontWeight: 'bold',
+          fontSize: 13,
+          textTransform: 'none',
+        },
+        tabBarPressColor: 'transparent',
+        tabBarIndicatorContainerStyle: {
+          borderRadius: 15,
+        },
+      }}>
+      <Tab.Screen
+        name="Guest  Lists"
+        component={AttendeeListsScreen}
+        initialParams={{ searchQuery }}
+      />
+      <Tab.Screen
+        name="Sessions"
+        component={SessionsListScreen}
+        initialParams={{ searchQuery }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+export default EventDashboarTabsdNavigator;
