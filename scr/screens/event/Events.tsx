@@ -1,18 +1,18 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {View, StyleSheet, Animated, StatusBar, Platform} from 'react-native';
 import {NavigationContainer, useFocusEffect} from '@react-navigation/native';
-import colors from '../assets/colors/colors';
-import Search from '../components/elements/Search';
+import colors from '../../assets/colors/colors';
+import Search from '../../components/elements/Search';
 import {useNavigation} from '@react-navigation/native';
-import HeaderEvent from '../components/elements/header/HeaderEvent';
-import globalStyle from '../assets/styles/globalStyle';
-import {useEvent} from '../context/EventContext';
-import {AuthContext} from '../context/AuthContext';
+import HeaderEvent from '../../components/elements/header/HeaderEvent';
+import globalStyle from '../../assets/styles/globalStyle';
+import {useEvent} from '../../context/EventContext';
+import {AuthContext} from '../../context/AuthContext';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {useDispatch, useSelector} from 'react-redux';
-import {selectIsLoading} from '../redux/selectors/auth/authSelectors';
-import {logoutThunk} from '../redux/thunks/auth/logoutThunk';
-import TabsNavigator from '../navigation/EventsNavigator';
+import {selectIsLoading} from '../../redux/selectors/auth/authSelectors';
+import {logoutThunk} from '../../redux/thunks/auth/logoutThunk';
+import TabsNavigator from '../../navigation/EventsNavigator';
 
 // Composant principal EventsScreen
 const EventsScreen = () => {

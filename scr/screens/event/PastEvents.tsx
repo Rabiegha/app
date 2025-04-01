@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, StyleSheet, FlatList} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import ListEvents from '../components/screens/events/ListEvents';
-import globalStyle from '../assets/styles/globalStyle';
-import usePastEvents from '../hooks/event/usePastEvents';
-import EmptyView from '../components/elements/view/EmptyView';
-import ErrorView from '../components/elements/view/ErrorView';
-import LoadingView from '../components/elements/view/LoadingView';
+import ListEvents from '../../components/screens/events/ListEvents';
+import globalStyle from '../../assets/styles/globalStyle';
+import usePastEvents from '../../hooks/event/usePastEvents';
+import EmptyView from '../../components/elements/view/EmptyView';
+import ErrorView from '../../components/elements/view/ErrorView';
+import LoadingView from '../../components/elements/view/LoadingView';
 
 const PastEventsScreen = ({searchQuery, onEventSelect}) => {
   const {events, loading, error, clearData} = usePastEvents();

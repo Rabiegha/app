@@ -2,15 +2,15 @@ import React, {useEffect} from 'react';
 import {View, StyleSheet, StatusBar, Text, SectionList} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 
-import ListEvents from '../components/screens/events/ListEvents';
-import colors from '../assets/colors/colors';
-import globalStyle from '../assets/styles/globalStyle';
+import ListEvents from '../../components/screens/events/ListEvents';
+import colors from '../../assets/colors/colors';
+import globalStyle from '../../assets/styles/globalStyle';
 
-import useFilteredAndSectionedEvents from '../hooks/event/useFilteredAndSectionedEvents';
-import ErrorView from '../components/elements/view/ErrorView';
-import LoadingView from '../components/elements/view/LoadingView';
-import EmptyView from '../components/elements/view/EmptyView';
-import useFutureEvents from '../hooks/event/useFutureEvents';
+import useFilteredAndSectionedEvents from '../../hooks/event/useFilteredAndSectionedEvents';
+import ErrorView from '../../components/elements/view/ErrorView';
+import LoadingView from '../../components/elements/view/LoadingView';
+import EmptyView from '../../components/elements/view/EmptyView';
+import useFutureEvents from '../../hooks/event/useFutureEvents';
 
 const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
   const {events, loading, error, clearData} = useFutureEvents();
