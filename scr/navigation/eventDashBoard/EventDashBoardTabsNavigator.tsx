@@ -1,8 +1,8 @@
 import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import colors from '../../assets/colors/colors';
-import SessionsListScreen from '../../screens/dashboard/SessionsListScreen';
-import AttendeeListsScreen from '../../screens/dashboard/AttendeeListsScreen';
+import SessionsListScreen from '../../screens/dashboard/DashboardSessionsListScreen';
+import AttendeeListsScreen from '../../screens/dashboard/DashboardAttendeeListScreen';
 
 const Tab = createMaterialTopTabNavigator();
 

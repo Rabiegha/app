@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Platform, StatusBar} from 'react-native';
 import {NavigationContainer, useFocusEffect} from '@react-navigation/native';
-import HeaderEvent from '../components/elements/header/HeaderEvent';
-import Search from '../components/elements/Search';
+import HeaderEvent from '../../components/elements/header/HeaderEvent';
+import Search from '../../components/elements/Search';
 
-import globalStyle from '../assets/styles/globalStyle';
-import {useEvent} from '../context/EventContext';
-import useStatusBarStyle from '../hooks/useStatusBarStyle';
-import EventDashBoardNavigator from '../navigation/EventDashBoardNavigator';
+import globalStyle from '../../assets/styles/globalStyle';
+import {useEvent} from '../../context/EventContext';
+import useStatusBarStyle from '../../hooks/useStatusBarStyle';
+import EventDashBoardTabsNavigator from '../../navigation/eventDashBoard/EventDashBoardTabsNavigator';
 
 const EventDashboardScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,7 +22,7 @@ const EventDashboardScreen = () => {
         <View style={styles.container}>
           <Search value={searchQuery} onChange={setSearchQuery} />
         </View>
-        <EventDashBoardNavigator searchQuery={searchQuery} />
+        <EventDashBoardTabsNavigator searchQuery={searchQuery} />
       </View>
     </NavigationContainer>
   );

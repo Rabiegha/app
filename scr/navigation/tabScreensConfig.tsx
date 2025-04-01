@@ -2,7 +2,7 @@ import AddAttendeesScreen from '../screens/AddAttendees';
 import QRCodeScannerScreen from '../screens/Scan';
 import PrintScreen from '../screens/Print';
 import MenuNavigator from './MenuNavigator';
-import EventDashboardScreen from '../screens/EventDashboardScreen';
+import EventDashboardScreen from '../screens/dashboard/EventDashboardScreen';
 
 export default [
   {

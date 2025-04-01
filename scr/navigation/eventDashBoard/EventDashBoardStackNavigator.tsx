@@ -1,7 +1,7 @@
 // EventStackNavigator.js
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SessionListScreen from '../../screens/Session';
+import SessionListScreen from '../../screens/SessionList';
 import AllAttendeesListScreen from '../../screens/AllAttendeesListScreen';
 import EventDashboardTabsNavigator from './EventDashBoardTabsNavigator';
 
