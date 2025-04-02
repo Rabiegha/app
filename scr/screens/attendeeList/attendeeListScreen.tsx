@@ -128,10 +128,11 @@ const attendeeListScreen = () => {
     if (searchQuery !== '') {
       setSearchQuery('');
     } else {
-      navigation.reset({
+      navigation.goBack();
+/*       navigation.reset({
         index: 0,
         routes: [{name: 'Events'}],
-      });
+      }); */
     } // Reset the search query
   };
 
