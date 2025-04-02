@@ -16,7 +16,6 @@ const EventDashboardScreen = () => {
   useStatusBarStyle('dark-content');
 
   return (
-    <NavigationContainer independent={true}>
       <View style={globalStyle.backgroundWhite}>
         <HeaderEvent title={eventDetails?.newEventName} />
         <View style={styles.container}>
@@ -24,7 +23,6 @@ const EventDashboardScreen = () => {
         </View>
         <EventDashBoardTabsNavigator searchQuery={searchQuery} />
       </View>
-    </NavigationContainer>
   );
 };
 
