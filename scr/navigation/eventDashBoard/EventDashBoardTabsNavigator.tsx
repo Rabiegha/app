@@ -2,7 +2,7 @@ import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import colors from '../../assets/colors/colors';
 import SessionsListScreen from '../../screens/dashboard/DashboardSessionsListScreen';
-import AttendeeListsScreen from '../../screens/dashboard/DashboardAttendeeListScreen';
+import DashboardAttendeeListsScreen from '../../screens/dashboard/DashboardAttendeeListScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -39,7 +39,7 @@ const EventDashboarTabsdNavigator = ({searchQuery}) => {
       }}>
       <Tab.Screen
         name="Guest  Lists"
-        component={AttendeeListsScreen}
+        component={DashboardAttendeeListsScreen}
         initialParams={{ searchQuery }}
       />
       <Tab.Screen
