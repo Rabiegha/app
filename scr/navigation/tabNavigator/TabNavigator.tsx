@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import {View, Platform} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import ModalFilter from '../components/elements/modals/ModalFilter';
+import ModalFilter from '../../components/elements/modals/ModalFilter';
 
-import {TabBarIcon} from '../components/navigation/TabBarIconComponent';
-import {ScanButton} from '../components/navigation/scanButton';
-import colors from '../assets/colors/colors';
-import styles from '../assets/styles/styles'; // Consolidated styles
-import useKeyboardOffset from '../hooks/keyboard/useKeyboardOffset';
+import {TabBarIcon} from '../../components/navigation/TabBarIconComponent';
+import {ScanButton} from '../../components/navigation/scanButton';
+import colors from '../../assets/colors/colors';
+import styles from '../../assets/styles/styles'; // Consolidated styles
+import useKeyboardOffset from '../../hooks/keyboard/useKeyboardOffset';
 import TAB_SCREENS from './tabScreensConfig';
 
 const Tab = createBottomTabNavigator();

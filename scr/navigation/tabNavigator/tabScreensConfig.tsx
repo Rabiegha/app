@@ -1,14 +1,14 @@
-import AddAttendeesScreen from '../screens/AddAttendees';
-import QRCodeScannerScreen from '../screens/Scan';
-import PrintScreen from '../screens/Print';
+import AddAttendeesScreen from '../../screens/AddAttendees';
+import QRCodeScannerScreen from '../../screens/Scan';
+import PrintScreen from '../../screens/Print';
 import MenuNavigator from './MenuNavigator';
-import EventDashboardStackNavigator from './eventDashBoard/EventDashBoardStackNavigator';
+import EventDashboardStackNavigator from '../eventDashBoard/EventDashboardStack';
 
 export default [
   {
     name: 'Attendees',
     component: EventDashboardStackNavigator,
-    icon: require('../assets/images/icons/Participant.png'),
+    icon: require('../../assets/images/icons/Participant.png'),
     label: 'Participants',
     isMiddle: false,
     hideTabBar: false,
@@ -18,7 +18,7 @@ export default [
   {
     name: 'Add',
     component: AddAttendeesScreen,
-    icon: require('../assets/images/icons/Ajouts.png'),
+    icon: require('../../assets/images/icons/Ajouts.png'),
     label: 'Ajouts',
     isMiddle: false,
     hideTabBar: false,
@@ -28,7 +28,7 @@ export default [
   {
     name: 'Scan',
     component: QRCodeScannerScreen,
-    icon: require('../assets/images/icons/Scan.png'),
+    icon: require('../../assets/images/icons/Scan.png'),
     label: '',
     isMiddle: true,
     hideTabBar: true,
@@ -38,7 +38,7 @@ export default [
   {
     name: 'Print',
     component: PrintScreen,
-    icon: require('../assets/images/icons/Print.png'),
+    icon: require('../../assets/images/icons/Print.png'),
     label: 'Imprimer',
     isMiddle: false,
     hideTabBar: false,
@@ -48,7 +48,7 @@ export default [
   {
     name: 'Menu',
     component: MenuNavigator,
-    icon: require('../assets/images/icons/Outils.png'),
+    icon: require('../../assets/images/icons/Outils.png'),
     label: 'Menu',
     isMiddle: false,
     hideTabBar: true,

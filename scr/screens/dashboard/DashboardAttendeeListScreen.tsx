@@ -8,7 +8,7 @@ const DashboardAttendeeListsScreen = () => {
   const navigation = useNavigation(); 
 
   const navigate = () => {
-    navigation.navigate('AllAttendeesList');
+    navigation.navigate('AttendeeList');
   };
 
   const attendees = [

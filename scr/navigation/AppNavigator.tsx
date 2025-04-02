@@ -12,7 +12,7 @@ import WebViewScreen from '../screens/WebView';
 import FutureEventsScreen from '../screens/event/FutureEvents';
 import PastEventsScreen from '../screens/event/PastEvents';
 import EventDetailsPerTypeScreen from '../screens/EventDetailsPerType';
-import TabNavigator from './TabNavigator';
+import TabNavigator from './tabNavigator/TabNavigator';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors';
 

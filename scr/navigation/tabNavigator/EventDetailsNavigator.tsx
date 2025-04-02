@@ -1,8 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import EventDetailsPerTypeScreen from '../screens/EventDetailsPerType';
-import EventDetailsScreen from '../screens/EventDetails';
+import EventDetailsPerTypeScreen from '../../screens/EventDetailsPerType';
+import EventDetailsScreen from '../../screens/EventDetails';
 
 const MenuStack = createNativeStackNavigator();
 

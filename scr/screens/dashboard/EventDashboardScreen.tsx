@@ -7,7 +7,7 @@ import Search from '../../components/elements/Search';
 import globalStyle from '../../assets/styles/globalStyle';
 import {useEvent} from '../../context/EventContext';
 import useStatusBarStyle from '../../hooks/useStatusBarStyle';
-import EventDashBoardTabsNavigator from '../../navigation/eventDashBoard/EventDashBoardTabsNavigator';
+import EventDashBoardTabsNavigator from '../../navigation/eventDashBoard/EventDashboardTabs';
 
 const EventDashboardScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
