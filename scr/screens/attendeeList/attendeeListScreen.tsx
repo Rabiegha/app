@@ -9,21 +9,21 @@ import {
   TouchableWithoutFeedback,
   StatusBar,
 } from 'react-native';
-import List from '../components/screens/attendees/List';
-import ProgressBar from '../components/elements/progress/ProgressBar';
-import ProgressText from '../components/elements/progress/ProgressionText';
-import globalStyle from '../assets/styles/globalStyle';
+import List from '../../components/screens/attendees/List';
+import ProgressBar from '../../components/elements/progress/ProgressBar';
+import ProgressText from '../../components/elements/progress/ProgressionText';
+import globalStyle from '../../assets/styles/globalStyle';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import HeaderParticipants from '../components/elements/header/HeaderParticipant';
-import SuccessComponent from '../components/elements/notifications/SuccessComponent';
-import {useEvent} from '../context/EventContext';
-import Search from '../components/elements/Search';
-import FiltreComponent from '../components/filtre/FiltreComponent';
+import HeaderParticipants from '../../components/elements/header/HeaderParticipant';
+import SuccessComponent from '../../components/elements/notifications/SuccessComponent';
+import {useEvent} from '../../context/EventContext';
+import Search from '../../components/elements/Search';
+import FiltreComponent from '../../components/filtre/FiltreComponent';
 import {useDispatch, useSelector} from 'react-redux';
-import {selectPrintStatus} from '../redux/selectors/print/printerSelectors';
-import {setPrintStatus} from '../redux/slices/printerSlice';
-import useRegistrationSummary from '../hooks/registration/useRegistrationSummary';
-import PrintModal from '../components/elements/modals/PrintModal';
+import {selectPrintStatus} from '../../redux/selectors/print/printerSelectors';
+import {setPrintStatus} from '../../redux/slices/printerSlice';
+import useRegistrationSummary from '../../hooks/registration/useRegistrationSummary';
+import PrintModal from '../../components/elements/modals/PrintModal';
 
 
 // Define a default set of filters
@@ -32,7 +32,7 @@ const defaultFilterCriteria = {
   company: null,      // or an empty string [] if you allow multiple
 };
 
-const AllAttendeesScreen = () => {
+const attendeeListScreen = () => {
   const {eventName} = useEvent();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   //console.log('eventId', eventName);
@@ -286,4 +286,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AllAttendeesScreen;
+export default attendeeListScreen;

@@ -1,20 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
-import HeaderComponent from '../components/elements/header/HeaderComponent';
+import HeaderComponent from '../../components/elements/header/HeaderComponent.tsx';
 import {useFocusEffect} from '@react-navigation/native';
-import globalStyle from '../assets/styles/globalStyle';
-import {useEvent} from '../context/EventContext';
-import axios from 'axios';
-import {BASE_URL} from '../config/config';
-import EditComponent from '../components/screens/EditComponent';
-import useUserId from '../hooks/useUserId';
-import colors from '../assets/colors/colors';
-import SuccessComponent from '../components/elements/notifications/SuccessComponent';
-import FailComponent from '../components/elements/notifications/FailComponent';
-import {editAttendee} from '../services/editAttendeeService.tsx';
-import useAttendeeTypeDropdown from '../hooks/type/useAttendeeTypesDropdown.tsx';
+import globalStyle from '../../assets/styles/globalStyle.tsx';
+import {useEvent} from '../../context/EventContext.tsx';
+import EditComponent from '../../components/screens/EditComponent.tsx';
+import colors from '../../assets/colors/colors.tsx';
+import SuccessComponent from '../../components/elements/notifications/SuccessComponent.tsx';
+import FailComponent from '../../components/elements/notifications/FailComponent.tsx';
+import {editAttendee} from '../../services/editAttendeeService.tsx';
+import useAttendeeTypeDropdown from '../../hooks/type/useAttendeeTypesDropdown.tsx';
 import {useSelector} from 'react-redux';
-import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors.tsx';
+import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors.tsx';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 const EditScreen = ({navigation, route}) => {

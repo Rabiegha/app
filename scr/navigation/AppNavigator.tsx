@@ -1,17 +1,16 @@
 import React, {useContext} from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {AuthContext} from '../context/AuthContext';
-import ConnexionScreen from '../screens/Connexion';
-import EventsScreen from '../screens/event/Events';
-import MoreScreen from '../screens/More';
-import EditScreen from '../screens/Edit';
-import BadgeScreen from '../screens/Badge';
-import PrintresListScreen from '../screens/PrintersList';
-import PaperFormat from '../screens/PaperFormat';
-import WebViewScreen from '../screens/WebView';
-import FutureEventsScreen from '../screens/event/FutureEvents';
-import PastEventsScreen from '../screens/event/PastEvents';
-import EventDetailsPerTypeScreen from '../screens/EventDetailsPerType';
+import ConnexionScreen from '../screens/auth/ConnexionScreen';
+import EventsScreen from '../screens/event/EventsScreen';
+import MoreScreen from '../screens/attendeeDetails/MoreScreen';
+import EditScreen from '../screens/attendeeDetails/EditScreen';
+import BadgeScreen from '../screens/attendeeDetails/BadgeScreen';
+import PrintresListScreen from '../screens/print/PrintersListScreen';
+import PaperFormat from '../screens/print/PaperFormatScreen';
+import WebViewScreen from '../screens/menu/WebViewScreen';
+import FutureEventsScreen from '../screens/event/FutureEventsScreen';
+import PastEventsScreen from '../screens/event/PastEventsScreen';
 import TabNavigator from './tabNavigator/TabNavigator';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors';
@@ -38,10 +37,6 @@ function AppNavigator() {
       <Stack.Screen name="WebView" component={WebViewScreen} />
       <Stack.Screen name="Avenir" component={FutureEventsScreen} />
       <Stack.Screen name="Passees" component={PastEventsScreen} />
-      <Stack.Screen
-        name="EventDetailsPerType"
-        component={EventDetailsPerTypeScreen}
-      />
     </Stack.Navigator>
   );
 }

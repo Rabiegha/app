@@ -2,17 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import axios from 'axios';
 import Share from 'react-native-share';
-import HeaderComponent from '../components/elements/header/HeaderComponent';
-import MoreComponent from '../components/screens/MoreComponent';
-import globalStyle from '../assets/styles/globalStyle';
-import colors from '../assets/colors/colors';
-import {BASE_URL, EMS_URL} from '../config/config';
-import {useEvent} from '../context/EventContext';
-import usePrintDocument from '../hooks/print/usePrintDocument';
-import {setPrintStatus} from '../redux/slices/printerSlice';
+import HeaderComponent from '../../components/elements/header/HeaderComponent';
+import MoreComponent from '../../components/screens/MoreComponent';
+import globalStyle from '../../assets/styles/globalStyle';
+import colors from '../../assets/colors/colors';
+import {BASE_URL, EMS_URL} from '../../config/config';
+import {useEvent} from '../../context/EventContext';
+import usePrintDocument from '../../hooks/print/usePrintDocument';
+import {setPrintStatus} from '../../redux/slices/printerSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectPrintStatus } from '../redux/selectors/print/printerSelectors';
-import PrintModal from '../components/elements/modals/PrintModal';
+import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
+import PrintModal from '../../components/elements/modals/PrintModal';
 
 const MoreScreen = ({route, navigation}) => {
   const {triggerListRefresh, updateAttendee} = useEvent();

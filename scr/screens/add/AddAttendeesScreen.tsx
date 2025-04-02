@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
-import AddAttendeesComponent from '../components/screens/AddAttendeesComponent';
-import HeaderComponent from '../components/elements/header/HeaderComponent';
+import AddAttendeesComponent from '../../components/screens/AddAttendeesComponent';
+import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import {useFocusEffect} from '@react-navigation/native';
-import globalStyle from '../assets/styles/globalStyle';
-import {useEvent} from '../context/EventContext';
-import colors from '../assets/colors/colors';
-import FailComponent from '../components/elements/notifications/FailComponent';
-import SuccessComponent from '../components/elements/notifications/SuccessComponent';
-import {addAttendee} from '../services/addAttendeeService';
-import useAttendeeTypeDropdown from '../hooks/type/useAttendeeTypesDropdown';
+import globalStyle from '../../assets/styles/globalStyle';
+import {useEvent} from '../../context/EventContext';
+import colors from '../../assets/colors/colors';
+import FailComponent from '../../components/elements/notifications/FailComponent';
+import SuccessComponent from '../../components/elements/notifications/SuccessComponent';
+import {addAttendee} from '../../services/addAttendeeService';
+import useAttendeeTypeDropdown from '../../hooks/type/useAttendeeTypesDropdown';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 const AddAttendeesScreen = ({navigation}) => {

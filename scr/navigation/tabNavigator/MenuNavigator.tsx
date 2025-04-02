@@ -1,11 +1,11 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import MenuScreen from '../../screens/Menu';
-import HelpScreen from '../../screens/Help';
-import AboutScreen from '../../screens/About';
-import SearchSettingsScreen from '../../screens/SearchSettings';
-import ScanSettingsScreen from '../../screens/ScanSettings';
+import MenuScreen from '../../screens/menu/MenuScreen';
+import HelpScreen from '../../screens/menu/HelpScreen';
+import AboutScreen from '../../screens/menu/AboutScreen';
+import SearchSettingsScreen from '../../screens/settings/SearchSettingsScreen';
+import ScanSettingsScreen from '../../screens/settings/ScanSettingsScreen';
 import EventDetailsNavigator from './EventDetailsNavigator';
 
 const MenuStack = createNativeStackNavigator();

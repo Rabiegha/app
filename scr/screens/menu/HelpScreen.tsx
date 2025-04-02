@@ -1,9 +1,9 @@
 // MenuScreen.js
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import colors from '../assets/colors/colors';
-import globalStyle from '../assets/styles/globalStyle';
-import HeaderComponent from '../components/elements/header/HeaderComponent';
+import colors from '../../assets/colors/colors';
+import globalStyle from '../../assets/styles/globalStyle';
+import HeaderComponent from '../../components/elements/header/HeaderComponent';
 
 const HelpScreen = ({navigation}) => {
   const sections = [

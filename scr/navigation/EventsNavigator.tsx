@@ -1,7 +1,7 @@
 import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import EventPasseesScreen from '../screens/event/PastEvents';
-import EventAvenirScreen from '../screens/event/FutureEvents';
+import EventPasseesScreen from '../screens/event/PastEventsScreen';
+import EventAvenirScreen from '../screens/event/FutureEventsScreen';
 import colors from '../assets/colors/colors';
 
 const Tab = createMaterialTopTabNavigator();

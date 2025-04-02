@@ -1,10 +1,9 @@
 // EventStackNavigator.js
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SessionListScreen from '../../screens/SessionList';
-import AllAttendeesListScreen from '../../screens/AllAttendeesListScreen';
-import EventDashboardTabsNavigator from './EventDashboardTabs';
-import EventDashboardScreen from '../../screens/dashboard/EventDashboardScreen';
+import SessionListScreen from '../../screens/session/SessionListScreen';
+import AllAttendeesListScreen from '../../screens/attendeeList/attendeeListScreen';
+import EventDashboardScreen from '../../screens/eventDashboard/EventDashboardScreen';
 
 const Stack = createNativeStackNavigator();
 

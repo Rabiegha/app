@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, StatusBar} from 'react-native';
-import ConnexionComponent from '../components/screens/ConnexionComponent';
+import ConnexionComponent from '../../components/screens/ConnexionComponent';
 import {useNavigation} from '@react-navigation/native';
-import globalStyle from '../assets/styles/globalStyle';
+import globalStyle from '../../assets/styles/globalStyle';
 import Spinner from 'react-native-loading-spinner-overlay';
-import FailComponent from '../components/elements/notifications/FailComponent';
-import {loginThunk} from '../redux/thunks/auth/loginThunk';
+import FailComponent from '../../components/elements/notifications/FailComponent';
+import {loginThunk} from '../../redux/thunks/auth/loginThunk';
 import {useDispatch, useSelector} from 'react-redux';
-import {resetError} from '../redux/slices/authSlice';
+import {resetError} from '../../redux/slices/authSlice';
 import {
   selectError,
   selectIsLoading,
-} from '../redux/selectors/auth/authSelectors';
+} from '../../redux/selectors/auth/authSelectors';
 
 const ConnexionScreen = () => {
   const [userName, setUserName] = useState('');

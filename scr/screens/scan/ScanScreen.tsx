@@ -1,5 +1,5 @@
 import {View, Text, StatusBar} from 'react-native';
-import ScanComponent from '../components/screens/ScanComponent.tsx';
+import ScanComponent from '../../components/screens/ScanComponent.tsx';
 import {useFocusEffect} from '@react-navigation/native';
 import React from 'react';
 

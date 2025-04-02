@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {ActivityIndicator, StatusBar, Text, View} from 'react-native';
-import HeaderComponent from '../components/elements/header/HeaderComponent.tsx';
+import HeaderComponent from '../../components/elements/header/HeaderComponent.tsx';
 import {useNavigation} from '@react-navigation/native';
-import globalStyle from '../assets/styles/globalStyle.tsx';
-import colors from '../assets/colors/colors';
-import EventDetailsComponent from '../components/screens/EventDetailsComponent.tsx';
-import useRegistrationData from '../hooks/registration/useRegistrationSummary.tsx';
+import globalStyle from '../../assets/styles/globalStyle.tsx';
+import colors from '../../assets/colors/colors.tsx';
+import EventDetailsComponent from '../../components/screens/EventDetailsComponent.tsx';
+import useRegistrationData from '../../hooks/registration/useRegistrationSummary.tsx';
 
 const EventDetailsScreen = () => {
   const navigation = useNavigation();

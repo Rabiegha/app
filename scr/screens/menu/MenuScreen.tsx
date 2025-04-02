@@ -1,15 +1,15 @@
 // MenuScreen.js
 import React, {useContext} from 'react';
 import {View, StyleSheet, StatusBar, ScrollView} from 'react-native';
-import colors from '../assets/colors/colors';
-import LogOutButton from '../components/elements/buttons/LogOutButton';
+import colors from '../../assets/colors/colors';
+import LogOutButton from '../../components/elements/buttons/LogOutButton';
 import {CommonActions, useFocusEffect, useNavigation} from '@react-navigation/native';
-import HeaderComponent from '../components/elements/header/HeaderComponent';
-import globalStyle from '../assets/styles/globalStyle';
-import MenuListComponent from '../components/screens/MenuListComponent';
-import {AuthContext} from '../context/AuthContext';
+import HeaderComponent from '../../components/elements/header/HeaderComponent';
+import globalStyle from '../../assets/styles/globalStyle';
+import MenuListComponent from '../../components/screens/MenuListComponent';
+import {AuthContext} from '../../context/AuthContext';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { logoutThunk } from '../redux/thunks/auth/logoutThunk';
+import { logoutThunk } from '../../redux/thunks/auth/logoutThunk';
 import { useDispatch } from 'react-redux';
 
 const MenuScreen = ({}) => {

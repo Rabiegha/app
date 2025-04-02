@@ -1,8 +1,8 @@
-import AddAttendeesScreen from '../../screens/AddAttendees';
-import QRCodeScannerScreen from '../../screens/Scan';
-import PrintScreen from '../../screens/Print';
+import AddAttendeesScreen from '../../screens/add/AddAttendeesScreen';
+import PrintScreen from '../../screens/print/PrintScreen';
 import MenuNavigator from './MenuNavigator';
 import EventDashboardStackNavigator from '../eventDashBoard/EventDashboardStack';
+import QRCodeScannerScreen from '../../screens/scan/ScanScreen';
 
 export default [
   {

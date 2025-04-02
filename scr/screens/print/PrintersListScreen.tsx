@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import HeaderComponent from '../components/elements/header/HeaderComponent';
-import {useEvent} from '../context/EventContext';
-import colors from '../assets/colors/colors';
-import globalStyle from '../assets/styles/globalStyle';
-import PrintersList from '../components/screens/print/PrintersListComponent';
+import HeaderComponent from '../../components/elements/header/HeaderComponent';
+import {useEvent} from '../../context/EventContext';
+import colors from '../../assets/colors/colors';
+import globalStyle from '../../assets/styles/globalStyle';
+import PrintersList from '../../components/screens/print/PrintersListComponent';
 
 const PrintersListScreen = ({route, navigation}) => {
   const handleGoBack = () => {

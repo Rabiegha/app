@@ -1,11 +1,11 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import HeaderComponent from '../components/elements/header/HeaderComponent';
-import colors from '../assets/colors/colors';
-import globalStyle from '../assets/styles/globalStyle';
+import HeaderComponent from '../../components/elements/header/HeaderComponent';
+import colors from '../../assets/colors/colors';
+import globalStyle from '../../assets/styles/globalStyle';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomSwitch from '../components/elements/Switch';
-import { setKioskMode } from '../redux/slices/scanModeSlice';
+import CustomSwitch from '../../components/elements/Switch';
+import { setKioskMode } from '../../redux/slices/scanModeSlice';
 
 const ScanSettingsScreen = ({navigation}) => {
     const dispatch = useDispatch();

@@ -1,14 +1,11 @@
 import React from 'react';
 import {View, Alert, StyleSheet, Platform} from 'react-native';
-import HeaderComponent from '../components/elements/header/HeaderComponent';
+import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import Share from 'react-native-share';
-import BadgeComponent from '../components/screens/BadgeComponent';
-import colors from '../assets/colors/colors';
-import globalStyle from '../assets/styles/globalStyle';
-import {useEvent} from '../context/EventContext';
-import {EMS_URL} from '../config/config';
-import BlobUtil from '@react-native-oh-tpl/react-native-blob-util';
-import {downloadAndPrintPdf} from '../hooks/print/downloadAndPrintPdf';
+import BadgeComponent from '../../components/screens/BadgeComponent';
+import colors from '../../assets/colors/colors';
+import globalStyle from '../../assets/styles/globalStyle';
+import {useEvent} from '../../context/EventContext';
 
 const BadgeScreen = ({route, navigation}) => {
   const {triggerListRefresh} = useEvent();

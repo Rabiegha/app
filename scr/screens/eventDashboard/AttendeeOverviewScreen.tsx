@@ -4,7 +4,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
 import { useNavigation } from '@react-navigation/native';
 
-const DashboardAttendeeListsScreen = () => {
+const AttendeeOverviewScreen = () => {
   const navigation = useNavigation(); 
 
   const navigate = () => {
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
 
 
 
-export default DashboardAttendeeListsScreen;
+export default AttendeeOverviewScreen;
