@@ -4,18 +4,12 @@ import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
 import { useNavigation } from '@react-navigation/native';
 
-export default function AttendeeListsScreen({navigation}) {
-
-  /* const navigation = useNavigation(); */
+const DashboardAttendeeListsScreen = () => {
+  const navigation = useNavigation(); 
 
   const navigate = () => {
-    navigation.navigate('EventDashboardStackNavigator', {
-          screen: 'AllAttendeesList',
-        });
-        console.log(navigation.getState());
-
-  }
-
+    navigation.navigate('AllAttendeesList');
+  };
 
   const attendees = [
     { id: '1', total: 100, checkedIn: 20 },
@@ -62,3 +56,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
 });
+
+
+
+export default DashboardAttendeeListsScreen;
