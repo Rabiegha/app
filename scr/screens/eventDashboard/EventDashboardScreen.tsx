@@ -24,7 +24,7 @@ const EventDashboardScreen = () => {
   return (
       <View style={globalStyle.backgroundWhite}>
         <HeaderComponent handlePress={handlePress} title={eventDetails?.newEventName} color={undefined} backgroundColor={undefined} />
-        <EventDachboardTopComponent />
+        <EventDachboardTopComponent eventName={eventName} eventDetails={undefined} />
         <View style={styles.container}>
           <Search value={searchQuery} onChange={setSearchQuery} />
         </View>

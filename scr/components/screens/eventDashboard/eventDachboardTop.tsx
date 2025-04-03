@@ -1,15 +1,16 @@
 import { StyleSheet, Text, View, Image } from 'react-native';
 import React from 'react';
 import colors from '../../../assets/colors/colors';
+import EventImage from '../../../assets/images/user.png';
 
-const EventDachboardTopComponent = () => {
+const EventDachboardTopComponent = ({eventName, eventDetails}) => {
   return (
     <View style={styles.container}>
-      <View>
-        <Image />
+      <View style={styles.imageContainer}>
+        <Image source={EventImage} style={styles.image} />
       </View>
-      <Text style={styles.title}>eventDackbordTop</Text>
-      <Text style={styles.text}>eventDackbordTop</Text>
+      <Text style={styles.title}>{eventName}</Text>
+      <Text style={styles.text}>{eventDetails}</Text>
     </View>
   );
 };
@@ -32,7 +33,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontSize: 15,
-  }
+  },
+  imageContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  image: {
+    height: 140,
+    width: 140,
+    borderRadius: 70,
+  },
 });
 
 export default EventDachboardTopComponent;
