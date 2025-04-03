@@ -26,21 +26,36 @@ export const EventProvider = ({children}) => {
   const [attendeesRefreshKey, setAttendeesRefreshKey] = useState(0);
 
   useEffect(() => {
+    // AUth get auth status from MMKV
     const storedStatus = storage.getBoolean('login_status');
     setIsLoggedIn(storedStatus);
+
+    // Event Get last seelected event from MMKV
+    const storedEvent = storage.getString('eventDetails');
+    if (storedEvent) {
+      const parsed = JSON.parse(storedEvent);
+      setEventDetails(parsed);
+      console.log('Loaded persisted event details:', parsed);
+    }
   }, []);
 
   const updateEventDetails = ({newSecretCode, newEventId, newEventName}) => {
-    setEventDetails({
+
+    const eventData = {
       secretCode: newSecretCode,
       eventId: newEventId,
       eventName: newEventName,
-    });
+    };
+    setEventDetails(eventData);
+    storage.set('eventDetails', JSON.stringify(eventData));
+
     console.log('Event details updated:', {
       secretCode: newSecretCode,
       eventId: newEventId,
       eventName: newEventName,
     });
+
+
   };
 
   const updateStatsAvenir = ({newTotaleAvenir}) => {
