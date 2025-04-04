@@ -61,9 +61,6 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
     dispatch(fetchAttendees({ userId, eventId, isDemoMode }));
   };
 
-  /**
-   * UseFocusEffect: fetch the data once per screen focus or event change.
-   */
   useFocusEffect(
     useCallback(() => {
       /* clearLocalData(); */

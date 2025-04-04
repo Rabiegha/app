@@ -49,11 +49,12 @@ const EventsScreen = () => {
   const navigation = useNavigation();
 
   const handleEventSelect = event => {
-    const {ems_secret_code, event_id, event_name} = event;
+    const {ems_secret_code, event_id, event_name, nice_start_datetime} = event;
     updateEventDetails({
       newSecretCode: ems_secret_code,
       newEventId: event_id,
       newEventName: event_name,
+      newNiceStartDate: nice_start_datetime,
     });
 
     navigation.navigate('Tabs', {screen: 'Attendees'});

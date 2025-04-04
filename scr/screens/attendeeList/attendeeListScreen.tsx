@@ -24,6 +24,7 @@ import {selectPrintStatus} from '../../redux/selectors/print/printerSelectors';
 import {setPrintStatus} from '../../redux/slices/printerSlice';
 import useRegistrationSummary from '../../hooks/registration/useRegistrationSummary';
 import PrintModal from '../../components/elements/modals/PrintModal';
+import useRegistrationData from '../../hooks/registration/useRegistrationData';
 
 
 // Define a default set of filters
@@ -33,29 +34,35 @@ const defaultFilterCriteria = {
 };
 
 const attendeeListScreen = () => {
-  const {eventName} = useEvent();
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  //console.log('eventId', eventName);
+
   useFocusEffect(
     React.useCallback(() => {
-      setRefreshTrigger(prev => prev + 1); 
+      setRefreshTrigger(prev => prev + 1);
       StatusBar.setBarStyle('dark-content'); // Set status bar style to light-content
       return () => {
         // This is useful if this screen has a unique StatusBar style                                                                                                                                                          '); // Reset status bar style when screen loses focus
       };
     }, []),
   );
+  // event name
+  const {eventName} = useEvent();
+
+  // set refresh trigger
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  //search query
   const [searchQuery, setSearchQuery] = useState('');
+  //modal handling
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAnimation] = useState(new Animated.Value(-300));
+
   const [success, setSuccess] = useState(false);
-  const [totalListAttendees, setTotalListAttendees] = useState(0);
-  const [checkedInAttendees, setCheckedInAttendees] = useState(0);
-  const [notCheckedInAttendees, setNotCheckedInAttendees] = useState(0);
-  const [ratio, setRatio] = useState(0);
+
+  //Filter Critererias
   const [filterCriteria, setFilterCriteria] = useState(defaultFilterCriteria);
 
-  const [modalPrintVisible, setModalPrintVisible] = useState(false);
+  // Registration data :
+  const {totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary} = useRegistrationData(refreshTrigger);
 
   const printStatus = useSelector(selectPrintStatus);
 
@@ -63,11 +70,10 @@ const attendeeListScreen = () => {
 
   const openModal = () => {
     setModalVisible(true);
-    // Animate the modal to slide in from the left
     Animated.timing(modalAnimation, {
-      toValue: 0, // End position of the modal
-      duration: 300, // Animation duration
-      useNativeDriver: true, // Use native driver for better performance
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -89,58 +95,15 @@ const attendeeListScreen = () => {
 
   const navigation = useNavigation();
 
-  const handleGoBack = () => {
-    /* navigation.reset({
-      index: 0,
-      routes: [{name: 'Events'}],
-    }); */
-  };
 
-  useEffect(() => {}, [totalListAttendees, checkedInAttendees]);
-
-  const [filter, setFilter] = useState({
-    status: 'all', // all, checked-in, not checked-in
-    order: 'mostRecent', // mostRecent, leastRecent
-  });
-  const updateFilter = newFilter => {
-    setFilter(newFilter);
-    closeModal(); // Assuming you want to close the modal on filter apply
-  };
-
-  const { summary, loading, error, refetch } = useRegistrationSummary(refreshTrigger);
-  const { totalAttendees, totalCheckedIn, totalNotCheckedIn } = summary || {};
-
-  useEffect(() => {
-    setTotalListAttendees(totalAttendees);
-    setCheckedInAttendees(totalCheckedIn);
-    setNotCheckedInAttendees(totalNotCheckedIn);
-    const ratio =
-      totalAttendees > 0 ? (totalCheckedIn / totalAttendees) * 100 : 0;
-      setRatio(ratio);
-  }, [totalAttendees, totalCheckedIn]);
-
-  const updateProgress = (total, checkedIn, ratio) => {
-    setTotalListAttendees(total);
-    setCheckedInAttendees(checkedIn);
-    setRatio(ratio);
-  };
   const clearSearch = () => {
     if (searchQuery !== '') {
       setSearchQuery('');
     } else {
       navigation.goBack();
-/*       navigation.reset({
-        index: 0,
-        routes: [{name: 'Events'}],
-      }); */
-    } // Reset the search query
+    }
   };
 
-  // Gestion de la fermeture du modal
-  const handleModalClose = () => {
-    (false);
-  };
-  
 
   const handleTriggerRefresh = () => {
     setRefreshTrigger(prev => prev + 1); // 🔄 This will trigger `useEffect` in useRegistrationSummary
@@ -161,7 +124,7 @@ const attendeeListScreen = () => {
         setFilterCriteria(defaultFilterCriteria);
       }
     };
-  
+
     // Utility to check if filters are currently at default
     const isDefaultFilter = (fc) => {
       return fc.status === 'all' && !fc.company;
@@ -190,9 +153,10 @@ const attendeeListScreen = () => {
         />
 
         <ProgressText
-          totalCheckedAttendees={checkedInAttendees}
-          totalAttendees={totalListAttendees}
+          totalCheckedAttendees={totalCheckedIn}
+          totalAttendees={totalAttendees}
         />
+        <ProgressBar progress={ratio} />
         <View style={styles.printModal}>
           <PrintModal
             onClose={() => dispatch(setPrintStatus(null))}
@@ -200,11 +164,6 @@ const attendeeListScreen = () => {
             status={printStatus}
           />
         </View>
-        <ProgressBar progress={ratio} />
-        {/*         <TouchableOpacity onPress={showNotification} style={styles.button}>
-          <Text style={styles.buttonText}>Afficher la notification</Text>
-        </TouchableOpacity> */}
-
         <List
           searchQuery={searchQuery}
           onShowNotification={showNotification}
@@ -244,7 +203,7 @@ const attendeeListScreen = () => {
                       setFilterCriteria(defaultFilterCriteria);
                       // (2) Close modal
                       closeModal();
-                    } } tout={totalListAttendees} checkedIn={checkedInAttendees} notChechkedIn={notCheckedInAttendees}                />
+                    } } tout={totalAttendees} checkedIn={totalCheckedIn} notChechkedIn={totalNotCheckedIn}                />
                 }
               </Animated.View>
             </TouchableWithoutFeedback>

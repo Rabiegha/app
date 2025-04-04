@@ -10,11 +10,14 @@ const storage = new MMKV();
 export const useEvent = () => useContext(EventContext);
 
 export const EventProvider = ({children}) => {
+  // Event Details
   const [eventDetails, setEventDetails] = useState({
     secretCode: '',
     eventId: '',
     eventName: '',
+    niceStartDate: '',
   });
+  // Event Stats
   const [statsAvenir, setStatsAvenir] = useState({
     totaleAvenir: '',
   });
@@ -39,12 +42,13 @@ export const EventProvider = ({children}) => {
     }
   }, []);
 
-  const updateEventDetails = ({newSecretCode, newEventId, newEventName}) => {
+  const updateEventDetails = ({newSecretCode, newEventId, newEventName, newNiceStartDate}) => {
 
     const eventData = {
       secretCode: newSecretCode,
       eventId: newEventId,
       eventName: newEventName,
+      niceStartDate: newNiceStartDate,
     };
     setEventDetails(eventData);
     storage.set('eventDetails', JSON.stringify(eventData));

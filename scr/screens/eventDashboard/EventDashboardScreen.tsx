@@ -11,10 +11,11 @@ import EventDashBoardTabsNavigator from '../../navigation/eventDashBoard/EventDa
 import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import EventDachboardTopComponent from '../../components/screens/eventDashboard/eventDachboardTop';
 
-const EventDashboardScreen = () => {
+const EventDashboardScreen = ({}) => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
-  const {eventDetails} = useEvent();
+
+  const {eventName: eventName, niceStartDate:eventDetails} = useEvent();
 
   useStatusBarStyle('dark-content');
   const handlePress = () => {
@@ -24,9 +25,8 @@ const EventDashboardScreen = () => {
   return (
       <View style={globalStyle.backgroundWhite}>
         <HeaderComponent handlePress={handlePress} title={eventDetails?.newEventName} color={undefined} backgroundColor={undefined} />
-        <EventDachboardTopComponent eventName={undefined} eventDetails={undefined} />
         <View style={styles.container}>
-          <Search value={searchQuery} onChange={setSearchQuery} />
+          <EventDachboardTopComponent eventName={eventName} eventDetails={eventDetails} />
         </View>
         <EventDashBoardTabsNavigator searchQuery={searchQuery} />
       </View>
@@ -35,7 +35,6 @@ const EventDashboardScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Platform.OS === 'ios' ? 90 : 70,
     paddingLeft: 20,
     paddingRight: 20,
   },
