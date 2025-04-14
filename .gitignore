@@ -67,8 +67,12 @@ yarn-error.log
 /coverage
 
 
-
 # package lock
 
 package-lock.json
 package-lock.json
+
+
+# API
+API/ApiApp-1.txt
+API/ApiApp.txt
