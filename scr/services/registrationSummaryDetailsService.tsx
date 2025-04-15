@@ -1,18 +1,29 @@
 import axios from 'axios';
-import {BASE_URL} from '../config/config';
+import { BASE_URL } from '../config/config';
+import { handleApiError } from '../utils/api/handleApiError';
+import { cleanParams } from '../utils/api/cleanParams';
 
 export const registrationSummaryDetails = async (userId, eventId) => {
-  const url = `${BASE_URL}/ajax_get_dashboard_registration_summary/?current_user_login_details_id=${userId}&event_id=${eventId}`;
-
   try {
-    const response = await axios.get(url);
-    if (response.data) {
-      console.log('Registration summary details fetched sucefully', userId);
-      return response.data;
-    } else {
-      console.log('Registration summary details not fetched');
+    const params = cleanParams({
+      current_user_login_details_id: userId,
+      event_id: eventId,
+    });
+
+    const response = await axios.get(
+      `${BASE_URL}/ajax_get_dashboard_registration_summary/`,
+      { params }
+    );
+
+    if (!response.data || response.data.status === false) {
+      console.log('Full API response:', response.data);
+      throw new Error(response.data?.message || 'Registration summary details not fetched');
     }
+
+    console.log('Registration summary details fetched successfully for user:', userId);
+    return response.data;
   } catch (error) {
-    console.error('Error fetching data from server, using local data:', error);
+    handleApiError(error, 'Failed to fetch registration summary details');
+    return null; // fallback si utilisé dans un composant
   }
 };
