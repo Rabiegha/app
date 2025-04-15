@@ -1,19 +1,29 @@
 import axios from 'axios';
-import {BASE_URL} from '../config/config';
+import { BASE_URL } from '../config/config';
+import { handleApiError } from '../utils/api/handleApiError';
+import { cleanParams } from '../utils/api/cleanParams';
 
 export const fetchEventList = async (userId, isEventFrom) => {
-  const url = `${BASE_URL}/ajax_get_event_details/?current_user_login_details_id=${userId}&is_event_from=${isEventFrom}`;
-
   try {
-    const response = await axios.get(url);
-    if (response.data.status && response.data.event_details) {
-      return response.data;
-    } else {
-      /* console.log('Events list not fetched'); */
-      throw new Error('Invalid event data from server');
+    const params = {
+      current_user_login_details_id: userId,
+      is_event_from: isEventFrom,
+    };
+
+    const response = await axios.get(
+      `${BASE_URL}/ajax_get_event_details/`,
+      { params }
+    );
+
+    if (!response.data || !response.data.status || !response.data.event_details) {
+      console.log('Params sent to API:', params);
+      console.log('Full API response:', response.data);
+      throw new Error(response.data?.message || 'Invalid event data from server');
     }
+
+    return response.data;
   } catch (error) {
-    console.log('Error fetching events list from past', error);
-    throw error;
+    handleApiError(error, 'Failed to fetch event list');
+    throw error; // pour que le hook ou composant appelant puisse réagir si besoin
   }
 };
