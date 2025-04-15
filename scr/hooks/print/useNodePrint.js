@@ -40,7 +40,7 @@ export const useNodePrint = () => {
     try {
       const printJob = {
         printerId: nodePrinterId,
-        title: 'Print Job From Attendee',
+        title: 'Print Job From Attendee', // replace this with attendee name + badge
         contentType: 'pdf_base64',
         content: fileBase64,
         source: 'Attendee App',
