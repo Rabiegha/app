@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { editAttendee } from "../services/editAttendeeService.tsx";
+import { editAttendee } from "../../services/editAttendeeService.tsx";
 
 const useEditAttendee = () => {
   const [loading, setLoading] = useState(false);

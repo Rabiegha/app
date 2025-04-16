@@ -3,6 +3,7 @@ import React from 'react';
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
 import { useNavigation } from '@react-navigation/native';
+import ListCard from '../../components/elements/ListCard';
 
 const AttendeeOverviewScreen = () => {
   const navigation = useNavigation();
@@ -15,13 +16,14 @@ const AttendeeOverviewScreen = () => {
     { id: '1', total: 100, checkedIn: 20 },
   ];
 
-    // 2. Fonction pour afficher chaque élément de la liste
-    const renderItem = ({ item }) => (
-      <TouchableOpacity style={styles.item} onPress={navigate}>
-        <Text style={styles.title}>Liste des participants</Text>
-        <Text style={styles.name}>{item.total} Total | {item.checkedIn} Enregistrés</Text>
-      </TouchableOpacity>
-    );
+  // 2. Fonction pour afficher chaque élément de la liste
+  const renderItem = ({ item }) => (
+    <ListCard
+      title="Liste des participants"
+      subtitle1={`${item.total} Total | ${item.checkedIn} Enregistrés`}
+      onPress={navigate} subtitle2={undefined}/>
+
+  );
 
   return (
     <View style={[globalStyle.backgroundWhite, styles.container]}>

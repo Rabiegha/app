@@ -11,6 +11,8 @@ import SuccessComponent from '../../components/elements/notifications/SuccessCom
 import {addAttendee} from '../../services/addAttendeeService';
 import useAttendeeTypeDropdown from '../../hooks/type/useAttendeeTypesDropdown';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { useSelector } from 'react-redux';
+import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 
 const AddAttendeesScreen = ({navigation}) => {
   useFocusEffect(
@@ -19,6 +21,9 @@ const AddAttendeesScreen = ({navigation}) => {
       return () => {};
     }, []),
   );
+
+  //user id
+  const userId = useSelector(selectCurrentUserId);
 
   // Form variables
   const [nom, setNom] = useState('');
@@ -88,12 +93,15 @@ const AddAttendeesScreen = ({navigation}) => {
 
     // Build payload for the service
     const attendeeData = {
+      current_user_login_details_id: userId,
+      ems_secret_code: secretCode,
       send_confirmation_mail_ems_yn: 0,
       generate_qrcode: 0,
-      generate_badge: 0,
+      generate_badge: 1,
       send_badge_yn: 0,
-      ems_secret_code: secretCode,
       salutation: '',
+      send_badge_item: '',
+      attendee_type_id: selectedAttendeeType,
       first_name: prenom,
       last_name: nom,
       email: email,
@@ -102,7 +110,6 @@ const AddAttendeesScreen = ({navigation}) => {
       jobTitle: jobTitle,
       status_id: '2',
       attendee_status: CheckedIn,
-      attendee_type_id: selectedAttendeeType,
     };
 
     try {

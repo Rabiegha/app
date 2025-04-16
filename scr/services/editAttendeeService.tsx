@@ -1,31 +1,37 @@
 import axios from 'axios';
-import {BASE_URL} from '../config/config';
+import { BASE_URL } from '../config/config';
+import { handleApiError } from '../utils/api/handleApiError';
+import { cleanParams } from '../utils/api/cleanParams';
 
-export const editAttendee = async attendeeData => {
-  const {
-    userId,
-    attendeeId,
-    first_name,
-    last_name,
-    email,
-    phone,
-    organization,
-    jobTitle,
-    typeId,
-  } = attendeeData;
-
+export const editAttendee = async (attendeeData) => {
   try {
-    const url = `${BASE_URL}/ajax_update_attendee/?current_user_login_details_id=${userId}&attendee_id=${attendeeId}&first_name=${first_name}&last_name=${last_name}&email=${email}&phone=${phone}&organization=${organization}&designation=${jobTitle}&attendee_type_id=${typeId}&generate_badge=1`;
+    const params = cleanParams({
+      current_user_login_details_id: attendeeData.userId,
+      attendee_id: attendeeData.attendeeId,
+      first_name: attendeeData.first_name,
+      last_name: attendeeData.last_name,
+      email: attendeeData.email,
+      phone: attendeeData.phone,
+      organization: attendeeData.organization,
+      designation: attendeeData.jobTitle,
+      attendee_type_id: attendeeData.typeId,
+      generate_badge: 1,
+    });
 
-    const response = await axios.post(url);
+    const response = await axios.post(
+      `${BASE_URL}/ajax_update_attendee/`,
+      null,
+      { params }
+    );
 
-    if (response.data.status) {
-      return response.data;
-    } else {
-      throw new Error('Erreur lors de l’ajout de l’attendee.');
+    if (!response.data || !response.data.status) {
+      console.log('Params sent to API:', params);
+      console.log('Full API response:', response.data);
+      throw new Error(response.data?.message || 'API returned false status while editing attendee');
     }
+
+    return response.data;
   } catch (error) {
-    console.error('Erreur lors de l’ajout de l’attendee:', error);
-    throw error;
+    handleApiError(error, 'Failed to edit attendee');
   }
 };

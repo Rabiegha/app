@@ -1,24 +1,31 @@
-// services/eventOrganizationsService.js
-
 import axios from 'axios';
-import {BASE_URL} from '../config/config';
+import { BASE_URL } from '../config/config';
+import { handleApiError } from '../utils/api/handleApiError';
+import { cleanParams } from '../utils/api/cleanParams';
 
 export const fetchEventOrganizations = async (userId, eventId) => {
-  const url = `${BASE_URL}/ajax_get_event_attendee_distinct_organization/?current_user_login_details_id=${userId}&event_id=${eventId}`;
-
   try {
-    const response = await axios.get(url);
-    const serverData = response.data;
-    if (response.data) {
-      console.log('Distinct organizations fetched successfully');
-      return serverData.data;
-    } else {
-      console.log('Distinct organizations not fetched');
+    const params = cleanParams({
+      current_user_login_details_id: userId,
+      event_id: eventId,
+    });
 
-      return []; // Return empty array if none
+    const response = await axios.get(
+      `${BASE_URL}/ajax_get_event_attendee_distinct_organization/`,
+      { params }
+    );
+
+    const serverData = response.data;
+
+    if (!serverData || !serverData.status || !serverData.data) {
+      console.log('Distinct organizations not fetched');
+      return [];
     }
+
+    console.log('Distinct organizations fetched successfully');
+    return serverData.data;
   } catch (error) {
-    console.error('Error fetching data from server:', error);
-    throw error; // Throw so the hook can catch it
+    handleApiError(error, 'Failed to fetch event organizations');
+    return []; // Fallback en cas d'erreur
   }
 };
