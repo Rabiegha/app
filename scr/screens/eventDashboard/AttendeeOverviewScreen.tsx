@@ -5,10 +5,10 @@ import colors from '../../assets/colors/colors';
 import { useNavigation } from '@react-navigation/native';
 
 const AttendeeOverviewScreen = () => {
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const navigate = () => {
-    navigation.navigate('AttendeeList');
+    navigation.navigate('AttendeesList');
   };
 
   const attendees = [
