@@ -2,6 +2,7 @@ import axios from 'axios';
 import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
+import { handleApiSuccess } from '../utils/api/handleApiSuccess';
 
 export const getSessionsList = async (currentUserLoginDetailsId, eventId) => {
   try {
@@ -15,13 +16,8 @@ export const getSessionsList = async (currentUserLoginDetailsId, eventId) => {
       { params }
     );
 
-    if (!response.data || !response.data.status) {
-      console.log('Full API response:', response.data);
-      throw new Error(response.data?.message || 'API returned false status while fetching sessions');
-    }
-
-    return response.data;
+    return(handleApiSuccess(response, 'Failed to fetch sessions list'));
   } catch (error) {
-    handleApiError(error, 'Failed to fetch sessions list');
+    throw handleApiError(error, 'Failed to fetch sessions list');
   }
 };
