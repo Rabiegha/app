@@ -1,8 +1,7 @@
-import axios from 'axios';
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { handleApiSuccess } from '../utils/api/handleApiSuccess';
 import { cleanParams } from '../utils/api/cleanParams';
+import mainApi from '../config/mainApi';
 
 export const fetchDetailsByType = async (userId, eventId) => {
   try {
@@ -15,8 +14,8 @@ export const fetchDetailsByType = async (userId, eventId) => {
       console.log('Params sent to API:', params);
     }
 
-    const response = await axios.get(
-      `${BASE_URL}/ajax_get_dashboard_attendence_by_type_chart/`,
+    const response = await mainApi.get(
+      '/ajax_get_dashboard_attendence_by_type_chart/',
       { params }
     );
 

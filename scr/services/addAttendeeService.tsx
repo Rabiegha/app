@@ -1,8 +1,7 @@
-import axios from 'axios';
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
 import { handleApiSuccess } from '../utils/api/handleApiSuccess';
+import mainApi from '../config/mainApi';
 
 export const addAttendee = async (attendeeData) => {
   try {
@@ -44,8 +43,8 @@ export const addAttendee = async (attendeeData) => {
       console.log('Params sent to API:', params);
     }
 
-    const response = await axios.post(
-      `${BASE_URL}/add_attendee/`,
+    const response = await mainApi.post(
+      '/add_attendee/',
       null,
       { params: params }
     );
