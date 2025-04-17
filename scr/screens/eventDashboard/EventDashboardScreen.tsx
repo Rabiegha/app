@@ -19,7 +19,7 @@ const EventDashboardScreen = ({}) => {
 
   useStatusBarStyle('dark-content');
   const handlePress = () => {
-    navigation.goBack();
+    navigation.navigate('Events');
   };
 
   return (
