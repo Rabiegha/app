@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const SessionListScreen = () => {
+const SessionAttendeesListScreen = () => {
   return (
     <View>
       <Text>Session</Text>
@@ -13,4 +13,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default SessionListScreen;
+export default SessionAttendeesListScreen;
