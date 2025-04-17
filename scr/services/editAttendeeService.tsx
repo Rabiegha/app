@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
+import { handleApiSuccess } from '../utils/api/handleApiSuccess';
 import { cleanParams } from '../utils/api/cleanParams';
 
 export const editAttendee = async (attendeeData) => {
@@ -18,20 +19,18 @@ export const editAttendee = async (attendeeData) => {
       generate_badge: 1,
     });
 
+    if (__DEV__) {
+      console.log('Params sent to API:', params);
+    }
+
     const response = await axios.post(
       `${BASE_URL}/ajax_update_attendee/`,
       null,
       { params }
     );
 
-    if (!response.data || !response.data.status) {
-      console.log('Params sent to API:', params);
-      console.log('Full API response:', response.data);
-      throw new Error(response.data?.message || 'API returned false status while editing attendee');
-    }
-
-    return response.data;
+    return handleApiSuccess(response, 'Failed to edit attendee');
   } catch (error) {
-    handleApiError(error, 'Failed to edit attendee');
+    throw handleApiError(error, 'Failed to edit attendee');
   }
 };
