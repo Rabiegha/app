@@ -1,21 +1,11 @@
 import Toast from 'react-native-toast-message';
 
-export const showErrorToast = (title = 'Oops!', message = 'Une erreur est survenue') => {
+export const showToast = (type, title = 'Oops!', message = 'Une erreur est survenue') => {
     Toast.show({
-        type: 'customError',
+        type: type,
         text1: title,
         text2: message,
         position: 'top',
         visibilityTime: 4000,
-    });
-};
-
-export const showSuccessToast = (title = 'Succès', message = '') => {
-    Toast.show({
-        type: 'customSuccess',
-        text1: title,
-        text2: message,
-        position: 'top',
-        visibilityTime: 3000,
     });
 };

@@ -1,5 +1,5 @@
 import { TOAST_MESSAGES } from '../../constants/toastMessages';
-import { showErrorToast } from '../ui/toastUtils';
+import { showToast } from '../ui/toastUtils';
 
 export const handleApiError = (error, customMessage = TOAST_MESSAGES.errors.generic) => {
   let finalMessage = TOAST_MESSAGES.errors.generic;
@@ -18,6 +18,6 @@ export const handleApiError = (error, customMessage = TOAST_MESSAGES.errors.gene
   }
 
   // ✅ Show toast and return a JS Error
-  showErrorToast('Erreur', finalMessage);
+  showToast('customError' ,'Erreur', finalMessage);
   return new Error(finalMessage);
 };
