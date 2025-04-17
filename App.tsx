@@ -11,6 +11,8 @@ import AppNavigator from './scr/navigation/AppNavigator';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {navigationRef} from './scr/navigation/RootNavigation';
 import AppProviders from './AppProviders';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from './scr/app/toastConfig';
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
           <AppNavigator />
         </GestureHandlerRootView>
       </NavigationContainer>
+      <Toast config={toastConfig} />
     </AppProviders>
   );
 }
