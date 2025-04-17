@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
+import { handleApiSuccess } from '../utils/api/handleApiSuccess';
+import mainApi from '../config/mainApi';
 
 export const addAttendee = async (attendeeData) => {
   try {
@@ -16,7 +16,7 @@ export const addAttendee = async (attendeeData) => {
     }
 
     // Tous les paramètres
-    const params = {
+    const params = cleanParams({
       current_user_login_details_id,
       ems_secret_code,
       attendee_type_id: attendeeData.attendee_type_id,
@@ -37,21 +37,19 @@ export const addAttendee = async (attendeeData) => {
       generate_badge: 1,
       send_badge_yn: 0,
       send_badge_item: '',
-    };
+    });
 
-    const response = await axios.post(
-      `${BASE_URL}/add_attendee/`,
-      null,
-      { params: cleanParams(params) }
-    );
-
-    if (!response.data || !response.data.status) {
-      console.log('Params sent to API:', cleanParams(params));
-      console.log('Full API response:', response.data);
-      throw new Error(response.data?.message || 'API returned false status while adding attendee');
+    if (__DEV__) {
+      console.log('Params sent to API:', params);
     }
 
-    return response.data;
+    const response = await mainApi.post(
+      '/add_attendee/',
+      null,
+      { params: params }
+    );
+
+    return handleApiSuccess(response, 'Failed to add attendee');
   } catch (error) {
     handleApiError(error, 'Failed to add attendee');
   }

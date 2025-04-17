@@ -1,17 +1,16 @@
-import axios from 'axios';
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
+import mainApi from '../config/mainApi';
 
 export const fetchEventList = async (userId, isEventFrom) => {
   try {
-    const params = {
+    const params = cleanParams({
       current_user_login_details_id: userId,
       is_event_from: isEventFrom,
-    };
+    });
 
-    const response = await axios.get(
-      `${BASE_URL}/ajax_get_event_details/`,
+    const response = await mainApi.get(
+      '/ajax_get_event_details/',
       { params }
     );
 

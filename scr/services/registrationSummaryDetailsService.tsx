@@ -1,7 +1,6 @@
-import axios from 'axios';
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
+import mainApi from '../config/mainApi';
 
 export const registrationSummaryDetails = async (userId, eventId) => {
   try {
@@ -10,8 +9,8 @@ export const registrationSummaryDetails = async (userId, eventId) => {
       event_id: eventId,
     });
 
-    const response = await axios.get(
-      `${BASE_URL}/ajax_get_dashboard_registration_summary/`,
+    const response = await mainApi.get(
+      '/ajax_get_dashboard_registration_summary/',
       { params }
     );
 

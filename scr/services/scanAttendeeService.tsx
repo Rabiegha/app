@@ -1,7 +1,6 @@
-import axios from 'axios';
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
+import mainApi from '../config/mainApi';
 
 export const scanAttendee = async (userId, eventId, data) => {
   try {
@@ -11,8 +10,8 @@ export const scanAttendee = async (userId, eventId, data) => {
       content: data,
     });
 
-    const response = await axios.post(
-      `${BASE_URL}/ajax_join_attendee/`,
+    const response = await mainApi.post(
+      '/ajax_join_attendee/',
       null,
       { params }
     );

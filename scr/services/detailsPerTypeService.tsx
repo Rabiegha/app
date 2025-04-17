@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
+import { handleApiSuccess } from '../utils/api/handleApiSuccess';
 import { cleanParams } from '../utils/api/cleanParams';
+import mainApi from '../config/mainApi';
 
 export const fetchDetailsByType = async (userId, eventId) => {
   try {
@@ -10,19 +10,17 @@ export const fetchDetailsByType = async (userId, eventId) => {
       event_id: eventId,
     });
 
-    const response = await axios.get(
-      `${BASE_URL}/ajax_get_dashboard_attendence_by_type_chart/`,
+    if (__DEV__) {
+      console.log('Params sent to API:', params);
+    }
+
+    const response = await mainApi.get(
+      '/ajax_get_dashboard_attendence_by_type_chart/',
       { params }
     );
 
-    if (!response.data || !response.data.status) {
-      console.log('Params sent to API:', params);
-      console.log('Full API response:', response.data);
-      throw new Error(response.data?.message || 'API returned false status');
-    }
-
-    return response.data;
+    return handleApiSuccess(response, 'Failed to fetch attendee by type chart details');
   } catch (error) {
-    handleApiError(error, 'Failed to fetch attendee by type chart details');
+    throw handleApiError(error, 'Failed to fetch attendee by type chart details');
   }
 };

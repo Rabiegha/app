@@ -1,7 +1,6 @@
-import axios from 'axios';
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
+import mainApi from '../config/mainApi';
 
 export const getAttendeeTypes = async (
   currentUserLoginDetailsId,
@@ -13,8 +12,8 @@ export const getAttendeeTypes = async (
       attendee_type_id: attendeeTypeId,
     });
 
-    const response = await axios.get(
-      `${BASE_URL}/ajax_get_attendee_type_details`,
+    const response = await mainApi.get(
+      '/ajax_get_attendee_type_details',
       { params }
     );
 

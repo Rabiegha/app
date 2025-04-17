@@ -1,8 +1,7 @@
-import axios from 'axios';
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
 import { handleApiSuccess } from '../utils/api/handleApiSuccess';
+import mainApi from '../config/mainApi';
 
 export const getSessionsList = async (currentUserLoginDetailsId, eventId) => {
   try {
@@ -11,8 +10,8 @@ export const getSessionsList = async (currentUserLoginDetailsId, eventId) => {
       event_id: eventId,
     });
 
-    const response = await axios.get(
-      `${BASE_URL}/ajax_get_event_child_details`,
+    const response = await mainApi.get(
+      '/ajax_get_event_child_details',
       { params }
     );
 
