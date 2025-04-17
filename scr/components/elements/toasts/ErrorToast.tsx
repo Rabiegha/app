@@ -10,8 +10,9 @@ import {
 import colors from '../../../assets/colors/colors';
 import Fermer from '../../../assets/images/icons/Fermer.png';
 import closeButton from '../../../assets/images/icons/closeButton.png';
+import Toast from 'react-native-toast-message';
 
-const FailComponent = ({onClose, text1, text2, ...rest}) => {
+const ErrorToast = ({text1, text2, ...rest}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -22,6 +23,10 @@ const FailComponent = ({onClose, text1, text2, ...rest}) => {
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
+
+  const handleClose = () => {
+    Toast.hide();
+  };
 
   return (
     <Animated.View style={[styles.notification, {opacity: fadeAnim}]}>
@@ -39,7 +44,7 @@ const FailComponent = ({onClose, text1, text2, ...rest}) => {
         <Text style={styles.buttonText}>{text1}:</Text>
         {text2 ? <Text style={styles.buttonText}> {text2}</Text> : null}
       </View>
-      <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+      <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
         <Image source={closeButton} style={styles.buttonImage} />
       </TouchableOpacity>
     </Animated.View>
@@ -85,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FailComponent;
+export default ErrorToast;

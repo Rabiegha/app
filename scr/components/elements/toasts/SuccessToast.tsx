@@ -10,8 +10,9 @@ import {
 import Verifie from '../../../assets/images/icons/Verifie.png';
 import closeButton from '../../../assets/images/icons/closeButton.png';
 import colors from '../../../assets/colors/colors';
+import Toast from 'react-native-toast-message';
 
-const SuccessComponent = ({onClose, text1, text2, ...rest}) => {
+const SuccessToast = ({text1, text2, ...rest}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value
 
   useEffect(() => {
@@ -22,6 +23,11 @@ const SuccessComponent = ({onClose, text1, text2, ...rest}) => {
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
+
+    const handleClose = () => {
+      Toast.hide();
+    };
+  
 
   return (
     <Animated.View style={[styles.notification, {opacity: fadeAnim}]}>
@@ -39,7 +45,7 @@ const SuccessComponent = ({onClose, text1, text2, ...rest}) => {
         <Text style={styles.buttonText}>{text1}</Text>
         {text2 ? <Text style={styles.buttonText}>{text2}: </Text> : null}
       </View>
-      <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+      <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
         <Image source={closeButton} style={styles.buttonImage} />
       </TouchableOpacity>
     </Animated.View>
@@ -84,4 +90,4 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 });
-export default SuccessComponent;
+export default SuccessToast;
