@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {selectIsLoading} from '../../redux/selectors/auth/authSelectors';
 import {logoutThunk} from '../../redux/thunks/auth/logoutThunk';
 import TabsNavigator from '../../navigation/EventsNavigator';
+import { useEventSelector } from '../../utils/event/selectEvent';
 
 // Composant principal EventsScreen
 const EventsScreen = () => {
@@ -23,40 +24,14 @@ const EventsScreen = () => {
     }, []),
   );
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalAnimation] = useState(new Animated.Value(-300));
-  const openModal = () => {
-    setModalVisible(true);
-    Animated.timing(modalAnimation, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const closeModal = () => {
-    Animated.timing(modalAnimation, {
-      toValue: -300,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => setModalVisible(false));
-  };
 
   const isLoading = useSelector(selectIsLoading);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const {updateEventDetails} = useEvent();
   const navigation = useNavigation();
+  const selectEvent = useEventSelector();
 
-  const handleEventSelect = event => {
-    const {ems_secret_code, event_id, event_name, nice_start_datetime} = event;
-    updateEventDetails({
-      newSecretCode: ems_secret_code,
-      newEventId: event_id,
-      newEventName: event_name,
-      newNiceStartDate: nice_start_datetime,
-    });
-
+  const handleEventSelect = (event) => {
+    selectEvent(event);
     navigation.navigate('Tabs', {screen: 'Attendees'});
   };
 
