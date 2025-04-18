@@ -8,7 +8,18 @@ import { updateAttendeeStatus } from '../../services/updateAttendeeStatusService
 // Action asynchrone pour récupérer la liste des participants
 export const fetchAttendees = createAsyncThunk(
     'attendees/fetchAttendees',
-    async ({ userId, eventId, isDemoMode }, thunkAPI) => {
+    async (    {
+      userId,
+      eventId,
+      isDemoMode,
+      attendeeStatus, // ⬅️ param optionnel
+    }: {
+      userId: string;
+      eventId: string;
+      isDemoMode: boolean;
+      attendeeStatus?: number;
+    }, thunkAPI) => {
+
       let attendees = [];
 
       // Create a timeout promise that rejects after 10 seconds
@@ -26,7 +37,7 @@ export const fetchAttendees = createAsyncThunk(
         try {
           // Race the fetch promise with the timeout
           attendees = await Promise.race([
-            fetchEventAttendeeList(userId, eventId),
+            fetchEventAttendeeList(userId, eventId, undefined, attendeeStatus),
             timeoutPromise,
           ]);
           if (!attendees) {attendees = [];}
