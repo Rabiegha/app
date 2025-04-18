@@ -24,6 +24,8 @@ const EventsScreen = () => {
     }, []),
   );
 
+  const clearSessionDetails = useEvent;
+
 
   const isLoading = useSelector(selectIsLoading);
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,6 +34,7 @@ const EventsScreen = () => {
 
   const handleEventSelect = (event) => {
     selectEvent(event);
+    clearSessionDetails();
     navigation.navigate('Tabs', {screen: 'Attendees'});
   };
 
