@@ -6,10 +6,8 @@ import RNFS from 'react-native-fs';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPrintStatus } from '../../redux/slices/printerSlice';
 import { useNodePrint } from './useNodePrint';
-import { useEvent } from '../../context/EventContext';
 
 const usePrintDocument = () => {
-  const eventDetails = useEvent();
   const dispatch = useDispatch();
   const { sendPrintJob } = useNodePrint();
 
@@ -19,7 +17,6 @@ const usePrintDocument = () => {
   );
 
   const nodePrinterId = selectedNodePrinter?.id;
-  const eventId = eventDetails.eventId;
 
   // Fonction pour convertir ArrayBuffer en Base64
   const arrayBufferToBase64 = buffer => {
@@ -96,7 +93,6 @@ const usePrintDocument = () => {
         }, 3000);
       } catch (error) {
         // Error printing
-        console.log('eventid', eventId);
         console.error(
           'Error printing document:',
           error.response ? error.response.data : error.message,
@@ -109,7 +105,7 @@ const usePrintDocument = () => {
         }, 3000);
       }
     },
-    [eventId, nodePrinterId, sendPrintJob, dispatch],
+    [nodePrinterId, sendPrintJob, dispatch],
   );
 
   return { printDocument };
