@@ -11,6 +11,7 @@ import ErrorView from '../../components/elements/view/ErrorView';
 import EmptyView from '../../components/elements/view/EmptyView';
 import { useEventSelector } from '../../utils/event/selectEvent';
 import { useNavigation } from '@react-navigation/native';
+import { useSessionSelector } from '../../utils/session/useSessionSelector';
 
 const  SessionsListScreen = () => {
 
@@ -20,7 +21,8 @@ const  SessionsListScreen = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const userId = useSelector(selectCurrentUserId);
-  const selectEvent = useEventSelector();
+  const selectSession = useSessionSelector();
+
 
 
   const fetchSessions = async () => {
@@ -42,7 +44,7 @@ const  SessionsListScreen = () => {
   }, [userId, eventId]);
 
   const handleSessionSelect = (session) => {
-    selectEvent(session);
+    selectSession(session);
     navigation.navigate('SessionAttendeesList');
   };
 
