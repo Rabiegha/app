@@ -1,10 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchEventOrganizations } from '../services/eventOrganizationsService';
+import { useSelector } from 'react-redux';
+import { useEvent } from '../context/EventContext';
+import { selectCurrentUserId } from '../redux/selectors/auth/authSelectors';
 
-export default function useEventOrganizations(userId, eventId) {
+export default function useEventOrganizations() {
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const userId = useSelector(selectCurrentUserId);
+  const { eventId } = useEvent();
+
 
   const getOrganizations = useCallback(async () => {
     if (!userId || !eventId) {

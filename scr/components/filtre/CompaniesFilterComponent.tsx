@@ -12,19 +12,14 @@ import {
 } from 'react-native';
 import colors from '../../assets/colors/colors';
 import useEventOrganizations from '../../hooks/useEventOrganizations';
-import { useSelector } from 'react-redux';
-import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
-import { useEvent } from '../../context/EventContext';
 
 // For demonstration, a simple "RedBorderButton" or any custom button
 import RedBorderButton from '../elements/buttons/RedBorderButton';
 
 const CompaniesFilterComponent = ({ filterCriteria, setFilterCriteria }) => {
-  const userId = useSelector(selectCurrentUserId);
-  const { eventId } = useEvent();
 
   // Our custom hook now returns { organizations, loading, error, refetch }
-  const { organizations, loading, error, refetch } = useEventOrganizations(userId, eventId);
+  const { organizations, loading, error, refetch } = useEventOrganizations();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -47,8 +42,8 @@ const CompaniesFilterComponent = ({ filterCriteria, setFilterCriteria }) => {
         <RedBorderButton
           Titre="Retry"
           color={colors.red}
-          onPress={refetch}
-        />
+          onPress={refetch} 
+          style={undefined}        />
       </View>
     );
   }
