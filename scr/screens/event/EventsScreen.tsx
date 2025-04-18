@@ -24,9 +24,9 @@ const EventsScreen = () => {
     }, []),
   );
 
-  const clearSessionDetails = useEvent;
 
 
+  const {clearSessionDetails} = useEvent();
   const isLoading = useSelector(selectIsLoading);
   const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();

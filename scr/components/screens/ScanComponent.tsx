@@ -18,10 +18,12 @@ import {
 } from '../../redux/selectors/print/printerSelectors';
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 import { useFocusEffect } from '@react-navigation/native';
+import { useActiveEvent } from '../../utils/event/useActiveEvent';
 
 const ScanComponent = () => {
   const navigation = useNavigation();
-  const {triggerListRefresh, eventId} = useEvent();
+  const {triggerListRefresh } = useEvent();
+  const { eventId } = useActiveEvent();
   const cameraRef = useRef(null);
   const scanAnimation = useRef(new Animated.Value(0)).current;
   const [markerColor] = useState('white');
