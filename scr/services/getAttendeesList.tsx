@@ -17,7 +17,7 @@ export const fetchEventAttendeeList = async (
     });
 
     if (attendeeStatus){
-      params.attendee_status = Number(attendeeStatus);
+      params.attendee_status = attendeeStatus;
     }
 
     const response = await mainApi.get(

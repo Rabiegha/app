@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { fetchEventAttendeeList } from '../../services/getAttendeesList';
-import { BASE_URL } from '../../config/config';
 import { demoEvents } from '../../demo/demoEvents';
 import { updateAttendeeStatus } from '../../services/updateAttendeeStatusService';
 

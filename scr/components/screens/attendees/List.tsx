@@ -64,7 +64,6 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
 
   useFocusEffect(
     useCallback(() => {
-      /* clearLocalData(); */
       return () => {};
     }, [eventId])
   );
