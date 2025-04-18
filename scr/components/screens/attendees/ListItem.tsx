@@ -16,13 +16,15 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Accepted from '../../../assets/images/icons/Accepted.png';
 import {useSelector, useDispatch} from 'react-redux';
 import usePrintDocument from '../../../hooks/print/usePrintDocument';
+import { ListItemProps } from '../../../types/listItem.types';
 
 const {width} = Dimensions.get('window');
 let openSwipeableRef = null;
 let isTypeModeActive = true;
 
+
 const ListItem = React.memo(
-  ({item, searchQuery, onUpdateAttendee}) => {
+  ({ item, searchQuery, onUpdateAttendee }: ListItemProps) => {
     const navigation = useNavigation();
     const {triggerListRefresh} = useEvent();
     const swipeableRef = useRef(null);
@@ -97,12 +99,13 @@ const ListItem = React.memo(
      */
     const highlightSearch = (text, query) => {
       // If no query, just return text as a single array item
-      if (!query.trim()) {
+      const safeQuery = (query || '').trim();
+      if (!safeQuery) {
         return [text];
       }
 
       // Build regex for the query
-      const regex = new RegExp(`(${query.trim()})`, 'gi');
+      const regex = new RegExp(`(${safeQuery})`, 'gi');
       // Split the text by the matched portions
       const parts = text.split(regex);
 
