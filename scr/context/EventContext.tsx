@@ -17,6 +17,8 @@ export const EventProvider = ({children}) => {
     eventName: '',
     niceStartDate: '',
   });
+  //Session details
+  const [sessionDetails, setSessionDetails] = useState(null);
   // Event Stats
   const [statsAvenir, setStatsAvenir] = useState({
     totaleAvenir: '',
@@ -61,6 +63,25 @@ export const EventProvider = ({children}) => {
 
 
   };
+
+  const updateSessionDetails = ({newSecretCode, newEventId, newEventName, newNiceStartDate}) => {
+    const sessionData = {
+      secretCode: newSecretCode,
+      eventId: newEventId,
+      eventName: newEventName,
+      niceStartDate: newNiceStartDate,
+    };
+    setSessionDetails(sessionData);
+    console.log('Session details updated:', sessionData);
+  };
+
+
+  const clearSessionDetails = () => {
+    setSessionDetails(null);
+    console.log('Session details cleared');
+  };
+
+
 
   const updateStatsAvenir = ({newTotaleAvenir}) => {
     setStatsAvenir({
@@ -126,6 +147,11 @@ export const EventProvider = ({children}) => {
       value={{
         ...eventDetails,
         updateEventDetails,
+
+        sessionDetails,
+        updateSessionDetails,
+        clearSessionDetails,
+
         refreshList,
         triggerListRefresh,
         isLoggedIn,
