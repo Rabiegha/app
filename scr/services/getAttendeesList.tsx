@@ -1,14 +1,24 @@
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
 import mainApi from '../config/mainApi';
+import { Attendee } from '../types/attendee.types';
 
-export const fetchEventAttendeeList = async (userId, eventId, attendeeId) => {
+export const fetchEventAttendeeList = async (
+    userId: string,
+    eventId: string,
+    attendeeId?: string,
+    attendeeStatus?: number
+  ): Promise<Attendee[]> => {
   try {
     const params = cleanParams({
       current_user_login_details_id: userId,
       event_id: eventId,
       attendee_id: attendeeId,
     });
+
+    if (attendeeStatus){
+      params.attendee_status = Number(attendeeStatus);
+    }
 
     const response = await mainApi.get(
       '/ajax_get_event_attendee_details/',
