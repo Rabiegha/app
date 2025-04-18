@@ -13,7 +13,7 @@ const EventDashboardStackNavigator = ({ searchQuery }) => {
       {/* Tabs inside the stack */}
       <Stack.Screen name="EventDashboard" component={EventDashboardScreen} />
       {/* Extra screens not in tabs */}
-      <Stack.Screen name="AttendeeList" component={attendeesListScreen} />
+      <Stack.Screen name="AttendeesList" component={attendeesListScreen} />
       <Stack.Screen name="SessionAttendeesList" component={SessionListAttendeesScreen} />
     </Stack.Navigator>
   );
