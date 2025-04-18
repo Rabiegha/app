@@ -11,14 +11,13 @@ import ErrorView from '../../components/elements/view/ErrorView';
 import EmptyView from '../../components/elements/view/EmptyView';
 import { useNavigation } from '@react-navigation/native';
 import { useSessionSelector } from '../../utils/session/useSessionSelector';
-import { useActiveEvent } from '../../utils/event/useActiveEvent';
 
 const  SessionOverviewScreen = () => {
 
   const navigation = useNavigation();
   const [sessions, setSessions] = useState([]);
   const {updateEventDetails} = useEvent();
-  const { eventId } = useActiveEvent();
+  const { eventId } = useEvent();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const userId = useSelector(selectCurrentUserId);
