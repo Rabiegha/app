@@ -20,8 +20,9 @@ import {selectCurrentUserId} from '../../../redux/selectors/auth/authSelectors';
 **/
 import { selectIsSearchByCompanyMode } from '../../../redux/selectors/search/searchSelectors';
 import EmptyView from '../../elements/view/EmptyView.tsx';
-import { fetchAttendees, updateAttendee, clearAttendees } from '../../../redux/slices/attendeesListSlice.tsx';
 import { useActiveEvent } from '../../../utils/event/useActiveEvent.tsx';
+import { updateAttendee } from '../../../redux/thunks/attendee/updateAttendeeThunk.tsx';
+import { fetchMainAttendees } from '../../../redux/thunks/attendee/mainAttendeesThunk.tsx';
 // or if you’re directly accessing state.search.isSearchByCompanyMode, see code below
 
 const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
@@ -59,7 +60,7 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
    * Fetches and sets the raw attendee list (WITHOUT storing to AsyncStorage).
    */
   const fetchAllEventAttendeeDetails = () => {
-    dispatch(fetchAttendees({ userId, eventId, isDemoMode }));
+    dispatch(fetchMainAttendees({ userId, eventId, isDemoMode }));
   };
 
   useFocusEffect(

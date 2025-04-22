@@ -7,10 +7,13 @@ import globalStyle from '../../assets/styles/globalStyle';
 import Search from '../../components/elements/Search';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
-import { fetchAttendees } from '../../redux/slices/attendeesListSlice';
 import { useActiveEvent } from '../../utils/event/useActiveEvent';
-import { useEvent } from '../../context/EventContext';
 import ListItem from '../../components/screens/attendees/ListItem';
+import { fetchSessionAttendees } from '../../redux/thunks/attendee/sessionAttendeesThunk';
+import LoadingView from '../../components/elements/view/LoadingView';
+import ErrorView from '../../components/elements/view/ErrorView';
+import EmptyView from '../../components/elements/view/EmptyView';
+import { fetchEventAttendeeList } from '../../services/getAttendeesList';
 
 
 const SessionAttendeesListScreen = () => {
@@ -19,29 +22,41 @@ const SessionAttendeesListScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const [refreshing, setRefreshing] = useState(false);
+    const [attendees, setAttendees] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(false);
+
 
     const userId = useSelector(selectCurrentUserId);
-    const { sessionDetails } = useEvent(); // ou useActiveEvent si tu veux utiliser la fusion session/event
     const {eventId} = useActiveEvent;
 
-    const { data: attendees, isLoading, error } = useSelector(state => state.attendees);
 
+
+    const fetchAttendeeList = async () => {
+      if (!userId || !eventId) {return;}
+      try {
+        setError(false);
+        setIsLoading(true);
+        const response = await fetchEventAttendeeList(userId, eventId, undefined, 1);
+        setAttendees(response || []);
+      } catch (err) {
+        console.error('Error fetching session attendees', err);
+        setError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
     useEffect(() => {
-      if (userId && eventId) {
-        dispatch(fetchAttendees({ userId, eventId, isDemoMode: false, attendeeStatus: 1 }));
-      }
-    }, [userId, eventId, dispatch]);
+      fetchAttendeeList();
+    }, [userId, eventId]);
+
 
 
     const handleRefresh = async () => {
-      if (!userId || !eventId) {return;}
-
       try {
         setRefreshing(true);
-        await dispatch(fetchAttendees({ userId, eventId, isDemoMode: false, attendeeStatus: 1 })).unwrap();
-      } catch (err) {
-        console.error('Refresh failed', err);
+        await fetchAttendeeList();
       } finally {
         setRefreshing(false);
       }
@@ -55,6 +70,17 @@ const SessionAttendeesListScreen = () => {
 
     // sessiion list fetch
 
+      if (isLoading) {
+        return <LoadingView />;
+      }
+
+      if (error) {return <ErrorView handleRetry={fetchAttendeeList} />;}
+/*
+      if (attendees.length === 0) {return <EmptyView handleRetry={fetchAttendeeList} />;} */
+
+
+
+
 
   return (
     <View style={[globalStyle.backgroundWhite]}>
@@ -65,7 +91,7 @@ const SessionAttendeesListScreen = () => {
         backgroundColor={'white'}
       />
       <View style={globalStyle.container}>
-        <Search value={''} onChange={undefined} />
+      {/* <Search value={''} onChange={undefined} /> */}
         <FlatList
           data={attendees}
           keyExtractor={item => item.id.toString()}

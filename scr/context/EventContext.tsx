@@ -104,7 +104,7 @@ export const EventProvider = ({children}) => {
 
   const triggerListRefresh = () => {
     setAttendeesRefreshKey(prevKey => prevKey + 1);
-    /*     console.log('List refresh triggered, new attendeesRefreshKey:', attendeesRefreshKey + 1); */
+    /* console.log('List refresh triggered, new attendeesRefreshKey:', attendeesRefreshKey + 1); */
   };
 
   const updateAttendee = async (eventId, updatedAttendee) => {
