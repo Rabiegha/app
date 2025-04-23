@@ -95,7 +95,7 @@ const SessionAttendeesListScreen = () => {
 
 
   return (
-    <View style={[globalStyle.backgroundWhite]}>
+    <View style={[globalStyle.backgroundWhite, styles.container]}>
       <HeaderComponent
         title={eventName}
         color={colors.darkGrey}
@@ -130,11 +130,14 @@ const SessionAttendeesListScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'flex-start',
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 100, // Pour que le scroll vers le bas fonctionne
+    paddingTop: 100,
   },
   emptyText: {
     fontSize: 16,

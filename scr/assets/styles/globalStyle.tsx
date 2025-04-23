@@ -11,7 +11,7 @@ const globalStyle = StyleSheet.create({
     flex: 1,
   },
   container: {
-    paddingTop: Platform.OS === 'ios' ? 90 : 68,
+    paddingTop: Platform.OS === 'ios' ? 30 : 10,
     paddingLeft: 20,
     paddingRight: 20,
   },

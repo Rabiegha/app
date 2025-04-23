@@ -31,19 +31,16 @@ const HeaderComponent = ({title, handlePress, color, backgroundColor}) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    top: Platform.OS === 'ios' ? 50 : 25,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 20,
     paddingTop: 12,
     position: 'relative',
-    maxHeight: 100,
-    height: 100,
+    height: 120,
     zIndex: 10,
   },
   title: {
-    top: 25,
+    top: 60,
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.darkGrey,
@@ -54,10 +51,11 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 18,
+    top: 52,
     justifyContent: 'center',
     padding: 10,
     zIndex: 10,
+    marginLeft: 20,
   },
   buttonImage: {
     width: 15,

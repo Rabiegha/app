@@ -30,6 +30,10 @@ const ScanComponent = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [attendeeData, setAttendeeData] = useState(null);
   const [scanStatus, setScanStatus] = useState('idle');
+  const {
+    sessionDetails,
+  } = useEvent();
+  const isSession = sessionDetails !== null;
 
   const userId = useSelector(selectCurrentUserId);
 
@@ -182,7 +186,7 @@ const ScanComponent = () => {
         title="Scan QR Code"
         color={colors.greyCream}
         handlePress={handleBackPress}
-        backgroundColor={undefined}
+        backgroundColor={'cyan'}
       />
       <RNCamera
         ref={cameraRef}

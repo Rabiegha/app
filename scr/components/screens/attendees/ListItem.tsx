@@ -24,7 +24,7 @@ let isTypeModeActive = true;
 
 
 const ListItem = React.memo(
-  ({ item, searchQuery, onUpdateAttendee }: ListItemProps) => {
+  ({ item,  searchQuery = '', onUpdateAttendee }: ListItemProps) => {
     const navigation = useNavigation();
     const {triggerListRefresh} = useEvent();
     const swipeableRef = useRef(null);

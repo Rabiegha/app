@@ -20,7 +20,6 @@ const HeaderParticipants = ({onLeftPress, Title, onRightPress}) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    top: Platform.OS === 'ios' ? 50 : 25,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -40,12 +39,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     maxWidth: 200,
     color: colors.darkGrey,
+    top: 60,
   },
   buttonImage: {
     width: 15,
     height: 23,
     tintColor: colors.green,
     zIndex: 2,
+    top: 60,
   },
   buttonImageBlack: {
     tintColor: colors.darkGrey,

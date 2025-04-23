@@ -44,7 +44,7 @@ const  SessionOverviewScreen = () => {
   }, [userId, eventId]);
 
   const handleSessionSelect = (session) => {
-    selectSession(session); // si tu veux garder le contexte
+    selectSession(session);
     navigation.navigate('SessionAttendeesList', {
       capacity: session.capacity,
       eventName: session.event_name,
