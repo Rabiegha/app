@@ -1,9 +1,9 @@
 // EventStackNavigator.js
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SessionListAttendeesScreen from '../../screens/session/SessionAttendeesListScreen';
-import attendeesListScreen from '../../screens/attendeeList/attendeeListScreen';
+import AttendeesListScreen from '../../screens/attendeesList/attendeesListScreen';
 import EventDashboardScreen from '../../screens/eventDashboard/EventDashboardScreen';
+import SessionAttendeesListScreen from '../../screens/sessionAttendeesList/SessionAttendeesListScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,8 +13,8 @@ const EventDashboardStackNavigator = ({ searchQuery }) => {
       {/* Tabs inside the stack */}
       <Stack.Screen name="EventDashboard" component={EventDashboardScreen} />
       {/* Extra screens not in tabs */}
-      <Stack.Screen name="AttendeesList" component={attendeesListScreen} />
-      <Stack.Screen name="SessionAttendeesList" component={SessionListAttendeesScreen} />
+      <Stack.Screen name="AttendeesList" component={AttendeesListScreen} />
+      <Stack.Screen name="SessionAttendeesList" component={SessionAttendeesListScreen} />
     </Stack.Navigator>
   );
 }

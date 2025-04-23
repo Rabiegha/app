@@ -3,7 +3,7 @@ import { cleanParams } from '../utils/api/cleanParams';
 import mainApi from '../config/mainApi';
 import { Attendee } from '../types/attendee.types';
 
-export const fetchEventAttendeeList = async (
+export const fetchAttendeesList = async (
     userId: string,
     eventId: string,
     attendeeId?: string,

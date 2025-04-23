@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchEventAttendeeList } from '../../../services/getAttendeesList';
+import { fetchAttendeeList } from '../../../services/getAttendeesListService';
 import { demoEvents } from '../../../demo/demoEvents';
 
 export const fetchMainAttendees = createAsyncThunk(
@@ -10,7 +10,7 @@ export const fetchMainAttendees = createAsyncThunk(
         const selectedEvent = demoEvents.find(e => e.event_id == eventId);
         return selectedEvent ? selectedEvent.participants : [];
       }
-      const attendees = await fetchEventAttendeeList(userId, eventId);
+      const attendees = await fetchAttendeeList(userId, eventId);
       return attendees || [];
     } catch (error) {
       return thunkAPI.rejectWithValue('Failed to fetch main attendees');

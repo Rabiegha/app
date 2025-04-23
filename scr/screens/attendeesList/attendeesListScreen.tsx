@@ -22,7 +22,6 @@ import FiltreComponent from '../../components/filtre/FiltreComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectPrintStatus} from '../../redux/selectors/print/printerSelectors';
 import {setPrintStatus} from '../../redux/slices/printerSlice';
-import useRegistrationSummary from '../../hooks/registration/useRegistrationSummary';
 import PrintModal from '../../components/elements/modals/PrintModal';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
 
@@ -33,7 +32,7 @@ const defaultFilterCriteria = {
   company: null,      // or an empty string [] if you allow multiple
 };
 
-const attendeeListScreen = () => {
+const AttendeeListScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
@@ -246,4 +245,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default attendeeListScreen;
+export default AttendeeListScreen;

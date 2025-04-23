@@ -1,6 +1,6 @@
 // redux/thunks/attendees/fetchSessionAttendees.ts
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchEventAttendeeList } from '../../../services/getAttendeesList';
+import { fetchEventAttendeeList } from '../../../services/getAttendeesListService';
 
 export const fetchSessionAttendees = createAsyncThunk(
   'sessionAttendees/fetchSessionAttendees',
