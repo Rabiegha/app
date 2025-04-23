@@ -29,8 +29,7 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
 
   const dispatch = useDispatch();
   const [openSwipeable, setOpenSwipeable] = useState(null);
-  const {refreshList, triggerListRefresh, attendeesRefreshKey} = useEvent();
-  const { eventId } = useActiveEvent();
+  const {refreshList, eventId, attendeesRefreshKey} = useEvent();
   const [hasData, setHasData] = useState(false);
   const { isLoading, data: allAttendees } = useSelector(state => state.attendees);
   const {isDemoMode} = useContext(AuthContext);

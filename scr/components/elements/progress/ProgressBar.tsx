@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden', // Pour assurer que le débordement est caché avec les bordures rondes
     marginTop: 10,
     marginBottom: 20,
+    alignSelf: 'center',
   },
   progressBar: {
     height: '100%',
