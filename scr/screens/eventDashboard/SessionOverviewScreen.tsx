@@ -44,9 +44,13 @@ const  SessionOverviewScreen = () => {
   }, [userId, eventId]);
 
   const handleSessionSelect = (session) => {
-    selectSession(session);
-    navigation.navigate('SessionAttendeesList');
+    selectSession(session); // si tu veux garder le contexte
+    navigation.navigate('SessionAttendeesList', {
+      capacity: session.capacity,
+      eventName: session.event_name,
+    });
   };
+  
 
   const renderItem = ({ item }) => (
     <ListCard
