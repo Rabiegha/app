@@ -15,17 +15,25 @@ import ErrorView from '../../components/elements/view/ErrorView';
 import EmptyView from '../../components/elements/view/EmptyView';
 import { fetchAttendeesList } from '../../services/getAttendeesListService';
 import { useFocusEffect } from '@react-navigation/native';
+import SessionStats from '../../components/screens/sessionAttendeeList/SessionStatsComponent';
+import ProgressBar from '../../components/elements/progress/ProgressBar';
+import { useRoute } from '@react-navigation/native';
+
 
 
 const SessionAttendeesListScreen = () => {
 
 
+    const route = useRoute();
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const [refreshing, setRefreshing] = useState(false);
     const [attendees, setAttendees] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(false);
+    const { capacity, eventName } = route.params || {};
+    const scannedCount = attendees.filter(a => a.attendee_status == 1).length;
+    const ratio = capacity > 0 ? (scannedCount / capacity) * 100 : 0;
 
 
     const userId = useSelector(selectCurrentUserId);
@@ -89,13 +97,15 @@ const SessionAttendeesListScreen = () => {
   return (
     <View style={[globalStyle.backgroundWhite]}>
       <HeaderComponent
-        title="Participants de la session"
+        title={eventName}
         color={colors.darkGrey}
         handlePress={() => navigation.goBack()}
         backgroundColor={'white'}
       />
       <View style={globalStyle.container}>
       {/* <Search value={''} onChange={undefined} /> */}
+      <SessionStats scannedCount={scannedCount} totalCount={capacity} />
+      <ProgressBar progress={ratio} />
       <FlatList
           data={attendees}
           keyExtractor={(item) => item.id.toString()}
