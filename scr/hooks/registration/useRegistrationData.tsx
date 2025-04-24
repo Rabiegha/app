@@ -7,8 +7,9 @@ const useRegistrationData = ({refreshTrigger1}) => {
 
   const { summary, loading, error, refetch } = useRegistrationSummary(refreshTrigger);
 
-  const { totalAttendees = 0, totalCheckedIn = 0, totalNotCheckedIn = 0 } = summary || {};
+  const { totalAttendees = 0, totalCheckedIn = 0, totalNotCheckedIn = 0, capacity = 0 } = summary || {};
   const ratio = totalAttendees > 0 ? (totalCheckedIn / totalAttendees) * 100 : 0;
+  const sessionRatio = capacity > 0 ? (totalCheckedIn / capacity) * 100 : 0;
 
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
@@ -19,6 +20,7 @@ const useRegistrationData = ({refreshTrigger1}) => {
     totalCheckedIn,
     totalNotCheckedIn,
     ratio,
+    sessionRatio,
     loading,
     error,
     summary,

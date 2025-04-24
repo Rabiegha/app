@@ -9,6 +9,7 @@ const useRegistrationSummary = (refreshTrigger) => {
     totalAttendees: 0,
     totalCheckedIn: 0,
     totalNotCheckedIn: 0,
+    capacity: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,6 +28,7 @@ const useRegistrationSummary = (refreshTrigger) => {
       if (response && response.status) {
         const totalRegistered = response.total_registered;
         const totalAttended = response.total_attended;
+        const capacity = response.capacity;
 
 
         if (!isNaN(totalRegistered) && !isNaN(totalAttended)) {
@@ -34,6 +36,7 @@ const useRegistrationSummary = (refreshTrigger) => {
             totalAttendees: totalRegistered,
             totalCheckedIn: totalAttended,
             totalNotCheckedIn: totalRegistered - totalAttended,
+            capacity: capacity,
           });
 
           setError(null);

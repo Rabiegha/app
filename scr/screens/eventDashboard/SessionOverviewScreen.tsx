@@ -11,8 +11,19 @@ import ErrorView from '../../components/elements/view/ErrorView';
 import EmptyView from '../../components/elements/view/EmptyView';
 import { useNavigation } from '@react-navigation/native';
 import { useSessionSelector } from '../../utils/session/useSessionSelector';
+import useRegistrationData from '../../hooks/registration/useRegistrationData';
 
 const  SessionOverviewScreen = () => {
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setRefreshTrigger(prev => prev + 1);
+      return () => {
+        // This is useful if this screen has a unique StatusBar style                                                                                                                                                          '); // Reset status bar style when screen loses focus
+      };
+    }, []),
+  );
 
   const navigation = useNavigation();
   const [sessions, setSessions] = useState([]);
@@ -22,8 +33,13 @@ const  SessionOverviewScreen = () => {
   const [error, setError] = useState(false);
   const userId = useSelector(selectCurrentUserId);
   const selectSession = useSessionSelector();
+  const {totalCheckedIn, sessionRatio} = useRegistrationData({ refreshTrigger1: refreshTrigger });
+  const [refreshTrigger, setRefreshTrigger] = useState();
 
 
+  const handleTriggerRefresh = () => {
+    setRefreshTrigger(prev => prev + 1); // 🔄 This will trigger `useEffect` in useRegistrationSummary
+  };
 
   const fetchSessions = async () => {
     try {
