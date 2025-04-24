@@ -61,7 +61,7 @@ const AttendeeListScreen = () => {
   const [filterCriteria, setFilterCriteria] = useState(defaultFilterCriteria);
 
   // Registration data :
-  const {totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary} = useRegistrationData(refreshTrigger);
+  const {totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary} = useRegistrationData({ refreshTrigger1: refreshTrigger });
 
   const printStatus = useSelector(selectPrintStatus);
 
@@ -216,6 +216,7 @@ const AttendeeListScreen = () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    top: 65,
   },
   modalOverlay: {
     flex: 1,

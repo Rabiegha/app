@@ -1,11 +1,11 @@
 import React, {
   useContext,
-  useCallback,
+  useDeferredValue,
   useEffect,
   useState,
   useMemo,
 } from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {useEvent} from '../../../context/EventContext';
 import colors from '../../../assets/colors/colors';
 import {AuthContext} from '../../../context/AuthContext.tsx';
@@ -23,21 +23,26 @@ import EmptyView from '../../elements/view/EmptyView.tsx';
 import { useActiveEvent } from '../../../utils/event/useActiveEvent.tsx';
 import { updateAttendee } from '../../../redux/thunks/attendee/updateAttendeeThunk.tsx';
 import { fetchMainAttendees } from '../../../redux/thunks/attendee/mainAttendeesThunk.tsx';
+import { updateAttendeeLocally } from '../../../redux/slices/attendee/attendeesListSlice.tsx';
+import LoadingView from '../../elements/view/LoadingView.tsx';
 // or if you’re directly accessing state.search.isSearchByCompanyMode, see code below
 
 const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
 
   const dispatch = useDispatch();
   const [openSwipeable, setOpenSwipeable] = useState(null);
-  const {refreshList, eventId, attendeesRefreshKey} = useEvent();
+  const {eventId, attendeesRefreshKey} = useEvent();
   const [hasData, setHasData] = useState(false);
-  const { isLoading, data: allAttendees } = useSelector(state => state.attendees);
+  const { isLoadingList, data: allAttendees } = useSelector(state => state.attendees);
   const {isDemoMode} = useContext(AuthContext);
+  const [refreshing, setRefreshing] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(20);
+
 
   // Pull userId from Redux
   const userId = useSelector(selectCurrentUserId);
   // If you have a “search by company” mode, wire it here; for now just “false”:
-  const isSearchByCompanyMode = false;
+  const isSearchByCompanyMode = true;
 
   /**
    * 1) Debounce logic: track a “debouncedSearchQuery” that updates
@@ -48,37 +53,17 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
-    }, 300); // Wait 300ms after the last keystroke
+    }, 200); // Wait 300ms after the last keystroke
 
     return () => {
       clearTimeout(handler); // Clear on unmount or re-run
     };
   }, [searchQuery]);
 
-  /**
-   * Fetches and sets the raw attendee list (WITHOUT storing to AsyncStorage).
-   */
-  const fetchAllEventAttendeeDetails = () => {
-    dispatch(fetchMainAttendees({ userId, eventId, isDemoMode }));
-  };
+  const deferredQuery = useDeferredValue(debouncedSearchQuery);
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {};
-    }, [eventId])
-  );
 
-  /**
-   * If you need to re-fetch on certain triggers (e.g. refreshList, attendeesRefreshKey):
-   */
-  useEffect(() => {
-    fetchAllEventAttendeeDetails();
-  }, [refreshList, isDemoMode, attendeesRefreshKey]);
 
-  /**
-   * 2) Memoized filtering on the client side,
-   *    using the debounced value instead of the raw searchQuery.
-   */
   const filteredData = useMemo(() => {
     let filteredAttendees = [...allAttendees];
 
@@ -92,29 +77,35 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
     // Sort by status (checked-in to bottom, for example)
     filteredAttendees.sort((a, b) => a.attendee_status - b.attendee_status);
 
-    // If debouncedSearchQuery is non-empty, filter by name + possibly company
-    const q = debouncedSearchQuery.trim().toLowerCase();
-    if (q) {
-      filteredAttendees = filteredAttendees.filter(attendee => {
-        let combinedText = `${attendee.first_name} ${attendee.last_name}`.toLowerCase();
+    // If deferredQuery is non-empty, filter by name + possibly company
+    const q = deferredQuery.trim().toLowerCase();
 
+    if (q) {
+      const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'); // échappe les caractères spéciaux
+      filteredAttendees = filteredAttendees.filter(attendee => {
+        let fullText = `${attendee.first_name} ${attendee.last_name}`;
         if (isSearchByCompanyMode && attendee.organization) {
-          combinedText += ` ${attendee.organization.toLowerCase()}`;
+          fullText += ` ${attendee.organization}`;
         }
-        return combinedText.includes(q);
+        return regex.test(fullText);
       });
     }
 
-    return filteredAttendees;
-  }, [allAttendees, debouncedSearchQuery, filterCriteria, isSearchByCompanyMode]);
+
+    return filteredAttendees.slice(0, visibleCount); 
+    /* return filteredAttendees; */
+  }, [allAttendees, deferredQuery, filterCriteria, isSearchByCompanyMode]);
 
   // Gérer la mise à jour d'un participant
   const handleUpdateAttendee = async updatedAttendee => {
-    // Mise à jour locale (optimiste) via dispatch
-    dispatch(updateAttendee(updatedAttendee));
+    dispatch(updateAttendeeLocally(updatedAttendee)); // Optimistic
+    await dispatch(updateAttendee(updatedAttendee));
+    openSwipeable?.current?.close();
     onTriggerRefresh?.();
   };
 
+
+  //Gerer l'ouverture d'un swipeable
   const handleSwipeableOpen = swipeable => {
     if (openSwipeable && openSwipeable.current && openSwipeable !== swipeable) {
       openSwipeable.current.close();
@@ -122,15 +113,25 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
     setOpenSwipeable(swipeable);
   };
 
+  // Handle list refreshing
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await dispatch(fetchMainAttendees({ userId, eventId, isDemoMode }));
+    setRefreshing(false);
+    onTriggerRefresh?.();
+  };
+
+
   return (
     <View style={styles.list}>
-      {isLoading ? (
+      {isLoadingList ? (
         <ActivityIndicator color={colors.green} size="large" />
       ) : filteredData.length ? (
+        <>
         <FlatList
           contentContainerStyle={styles.contentContainer}
           data={filteredData}
-          keyExtractor={item => `${item.id}_${item.attendee_status}`}
+          keyExtractor={item => item.id.toString()}
           renderItem={({item}) => (
             <ListItem
               item={item}
@@ -140,13 +141,24 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
             />
           )}
           // 3) Optional FlatList performance tweaks (especially for large lists):
+          refreshing={refreshing}          // 👈 active l'animation de refresh
+          onRefresh={handleRefresh}
           windowSize={10}
           initialNumToRender={20}
           maxToRenderPerBatch={20}
           removeClippedSubviews
         />
+                {/* 👇 Ajouter le bouton ici */}
+                {filteredData.length > visibleCount && (
+                  <TouchableOpacity
+                    onPress={() => setVisibleCount(prev => prev + 50)}
+                    style={styles.loadMoreButton}>
+                    <Text style={styles.loadMoreText}>Voir plus</Text>
+                  </TouchableOpacity>
+                )}
+              </>
       ) : (
-        <EmptyView handleRetry={undefined}/>
+        <EmptyView handleRetry={handleRefresh}/>
       )}
     </View>
   );
@@ -166,4 +178,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  loadMoreButton: {
+    marginVertical: 16,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: colors.green,
+    alignSelf: 'center',
+    alignItems: 'center',
+  },
+  loadMoreText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+
 });

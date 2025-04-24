@@ -25,13 +25,9 @@ const useRegistrationSummary = (refreshTrigger) => {
 
       // ✅ Ensure API response is valid before updating state
       if (response && response.status) {
-        const totalRegistered = response.total_registered
-          ? parseInt(response.total_registered.replace(/,/g, ''), 10)
-          : 0;
+        const totalRegistered = response.total_registered;
+        const totalAttended = response.total_attended;
 
-        const totalAttended = response.total_attended
-          ? parseInt(response.total_attended.replace(/,/g, ''), 10)
-          : 0;
 
         if (!isNaN(totalRegistered) && !isNaN(totalAttended)) {
           setSummary({

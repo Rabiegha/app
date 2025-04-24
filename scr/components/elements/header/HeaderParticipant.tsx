@@ -39,19 +39,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     maxWidth: 200,
     color: colors.darkGrey,
-    top: 60,
+    top: 39,
   },
   buttonImage: {
     width: 15,
     height: 23,
     tintColor: colors.green,
     zIndex: 2,
-    top: 60,
+    top: 39,
   },
   buttonImageBlack: {
     tintColor: colors.darkGrey,
     width: 20,
     height: 20,
+    top: 39,
   },
 });
 

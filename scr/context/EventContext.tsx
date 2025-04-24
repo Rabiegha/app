@@ -27,7 +27,6 @@ export const EventProvider = ({children}) => {
     totalePassees: '',
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [refreshList, setRefreshList] = useState(false);
   const [attendeesRefreshKey, setAttendeesRefreshKey] = useState(0);
 
   useEffect(() => {
@@ -151,8 +150,6 @@ export const EventProvider = ({children}) => {
         sessionDetails,
         updateSessionDetails,
         clearSessionDetails,
-
-        refreshList,
         triggerListRefresh,
         isLoggedIn,
         login,

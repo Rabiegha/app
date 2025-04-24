@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import useRegistrationSummary from './useRegistrationSummary';
 
 const useRegistrationData = ({refreshTrigger1}) => {
-  const [refreshTrigger, setRefreshTrigger] = useState(refreshTrigger1);
+  const refreshTrigger = refreshTrigger1;
 
   const { summary, loading, error, refetch } = useRegistrationSummary(refreshTrigger);
 

@@ -24,16 +24,15 @@ let isTypeModeActive = true;
 
 
 const ListItem = React.memo(
-  ({ item,  searchQuery = '', onUpdateAttendee }: ListItemProps) => {
+  ({ item,  searchQuery = '', onUpdateAttendee, onSwipeableOpen }: ListItemProps) => {
     const navigation = useNavigation();
     const {triggerListRefresh} = useEvent();
     const swipeableRef = useRef(null);
     const dispatch = useDispatch();
+    const isSwipeOpen = useRef(false);
 
     // Redux: whether to show the company name in search
-    const isSearchByCompanyMode = useSelector(
-      state => state.search.isSearchByCompanyMode
-    );
+    const isSearchByCompanyMode = true;
 
     // Local "checked in" state
     const initialSwitchState = item.attendee_status == 1;
@@ -226,12 +225,15 @@ const ListItem = React.memo(
         enableTrackpadTwoFingerGesture
         overshootRight={false}
         onSwipeableWillOpen={() => {
+          isSwipeOpen.current = true;
         // Close any previously opened Swipeable
           if (openSwipeableRef && openSwipeableRef !== swipeableRef.current) {
             openSwipeableRef.close();
           }
           openSwipeableRef = swipeableRef.current;
-        }}>
+          onSwipeableOpen?.(swipeableRef);
+        }}
+        >
         <TouchableWithoutFeedback onPress={handleItemPress} accessible={false}>
           <View style={styles.listItemContainer}>
             {/* Main Content */}

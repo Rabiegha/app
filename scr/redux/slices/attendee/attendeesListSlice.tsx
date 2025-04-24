@@ -7,11 +7,12 @@ const attendeesSlice = createSlice({
   name: 'attendees',
   initialState: {
     data: [],
-    isLoading: false,
+    isLoadingList: false,
+    isUpdating: false,
     error: null,
   },
   reducers: {
-    // Pour les mises à jour locales si besoin
+
     updateAttendeeLocally(state, action) {
       const updated = action.payload;
       state.data = state.data.map(attendee =>
@@ -27,24 +28,38 @@ const attendeesSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(fetchMainAttendees.pending, state => {
-        state.isLoading = true;
+        state.isLoadingList = true;
         state.error = null;
       })
       .addCase(fetchMainAttendees.fulfilled, (state, action) => {
         state.data = action.payload;
-        state.isLoading = false;
+        state.isLoadingList = false;
       })
       .addCase(fetchMainAttendees.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isLoadingList = false;
         state.error = action.error.message;
       })
+      .addCase(updateAttendee.pending, state => {
+        state.isUpdating = true;
+      })
       .addCase(updateAttendee.fulfilled, (state, action) => {
-        // Mise à jour dans le store après succès
         const updated = action.payload;
         state.data = state.data.map(attendee =>
           attendee.id === updated.id ? updated : attendee
         );
+        state.isUpdating = false;
+      })
+      .addCase(updateAttendee.rejected, (state, action) => {
+        const { original } = action.payload;
+        // Rollback
+        state.data = state.data.map(a =>
+          a.id === original.id
+            ? { ...a, attendee_status: original.attendee_status === 1 ? 0 : 1 }
+            : a
+        );
+        state.isUpdating = false;
       });
+
   },
 });
 
