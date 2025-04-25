@@ -5,7 +5,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, View, Text} from 'react-native';
 import {useEvent} from '../../../context/EventContext';
 import colors from '../../../assets/colors/colors';
 import {AuthContext} from '../../../context/AuthContext.tsx';
@@ -60,29 +60,27 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
     };
   }, [searchQuery]);
 
+  useEffect(() => {
+    handleRefresh();
+  } ,[userId, eventId, isDemoMode]);
+
   const deferredQuery = useDeferredValue(debouncedSearchQuery);
 
 
 
-  const filteredData = useMemo(() => {
-    let filteredAttendees = [...allAttendees];
+  const totalFilteredData = useMemo(() => {
+    let filtered = [...allAttendees];
 
-    // Filter by status
     if (filterCriteria.status === 'checked-in') {
-      filteredAttendees = filteredAttendees.filter(a => a.attendee_status == 1);
+      filtered = filtered.filter(a => a.attendee_status == 1);
     } else if (filterCriteria.status === 'not-checked-in') {
-      filteredAttendees = filteredAttendees.filter(a => a.attendee_status == 0);
+      filtered = filtered.filter(a => a.attendee_status == 0);
     }
 
-    // Sort by status (checked-in to bottom, for example)
-    filteredAttendees.sort((a, b) => a.attendee_status - b.attendee_status);
-
-    // If deferredQuery is non-empty, filter by name + possibly company
     const q = deferredQuery.trim().toLowerCase();
-
     if (q) {
-      const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'); // échappe les caractères spéciaux
-      filteredAttendees = filteredAttendees.filter(attendee => {
+      const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      filtered = filtered.filter(attendee => {
         let fullText = `${attendee.first_name} ${attendee.last_name}`;
         if (isSearchByCompanyMode && attendee.organization) {
           fullText += ` ${attendee.organization}`;
@@ -91,10 +89,15 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
       });
     }
 
+    filtered.sort((a, b) => a.attendee_status - b.attendee_status);
 
-    return filteredAttendees.slice(0, visibleCount); 
-    /* return filteredAttendees; */
+    return filtered;
   }, [allAttendees, deferredQuery, filterCriteria, isSearchByCompanyMode]);
+
+  const filteredData = useMemo(
+    () => totalFilteredData.slice(0, visibleCount),
+    [totalFilteredData, visibleCount]
+  );
 
   // Gérer la mise à jour d'un participant
   const handleUpdateAttendee = async updatedAttendee => {
@@ -123,11 +126,11 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
 
 
   return (
-    <View style={styles.list}>
-      {isLoadingList ? (
-        <ActivityIndicator color={colors.green} size="large" />
-      ) : filteredData.length ? (
-        <>
+  <View style={styles.list}>
+    {isLoadingList ? (
+      <ActivityIndicator color={colors.green} size="large" />
+    ) : (
+      <>
         <FlatList
           contentContainerStyle={styles.contentContainer}
           data={filteredData}
@@ -135,34 +138,38 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
           renderItem={({item}) => (
             <ListItem
               item={item}
-              searchQuery={debouncedSearchQuery} // or just pass searchQuery
+              searchQuery={debouncedSearchQuery}
               onUpdateAttendee={handleUpdateAttendee}
               onSwipeableOpen={handleSwipeableOpen}
             />
           )}
-          // 3) Optional FlatList performance tweaks (especially for large lists):
-          refreshing={refreshing}          // 👈 active l'animation de refresh
+          refreshing={refreshing}
           onRefresh={handleRefresh}
           windowSize={10}
           initialNumToRender={20}
           maxToRenderPerBatch={20}
           removeClippedSubviews
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <EmptyView handleRetry={handleRefresh} />
+            </View>
+          }
         />
-                {/* 👇 Ajouter le bouton ici */}
-                {filteredData.length > visibleCount && (
-                  <TouchableOpacity
-                    onPress={() => setVisibleCount(prev => prev + 50)}
-                    style={styles.loadMoreButton}>
-                    <Text style={styles.loadMoreText}>Voir plus</Text>
-                  </TouchableOpacity>
-                )}
-              </>
-      ) : (
-        <EmptyView handleRetry={handleRefresh}/>
-      )}
-    </View>
-  );
+
+        {/* 👇 Bouton Voir plus */}
+        {filteredData.length === visibleCount && (
+          <TouchableOpacity
+            onPress={() => setVisibleCount(prev => prev + 50)}
+            style={styles.loadMoreButton}>
+            <Text style={styles.loadMoreText}>Voir plus</Text>
+          </TouchableOpacity>
+        )}
+      </>
+    )}
+  </View>
+);
 };
+
 
 export default List;
 
@@ -190,6 +197,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 14,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 100,
   },
 
 });
