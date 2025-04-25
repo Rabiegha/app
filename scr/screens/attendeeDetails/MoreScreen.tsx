@@ -31,6 +31,7 @@ const MoreScreen = ({route, navigation}) => {
     typeId,
     badgePdfUrl,
     badgeImageUrl,
+    attendeeStatusChangeDatetime,
   } = route.params;
 
   const [localAttendeeStatus, setLocalAttendeeStatus] =
@@ -52,6 +53,7 @@ const MoreScreen = ({route, navigation}) => {
       event_id: eventId,
       badge_pdf_url: badgePdfUrl,
       badge_image_url: badgeImageUrl,
+      attendeeStatusChangeDatetime: attendeeStatusChangeDatetime,
     };
     updateAttendee(eventId, updatedAttendee);
     triggerListRefresh();
@@ -67,6 +69,7 @@ const MoreScreen = ({route, navigation}) => {
       eventId: eventId,
       badgePdfUrl: badgePdfUrl,
       badgeImageUrl: badgeImageUrl,
+
     });
   };
 
@@ -164,6 +167,7 @@ const MoreScreen = ({route, navigation}) => {
           JobTitle={jobTitle}
           attendeeStatus={localAttendeeStatus}
           organization={organization}
+          attendeeStatusChangeDatetime={attendeeStatusChangeDatetime}
           handleButton={handleButton}
           share={sendPdf}
           Print={handlePrintDocument}

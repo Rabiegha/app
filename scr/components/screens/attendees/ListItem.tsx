@@ -88,6 +88,7 @@ const ListItem = React.memo(
         badgePdfUrl: item.badge_pdf_url,
         badgeImageUrl: item.badge_image_url,
         attendeeTypeBackgroundColor: item.attendee_type_background_color,
+        attendeeStatusChangeDatetime: item.attendee_status_change_datetime,
       });
     };
 

@@ -5,26 +5,37 @@ import globalStyle from '../../../assets/styles/globalStyle';
 import LottieView from 'lottie-react-native';
 import colors from '../../../assets/colors/colors';
 
-export default function EmptyView({handleRetry}) {
+export default function EmptyView({handleRetry, text}) {
   return (
     <View style={[styles.container, globalStyle.backgroundWhite]}>
+      <Text style={styles.emptyText}>{text}</Text>
       <LottieView
         source={emptyAnimation}
         autoPlay
         loop={true}
         style={styles.gifStyle}
+        resizeMode="cover"
       />
-            <TouchableOpacity style={styles.button} onPress={handleRetry}>
-              <Text style={styles.buttonTexte}>Réessayer</Text>
-              <Text style={styles.emptyText}>Aucun participant pour cette session.</Text>
-            </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleRetry}>
+        <Text style={styles.buttonTexte}>Reload</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  gifStyle: {height: 300, width: 300},
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  gifStyle: {
+    height: 300,
+     width: 300,
+     margin: 0,
+     padding: 0,
+     alignSelf: 'center',
+    },
   button: {
     backgroundColor: colors.green,
     padding: 10,

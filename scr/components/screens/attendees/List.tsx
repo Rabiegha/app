@@ -4,69 +4,75 @@ import React, {
   useEffect,
   useState,
   useMemo,
+  useImperativeHandle,
+  forwardRef,
 } from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, View, Text} from 'react-native';
-import {useEvent} from '../../../context/EventContext';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  View,
+} from 'react-native';
+import { useEvent } from '../../../context/EventContext';
 import colors from '../../../assets/colors/colors';
-import {AuthContext} from '../../../context/AuthContext.tsx';
-import {useFocusEffect} from '@react-navigation/native';
+import { AuthContext } from '../../../context/AuthContext.tsx';
 import ListItem from './ListItem';
-
-// Redux
-import {useDispatch, useSelector} from 'react-redux';
-import {selectCurrentUserId} from '../../../redux/selectors/auth/authSelectors';
-/** NEW: If your store is set up so that “search” slice has isSearchByCompanyMode,
-    import from whichever slice you have:
-**/
-import { selectIsSearchByCompanyMode } from '../../../redux/selectors/search/searchSelectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentUserId } from '../../../redux/selectors/auth/authSelectors';
 import EmptyView from '../../elements/view/EmptyView.tsx';
-import { useActiveEvent } from '../../../utils/event/useActiveEvent.tsx';
-import { updateAttendee } from '../../../redux/thunks/attendee/updateAttendeeThunk.tsx';
-import { fetchMainAttendees } from '../../../redux/thunks/attendee/mainAttendeesThunk.tsx';
-import { updateAttendeeLocally } from '../../../redux/slices/attendee/attendeesListSlice.tsx';
 import LoadingView from '../../elements/view/LoadingView.tsx';
-// or if you’re directly accessing state.search.isSearchByCompanyMode, see code below
+import ErrorView from '../../elements/view/ErrorView.tsx';
+import { fetchMainAttendees } from '../../../redux/thunks/attendee/mainAttendeesThunk.tsx';
+import { updateAttendee } from '../../../redux/thunks/attendee/updateAttendeeThunk.tsx';
+import { updateAttendeeLocally } from '../../../redux/slices/attendee/attendeesListSlice.tsx';
 
-const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
+type Props = {
+  searchQuery: string;
+  onTriggerRefresh?: () => void;
+  filterCriteria: any;
+  onShowNotification?: () => void;
+  summary?: any;
+};
 
+export type ListHandle = {
+  handleRefresh: () => void;
+};
+
+const List = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, filterCriteria }, ref) => {
   const dispatch = useDispatch();
-  const [openSwipeable, setOpenSwipeable] = useState(null);
-  const {eventId, attendeesRefreshKey} = useEvent();
-  const [hasData, setHasData] = useState(false);
-  const { isLoadingList, data: allAttendees } = useSelector(state => state.attendees);
-  const {isDemoMode} = useContext(AuthContext);
+  const { eventId } = useEvent();
+  const { isDemoMode } = useContext(AuthContext);
+  const userId = useSelector(selectCurrentUserId);
+  const { data: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendees);
+
   const [refreshing, setRefreshing] = useState(false);
   const [visibleCount, setVisibleCount] = useState(20);
-
-
-  // Pull userId from Redux
-  const userId = useSelector(selectCurrentUserId);
-  // If you have a “search by company” mode, wire it here; for now just “false”:
-  const isSearchByCompanyMode = true;
-
-  /**
-   * 1) Debounce logic: track a “debouncedSearchQuery” that updates
-   *    only after the user stops typing for 300ms.
-   */
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [openSwipeable, setOpenSwipeable] = useState(null);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 200); // Wait 300ms after the last keystroke
+  const isSearchByCompanyMode = true;
+  const deferredQuery = useDeferredValue(debouncedSearchQuery);
 
-    return () => {
-      clearTimeout(handler); // Clear on unmount or re-run
-    };
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await dispatch(fetchMainAttendees({ userId, eventId, isDemoMode }));
+    setRefreshing(false);
+    onTriggerRefresh?.();
+  };
+
+  useImperativeHandle(ref, () => ({
+    handleRefresh,
+  }));
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebouncedSearchQuery(searchQuery), 200);
+    return () => clearTimeout(timeout);
   }, [searchQuery]);
 
   useEffect(() => {
     handleRefresh();
-  } ,[userId, eventId, isDemoMode]);
-
-  const deferredQuery = useDeferredValue(debouncedSearchQuery);
-
-
+  }, [userId, eventId, isDemoMode]);
 
   const totalFilteredData = useMemo(() => {
     let filtered = [...allAttendees];
@@ -90,25 +96,21 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
     }
 
     filtered.sort((a, b) => a.attendee_status - b.attendee_status);
-
     return filtered;
-  }, [allAttendees, deferredQuery, filterCriteria, isSearchByCompanyMode]);
+  }, [allAttendees, deferredQuery, filterCriteria]);
 
   const filteredData = useMemo(
     () => totalFilteredData.slice(0, visibleCount),
     [totalFilteredData, visibleCount]
   );
 
-  // Gérer la mise à jour d'un participant
   const handleUpdateAttendee = async updatedAttendee => {
-    dispatch(updateAttendeeLocally(updatedAttendee)); // Optimistic
+    dispatch(updateAttendeeLocally(updatedAttendee));
     await dispatch(updateAttendee(updatedAttendee));
     openSwipeable?.current?.close();
     onTriggerRefresh?.();
   };
 
-
-  //Gerer l'ouverture d'un swipeable
   const handleSwipeableOpen = swipeable => {
     if (openSwipeable && openSwipeable.current && openSwipeable !== swipeable) {
       openSwipeable.current.close();
@@ -116,62 +118,52 @@ const List = ({searchQuery, onTriggerRefresh, filterCriteria}) => {
     setOpenSwipeable(swipeable);
   };
 
-  // Handle list refreshing
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await dispatch(fetchMainAttendees({ userId, eventId, isDemoMode }));
-    setRefreshing(false);
-    onTriggerRefresh?.();
+  const handleLoadMore = () => {
+    if (visibleCount >= totalFilteredData.length || isLoadingMore) return;
+    setIsLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount(prev => prev + 50);
+      setIsLoadingMore(false);
+    }, 500);
   };
 
+  if (isLoadingList) return <LoadingView />;
+  if (error) return <ErrorView handleRetry={handleRefresh} />;
 
   return (
-  <View style={styles.list}>
-    {isLoadingList ? (
-      <ActivityIndicator color={colors.green} size="large" />
-    ) : (
-      <>
-        <FlatList
-          contentContainerStyle={styles.contentContainer}
-          data={filteredData}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => (
-            <ListItem
-              item={item}
-              searchQuery={debouncedSearchQuery}
-              onUpdateAttendee={handleUpdateAttendee}
-              onSwipeableOpen={handleSwipeableOpen}
-            />
-          )}
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          windowSize={10}
-          initialNumToRender={20}
-          maxToRenderPerBatch={20}
-          removeClippedSubviews
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <EmptyView handleRetry={handleRefresh} />
-            </View>
-          }
-        />
-
-        {/* 👇 Bouton Voir plus */}
-        {filteredData.length === visibleCount && (
-          <TouchableOpacity
-            onPress={() => setVisibleCount(prev => prev + 50)}
-            style={styles.loadMoreButton}>
-            <Text style={styles.loadMoreText}>Voir plus</Text>
-          </TouchableOpacity>
+    <View style={styles.list}>
+      <FlatList
+        contentContainerStyle={styles.contentContainer}
+        data={filteredData}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <ListItem
+            item={item}
+            searchQuery={debouncedSearchQuery}
+            onUpdateAttendee={handleUpdateAttendee}
+            onSwipeableOpen={handleSwipeableOpen}
+          />
         )}
-      </>
-    )}
-  </View>
-);
-};
-
-
-export default List;
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <EmptyView handleRetry={handleRefresh} text={'Aucun participant'} />
+          </View>
+        }
+        ListFooterComponent={
+          isLoadingMore && (
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="small" color={colors.green} />
+            </View>
+          )
+        }
+      />
+    </View>
+  );
+});
 
 const styles = StyleSheet.create({
   list: {
@@ -180,29 +172,14 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingBottom: 300,
   },
-  noDataView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadMoreButton: {
-    marginVertical: 16,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: colors.green,
-    alignSelf: 'center',
-    alignItems: 'center',
-  },
-  loadMoreText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 100,
   },
-
+  loaderContainer: {
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
 });
+
+export default List;

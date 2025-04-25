@@ -1,71 +1,56 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Modal,
-  Text,
+  Image,
   StyleSheet,
   Animated,
   TouchableOpacity,
   TouchableWithoutFeedback,
   StatusBar,
 } from 'react-native';
-import List from '../../components/screens/attendees/List';
+import List, { ListHandle } from '../../components/screens/attendees/List';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
 import ProgressText from '../../components/elements/progress/ProgressionText';
 import globalStyle from '../../assets/styles/globalStyle';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import HeaderParticipants from '../../components/elements/header/HeaderParticipant';
 import SuccessComponent from '../../components/elements/notifications/SuccessComponent';
-import {useEvent} from '../../context/EventContext';
+import { useEvent } from '../../context/EventContext';
 import Search from '../../components/elements/Search';
 import FiltreComponent from '../../components/filtre/FiltreComponent';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectPrintStatus} from '../../redux/selectors/print/printerSelectors';
-import {setPrintStatus} from '../../redux/slices/printerSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
+import { setPrintStatus } from '../../redux/slices/printerSlice';
 import PrintModal from '../../components/elements/modals/PrintModal';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
+import refreshIcon from '../../assets/images/icons/refresh.png';
+import colors from '../../assets/colors/colors';
 
-
-// Define a default set of filters
 const defaultFilterCriteria = {
-  status: 'all',      // 'all', 'checked-in', 'not-checked-in'
-  company: null,      // or an empty string [] if you allow multiple
+  status: 'all',
+  company: null,
 };
 
 const AttendeeListScreen = () => {
+  const listRef = useRef<ListHandle>(null);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setRefreshTrigger(prev => prev + 1);
-      StatusBar.setBarStyle('dark-content'); // Set status bar style to light-content
-      return () => {
-        // This is useful if this screen has a unique StatusBar style                                                                                                                                                          '); // Reset status bar style when screen loses focus
-      };
-    }, []),
-  );
-  // event name
-  const {eventName} = useEvent();
+  const triggerChildRefresh = () => {
+    listRef.current?.handleRefresh(); // 🟢 Appel direct de la méthode enfant
+  };
 
-  // set refresh trigger
+  const { eventName } = useEvent();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  //search query
   const [searchQuery, setSearchQuery] = useState('');
-  //modal handling
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAnimation] = useState(new Animated.Value(-300));
-
   const [success, setSuccess] = useState(false);
-
-  //Filter Critererias
   const [filterCriteria, setFilterCriteria] = useState(defaultFilterCriteria);
 
-  // Registration data :
-  const {totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary} = useRegistrationData({ refreshTrigger1: refreshTrigger });
-
+  const { totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary } = useRegistrationData({ refreshTrigger1: refreshTrigger });
   const printStatus = useSelector(selectPrintStatus);
-
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const openModal = () => {
     setModalVisible(true);
@@ -76,24 +61,13 @@ const AttendeeListScreen = () => {
     }).start();
   };
 
-  const showNotification = () => {
-    setSuccess(true);
-    setTimeout(() => {
-      setSuccess(false);
-    }, 2000);
-  };
-
   const closeModal = () => {
-    // Animate the modal to slide out to the left
     Animated.timing(modalAnimation, {
-      toValue: -300, // Move back to the initial off-screen position
+      toValue: -300,
       duration: 300,
       useNativeDriver: true,
-    }).start(() => setModalVisible(false)); // Hide the modal after the animation
+    }).start(() => setModalVisible(false));
   };
-
-  const navigation = useNavigation();
-
 
   const clearSearch = () => {
     if (searchQuery !== '') {
@@ -103,31 +77,17 @@ const AttendeeListScreen = () => {
     }
   };
 
-
   const handleTriggerRefresh = () => {
-    setRefreshTrigger(prev => prev + 1); // 🔄 This will trigger `useEffect` in useRegistrationSummary
+    setRefreshTrigger(prev => prev + 1);
   };
 
-    /**
-   * Decide how the left button acts:
-   * If filters are currently default, do your normal "clearSearch" or go back logic.
-   * Otherwise, reset the filters to default.
-   */
-    const handleLeftPress = () => {
-      if (isDefaultFilter(filterCriteria)) {
-        // If we have the default filters, do your old logic:
-        // either "go back" or "clearSearch"
-        clearSearch();
-      } else {
-        // Reset filters to default
-        setFilterCriteria(defaultFilterCriteria);
-      }
-    };
-
-    // Utility to check if filters are currently at default
-    const isDefaultFilter = (fc) => {
-      return fc.status === 'all' && !fc.company;
-    };
+  const handleLeftPress = () => {
+    if (filterCriteria.status === 'all' && !filterCriteria.company) {
+      clearSearch();
+    } else {
+      setFilterCriteria(defaultFilterCriteria);
+    }
+  };
 
   return (
     <View style={globalStyle.backgroundWhite}>
@@ -136,6 +96,7 @@ const AttendeeListScreen = () => {
         onRightPress={openModal}
         Title={eventName}
       />
+
       {success && (
         <View style={styles.notification}>
           <SuccessComponent
@@ -144,18 +105,18 @@ const AttendeeListScreen = () => {
           />
         </View>
       )}
-      <View style={[globalStyle.container, styles.container]}>
-        <Search
-          style={styles.search}
-          onChange={text => setSearchQuery(text)}
-          value={searchQuery}
-        />
 
-        <ProgressText
-          totalCheckedAttendees={totalCheckedIn}
-          totalAttendees={totalAttendees}
-        />
+      <View style={[globalStyle.container, styles.container]}>
+        <Search style={styles.search} onChange={setSearchQuery} value={searchQuery} />
+        <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />
         <ProgressBar progress={ratio} />
+
+        {/* 🔁 Bouton de reload */}
+        <TouchableOpacity style={styles.imageContainee} onPress={triggerChildRefresh}>
+          <Image style={styles.reloadImage} source={refreshIcon} />
+        </TouchableOpacity>
+
+        {/* 🖨️ Print modal */}
         <View style={styles.printModal}>
           <PrintModal
             onClose={() => dispatch(setPrintStatus(null))}
@@ -163,47 +124,37 @@ const AttendeeListScreen = () => {
             status={printStatus}
           />
         </View>
+
+        {/* 📋 Liste des participants */}
         <List
+          ref={listRef}
           searchQuery={searchQuery}
-          onShowNotification={showNotification}
+          onShowNotification={() => setSuccess(true)}
           filterCriteria={filterCriteria}
           onTriggerRefresh={handleTriggerRefresh}
           summary={summary}
         />
 
-        <Modal
-          animationType="none"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={closeModal}>
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPressOut={closeModal}>
+        {/* 🧾 Modal de filtre */}
+        <Modal animationType="none" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
+          <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={closeModal}>
             <TouchableWithoutFeedback>
-              <Animated.View
-                style={[
-                  styles.modalView,
-                  {transform: [{translateX: modalAnimation}]}, // Use the animated value for the translation
-                ]}>
-                {
-              <FiltreComponent
-                    // We pass in the *current* filters to show in the modal
-                    initialFilter={filterCriteria}
-                    defaultFilter={defaultFilterCriteria}
-                    onApply={(newFilter) => {
-                      // (1) Apply the new filter
-                      setFilterCriteria(newFilter);
-                      // (2) Close modal
-                      closeModal();
-                    } }
-                    onCancel={() => {
-                      // (1) Reset to default
-                      setFilterCriteria(defaultFilterCriteria);
-                      // (2) Close modal
-                      closeModal();
-                    } } tout={totalAttendees} checkedIn={totalCheckedIn} notChechkedIn={totalNotCheckedIn}                />
-                }
+              <Animated.View style={[styles.modalView, { transform: [{ translateX: modalAnimation }] }]}>
+                <FiltreComponent
+                  initialFilter={filterCriteria}
+                  defaultFilter={defaultFilterCriteria}
+                  onApply={(newFilter) => {
+                    setFilterCriteria(newFilter);
+                    closeModal();
+                  }}
+                  onCancel={() => {
+                    setFilterCriteria(defaultFilterCriteria);
+                    closeModal();
+                  }}
+                  tout={totalAttendees}
+                  checkedIn={totalCheckedIn}
+                  notChechkedIn={totalNotCheckedIn}
+                />
               </Animated.View>
             </TouchableWithoutFeedback>
           </TouchableOpacity>
@@ -227,11 +178,8 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
   },
-  eventName: {
-    top: 40,
-  },
   modalView: {
-    width: 300, // Width of the modal
+    width: 300,
     backgroundColor: 'white',
     position: 'absolute',
     left: 0,
@@ -243,6 +191,19 @@ const styles = StyleSheet.create({
   },
   search: {
     top: 20,
+  },
+  reloadImage: {
+    height: 30,
+    width: 30,
+    tintColor: colors.green,
+  },
+  imageContainee: {
+    height: 30,
+    width: 30,
+    position: 'absolute',
+    right: 25,
+    top: 55,
+
   },
 });
 

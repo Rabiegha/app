@@ -3,18 +3,20 @@ import { registrationSummaryDetails } from '../../services/registrationSummaryDe
 import { useEvent } from '../../context/EventContext';
 import { useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
+import { useActiveEvent } from '../../utils/event/useActiveEvent';
 
 const useRegistrationSummary = (refreshTrigger) => {
   const [summary, setSummary] = useState({
     totalAttendees: 0,
     totalCheckedIn: 0,
     totalNotCheckedIn: 0,
-  });
+    capacity: 0,
+    });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const userId = useSelector(selectCurrentUserId);
-  const { eventId } = useEvent();
+  const {eventId} = useActiveEvent();
 
   const fetchSummary = useCallback(async () => {
     if (!userId || !eventId) return;
@@ -27,6 +29,7 @@ const useRegistrationSummary = (refreshTrigger) => {
       if (response && response.status) {
         const totalRegistered = response.total_registered;
         const totalAttended = response.total_attended;
+        const capacity = response.capacity;
 
 
         if (!isNaN(totalRegistered) && !isNaN(totalAttended)) {
@@ -34,6 +37,7 @@ const useRegistrationSummary = (refreshTrigger) => {
             totalAttendees: totalRegistered,
             totalCheckedIn: totalAttended,
             totalNotCheckedIn: totalRegistered - totalAttended,
+            capacity: capacity,
           });
 
           setError(null);
