@@ -16,6 +16,7 @@ export default function EmptyView({handleRetry}) {
       />
             <TouchableOpacity style={styles.button} onPress={handleRetry}>
               <Text style={styles.buttonTexte}>Réessayer</Text>
+              <Text style={styles.emptyText}>Aucun participant pour cette session.</Text>
             </TouchableOpacity>
     </View>
   );
@@ -29,6 +30,11 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.darkGrey,
+    textAlign: 'center',
   },
   buttonTexte: {color: 'white'},
 });
