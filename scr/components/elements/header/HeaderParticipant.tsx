@@ -23,10 +23,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 20,
+    paddingHorizontal: 20,
     paddingTop: 12,
-    maxHeight: 60,
-    height: 80,
+    height: 60,
     zIndex: 10,
     backgroundColor: 'white',
   },
@@ -39,20 +38,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     maxWidth: 200,
     color: colors.darkGrey,
-    top: 39,
   },
   buttonImage: {
     width: 15,
     height: 23,
     tintColor: colors.green,
     zIndex: 2,
-    top: 39,
   },
   buttonImageBlack: {
     tintColor: colors.darkGrey,
     width: 20,
     height: 20,
-    top: 39,
   },
 });
 

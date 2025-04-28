@@ -1,11 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { registrationSummaryDetails } from '../../services/registrationSummaryDetailsService';
-import { useEvent } from '../../context/EventContext';
-import { useSelector } from 'react-redux';
-import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
-import { useActiveEvent } from '../../utils/event/useActiveEvent';
 
-const useRegistrationSummary = (refreshTrigger) => {
+const useRegistrationSummary = (userId, eventId, refreshTrigger) => {
   const [summary, setSummary] = useState({
     totalAttendees: 0,
     totalCheckedIn: 0,
@@ -15,8 +11,6 @@ const useRegistrationSummary = (refreshTrigger) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const userId = useSelector(selectCurrentUserId);
-  const {eventId} = useActiveEvent();
 
   const fetchSummary = useCallback(async () => {
     if (!userId || !eventId) return;

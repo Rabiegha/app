@@ -13,18 +13,18 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { useEvent } from '../../../context/EventContext';
-import colors from '../../../assets/colors/colors';
-import { AuthContext } from '../../../context/AuthContext.tsx';
-import ListItem from './ListItem';
+import { useEvent } from '../../../../context/EventContext.tsx';
+import colors from '../../../../assets/colors/colors.tsx';
+import { AuthContext } from '../../../../context/AuthContext.tsx';
+import ListItem from './MainAttendeeListItem.tsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentUserId } from '../../../redux/selectors/auth/authSelectors';
-import EmptyView from '../../elements/view/EmptyView.tsx';
-import LoadingView from '../../elements/view/LoadingView.tsx';
-import ErrorView from '../../elements/view/ErrorView.tsx';
-import { fetchMainAttendees } from '../../../redux/thunks/attendee/mainAttendeesThunk.tsx';
-import { updateAttendee } from '../../../redux/thunks/attendee/updateAttendeeThunk.tsx';
-import { updateAttendeeLocally } from '../../../redux/slices/attendee/attendeesListSlice.tsx';
+import { selectCurrentUserId } from '../../../../redux/selectors/auth/authSelectors.tsx';
+import EmptyView from '../../../elements/view/EmptyView.tsx';
+import LoadingView from '../../../elements/view/LoadingView.tsx';
+import ErrorView from '../../../elements/view/ErrorView.tsx';
+import { fetchMainAttendees } from '../../../../redux/thunks/attendee/mainAttendeesThunk.tsx';
+import { updateAttendee } from '../../../../redux/thunks/attendee/updateAttendeeThunk.tsx';
+import { updateAttendeeLocally } from '../../../../redux/slices/attendee/attendeesListSlice.tsx';
 
 type Props = {
   searchQuery: string;
@@ -102,7 +102,7 @@ const List = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, fil
   const filteredData = useMemo(
     () => totalFilteredData.slice(0, visibleCount),
     [totalFilteredData, visibleCount]
-  );
+  ); 
 
   const handleUpdateAttendee = async updatedAttendee => {
     dispatch(updateAttendeeLocally(updatedAttendee));
@@ -119,16 +119,28 @@ const List = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, fil
   };
 
   const handleLoadMore = () => {
-    if (visibleCount >= totalFilteredData.length || isLoadingMore) return;
+    if (visibleCount >= totalFilteredData.length || isLoadingMore) {return;}
     setIsLoadingMore(true);
     setTimeout(() => {
       setVisibleCount(prev => prev + 50);
       setIsLoadingMore(false);
     }, 500);
   };
+/*   const filteredData = []; */
 
-  if (isLoadingList) return <LoadingView />;
-  if (error) return <ErrorView handleRetry={handleRefresh} />;
+  if (isLoadingList) {
+    return (
+      <View style={{ flex: 1 }}>
+        <LoadingView />
+      </View>
+    );
+  }
+
+  if (error) {return (
+    <View style={{ flex: 1 }}>
+      <ErrorView handleRetry={handleRefresh} />
+      </View>
+      );}
 
   return (
     <View style={styles.list}>
@@ -147,6 +159,11 @@ const List = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, fil
         refreshing={refreshing}
         onRefresh={handleRefresh}
         onEndReached={handleLoadMore}
+        contentContainerStyle={{
+          paddingBottom: 250, // 🟢 Important for scrolling above bottom navbar
+          flexGrow: filteredData.length === 0 ? 1 : undefined,
+          minHeight: filteredData.length === 0 ? 500 : undefined,
+        }}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -175,10 +192,12 @@ const styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
+    height: '100%',
   },
   loaderContainer: {
     paddingVertical: 16,
     alignItems: 'center',
+    height: '100%',
   },
 });
 

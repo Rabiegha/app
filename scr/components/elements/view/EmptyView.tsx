@@ -8,7 +8,6 @@ import colors from '../../../assets/colors/colors';
 export default function EmptyView({handleRetry, text}) {
   return (
     <View style={[styles.container, globalStyle.backgroundWhite]}>
-      <Text style={styles.emptyText}>{text}</Text>
       <LottieView
         source={emptyAnimation}
         autoPlay
@@ -30,8 +29,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   gifStyle: {
-    height: 300,
-     width: 300,
+    height: 330,
+     width: 330,
      margin: 0,
      padding: 0,
      alignSelf: 'center',
@@ -41,6 +40,7 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginTop: -50,
   },
   emptyText: {
     fontSize: 16,

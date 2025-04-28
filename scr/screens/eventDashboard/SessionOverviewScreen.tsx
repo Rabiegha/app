@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, RefreshControl, View } from 'react-native';
+import { FlatList, StyleSheet, RefreshControl, View, Text, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import globalStyle from '../../assets/styles/globalStyle';
 import ListCard from '../../components/elements/ListCard';
@@ -12,6 +12,7 @@ import ErrorView from '../../components/elements/view/ErrorView';
 import EmptyView from '../../components/elements/view/EmptyView';
 import { useSessionSelector } from '../../utils/session/useSessionSelector';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
+import colors from '../../assets/colors/colors';
 
 const SessionOverviewScreen = () => {
   const navigation = useNavigation();
@@ -84,7 +85,12 @@ const SessionOverviewScreen = () => {
           />
         }
         ListEmptyComponent={
-          <EmptyView handleRetry={fetchSessions} text="Aucune session disponible." />
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Aucune session enregistrée</Text>
+            <TouchableOpacity style={styles.button} onPress={handleRefresh}>
+              <Text style={styles.buttonTexte}>Reload</Text>
+            </TouchableOpacity>
+          </View>
         }
       />
     </View>
@@ -96,6 +102,24 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     paddingHorizontal: 20,
   },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    height: '100%',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.darkGrey,
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: colors.green,
+    padding: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  buttonTexte: {color: 'white'},
 });
 
 export default SessionOverviewScreen;

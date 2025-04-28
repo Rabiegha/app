@@ -10,13 +10,13 @@ import {
   Image,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import colors from '../../../assets/colors/colors';
-import {useEvent} from '../../../context/EventContext';
+import colors from '../../../../assets/colors/colors';
+import {useEvent} from '../../../../context/EventContext';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import Accepted from '../../../assets/images/icons/Accepted.png';
+import Accepted from '../../../../assets/images/icons/Accepted.png';
 import {useSelector, useDispatch} from 'react-redux';
-import usePrintDocument from '../../../hooks/print/usePrintDocument';
-import { ListItemProps } from '../../../types/listItem.types';
+import usePrintDocument from '../../../../hooks/print/usePrintDocument';
+import { ListItemProps } from '../../../../types/listItem.types';
 
 const {width} = Dimensions.get('window');
 let openSwipeableRef = null;

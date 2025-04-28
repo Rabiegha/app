@@ -7,15 +7,14 @@ import {
   Animated,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  StatusBar,
+  SafeAreaView,
 } from 'react-native';
-import List, { ListHandle } from '../../components/screens/attendees/List';
+import List, { ListHandle } from '../../components/screens/attendees/mainAttendeeList/MainAttendeeList';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
 import ProgressText from '../../components/elements/progress/ProgressionText';
 import globalStyle from '../../assets/styles/globalStyle';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import HeaderParticipants from '../../components/elements/header/HeaderParticipant';
-import SuccessComponent from '../../components/elements/notifications/SuccessComponent';
 import { useEvent } from '../../context/EventContext';
 import Search from '../../components/elements/Search';
 import FiltreComponent from '../../components/filtre/FiltreComponent';
@@ -90,77 +89,71 @@ const AttendeeListScreen = () => {
   };
 
   return (
-    <View style={globalStyle.backgroundWhite}>
-      <HeaderParticipants
-        onLeftPress={handleLeftPress}
-        onRightPress={openModal}
-        Title={eventName}
-      />
-
-      {success && (
-        <View style={styles.notification}>
-          <SuccessComponent
-            onClose={() => setSuccess(null)}
-            text={'Votre participation à l’évènement\nà bien été enregistrée'}
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={{ flex: 1 }}>
+        <View style={styles.headerWrapper}>
+          <HeaderParticipants
+            onLeftPress={handleLeftPress}
+            onRightPress={openModal}
+            Title={eventName}
           />
         </View>
-      )}
+        <View style={styles.mainContent}>
+            <Search style={styles.search} onChange={setSearchQuery} value={searchQuery} />
+            <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />
+            <ProgressBar progress={ratio} />
 
-      <View style={[globalStyle.container, styles.container]}>
-        <Search style={styles.search} onChange={setSearchQuery} value={searchQuery} />
-        <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />
-        <ProgressBar progress={ratio} />
+            {/* 🔁 Bouton de reload */}
+            <TouchableOpacity style={styles.imageContainee} onPress={triggerChildRefresh}>
+              <Image style={styles.reloadImage} source={refreshIcon} />
+            </TouchableOpacity>
 
-        {/* 🔁 Bouton de reload */}
-        <TouchableOpacity style={styles.imageContainee} onPress={triggerChildRefresh}>
-          <Image style={styles.reloadImage} source={refreshIcon} />
-        </TouchableOpacity>
+            {/* 🖨️ Print modal */}
+            <View style={styles.printModal}>
+              <PrintModal
+                onClose={() => dispatch(setPrintStatus(null))}
+                visible={!!printStatus}
+                status={printStatus}
+              />
+            </View>
 
-        {/* 🖨️ Print modal */}
-        <View style={styles.printModal}>
-          <PrintModal
-            onClose={() => dispatch(setPrintStatus(null))}
-            visible={!!printStatus}
-            status={printStatus}
-          />
+            {/* 📋 Liste des participants */}
+            <List
+              ref={listRef}
+              searchQuery={searchQuery}
+              onShowNotification={() => setSuccess(true)}
+              filterCriteria={filterCriteria}
+              onTriggerRefresh={handleTriggerRefresh}
+              summary={summary}
+            />
+
+            {/* 🧾 Modal de filtre */}
+            <Modal animationType="none" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
+              <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={closeModal}>
+                <TouchableWithoutFeedback>
+                  <Animated.View style={[styles.modalView, { transform: [{ translateX: modalAnimation }] }]}>
+                    <FiltreComponent
+                      initialFilter={filterCriteria}
+                      defaultFilter={defaultFilterCriteria}
+                      onApply={(newFilter) => {
+                        setFilterCriteria(newFilter);
+                        closeModal();
+                      }}
+                      onCancel={() => {
+                        setFilterCriteria(defaultFilterCriteria);
+                        closeModal();
+                      }}
+                      tout={totalAttendees}
+                      checkedIn={totalCheckedIn}
+                      notChechkedIn={totalNotCheckedIn}
+                    />
+                  </Animated.View>
+                </TouchableWithoutFeedback>
+              </TouchableOpacity>
+            </Modal>
+          </View>
         </View>
-
-        {/* 📋 Liste des participants */}
-        <List
-          ref={listRef}
-          searchQuery={searchQuery}
-          onShowNotification={() => setSuccess(true)}
-          filterCriteria={filterCriteria}
-          onTriggerRefresh={handleTriggerRefresh}
-          summary={summary}
-        />
-
-        {/* 🧾 Modal de filtre */}
-        <Modal animationType="none" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
-          <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={closeModal}>
-            <TouchableWithoutFeedback>
-              <Animated.View style={[styles.modalView, { transform: [{ translateX: modalAnimation }] }]}>
-                <FiltreComponent
-                  initialFilter={filterCriteria}
-                  defaultFilter={defaultFilterCriteria}
-                  onApply={(newFilter) => {
-                    setFilterCriteria(newFilter);
-                    closeModal();
-                  }}
-                  onCancel={() => {
-                    setFilterCriteria(defaultFilterCriteria);
-                    closeModal();
-                  }}
-                  tout={totalAttendees}
-                  checkedIn={totalCheckedIn}
-                  notChechkedIn={totalNotCheckedIn}
-                />
-              </Animated.View>
-            </TouchableWithoutFeedback>
-          </TouchableOpacity>
-        </Modal>
-      </View>
-    </View>
+      </SafeAreaView>
   );
 };
 
@@ -190,7 +183,6 @@ const styles = StyleSheet.create({
     zIndex: 50,
   },
   search: {
-    top: 20,
   },
   reloadImage: {
     height: 30,
@@ -202,8 +194,21 @@ const styles = StyleSheet.create({
     width: 30,
     position: 'absolute',
     right: 25,
-    top: 55,
+    top: 160,
 
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    backgroundColor: 'white',
+  },
+  mainContent: {
+    flex: 1,
+    paddingTop: 120,
+    paddingHorizontal: 20,
   },
 });
 
