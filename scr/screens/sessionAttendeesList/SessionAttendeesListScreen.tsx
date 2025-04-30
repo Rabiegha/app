@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View  } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View  } from 'react-native';
 import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
 import { useNavigation } from '@react-navigation/native';
@@ -12,6 +12,7 @@ import { useRoute } from '@react-navigation/native';
 import useSessionRegistrationData from '../../hooks/registration/useSessionRegistrationSData';
 import useFetchSessionAttendeeList from '../../hooks/attendee/useFetchSessionAttendeeList';
 import SessionListAttendee from '../../components/screens/attendees/sessionAttendeeList/SessionAttendeeList';
+import refreshIcon from '../../assets/images/icons/refresh.png';
 
 
 
@@ -62,6 +63,10 @@ const SessionAttendeesListScreen = () => {
         backgroundColor={'white'}
       />
       <View style={styles.container}>
+      {/* 🔁 Bouton de reload */}
+      <TouchableOpacity style={styles.imageContainee} onPress={handleRefresh}>
+        <Image style={styles.reloadImage} source={refreshIcon} />
+      </TouchableOpacity>
       <SessionListAttendee
         searchQuery={''}
         ratio={ratio}
@@ -93,6 +98,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.darkGrey,
     textAlign: 'center',
+  },
+  reloadImage: {
+    height: 30,
+    width: 30,
+    tintColor: colors.green,
+  },
+  imageContainee: {
+    height: 30,
+    width: 30,
+    position: 'absolute',
+    right: 25,
+    top: 0,
+    zIndex: 20,
+
   },
 });
 

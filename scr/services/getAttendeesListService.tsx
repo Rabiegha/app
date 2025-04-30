@@ -25,6 +25,8 @@ export const fetchAttendeesList = async (
       '/ajax_get_event_attendee_details/',
       { params }
     );
+    console.log('Params sent to API:', params);
+
 
     if (!response.data || !response.data.event_attendee_details) {
       console.log('Full API response:', response.data);

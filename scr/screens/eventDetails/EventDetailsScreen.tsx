@@ -5,11 +5,11 @@ import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle.tsx';
 import colors from '../../assets/colors/colors.tsx';
 import EventDetailsComponent from '../../components/screens/EventDetailsComponent.tsx';
-import useRegistrationData from '../../hooks/registration/useRegistrationSummary.tsx';
+import useRegistrationData from '../../hooks/registration/useRegistrationData.tsx';
 
 const EventDetailsScreen = () => {
   const navigation = useNavigation();
-  const {summary, loading, error} = useRegistrationData();
+  const {summary, loading, error} = useRegistrationData(1);
   const totalAttendees = summary.totalAttendees;
   const totalCheckedIn = summary.totalCheckedIn;
   const totalNotCheckedIn = summary.totalNotCheckedIn;

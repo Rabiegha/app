@@ -194,7 +194,8 @@ const styles = StyleSheet.create({
     width: 30,
     position: 'absolute',
     right: 25,
-    top: 160,
+    top: 190,
+    zIndex: 20,
 
   },
   headerWrapper: {
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    paddingTop: 120,
+    paddingTop: 150,
     paddingHorizontal: 20,
   },
 });

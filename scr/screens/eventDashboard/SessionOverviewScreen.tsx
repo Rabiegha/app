@@ -84,6 +84,11 @@ const SessionOverviewScreen = () => {
             tintColor="#2ecc71"
           />
         }
+        contentContainerStyle={{
+          paddingBottom: 250, // 🟢 Important for scrolling above bottom navbar
+          flexGrow: sessions.length === 0 ? 1 : undefined,
+          minHeight: sessions.length === 0 ? 500 : undefined,
+        }}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>Aucune session enregistrée</Text>
