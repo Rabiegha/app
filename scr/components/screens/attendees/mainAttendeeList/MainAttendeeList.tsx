@@ -25,6 +25,8 @@ import ErrorView from '../../../elements/view/ErrorView.tsx';
 import { fetchMainAttendees } from '../../../../redux/thunks/attendee/mainAttendeesThunk.tsx';
 import { updateAttendee } from '../../../../redux/thunks/attendee/updateAttendeeThunk.tsx';
 import { updateAttendeeLocally } from '../../../../redux/slices/attendee/attendeesListSlice.tsx';
+import BaseFlatList from '../../../elements/list/BaseFlatList.tsx';
+import { Attendee } from '../../../../types/attendee.types.ts';
 
 type Props = {
   searchQuery: string;
@@ -38,7 +40,7 @@ export type ListHandle = {
   handleRefresh: () => void;
 };
 
-const List = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, filterCriteria }, ref) => {
+const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, filterCriteria }, ref) => {
   const dispatch = useDispatch();
   const { eventId } = useEvent();
   const { isDemoMode } = useContext(AuthContext);
@@ -50,6 +52,7 @@ const List = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, fil
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [openSwipeable, setOpenSwipeable] = useState(null);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const simulateEmpty = true;
 
   const isSearchByCompanyMode = true;
   const deferredQuery = useDeferredValue(debouncedSearchQuery);
@@ -100,9 +103,9 @@ const List = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, fil
   }, [allAttendees, deferredQuery, filterCriteria]);
 
   const filteredData = useMemo(
-    () => totalFilteredData.slice(0, visibleCount),
+    () => (simulateEmpty ? [] : totalFilteredData.slice(0, visibleCount)),
     [totalFilteredData, visibleCount]
-  ); 
+  );
 
   const handleUpdateAttendee = async updatedAttendee => {
     dispatch(updateAttendeeLocally(updatedAttendee));
@@ -126,79 +129,58 @@ const List = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, fil
       setIsLoadingMore(false);
     }, 500);
   };
-/*   const filteredData = []; */
 
   if (isLoadingList) {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.viewsContainer}>
         <LoadingView />
       </View>
     );
   }
 
   if (error) {return (
-    <View style={{ flex: 1 }}>
-      <ErrorView handleRetry={handleRefresh} />
+      <View style={styles.viewsContainer}>
+        <ErrorView handleRetry={handleRefresh} />
       </View>
       );}
 
   return (
-    <View style={styles.list}>
-      <FlatList
-        contentContainerStyle={styles.contentContainer}
-        data={filteredData}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <ListItem
-            item={item}
-            searchQuery={debouncedSearchQuery}
-            onUpdateAttendee={handleUpdateAttendee}
-            onSwipeableOpen={handleSwipeableOpen}
-          />
-        )}
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
-        onEndReached={handleLoadMore}
-        contentContainerStyle={{
-          paddingBottom: 250, // 🟢 Important for scrolling above bottom navbar
-          flexGrow: filteredData.length === 0 ? 1 : undefined,
-          minHeight: filteredData.length === 0 ? 500 : undefined,
-        }}
-        onEndReachedThreshold={0.1}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <EmptyView handleRetry={handleRefresh} text={'Aucun participant'} />
-          </View>
-        }
-        ListFooterComponent={
-          isLoadingMore && (
-            <View style={styles.loaderContainer}>
-              <ActivityIndicator size="small" color={colors.green} />
+    <View >
+      <BaseFlatList<Attendee>
+          data={filteredData}
+          renderItem={({ item }) => (
+            <ListItem
+              item={item}
+              searchQuery={debouncedSearchQuery}
+              onUpdateAttendee={handleUpdateAttendee}
+              onSwipeableOpen={handleSwipeableOpen}
+            />
+          )}
+          keyExtractor={item => item.id.toString()}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          onEndReached={handleLoadMore}
+          isLoadingMore={isLoadingMore}
+          footerEnabled={true}
+          ListEmptyComponent={
+            <View style={styles.viewsContainer}>
+              <EmptyView text={''} handleRetry={handleRefresh} />
             </View>
-          )
-        }
-      />
+          }
+        />
     </View>
   );
 });
 
 const styles = StyleSheet.create({
-  list: {
-    paddingBottom: 120,
-  },
-  contentContainer: {
-    paddingBottom: 300,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    height: '100%',
-  },
   loaderContainer: {
     paddingVertical: 16,
     alignItems: 'center',
     height: '100%',
   },
+  viewsContainer: {
+    flex: 1,
+  },
 });
 
-export default List;
+export default MainAttendeeListItem;

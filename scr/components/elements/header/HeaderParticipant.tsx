@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
     zIndex: 10,
-    height: 110,
     backgroundColor: 'white',
   },
   backButton: {

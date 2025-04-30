@@ -25,7 +25,6 @@ export default function EmptyView({handleRetry, text}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
   gifStyle: {
