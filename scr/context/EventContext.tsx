@@ -16,6 +16,7 @@ export const EventProvider = ({children}) => {
     eventId: '',
     eventName: '',
     niceStartDate: '',
+    eventLogo: '',
   });
   //Session details
   const [sessionDetails, setSessionDetails] = useState(null);
@@ -43,13 +44,14 @@ export const EventProvider = ({children}) => {
     }
   }, []);
 
-  const updateEventDetails = ({newSecretCode, newEventId, newEventName, newNiceStartDate}) => {
+  const updateEventDetails = ({newSecretCode, newEventId, newEventName, newNiceStartDate, newEventLogo}) => {
 
     const eventData = {
       secretCode: newSecretCode,
       eventId: newEventId,
       eventName: newEventName,
       niceStartDate: newNiceStartDate,
+      eventLogo: newEventLogo,
     };
     setEventDetails(eventData);
     storage.set('eventDetails', JSON.stringify(eventData));
@@ -58,6 +60,7 @@ export const EventProvider = ({children}) => {
       secretCode: newSecretCode,
       eventId: newEventId,
       eventName: newEventName,
+      eventLogo: newEventLogo,
     });
 
 
