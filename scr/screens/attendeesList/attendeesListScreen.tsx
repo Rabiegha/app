@@ -9,10 +9,9 @@ import {
   TouchableWithoutFeedback,
   SafeAreaView,
 } from 'react-native';
-import List, { ListHandle } from '../../components/screens/attendees/mainAttendeeList/MainAttendeeList';
+import MainAttendeeListItem, { ListHandle } from '../../components/screens/attendees/mainAttendeeList/MainAttendeeList';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
 import ProgressText from '../../components/elements/progress/ProgressionText';
-import globalStyle from '../../assets/styles/globalStyle';
 import { useNavigation } from '@react-navigation/native';
 import HeaderParticipants from '../../components/elements/header/HeaderParticipant';
 import { useEvent } from '../../context/EventContext';
@@ -118,7 +117,7 @@ const AttendeeListScreen = () => {
             </View>
 
             {/* 📋 Liste des participants */}
-            <List
+            <MainAttendeeListItem
               ref={listRef}
               searchQuery={searchQuery}
               onShowNotification={() => setSuccess(true)}
@@ -158,10 +157,6 @@ const AttendeeListScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    top: 65,
-  },
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-start',
@@ -181,8 +176,6 @@ const styles = StyleSheet.create({
   },
   notification: {
     zIndex: 50,
-  },
-  search: {
   },
   reloadImage: {
     height: 30,
@@ -208,7 +201,7 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    paddingTop: 150,
+    paddingTop: 140,
     paddingHorizontal: 20,
   },
 });
