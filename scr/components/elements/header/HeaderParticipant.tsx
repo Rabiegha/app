@@ -1,12 +1,15 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet, Platform} from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../../../assets/colors/colors';
 import Retour from '../../../assets/images/icons/Retour.png';
 import Filtre from '../../../assets/images/icons/Filtre.png';
 
-const HeaderParticipants = ({onLeftPress, Title, onRightPress}) => {
+const HeaderParticipants = ({ onLeftPress, Title, onRightPress }) => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.headerContainer}>
+    <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
       <TouchableOpacity onPress={onLeftPress} style={styles.backButton}>
         <Image source={Retour} style={styles.buttonImage} />
       </TouchableOpacity>
@@ -24,9 +27,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 12,
-    height: 60,
+    paddingBottom: 12,
     zIndex: 10,
+    height: 110,
     backgroundColor: 'white',
   },
   backButton: {
@@ -38,12 +41,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     maxWidth: 200,
     color: colors.darkGrey,
+    height: 'auto',
   },
   buttonImage: {
     width: 15,
     height: 23,
     tintColor: colors.green,
-    zIndex: 2,
   },
   buttonImageBlack: {
     tintColor: colors.darkGrey,
