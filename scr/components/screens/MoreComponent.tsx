@@ -20,6 +20,7 @@ const MoreComponent = ({
   attendeeStatus,
   organization,
   JobTitle,
+  attendeeStatusChangeDatetime,
   See,
   Print,
   handleButton,
@@ -79,7 +80,10 @@ const MoreComponent = ({
         <LabelValueComponent
           label="Job Title:"
           value={JobTitle ? JobTitle : '-'} value2={undefined}        />
-      </View>
+          <LabelValueComponent
+            label="Date de check-in:"
+            value={parsedAttendeeStatus ? attendeeStatusChangeDatetime : '-'} value2={undefined}    />
+        </View>
       {/*<Text>Status: {attendeeStatus}</Text> */}
         {parsedAttendeeStatus == 0 ? (
           <LargeButton

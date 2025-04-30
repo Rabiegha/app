@@ -15,7 +15,8 @@ const EventDashboardScreen = ({}) => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const {eventName: eventName, niceStartDate:eventDetails} = useEvent();
+  const {eventName: eventName, niceStartDate:eventDetails, eventLogo: eventImage } = useEvent();
+
 
   useStatusBarStyle('dark-content');
   const handlePress = () => {
@@ -24,9 +25,9 @@ const EventDashboardScreen = ({}) => {
 
   return (
       <View style={globalStyle.backgroundWhite}>
-        <HeaderComponent handlePress={handlePress} title={eventDetails?.newEventName} color={undefined} backgroundColor={undefined} />
+        <HeaderComponent handlePress={handlePress} title={undefined} color={undefined} backgroundColor={undefined} />
         <View style={styles.container}>
-          <EventDachboardTopComponent eventName={eventName} eventDetails={eventDetails} />
+          <EventDachboardTopComponent eventName={eventName} eventDetails={eventDetails} eventImage={eventImage} />
         </View>
         <EventDashBoardTabsNavigator searchQuery={searchQuery} />
       </View>

@@ -4,20 +4,14 @@ import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
 import { useNavigation } from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle';
-import Search from '../../components/elements/Search';
-import { useDispatch, useSelector } from 'react-redux';
+import {useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import { useActiveEvent } from '../../utils/event/useActiveEvent';
-import ListItem from '../../components/screens/attendees/ListItem';
-import { fetchSessionAttendees } from '../../redux/thunks/attendee/sessionAttendeesThunk';
-import LoadingView from '../../components/elements/view/LoadingView';
-import ErrorView from '../../components/elements/view/ErrorView';
-import EmptyView from '../../components/elements/view/EmptyView';
-import { fetchAttendeesList } from '../../services/getAttendeesListService';
 import { useFocusEffect } from '@react-navigation/native';
-import SessionStats from '../../components/screens/sessionAttendeeList/SessionStatsComponent';
-import ProgressBar from '../../components/elements/progress/ProgressBar';
 import { useRoute } from '@react-navigation/native';
+import useSessionRegistrationData from '../../hooks/registration/useSessionRegistrationSData';
+import useFetchSessionAttendeeList from '../../hooks/attendee/useFetchSessionAttendeeList';
+import SessionListAttendee from '../../components/screens/attendees/sessionAttendeeList/SessionAttendeeList';
 
 
 
@@ -26,104 +20,59 @@ const SessionAttendeesListScreen = () => {
 
     const route = useRoute();
     const navigation = useNavigation();
-    const dispatch = useDispatch();
     const [refreshing, setRefreshing] = useState(false);
-    const [attendees, setAttendees] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(false);
-    const { capacity, eventName } = route.params || {};
-    const scannedCount = attendees.filter(a => a.attendee_status == 1).length;
-    const ratio = capacity > 0 ? (scannedCount / capacity) * 100 : 0;
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const {capacity, totalCheckedIn} = useSessionRegistrationData({ refreshTrigger1: refreshTrigger });
+    const { eventName } = route.params || {};
 
 
     const userId = useSelector(selectCurrentUserId);
     const {eventId} = useActiveEvent();
 
+    const { attendees, isLoading, error, fetchData} = useFetchSessionAttendeeList(userId, eventId);
+
+    const ratio = capacity > 0 ? (totalCheckedIn / capacity) * 100 : 0;
+
     useFocusEffect(
       React.useCallback(() => {
-        fetchAttendeeList();
+        fetchData();
       }, [userId, eventId])
     );
-
-
-
-    const fetchAttendeeList = async () => {
-      if (!userId || !eventId) {return;}
-      try {
-        setError(false);
-        setIsLoading(true);
-        const response = await fetchAttendeesList(userId, eventId, undefined, 1);
-        setAttendees(response || []);
-      } catch (err) {
-        console.error('Error fetching session attendees', err);
-        setError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    useEffect(() => {
-      fetchAttendeeList();
-    }, [userId, eventId]);
-
 
 
     const handleRefresh = async () => {
       try {
         setRefreshing(true);
-        await fetchAttendeeList();
+        await fetchData();
+        await setRefreshTrigger(prev => prev + 1);
       } finally {
         setRefreshing(false);
       }
     };
 
 
-    // Navigate back
-    const handleGoBack = () => {
-      navigation.goBack();
-    };
-
-    // sessiion list fetch
-
-      if (isLoading) {
-        return <LoadingView />;
-      }
-
-      if (error) {return <ErrorView handleRetry={fetchAttendeeList} />;}
-/*
-  if (attendees.length === 0) {return <EmptyView handleRetry={fetchAttendeeList} />;} */
 
 
   return (
-    <View style={[globalStyle.backgroundWhite, styles.container]}>
+    <View style={[globalStyle.backgroundWhite]}>
       <HeaderComponent
         title={eventName}
         color={colors.darkGrey}
         handlePress={() => navigation.goBack()}
         backgroundColor={'white'}
       />
-      <View style={globalStyle.container}>
-      {/* <Search value={''} onChange={undefined} /> */}
-      <SessionStats scannedCount={scannedCount} totalCount={capacity} />
-      <ProgressBar progress={ratio} />
-      <FlatList
-          data={attendees}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <ListItem item={item} />}
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          contentContainerStyle={
-            attendees.length === 0
-              ? { flexGrow: 1, minHeight: 500 } //
-              : undefined
-          }
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>Aucun participant pour cette session.</Text>
-            </View>
-          }
-        />
-
+      <View style={styles.container}>
+      <SessionListAttendee
+        searchQuery={''}
+        ratio={ratio}
+        capacity={capacity}
+        totalCheckedIn={totalCheckedIn}
+        attendees={attendees}
+        isLoading={isLoading}
+        error={error}
+        handleRefresh={handleRefresh}
+        refreshing= {refreshing}
+      />
       </View>
     </View>
   );
@@ -131,7 +80,8 @@ const SessionAttendeesListScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'flex-start',
+    flex: 1,
+    paddingHorizontal: 20,
   },
   emptyContainer: {
     flex: 1,

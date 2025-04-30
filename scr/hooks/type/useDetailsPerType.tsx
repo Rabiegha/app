@@ -1,10 +1,10 @@
 // useLiveData.js
 
 import {useState, useEffect} from 'react';
-import {fetchDetailsByType} from '../../services/detailsPerTypeService';
 import {useEvent} from '../../context/EventContext';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
+import { fetchDetailsByType } from '../../services/getDetailsPerTypeService';
 
 const useDetailsPerType = () => {
   const [details, setDetails] = useState({

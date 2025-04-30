@@ -16,6 +16,7 @@ export const fetchAttendeesList = async (
       attendee_id: attendeeId,
     });
 
+
     if (attendeeStatus){
       params.attendee_status = attendeeStatus;
     }

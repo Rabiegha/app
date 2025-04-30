@@ -10,13 +10,13 @@ import {
   Image,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import colors from '../../../assets/colors/colors';
-import {useEvent} from '../../../context/EventContext';
+import colors from '../../../../assets/colors/colors';
+import {useEvent} from '../../../../context/EventContext';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import Accepted from '../../../assets/images/icons/Accepted.png';
+import Accepted from '../../../../assets/images/icons/Accepted.png';
 import {useSelector, useDispatch} from 'react-redux';
-import usePrintDocument from '../../../hooks/print/usePrintDocument';
-import { ListItemProps } from '../../../types/listItem.types';
+import usePrintDocument from '../../../../hooks/print/usePrintDocument';
+import { ListItemProps } from '../../../../types/listItem.types';
 
 const {width} = Dimensions.get('window');
 let openSwipeableRef = null;
@@ -88,6 +88,7 @@ const ListItem = React.memo(
         badgePdfUrl: item.badge_pdf_url,
         badgeImageUrl: item.badge_image_url,
         attendeeTypeBackgroundColor: item.attendee_type_background_color,
+        attendeeStatusChangeDatetime: item.attendee_status_change_datetime,
       });
     };
 
@@ -218,22 +219,6 @@ const ListItem = React.memo(
     );
 
     return (
-      <Swipeable
-        ref={swipeableRef}
-        renderRightActions={renderRightActions}
-        friction={1}
-        enableTrackpadTwoFingerGesture
-        overshootRight={false}
-        onSwipeableWillOpen={() => {
-          isSwipeOpen.current = true;
-        // Close any previously opened Swipeable
-          if (openSwipeableRef && openSwipeableRef !== swipeableRef.current) {
-            openSwipeableRef.close();
-          }
-          openSwipeableRef = swipeableRef.current;
-          onSwipeableOpen?.(swipeableRef);
-        }}
-        >
         <TouchableWithoutFeedback onPress={handleItemPress} accessible={false}>
           <View style={styles.listItemContainer}>
             {/* Main Content */}
@@ -258,21 +243,10 @@ const ListItem = React.memo(
                   styles.attendeeTypeIndicator,
                   {backgroundColor: item.attendee_type_background_color || colors.grey}
                 ]}>
-                  {/* Check icon */}
-                  {isCheckedIn ? (
-                    <Image
-                      source={Accepted}
-                      resizeMode="contain"
-                      style={styles.checkedIconInsideIndicator}
-                    />
-                  ) : (
-                    <View style={styles.emptyIconSpace} />
-                  )}
               </View>
               )}
           </View>
         </TouchableWithoutFeedback>
-      </Swipeable>
     );
   }
 );

@@ -13,17 +13,20 @@ import {navigationRef} from './scr/navigation/RootNavigation';
 import AppProviders from './AppProviders';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './scr/app/toastConfig';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 function App() {
   return (
-    <AppProviders>
-      <NavigationContainer ref={navigationRef}>
-        <GestureHandlerRootView style={{flex: 1}}>
-          <AppNavigator />
-        </GestureHandlerRootView>
-      </NavigationContainer>
-      <Toast config={toastConfig} />
-    </AppProviders>
+    <SafeAreaProvider>
+      <AppProviders>
+        <NavigationContainer ref={navigationRef}>
+          <GestureHandlerRootView style={{flex: 1}}>
+            <AppNavigator />
+          </GestureHandlerRootView>
+        </NavigationContainer>
+        <Toast config={toastConfig} />
+      </AppProviders>
+    </SafeAreaProvider>
   );
 }
 

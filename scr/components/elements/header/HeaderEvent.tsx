@@ -1,21 +1,27 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet, Platform} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../../../assets/colors/colors';
-import SmallButton from '../buttons/SmallButton';
 import retourIcon from '../../../assets/images/icons/Retour.png';
 import logOutIcon from '../../../assets/images/icons/Log-out.png';
 
-const HeaderEvent = ({onLeftPress, onRightPress, opacity}) => {
+const HeaderEvent = ({ onLeftPress, onRightPress, opacity = 1 }) => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.headerContainer}>
+    <View style={[styles.headerContainer, { paddingTop: insets.top + 12 }]}>
       <TouchableOpacity
         onPress={onLeftPress}
-        style={[styles.backButton, {opacity: opacity}]}>
-        <Image source={retourIcon} style={styles.buttonImageBlack} />
+        style={[styles.button, { opacity }]}
+      >
+        <Image source={retourIcon} style={styles.backButtonImage} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onRightPress} style={styles.backButton}>
-        <Image source={logOutIcon} style={styles.buttonImage} />
+
+      <TouchableOpacity
+        onPress={onRightPress}
+        style={styles.button}
+      >
+        <Image source={logOutIcon} style={styles.logoutButtonImage} />
       </TouchableOpacity>
     </View>
   );
@@ -23,31 +29,26 @@ const HeaderEvent = ({onLeftPress, onRightPress, opacity}) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    top: Platform.OS === 'ios' ? 50 : 25,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 20,
-    paddingTop: 12,
-    position: 'relative',
-    maxHeight: 60,
+    paddingHorizontal: 20,
+    backgroundColor: 'white', // Ajouté pour éviter la transparence si nécessaire
     height: 80,
     zIndex: 10,
   },
-  backButton: {
+  button: {
     padding: 10,
   },
-  buttonImage: {
-    width: 23,
-    height: 23,
-    tintColor: colors.red,
-    zIndex: 2,
-  },
-  buttonImageBlack: {
+  backButtonImage: {
     width: 15,
     height: 23,
     tintColor: colors.green,
-    zIndex: 2,
+  },
+  logoutButtonImage: {
+    width: 23,
+    height: 23,
+    tintColor: colors.red,
   },
 });
 

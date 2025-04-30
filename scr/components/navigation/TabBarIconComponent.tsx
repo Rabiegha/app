@@ -1,32 +1,24 @@
 import React from 'react';
-import {
-  View,
-  Image,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import colors from '../../assets/colors/colors';
 
-export function TabBarIcon({icon, label, focused, height, width}) {
+export function TabBarIcon({ icon, label, focused, height = 24, width = 24 }) {
   return (
-    <View style={styles.navBarIcons}>
+    <View style={styles.container}>
       <Image
         source={icon}
         resizeMode="contain"
-        style={{
-          tintColor: focused ? colors.green : colors.greyCream,
-          height: height,
-          width: width,
-        }}
+        style={[
+          styles.icon,
+          {
+            tintColor: focused ? colors.green : colors.greyCream,
+            height,
+            width,
+          }
+        ]}
       />
       {label ? (
-        <Text
-          style={[
-            styles.label,
-            {color: focused ? colors.green : colors.greyCream},
-          ]}>
+        <Text style={[styles.label, { color: focused ? colors.green : colors.greyCream }]}>
           {label}
         </Text>
       ) : null}
@@ -35,12 +27,15 @@ export function TabBarIcon({icon, label, focused, height, width}) {
 }
 
 const styles = StyleSheet.create({
-  navBarIcons: {
+  container: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
+  },
+  icon: {
+    marginBottom: 2,
   },
   label: {
-    fontSize: 8,
+    fontSize: 10,
+    marginTop: 2,
   },
 });

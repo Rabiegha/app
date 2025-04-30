@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 15,
-    fontWeight: '300',
+    fontWeight: '400',
+    color: colors.darkGrey,
   },
 });
 

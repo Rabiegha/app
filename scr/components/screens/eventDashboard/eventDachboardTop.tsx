@@ -3,11 +3,14 @@ import React from 'react';
 import colors from '../../../assets/colors/colors';
 import EventImage from '../../../assets/images/user.png';
 
-const EventDachboardTopComponent = ({eventName, eventDetails}) => {
+const EventDachboardTopComponent = ({eventImage, eventName, eventDetails}) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image source={EventImage} style={styles.image} />
+        <Image source={
+                eventImage
+                ? {uri: eventImage} 
+                : EventImage} style={styles.image} />
       </View>
       <Text style={styles.title}>{eventName}</Text>
       <Text style={styles.text}>{eventDetails}</Text>
