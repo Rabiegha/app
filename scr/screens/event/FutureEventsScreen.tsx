@@ -40,7 +40,7 @@ const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
 
   if (events) {
     if (events.length === 0) {
-      return <EmptyView handleRetry={handleRetry}/>;
+      return <EmptyView handleRetry={handleRetry} text={undefined}/>;
     }
   }
 
