@@ -219,22 +219,6 @@ const ListItem = React.memo(
     );
 
     return (
-      <Swipeable
-        ref={swipeableRef}
-        renderRightActions={renderRightActions}
-        friction={1}
-        enableTrackpadTwoFingerGesture
-        overshootRight={false}
-        onSwipeableWillOpen={() => {
-          isSwipeOpen.current = true;
-        // Close any previously opened Swipeable
-          if (openSwipeableRef && openSwipeableRef !== swipeableRef.current) {
-            openSwipeableRef.close();
-          }
-          openSwipeableRef = swipeableRef.current;
-          onSwipeableOpen?.(swipeableRef);
-        }}
-        >
         <TouchableWithoutFeedback onPress={handleItemPress} accessible={false}>
           <View style={styles.listItemContainer}>
             {/* Main Content */}
@@ -259,21 +243,10 @@ const ListItem = React.memo(
                   styles.attendeeTypeIndicator,
                   {backgroundColor: item.attendee_type_background_color || colors.grey}
                 ]}>
-                  {/* Check icon */}
-                  {isCheckedIn ? (
-                    <Image
-                      source={Accepted}
-                      resizeMode="contain"
-                      style={styles.checkedIconInsideIndicator}
-                    />
-                  ) : (
-                    <View style={styles.emptyIconSpace} />
-                  )}
               </View>
               )}
           </View>
         </TouchableWithoutFeedback>
-      </Swipeable>
     );
   }
 );
