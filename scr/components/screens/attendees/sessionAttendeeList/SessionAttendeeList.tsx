@@ -14,6 +14,7 @@ import ErrorView from '../../../elements/view/ErrorView.tsx';
 import SessionStats from '../../sessionAttendeeList/SessionStatsComponent.tsx';
 import ProgressBar from '../../../elements/progress/ProgressBar.tsx';
 import colors from '../../../../assets/colors/colors.tsx';
+import BaseFlatList from '../../../elements/list/BaseFlatList.tsx';
 
 type Props = {
   searchQuery: string;
@@ -33,39 +34,27 @@ const SessionListAttendee = forwardRef<ListHandle, Props>(({ handleRefresh, capa
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1 }}>
         <LoadingView />
-      </View>
     );
   }
 
   if (error) {return(
-    <View style={{ flex: 1 }}>
       <ErrorView handleRetry={handleRefresh} />
-    </View> );}
+    );}
+
 
 
   return (
     <View style={styles.list}>
       <SessionStats scannedCount={totalCheckedIn} totalCount={capacity} />
             <ProgressBar progress={ratio} />
-            <FlatList
+            <BaseFlatList
                 data={attendees}
-                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => <ListItem item={item} />}
+                keyExtractor={item => item.id.toString()}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                contentContainerStyle={{
-                  paddingBottom: 250, // 🟢 Important for scrolling above bottom navbar
-                  flexGrow: attendees.length === 0 ? 1 : undefined,
-                  minHeight: attendees.length === 0 ? 500 : undefined,
-                }}
-                ListEmptyComponent={
-                  <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>Aucun participant pour cette session.</Text>
-                  </View>
-                }
-              />
+                />
     </View>
   );
 });
