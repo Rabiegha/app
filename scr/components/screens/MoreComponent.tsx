@@ -80,11 +80,9 @@ const MoreComponent = ({
         <LabelValueComponent
           label="Job Title:"
           value={JobTitle ? JobTitle : '-'} value2={undefined}        />
-        {parsedAttendeeStatus === 1 && (
           <LabelValueComponent
             label="Date de check-in:"
-            value={attendeeStatusChangeDatetime || '-'} value2={undefined}          />
-        )}
+            value={parsedAttendeeStatus ? attendeeStatusChangeDatetime : '-'} value2={undefined}    />
         </View>
       {/*<Text>Status: {attendeeStatus}</Text> */}
         {parsedAttendeeStatus == 0 ? (
