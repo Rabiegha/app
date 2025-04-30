@@ -5,7 +5,7 @@ import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import { useActiveEvent } from '../../utils/event/useActiveEvent';
 import { fetchAttendeesList } from '../../services/getAttendeesListService';
 
-const useFetchAttendeeDetails = (refreshTrigger: number, attendee_id: string) => {
+const useFetchAttendeeDetails = (refreshTrigger: number, attendeeId: string) => {
   const [attendeeDetails, setAttendeeDetails] = useState({
     Type: '-',
     Nom: '-',
@@ -24,14 +24,14 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendee_id: string) =>
   const { eventId } = useActiveEvent();
 
   const fetchDetails = useCallback(async () => {
-    if (!userId || !eventId || !attendee_id) return;
+    if (!userId || !eventId || !attendeeId) return;
 
     try {
       setLoading(true);
-      const response = await fetchAttendeesList(userId, eventId, attendee_id);
+      const attendees = await fetchAttendeesList(userId, eventId, attendeeId);
 
-      if (response?.status && Array.isArray(response.event_attendee_details)) {
-        const attendee = response.event_attendee_details[0];
+      if (Array.isArray(attendees) && attendees.length > 0) {
+        const attendee = attendees[0];
 
         if (attendee) {
           setAttendeeDetails({
@@ -42,7 +42,7 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendee_id: string) =>
             Telephone: attendee.phone || '-',
             Entreprise: attendee.organization || '-',
             JobTitle: attendee.designation || '-',
-            attendeeStatusChangeDatetime: attendee.nice_attendee_status_change_datetime || '',
+            attendeeStatusChangeDatetime: attendee.nice_attendee_status_change_datetime || '-',
           });
           setError(null);
         } else {
@@ -56,10 +56,13 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendee_id: string) =>
     } finally {
       setLoading(false);
     }
-  }, [userId, eventId, attendee_id]);
+  }, [userId, eventId, attendeeId]);
 
   useEffect(() => {
     fetchDetails();
+    console.log('Params attendeeId:', attendeeId, eventId);
+    console.log('Fetched details:', attendeeDetails);
+
   }, [fetchDetails]);
 
   useEffect(() => {
