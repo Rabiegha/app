@@ -59,6 +59,7 @@ const ScanComponent = () => {
     const unsubscribe = navigation.addListener('focus', () => {
       resetScanner();
     });
+    console.log('isSession', isSession)
     return unsubscribe;
   }, [navigation]);
 
@@ -155,7 +156,7 @@ const ScanComponent = () => {
         // Garder le modal ouvert pour afficher le succès
         setTimeout(() => {
           resetScanner();
-          navigation.navigate('Attendees');
+          navigation.navigate('AttendeesList');
         }, 2000); // 2 secondes pour afficher le message
       } else if (printStatus === 'Error printing') {
         console.log('Print encountered an error.');
@@ -180,14 +181,26 @@ const ScanComponent = () => {
     navigation.goBack();
   };
 
+  const headerStyles = isSession
+  ? {
+      backgroundColor: colors.cyan,
+      color: colors.greyCream,
+      leftButtonTintColor: colors.greyCream,
+    }
+  : {
+      backgroundColor: 'white',
+      color: colors.darkGrey,
+      leftButtonTintColor: colors.green,
+    };
+
   return (
     <View style={styles.container}>
       <MainHeader
-        color={colors.greyCream}
-        onLeftPress={handleBackPress}
-        leftButtonTintColor={colors.greyCream}
-        backgroundColor={colors.green}
         title="Scan QR Code"
+        onLeftPress={handleBackPress}
+        backgroundColor={headerStyles.backgroundColor}
+        color={headerStyles.color}
+        leftButtonTintColor={headerStyles.leftButtonTintColor}
       />
       <RNCamera
         ref={cameraRef}
