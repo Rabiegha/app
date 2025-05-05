@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import axios from 'axios';
 import Share from 'react-native-share';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import MoreComponent from '../../components/screens/MoreComponent';
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
@@ -18,6 +17,7 @@ import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import LoadingView from '../../components/elements/view/LoadingView';
 import ErrorView from '../../components/elements/view/ErrorView';
 import { useFocusEffect } from '@react-navigation/native';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 const MoreScreen = ({ route, navigation }) => {
   const { triggerListRefresh, updateAttendee } = useEvent();
@@ -142,10 +142,10 @@ const MoreScreen = ({ route, navigation }) => {
 
   return (
     <View style={globalStyle.backgroundWhite}>
-      <HeaderComponent
-        title={'Profil'}
-        handlePress={handleBackPress}
+      <MainHeader
         color={colors.darkGrey}
+        onLeftPress={handleBackPress}
+        title="Profil"
       />
       <View style={[globalStyle.container, styles.profil]}>
         <PrintModal

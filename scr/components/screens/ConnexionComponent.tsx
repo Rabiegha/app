@@ -24,7 +24,6 @@ const ConnexionComponent = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [success, setSuccess] = useState(null);
-  const {isDemoMode, toggleDemoMode} = useContext(AuthContext);
 
   return (
     <ScrollView

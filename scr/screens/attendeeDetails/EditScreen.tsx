@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
-import HeaderComponent from '../../components/elements/header/HeaderComponent.tsx';
 import {useFocusEffect} from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle.tsx';
 import {useEvent} from '../../context/EventContext.tsx';
@@ -13,6 +12,7 @@ import useAttendeeTypeDropdown from '../../hooks/type/useAttendeeTypesDropdown.t
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors.tsx';
 import Spinner from 'react-native-loading-spinner-overlay';
+import MainHeader from '../../components/elements/header/MainHeader.tsx';
 
 const EditScreen = ({navigation, route}) => {
   useFocusEffect(
@@ -173,11 +173,10 @@ const EditScreen = ({navigation, route}) => {
 
   return (
     <View style={globalStyle.backgroundWhite}>
-      <HeaderComponent
-        title="Modifier"
+      <MainHeader
         color={colors.darkGrey}
-        handlePress={handleGoBack}
-        backgroundColor={'white'}
+        onLeftPress={handleGoBack}
+        title="Modifier"
       />
       {success === true && (
         <SuccessComponent

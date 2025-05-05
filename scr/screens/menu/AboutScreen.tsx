@@ -1,12 +1,14 @@
 import React from 'react';
 import {View, StyleSheet, Linking} from 'react-native';
 import MenuListComponent from '../../components/screens/MenuListComponent';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
-import WebView from 'react-native-webview';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 const AboutScreen = ({navigation}) => {
+  const goBack = () => {
+    navigation.goBack();
+  };
   const sections = [
     {
       title: 'Menu',
@@ -45,11 +47,13 @@ const AboutScreen = ({navigation}) => {
 
   return (
     <View style={globalStyle.backgroundBlack}>
-      <HeaderComponent
+
+      <MainHeader
         title={'À propos'}
+        onLeftPress={goBack}
+        backgroundColor={colors.darkGrey}
         color={colors.greyCream}
-        handlePress={() => navigation.goBack()}
-      />
+        />
       <View style={globalStyle.container}>
         <View style={{top: 60}}>
           <MenuListComponent sections={sections} />

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View  } from 'react-native';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
 import { useNavigation } from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle';
@@ -13,6 +12,7 @@ import useSessionRegistrationData from '../../hooks/registration/useSessionRegis
 import useFetchSessionAttendeeList from '../../hooks/attendee/useFetchSessionAttendeeList';
 import SessionListAttendee from '../../components/screens/attendees/sessionAttendeeList/SessionAttendeeList';
 import refreshIcon from '../../assets/images/icons/refresh.png';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 
 
@@ -51,17 +51,18 @@ const SessionAttendeesListScreen = () => {
       }
     };
 
-
+    const handleGoBack = () => {
+      navigation.goBack();
+    };
 
 
   return (
     <View style={[globalStyle.backgroundWhite]}>
-      <HeaderComponent
+      <MainHeader
         title={eventName}
-        color={colors.darkGrey}
-        handlePress={() => navigation.goBack()}
-        backgroundColor={'white'}
+        onLeftPress={handleGoBack}
       />
+      
       <View style={styles.container}>
       {/* 🔁 Bouton de reload */}
       <TouchableOpacity style={styles.imageContainee} onPress={handleRefresh}>

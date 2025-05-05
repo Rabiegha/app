@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import {useEvent} from '../../context/EventContext';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import PrintersList from '../../components/screens/print/PrintersListComponent';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 const PrintersListScreen = ({route, navigation}) => {
   const handleGoBack = () => {
@@ -13,10 +13,9 @@ const PrintersListScreen = ({route, navigation}) => {
   const {triggerListRefresh} = useEvent();
   return (
     <View style={globalStyle.backgroundWhite}>
-      <HeaderComponent
+      <MainHeader
         title={'Imprimantes'}
-        handlePress={handleGoBack}
-        color={colors.darkGrey}
+        onLeftPress={handleGoBack}
       />
       <View style={globalStyle.container}>
         <PrintersList

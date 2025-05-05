@@ -13,7 +13,7 @@ import MainAttendeeListItem, { ListHandle } from '../../components/screens/atten
 import ProgressBar from '../../components/elements/progress/ProgressBar';
 import ProgressText from '../../components/elements/progress/ProgressionText';
 import { useNavigation } from '@react-navigation/native';
-import HeaderParticipants from '../../components/elements/header/HeaderParticipant';
+import MainHeader from '../../components/elements/header/MainHeader';
 import { useEvent } from '../../context/EventContext';
 import Search from '../../components/elements/Search';
 import FiltreComponent from '../../components/filtre/FiltreComponent';
@@ -24,6 +24,7 @@ import PrintModal from '../../components/elements/modals/PrintModal';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
 import refreshIcon from '../../assets/images/icons/refresh.png';
 import colors from '../../assets/colors/colors';
+import Filtre from '../../assets/images/icons/Filtre.png';
 
 const defaultFilterCriteria = {
   status: 'all',
@@ -91,10 +92,11 @@ const AttendeeListScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={{ flex: 1 }}>
         <View style={styles.headerWrapper}>
-          <HeaderParticipants
+          <MainHeader
             onLeftPress={handleLeftPress}
             onRightPress={openModal}
-            Title={eventName}
+            RightIcon={Filtre}
+            title={eventName}
           />
         </View>
         <View style={styles.mainContent}>

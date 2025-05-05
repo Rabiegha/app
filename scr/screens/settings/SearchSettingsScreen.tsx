@@ -1,11 +1,11 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomSwitch from '../../components/elements/Switch';
 import { setSearchByCompanyMode } from '../../redux/slices/searchModeSlice';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 const SearchSettingsScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -16,14 +16,18 @@ const SearchSettingsScreen = ({navigation}) => {
         dispatch(setSearchByCompanyMode(!isSearchByCompanyMode));
         console.log('Auto Print mis à jour:', !isSearchByCompanyMode);
       };
+      const handleGoBack = () => {
+        navigation.goBack();
+      };
 
 
   return (
     <View style={globalStyle.backgroundBlack}>
-      <HeaderComponent
+      <MainHeader
         title={'Paramètres de recherche'}
+        onLeftPress={handleGoBack}
+        backgroundColor={colors.darkGrey}
         color={colors.greyCream}
-        handlePress={() => navigation.goBack()}
       />
       <View style={globalStyle.container}>
         <View style={{top: 60}}>

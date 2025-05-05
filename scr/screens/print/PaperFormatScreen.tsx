@@ -1,8 +1,8 @@
 import {View, Text} from 'react-native';
 import React from 'react';
 import {PaperFormatComponent} from '../../components/screens/print/PaperFormatComponent';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import globalStyle from '../../assets/styles/globalStyle';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 const PaperFormat = ({route, navigation}) => {
   const handleGoBack = () => {
@@ -10,11 +10,9 @@ const PaperFormat = ({route, navigation}) => {
   };
   return (
     <View style={globalStyle.backgroundWhite}>
-      <HeaderComponent
+      <MainHeader
         title={'Format du papier'}
-        handlePress={handleGoBack}
-        color={colors.darkGrey}
-        backgroundColor={undefined}
+        onLeftPress={handleGoBack}
       />
       <View style={globalStyle.container}>
         <PaperFormatComponent />

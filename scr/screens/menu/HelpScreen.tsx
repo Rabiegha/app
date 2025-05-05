@@ -3,9 +3,12 @@ import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 const HelpScreen = ({navigation}) => {
+  const goBack = () => {
+    navigation.goBack();
+  };
   const sections = [
     {
       title: 'Menu',
@@ -28,10 +31,11 @@ const HelpScreen = ({navigation}) => {
 
   return (
     <View style={globalStyle.backgroundBlack}>
-      <HeaderComponent
-        title={'Centre d’aide'}
-        color={colors.greyCream}
-        handlePress={() => navigation.goBack()}
+      <MainHeader
+      title={'Centre d’aide'}
+      onLeftPress={goBack}
+      backgroundColor={colors.darkGrey}
+      color={colors.greyCream}
       />
       <View style={[globalStyle.container, styles.wrapper]}>
         <View>

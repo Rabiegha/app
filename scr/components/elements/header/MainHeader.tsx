@@ -3,20 +3,23 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../../../assets/colors/colors';
 import Retour from '../../../assets/images/icons/Retour.png';
-import Filtre from '../../../assets/images/icons/Filtre.png';
 
-const HeaderParticipants = ({ onLeftPress, Title, onRightPress }) => {
+const MainHeader = ({ onLeftPress, title, onRightPress, RightIcon = null, backgroundColor = 'white', color = colors.darkGrey, leftButtonTintColor = colors.green }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
+    <View style={[styles.headerContainer, { paddingTop: insets.top, backgroundColor}]}>
       <TouchableOpacity onPress={onLeftPress} style={styles.backButton}>
-        <Image source={Retour} style={styles.buttonImage} />
+        <Image source={Retour} style={[styles.leftButton, {tintColor: leftButtonTintColor}]} />
       </TouchableOpacity>
-      <Text style={styles.Title}>{Title}</Text>
-      <TouchableOpacity onPress={onRightPress} style={styles.backButton}>
-        <Image source={Filtre} style={styles.buttonImageBlack} />
-      </TouchableOpacity>
+      <Text style={[styles.Title, {color: color}]}>{title}</Text>
+      {RightIcon ? (
+        <TouchableOpacity onPress={onRightPress} style={styles.backButton}>
+          <Image source={RightIcon} style={styles.rightButton} />
+        </TouchableOpacity>
+      ) : (
+        <View style={{ width: 40 }} />
+      )}
     </View>
   );
 };
@@ -29,7 +32,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
     zIndex: 10,
-    backgroundColor: 'white',
+    height: 80,
   },
   backButton: {
     padding: 10,
@@ -42,16 +45,16 @@ const styles = StyleSheet.create({
     color: colors.darkGrey,
     height: 'auto',
   },
-  buttonImage: {
+  leftButton: {
     width: 15,
     height: 23,
     tintColor: colors.green,
   },
-  buttonImageBlack: {
+  rightButton: {
     tintColor: colors.darkGrey,
     width: 20,
     height: 20,
   },
 });
 
-export default HeaderParticipants;
+export default MainHeader;

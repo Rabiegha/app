@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import HeaderComponent from '../elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import FiltreDetailsComponent from './FiltreDetailsComponent';
 import RedBorderButton from '../elements/buttons/RedBorderButton'; // assume we can override styles
+import MainHeader from '../elements/header/MainHeader';
 
 const FiltreComponent = ({
   initialFilter,
@@ -26,10 +26,11 @@ const FiltreComponent = ({
 
   return (
     <View style={[styles.rootContainer, globalStyle.backgroundBlack]}>
-      <HeaderComponent
-        title={'Filtre'}
+      <MainHeader
         color={colors.greyCream}
-        handlePress={onCancel}
+        onLeftPress={onCancel}
+        title={'Filtre'}
+        backgroundColor= {colors.darkGrey}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContainer} nestedScrollEnabled

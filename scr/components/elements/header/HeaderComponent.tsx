@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 100, // Fixe mais sera "décalé" proprement avec paddingTop dynamique
     paddingHorizontal: 20,
   },
   backButton: {

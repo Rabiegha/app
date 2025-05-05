@@ -4,27 +4,25 @@ import {useEvent} from '../../context/EventContext';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import PrintComponent from '../../components/screens/print/PrintComponent';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
+import MainHeader from '../../components/elements/header/MainHeader';
 
-const ProfilScreen = ({route, navigation}) => {
-  const handleGoBack = () => {
-    navigation.navigate('Attendees');
+const PrintScreen = ({route, navigation}) => {
+  const handleBackPress = () => {
+    navigation.goBack();
   };
-  const {triggerListRefresh} = useEvent();
+
   return (
     <View style={globalStyle.backgroundWhite}>
-      <HeaderComponent
-        title={'Paramètres d’impression'}
-        handlePress={handleGoBack}
-        color={colors.darkGrey}
-        backgroundColor={undefined}
+      <MainHeader
+        onLeftPress={handleBackPress}
+        title="Paramètres d’impression"
       />
       <View style={globalStyle.container}>
         <PrintComponent
           firstName={undefined}
           lastName={undefined}
           email={undefined}
-          navigateBack={handleGoBack}
+          navigateBack={handleBackPress}
         />
       </View>
     </View>
@@ -47,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfilScreen;
+export default PrintScreen;

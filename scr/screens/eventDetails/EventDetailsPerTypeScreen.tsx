@@ -6,13 +6,13 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import HeaderComponent from '../../components/elements/header/HeaderComponent.tsx';
 import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle.tsx';
 import colors from '../../assets/colors/colors.tsx';
 import EventDetailsPerTypeComponent from '../../components/screens/EventDetailsPerTypeComponent.tsx';
 import useDetailsPerType from '../../hooks/type/useDetailsPerType.tsx';
 import PieChart from 'react-native-pie-chart';
+import MainHeader from '../../components/elements/header/MainHeader.tsx';
 
 const widthAndHeight = 230;
 
@@ -57,12 +57,10 @@ const EventDetailsPerTypeScreen = ({route}) => {
 
   return (
     <View style={globalStyle.backgroundWhite}>
-      <HeaderComponent
-        title="Details"
-        color={colors.darkGrey}
-        handlePress={goBack}
-        backgroundColor={'white'}
-      />
+      <MainHeader
+        title={'Details'}
+        onLeftPress={goBack}
+        />
       <ScrollView
         style={styles.screenWrapper}
         contentContainerStyle={{flexGrow: 1}}>

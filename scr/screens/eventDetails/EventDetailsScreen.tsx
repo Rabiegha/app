@@ -1,11 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {ActivityIndicator, StatusBar, Text, View} from 'react-native';
-import HeaderComponent from '../../components/elements/header/HeaderComponent.tsx';
 import {useNavigation} from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle.tsx';
-import colors from '../../assets/colors/colors.tsx';
 import EventDetailsComponent from '../../components/screens/EventDetailsComponent.tsx';
 import useRegistrationData from '../../hooks/registration/useRegistrationData.tsx';
+import MainHeader from '../../components/elements/header/MainHeader.tsx';
 
 const EventDetailsScreen = () => {
   const navigation = useNavigation();
@@ -42,12 +41,10 @@ const EventDetailsScreen = () => {
 
   return (
     <View style={globalStyle.backgroundWhite}>
-      <HeaderComponent
-        title="Details"
-        color={colors.darkGrey}
-        handlePress={goBack}
-        backgroundColor={'white'}
-      />
+      <MainHeader
+        title={'Details'}
+        onLeftPress={goBack}
+        />
       <View style={globalStyle.container}>
         {loading ? (
           <ActivityIndicator size="large" color="#00ff00" />

@@ -52,7 +52,7 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [openSwipeable, setOpenSwipeable] = useState(null);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
-  const simulateEmpty = true;
+  const simulateEmpty = false;
 
   const isSearchByCompanyMode = true;
   const deferredQuery = useDeferredValue(debouncedSearchQuery);

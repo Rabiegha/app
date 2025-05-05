@@ -4,13 +4,13 @@ import {View, StyleSheet, StatusBar, ScrollView} from 'react-native';
 import colors from '../../assets/colors/colors';
 import LogOutButton from '../../components/elements/buttons/LogOutButton';
 import {CommonActions, useFocusEffect, useNavigation} from '@react-navigation/native';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import globalStyle from '../../assets/styles/globalStyle';
 import MenuListComponent from '../../components/screens/MenuListComponent';
 import {AuthContext} from '../../context/AuthContext';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { logoutThunk } from '../../redux/thunks/auth/logoutThunk';
 import { useDispatch } from 'react-redux';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 const MenuScreen = ({}) => {
   const {isLoading, logout} = useContext(AuthContext);
@@ -61,13 +61,18 @@ const MenuScreen = ({}) => {
     );
   };
 
+  const goBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={globalStyle.backgroundBlack}>
       <Spinner visible={isLoading} />
-      <HeaderComponent
+      <MainHeader
         title={'Outils'}
+        onLeftPress={goBack}
+        backgroundColor={colors.darkGrey}
         color={colors.greyCream}
-        handlePress={() => navigation.navigate('Attendees')}
       />
       {/* Wrap the content in a ScrollView */}
       <ScrollView style={globalStyle.container}>

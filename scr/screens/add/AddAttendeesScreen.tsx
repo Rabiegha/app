@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
 import AddAttendeesComponent from '../../components/screens/AddAttendeesComponent';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import {useFocusEffect} from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle';
 import {useEvent} from '../../context/EventContext';
@@ -13,6 +12,7 @@ import useAttendeeTypeDropdown from '../../hooks/type/useAttendeeTypesDropdown';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 const AddAttendeesScreen = ({navigation}) => {
   useFocusEffect(
@@ -149,11 +149,10 @@ const AddAttendeesScreen = ({navigation}) => {
 
   return (
     <View style={[globalStyle.backgroundWhite, styles.wrap]}>
-      <HeaderComponent
-        title="Ajouter"
+      <MainHeader
         color={colors.darkGrey}
-        handlePress={handleGoBack}
-        backgroundColor={'white'}
+        onLeftPress={handleGoBack}
+        title="Ajouter"
       />
 
       {success === true && (

@@ -4,7 +4,6 @@ import React, {useState, useEffect, useRef} from 'react';
 import {Text, View, StyleSheet, Animated} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {RNCamera} from 'react-native-camera';
-import HeaderComponent from '../elements/header/HeaderComponent';
 import colors from '../../assets/colors/colors';
 import {useEvent} from '../../context/EventContext';
 import CustomMarker from '../elements/CustomMarker';
@@ -19,6 +18,7 @@ import {
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 import { useFocusEffect } from '@react-navigation/native';
 import { useActiveEvent } from '../../utils/event/useActiveEvent';
+import MainHeader from '../elements/header/MainHeader';
 
 const ScanComponent = () => {
   const navigation = useNavigation();
@@ -182,11 +182,12 @@ const ScanComponent = () => {
 
   return (
     <View style={styles.container}>
-      <HeaderComponent
-        title="Scan QR Code"
+      <MainHeader
         color={colors.greyCream}
-        handlePress={handleBackPress}
-        backgroundColor={'cyan'}
+        onLeftPress={handleBackPress}
+        leftButtonTintColor={colors.greyCream}
+        backgroundColor={colors.green}
+        title="Scan QR Code"
       />
       <RNCamera
         ref={cameraRef}

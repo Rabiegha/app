@@ -1,15 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Platform, StatusBar} from 'react-native';
 import {NavigationContainer, useFocusEffect, useNavigation} from '@react-navigation/native';
-import HeaderEvent from '../../components/elements/header/HeaderEvent';
 import Search from '../../components/elements/Search';
 
 import globalStyle from '../../assets/styles/globalStyle';
 import {useEvent} from '../../context/EventContext';
 import useStatusBarStyle from '../../hooks/useStatusBarStyle';
 import EventDashBoardTabsNavigator from '../../navigation/eventDashBoard/EventDashboardTabs';
-import HeaderComponent from '../../components/elements/header/HeaderComponent';
 import EventDachboardTopComponent from '../../components/screens/eventDashboard/eventDachboardTop';
+import MainHeader from '../../components/elements/header/MainHeader';
 
 const EventDashboardScreen = ({}) => {
   const navigation = useNavigation();
@@ -25,7 +24,9 @@ const EventDashboardScreen = ({}) => {
 
   return (
       <View style={globalStyle.backgroundWhite}>
-        <HeaderComponent handlePress={handlePress} title={undefined} color={undefined} backgroundColor={undefined} />
+        <MainHeader
+        onLeftPress={handlePress}
+        />
         <View style={styles.container}>
           <EventDachboardTopComponent eventName={eventName} eventDetails={eventDetails} eventImage={eventImage} />
         </View>
