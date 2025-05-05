@@ -8,7 +8,7 @@ const MainHeader = ({ onLeftPress, title, onRightPress, RightIcon = null, backgr
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.headerContainer, { paddingTop: insets.top, backgroundColor}]}>
+    <View style={[styles.headerContainer, { paddingTop: insets.top + 12, backgroundColor}]}>
       <TouchableOpacity onPress={onLeftPress} style={styles.backButton}>
         <Image source={Retour} style={[styles.leftButton, {tintColor: leftButtonTintColor}]} />
       </TouchableOpacity>
