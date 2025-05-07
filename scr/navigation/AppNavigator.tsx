@@ -14,6 +14,8 @@ import PastEventsScreen from '../screens/event/PastEventsScreen';
 import TabNavigator from './tabNavigator/TabNavigator';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../redux/selectors/auth/authSelectors';
+import SessionAttendeesListScreen from '../screens/sessionAttendeesList/SessionAttendeesListScreen';
+import SessionScanScreen from '../screens/sessionsScan/SessionScanScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +31,8 @@ function AppNavigator() {
         <Stack.Screen name="Connexion" component={ConnexionScreen} />
       )}
       <Stack.Screen name="Tabs" component={TabNavigator} />
+      <Stack.Screen name="SessionAttendeesList" component={SessionAttendeesListScreen} />
+      <Stack.Screen name="SessionsScanScreen" component={SessionScanScreen} />
       <Stack.Screen name="More" component={MoreScreen} />
       <Stack.Screen name="Edit" component={EditScreen} />
       <Stack.Screen name="Badge" component={BadgeScreen} />

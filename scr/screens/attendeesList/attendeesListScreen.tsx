@@ -77,7 +77,7 @@ const AttendeeListScreen = () => {
   };
 
   const handleTriggerRefresh = () => {
-    setRefreshTrigger(prev => prev + 1);
+    setRefreshTrigger(p => p + 1);
   };
 
   const handleLeftPress = () => {
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     width: 30,
     position: 'absolute',
     right: 25,
-    top: 190,
+    top: 170,
     zIndex: 20,
 
   },
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    paddingTop: 140,
+    paddingTop: 120,
     paddingHorizontal: 20,
   },
 });

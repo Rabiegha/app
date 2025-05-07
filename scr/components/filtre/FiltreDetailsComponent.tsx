@@ -45,11 +45,11 @@ const FiltreDetailsComponent = ({
         ))}
       </View>
 
-      {/* Companies Filter */}
+      {/* Companies Filter 
       <CompaniesFilterComponent
         filterCriteria={filterCriteria}
         setFilterCriteria={setFilterCriteria}
-      />
+      /> */}
     </View>
   );
 };

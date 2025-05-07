@@ -46,12 +46,14 @@ const MoreComponent = ({
           backgroundColor={colors.green}
           tintColor={colors.greyCream}
         />
-        <SmallButton
-          imageSource={EditIcon}
-          pressHandler={modify}
-          backgroundColor={colors.greyCream}
-          tintColor={colors.darkGrey}
-        />
+          {/*  ----  Edit button temporarily disabled  ----  
+          // <SmallButton
+          //   imageSource={EditIcon}
+          //   pressHandler={modify}
+          //   backgroundColor={colors.greyCream}
+          //   tintColor={colors.darkGrey} 
+          // /> */}
+
         <SmallButton
           imageSource={ScanIcon}
           pressHandler={See}

@@ -2,11 +2,11 @@ import AddAttendeesScreen from '../../screens/add/AddAttendeesScreen';
 import PrintScreen from '../../screens/print/PrintScreen';
 import MenuNavigator from './MenuNavigator';
 import EventDashboardStackNavigator from '../eventDashBoard/EventDashboardStack';
-import QRCodeScannerScreen from '../../screens/scan/ScanScreen';
+import MainScanScreen from '../../screens/mainScan/MainScanScreen';
 
 export default [
   {
-    name: 'Attendees',
+    name: 'EventDashboard',
     component: EventDashboardStackNavigator,
     icon: require('../../assets/images/icons/Participant.png'),
     label: 'Participants',
@@ -27,7 +27,7 @@ export default [
   },
   {
     name: 'Scan',
-    component: QRCodeScannerScreen,
+    component: MainScanScreen,
     icon: require('../../assets/images/icons/Scan.png'),
     label: '',
     isMiddle: true,

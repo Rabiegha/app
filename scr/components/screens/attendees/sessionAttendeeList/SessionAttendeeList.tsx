@@ -1,84 +1,77 @@
-import React, {
-  forwardRef,
-} from 'react';
-import {
-  FlatList,
-  StyleSheet,
-  View,
-  Text,
-} from 'react-native';
+import React, { forwardRef } from 'react';
+import { StyleSheet, View } from 'react-native';
+
 import ListItem from './SessionAttendeeListItem.tsx';
 import EmptyView from '../../../elements/view/EmptyView.tsx';
 import LoadingView from '../../../elements/view/LoadingView.tsx';
 import ErrorView from '../../../elements/view/ErrorView.tsx';
 import SessionStats from '../../sessionAttendeeList/SessionStatsComponent.tsx';
 import ProgressBar from '../../../elements/progress/ProgressBar.tsx';
-import colors from '../../../../assets/colors/colors.tsx';
 import BaseFlatList from '../../../elements/list/BaseFlatList.tsx';
+import colors from '../../../../assets/colors/colors.tsx';
 
 type Props = {
   searchQuery: string;
   handleRefresh?: () => void;
-  ratio: any;
-  onShowNotification?: () => void;
-  capacity?: any;
-  totalCheckedIn?:any;
+  refreshing?: boolean;
+  attendees: any[];
+  isLoading: boolean;
+  error: boolean;
+  ratio: number;
+  capacity?: number;
+  totalCheckedIn?: number;
 };
 
 export type ListHandle = {
   handleRefresh: () => void;
 };
 
-const SessionListAttendee = forwardRef<ListHandle, Props>(({ handleRefresh, capacity, ratio, totalCheckedIn, refreshing, attendees, isLoading, error }, ref) => {
+const SessionListAttendee = forwardRef<ListHandle, Props>(
+  ({
+    handleRefresh,
+    refreshing,
+    attendees,
+    isLoading,
+    error,
+    capacity,
+    ratio,
+    totalCheckedIn,
+  }, ref) => {
+    if (isLoading) {
+      return <LoadingView />;
+    }
 
+    if (error) {
+      return <ErrorView handleRetry={handleRefresh} />;
+    }
 
-  if (isLoading) {
     return (
-        <LoadingView />
+      <View style={styles.list}>
+        <SessionStats scannedCount={totalCheckedIn} totalCount={capacity} />
+        <ProgressBar progress={ratio} />
+
+        <BaseFlatList
+          data={attendees}
+          renderItem={({ item }) => <ListItem item={item} />}
+          keyExtractor={(item) => item.id.toString()}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          emptyText="Aucun participant trouvé"
+          ListEmptyComponent={
+            <EmptyView text="Aucun participant trouvé" handleRetry={handleRefresh} />
+          }
+        />
+
+      </View>
     );
   }
-
-  if (error) {return(
-      <ErrorView handleRetry={handleRefresh} />
-    );}
-
-
-
-  return (
-    <View style={styles.list}>
-      <SessionStats scannedCount={totalCheckedIn} totalCount={capacity} />
-            <ProgressBar progress={ratio} />
-            <BaseFlatList
-                data={attendees}
-                renderItem={({ item }) => <ListItem item={item} />}
-                keyExtractor={item => item.id.toString()}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-                />
-    </View>
-  );
-});
+);
 
 const styles = StyleSheet.create({
-  contentContainer: {
-    paddingBottom: 300,
-  },
-  loaderContainer: {
-    paddingVertical: 16,
-    alignItems: 'center',
-    height: '100%',
-  },
-  emptyContainer: {
+  list: {
     flex: 1,
-    alignItems: 'center',
-    height: '100%',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.darkGrey,
-    textAlign: 'center',
+    paddingHorizontal: 10,
   },
 });
 
 export default SessionListAttendee;
-

@@ -14,7 +14,9 @@ const EventDashboarTabsdNavigator = ({searchQuery}) => {
         tabBarActiveTintColor: colors.green,
         tabBarInactiveTintColor: colors.grey,
         tabBarIndicatorStyle: {
-          height: 0,
+          backgroundColor: colors.green,
+          height: 6,
+          borderRadius: 15,
         },
         tabBarStyle: {
           backgroundColor: 'white',
@@ -38,7 +40,7 @@ const EventDashboarTabsdNavigator = ({searchQuery}) => {
         },
       }}>
       <Tab.Screen
-        name="Guest  Lists"
+        name="GuestLists"
         component={AttendeeOverviewScreen}
         initialParams={{ searchQuery }}
       />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View  } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View  } from 'react-native';
 import colors from '../../assets/colors/colors';
 import { useNavigation } from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle';
@@ -13,6 +13,7 @@ import useFetchSessionAttendeeList from '../../hooks/attendee/useFetchSessionAtt
 import SessionListAttendee from '../../components/screens/attendees/sessionAttendeeList/SessionAttendeeList';
 import refreshIcon from '../../assets/images/icons/refresh.png';
 import MainHeader from '../../components/elements/header/MainHeader';
+import ScanIcon from '../../assets/images/icons/Scan.png'
 
 
 
@@ -36,7 +37,7 @@ const SessionAttendeesListScreen = () => {
 
     useFocusEffect(
       React.useCallback(() => {
-        fetchData();
+        handleRefresh();
       }, [userId, eventId])
     );
 
@@ -45,7 +46,7 @@ const SessionAttendeesListScreen = () => {
       try {
         setRefreshing(true);
         await fetchData();
-        await setRefreshTrigger(prev => prev + 1);
+        await setRefreshTrigger(p => p + 1);
       } finally {
         setRefreshing(false);
       }
@@ -55,12 +56,19 @@ const SessionAttendeesListScreen = () => {
       navigation.goBack();
     };
 
+    const handleNavigationToScan = () => {
+      navigation.navigate('SessionsScanScreen');
+    };
+
 
   return (
     <View style={[globalStyle.backgroundWhite]}>
       <MainHeader
-        title={eventName}
+        color={colors.greyCream}
         onLeftPress={handleGoBack}
+        leftButtonTintColor={colors.greyCream}
+        backgroundColor={colors.cyan}
+        title={eventName}
       />
       
       <View style={styles.container}>
@@ -79,6 +87,10 @@ const SessionAttendeesListScreen = () => {
         handleRefresh={handleRefresh}
         refreshing= {refreshing}
       />
+      {/* ➕ Floating Button */}
+      <TouchableOpacity style={styles.floatingButton} onPress={handleNavigationToScan}>
+        <Image source={ScanIcon} style={styles.floatingIcon} />
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -110,10 +122,38 @@ const styles = StyleSheet.create({
     width: 30,
     position: 'absolute',
     right: 25,
-    top: 0,
+    top: 10,
     zIndex: 20,
 
   },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 30,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.green,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+  
+    // ✅ Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  
+    // ✅ Elevation for Android
+    elevation: 25,
+  
+    zIndex: 10,
+  },
+  floatingIcon: {
+    width: 50,
+    height: 50,
+    tintColor: 'white', // Optional: remove if you want the image in original color
+  },
+  
 });
 
 

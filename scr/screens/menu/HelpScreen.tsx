@@ -13,7 +13,7 @@ const HelpScreen = ({navigation}) => {
     {
       title: 'Menu',
       buttons: [
-        {title: 'Participants', action: () => navigation.navigate('Attendees')},
+        {title: 'Participants', action: () => navigation.navigate('EventDashboard')},
         {title: 'Ajouts', action: () => navigation.navigate('Add')},
         {title: 'Scan', action: () => navigation.navigate('Scan')},
         {title: 'Scan', action: () => navigation.navigate('Scan')},

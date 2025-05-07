@@ -7,14 +7,15 @@ import { fetchAttendeesList } from '../../services/getAttendeesListService';
 
 const useFetchAttendeeDetails = (refreshTrigger: number, attendeeId: string) => {
   const [attendeeDetails, setAttendeeDetails] = useState({
-    Type: '-',
-    Nom: '-',
-    Prenom: '-',
-    Mail: '-',
-    Telephone: '-',
-    Entreprise: '-',
-    JobTitle: '-',
-    attendeeStatusChangeDatetime: '',
+    type: '-',
+    lastName: '-',
+    firstName: '-',
+    email: '-',
+    phone: '-',
+    organization: '-',
+    jobTitle: '-',
+    attendeeStatus: '-',
+    attendeeStatusChangeDatetime: '-',
   });
 
   const [loading, setLoading] = useState(true);
@@ -35,14 +36,15 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendeeId: string) => 
 
         if (attendee) {
           setAttendeeDetails({
-            Type: attendee.attendee_type_name || '-',
-            Nom: attendee.last_name || '-',
-            Prenom: attendee.first_name || '-',
-            Mail: attendee.email || '-',
-            Telephone: attendee.phone || '-',
-            Entreprise: attendee.organization || '-',
-            JobTitle: attendee.designation || '-',
+            type: attendee.attendee_type_name || '-',
+            lastName: attendee.last_name || '-',
+            firstName: attendee.first_name || '-',
+            email: attendee.email || '-',
+            phone: attendee.phone || '-',
+            organization: attendee.organization || '-',
+            jobTitle: attendee.designation || '-',
             attendeeStatusChangeDatetime: attendee.nice_attendee_status_change_datetime || '-',
+            attendeeStatus: attendee.attendee_status|| '-',
           });
           setError(null);
         } else {

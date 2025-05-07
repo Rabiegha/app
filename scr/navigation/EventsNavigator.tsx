@@ -15,7 +15,7 @@ export default function TabsNavigator({searchQuery, onEventSelect}) {
         tabBarInactiveTintColor: colors.grey,
         tabBarIndicatorStyle: {
           backgroundColor: colors.green,
-          height: 14,
+          height: 6,
           borderRadius: 15,
         },
         tabBarStyle: {

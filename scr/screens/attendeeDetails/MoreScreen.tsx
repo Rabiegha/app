@@ -1,175 +1,172 @@
+// MoreScreen.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import axios from 'axios';
 import Share from 'react-native-share';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
+
 import MoreComponent from '../../components/screens/MoreComponent';
+import MainHeader from '../../components/elements/header/MainHeader';
+import PrintModal from '../../components/elements/modals/PrintModal';
+import LoadingView from '../../components/elements/view/LoadingView';
+import ErrorView from '../../components/elements/view/ErrorView';
+
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
 import { BASE_URL } from '../../config/config';
-import { useEvent } from '../../context/EventContext';
+
 import usePrintDocument from '../../hooks/print/usePrintDocument';
-import { setPrintStatus } from '../../redux/slices/printerSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
-import PrintModal from '../../components/elements/modals/PrintModal';
 import useFetchAttendeeDetails from '../../hooks/attendee/useAttendeeDetails';
+import { useEvent } from '../../context/EventContext';
+import { setPrintStatus } from '../../redux/slices/printerSlice';
+import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
-import LoadingView from '../../components/elements/view/LoadingView';
-import ErrorView from '../../components/elements/view/ErrorView';
-import { useFocusEffect } from '@react-navigation/native';
-import MainHeader from '../../components/elements/header/MainHeader';
 
 const MoreScreen = ({ route, navigation }) => {
+  /* ---------------------------------------------------------------- */
+  /* Context & Redux                                                 */
+  /* ---------------------------------------------------------------- */
   const { triggerListRefresh, updateAttendee } = useEvent();
-  const userId = useSelector(selectCurrentUserId);
-  const dispatch = useDispatch();
-  const printStatus = useSelector(selectPrintStatus);
+  const dispatch           = useDispatch();
+  const printStatus        = useSelector(selectPrintStatus);
+  const userId             = useSelector(selectCurrentUserId);
 
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [loadingButton, setLoadingButton] = useState(false);
-
-  const triggerRefresh = useCallback(() => {
-    setRefreshTrigger(prev => prev + 1);
-  }, []);
-
+  /* ---------------------------------------------------------------- */
+  /* Navigation params                                                */
+  /* ---------------------------------------------------------------- */
   const {
     eventId,
     attendeeId,
-    firstName,
-    lastName,
-    email,
-    phone,
-    jobTitle,
-    attendeeStatus,
-    organization,
-    type,
-    typeId,
+    attendeeStatus: initialStatus,
     badgePdfUrl,
     badgeImageUrl,
-    attendeeStatusChangeDatetime,
+    type,
   } = route.params;
 
-  const [localAttendeeStatus, setLocalAttendeeStatus] = useState(attendeeStatus);
+  /* ---------------------------------------------------------------- */
+  /* Local state                                                      */
+  /* ---------------------------------------------------------------- */
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [loadingButton , setLoadingButton ] = useState(false);
+  const [localAttendeeStatus, setLocalAttendeeStatus] = useState(initialStatus);
 
-  const { attendeeDetails, loading, error } = useFetchAttendeeDetails(refreshTrigger, attendeeId);
+  /* ---------------------------------------------------------------- */
+  /* Data fetching                                                    */
+  /* ---------------------------------------------------------------- */
+  const { attendeeDetails, loading, error } =
+    useFetchAttendeeDetails(refreshTrigger, attendeeId);
 
-  useEffect(() => {
-    const updatedAttendee = {
-      id: attendeeId,
-      attendee_status: localAttendeeStatus,
-      first_name: firstName,
-      last_name: lastName,
-      email: email,
-      phone: phone,
-      jobTitle: jobTitle,
-      type: type,
-      typeId: typeId,
-      event_id: eventId,
-      badge_pdf_url: badgePdfUrl,
-      badge_image_url: badgeImageUrl,
-      attendeeStatusChangeDatetime: attendeeStatusChangeDatetime,
-    };
-    updateAttendee(eventId, updatedAttendee);
-    triggerListRefresh();
-  }, [localAttendeeStatus]);
 
-  useFocusEffect(
-    useCallback(() => {
-      triggerRefresh();
-    }, [triggerRefresh])
+  /* refresh helper */
+  const triggerRefresh = useCallback(
+    () => setRefreshTrigger(prev => prev + 1),
+    []
   );
 
-  const handleBackPress = () => {
-    navigation.goBack();
+  /* ---------------------------------------------------------------- */
+  /* Handlers                                                         */
+  /* ---------------------------------------------------------------- */
+  const handleBackPress = () => navigation.goBack();
+
+  const handleBadgePress = () =>
+    navigation.navigate('Badge', { attendeeId, eventId, badgePdfUrl, badgeImageUrl });
+
+  const { printDocument } = usePrintDocument();
+  const handlePrintDocument = () => printDocument(badgePdfUrl);
+
+  const sendPdf = async () => {
+    try {
+      await Share.open({ url: badgePdfUrl, type: 'application/pdf' });
+    } catch (err) { console.error(err); }
   };
 
-  const handleBadgePress = () => {
-    navigation.navigate('Badge', {
-      attendeeId,
-      eventId,
-      badgePdfUrl,
-      badgeImageUrl,
-    });
-  };
-
-  const handleButton = async status => {
-    console.log('handleButton called');
+  const handleButton = async (status: 0 | 1) => {
     setLoadingButton(true);
 
-    const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${eventId}&attendee_id=${attendeeId}&attendee_status=${status}`;
-
     try {
-      const response = await axios.post(url);
+      const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${eventId}&attendee_id=${attendeeId}&attendee_status=${status}`;
+      const res = await axios.post(url);
 
-      if (response.data.status) {
-        console.log('Status updated locally');
+      if (res.data.status) {
         setLocalAttendeeStatus(status);
         triggerRefresh();
-      } else {
-        console.error('Failed to update attendee status');
       }
-    } catch (error) {
-      console.error('Error updating attendee status:', error);
+    } catch (err) {
+      console.error('Error updating attendee status:', err);
     } finally {
       setLoadingButton(false);
     }
   };
 
-  const { printDocument } = usePrintDocument();
+  /* update parent lists when status changes */
+  useEffect(() => {
+    updateAttendee(eventId, localAttendeeStatus);
+    triggerListRefresh();
+  }, [localAttendeeStatus]);
 
-  const handlePrintDocument = () => {
-    printDocument(badgePdfUrl);
-  };
-
-  const sendPdf = async () => {
-    try {
-      await Share.open({
-        url: badgePdfUrl,
-        type: 'application/pdf',
-      });
-    } catch (error) {
-      console.error(error);
+  /* ---------------------------------------------------------------- */
+  /* Render helpers                                                   */
+  /* ---------------------------------------------------------------- */
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <View style={styles.filler}>
+          <LoadingView />
+        </View>
+      );
     }
+  
+    if (error) {
+      return (
+        <View style={styles.filler}>
+          <ErrorView handleRetry={triggerRefresh} />
+        </View>
+      );
+    }
+
+    return (
+      <MoreComponent
+        See={handleBadgePress}
+        firstName={attendeeDetails.firstName}
+        lastName={attendeeDetails.lastName}
+        email={attendeeDetails.email}
+        phone={attendeeDetails.phone}
+        JobTitle={attendeeDetails.jobTitle}
+        attendeeStatus={localAttendeeStatus}
+        organization={attendeeDetails.organization}
+        attendeeStatusChangeDatetime={attendeeDetails.attendeeStatusChangeDatetime}
+        handleButton={handleButton}
+        share={sendPdf}
+        Print={handlePrintDocument}
+        loading={loadingButton}
+        modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
+        type={type}
+      />
+    );
   };
 
-  if (loading) {
-    return <LoadingView />;
-  }
-
-  if (error) {
-    return <ErrorView handleRetry={triggerRefresh} />;
-  }
-
+  /* ---------------------------------------------------------------- */
+  /* JSX                                                              */
+  /* ---------------------------------------------------------------- */
   return (
     <View style={globalStyle.backgroundWhite}>
       <MainHeader
+        title="Profil"
         color={colors.darkGrey}
         onLeftPress={handleBackPress}
-        title="Profil"
       />
+
       <View style={[globalStyle.container, styles.profil]}>
+        {/* Print status modal stays available at all times */}
         <PrintModal
-          onClose={() => dispatch(setPrintStatus(null))}
           visible={!!printStatus}
           status={printStatus}
+          onClose={() => dispatch(setPrintStatus(null))}
         />
-        <MoreComponent
-          See={handleBadgePress}
-          firstName={attendeeDetails.Prenom}
-          lastName={lastName}
-          email={email}
-          phone={phone}
-          JobTitle={jobTitle}
-          attendeeStatus={localAttendeeStatus}
-          organization={organization}
-          attendeeStatusChangeDatetime={attendeeDetails.attendeeStatusChangeDatetime}
-          handleButton={handleButton}
-          share={sendPdf}
-          Print={handlePrintDocument}
-          loading={loadingButton}
-          modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
-          type={type}
-        />
+
+        {/* The area below is where we swap in loading / error / data */}
+        {renderContent()}
       </View>
     </View>
   );
@@ -179,6 +176,7 @@ const styles = StyleSheet.create({
   profil: {
     height: 1700,
   },
+  filler: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });
 
 export default MoreScreen;

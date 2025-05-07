@@ -14,7 +14,6 @@ export default function ErrorView({handleRetry}) {
         loop={true}
         style={styles.gifStyle}
       />
-      <Text>Une erreur est survenue</Text>
       <TouchableOpacity style={styles.button} onPress={handleRetry}>
         <Text style={styles.buttonTexte}>Reload</Text>
       </TouchableOpacity>
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 10,
   },
-  buttonTexte: {color: 'white'},
+  buttonTexte: {color: 'white', fontSize: 16},
   gifStyle: {
     height: 220,
      width: 220,

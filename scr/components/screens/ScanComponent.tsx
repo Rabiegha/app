@@ -89,7 +89,6 @@ const ScanComponent = () => {
     if (hasScanned.current) return; // Évite les scans multiples
     hasScanned.current = true;
 
-
     console.log("🔍 Scanned Data:", data)
     if (scanStatus !== 'idle' || modalVisible) {
       return;

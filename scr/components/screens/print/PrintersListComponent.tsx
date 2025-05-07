@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  Image
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {
@@ -15,7 +16,8 @@ import {
 import colors from '../../../assets/colors/colors';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {getNodePrinters} from '../../../services/printNodeService';
-import {getWifiPrinters} from '../../../services/printService';
+import refreshIcon from '../../../assets/images/icons/refresh.png';
+import ErrorView from '../../elements/view/ErrorView';
 
 const PrintersList = () => {
   const [wifiPrinters, setWifiPrinters] = useState([]);
@@ -24,31 +26,47 @@ const PrintersList = () => {
   const [loadingWifiPrinters, setLoadingWifiPrinters] = useState(true);
   const [loadingNodePrinters, setLoadingNodePrinters] = useState(true);
   const [loadingPrinter, setLoadingPrinter] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); 
+  const [error, setError] = useState(false);
+ 
 
   const selectedNodePrinter = useSelector(
     state => state.printers.selectedNodePrinter,
   );
 
-  useEffect(() => {
-    getWifiPrinters()
-      .then(data => setWifiPrinters(data))
-      .catch(error => console.error(error))
-      .finally(() => setLoadingWifiPrinters(false));
-  }, []);
 
-  useEffect(() => {
-    const fetchPrinters = async () => {
-      try {
-        const printersList = await getNodePrinters();
-        setNodePrinters(printersList);
-      } catch (error) {
-        Alert.alert('Unable to fetch printers.', 'Error');
-      } finally {
-        setLoadingNodePrinters(false);
-      }
-    };
-    fetchPrinters();
+  const fetchPrinters = useCallback(async (withSpinner: boolean) => {
+    if (withSpinner) setLoadingNodePrinters(true);
+    setError(false);
+    const timeout = setTimeout(() => {
+      setLoadingNodePrinters(false);
+      setError(true);
+    }, 10000); // timeout après 5s
+  
+    try {
+      const printersList = await getNodePrinters();
+      clearTimeout(timeout);
+      setNodePrinters(printersList);
+    } catch (err) {
+      clearTimeout(timeout);
+      setError(true);
+      Alert.alert('Erreur', 'Impossible de récupérer les imprimantes.');
+    } finally {
+      setLoadingNodePrinters(false);
+      setRefreshing(false);
+    }
   }, []);
+  
+
+  /* initial load */
+  useEffect(() => {
+    fetchPrinters(true);
+  }, [fetchPrinters]);
+
+  const triggerRefresh = () => {
+    setRefreshing(true);
+    fetchPrinters(false);                 // pas de spinner plein-écran
+  };
 
   const onlinePrinters = nodePrinters.filter(
     printer => printer.state === 'online',
@@ -72,12 +90,25 @@ const PrintersList = () => {
     }
   };
 
+  if (error) {
+    return (
+      <View style={{ flex: 1 }}>
+        <ErrorView handleRetry={() => fetchPrinters(true)} />
+      </View>
+    );
+  }
+  
   return (
     <View>
       <Spinner
-        visible={loadingWifiPrinters || loadingNodePrinters || loadingPrinter}
+        visible={loadingNodePrinters || loadingPrinter}
         textContent="Loading..."
       />
+
+      {/* 🔁 Bouton de reload */}
+      <TouchableOpacity style={styles.imageContainee} onPress={triggerRefresh}>
+              <Image style={styles.reloadImage} source={refreshIcon} />
+            </TouchableOpacity>
 
       {/* Online Printers */}
       <View style={styles.container}>
@@ -91,6 +122,8 @@ const PrintersList = () => {
           <FlatList
             data={onlinePrinters}
             keyExtractor={item => item.id.toString()}
+            refreshing={refreshing} 
+            onRefresh={triggerRefresh}
             style={{ height: 230 }}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -188,6 +221,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 15,
     marginBottom: 15,
+    height: 350,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -237,6 +271,20 @@ const styles = StyleSheet.create({
     color: colors.darkGrey,
     textAlign: 'center',
     marginVertical: 10,
+  },
+  reloadImage: {
+    height: 30,
+    width: 30,
+    tintColor: colors.green,
+  },
+  imageContainee: {
+    height: 30,
+    width: 30,
+    position: 'absolute',
+    right: 25,
+    top: -15,
+    zIndex: 20,
+
   },
 
 });

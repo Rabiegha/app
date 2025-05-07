@@ -27,6 +27,8 @@ import { updateAttendee } from '../../../../redux/thunks/attendee/updateAttendee
 import { updateAttendeeLocally } from '../../../../redux/slices/attendee/attendeesListSlice.tsx';
 import BaseFlatList from '../../../elements/list/BaseFlatList.tsx';
 import { Attendee } from '../../../../types/attendee.types.ts';
+import Toast from 'react-native-toast-message';
+
 
 type Props = {
   searchQuery: string;
@@ -107,12 +109,25 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
     [totalFilteredData, visibleCount]
   );
 
+
   const handleUpdateAttendee = async updatedAttendee => {
     dispatch(updateAttendeeLocally(updatedAttendee));
-    await dispatch(updateAttendee(updatedAttendee));
+    const result = await dispatch(updateAttendee(updatedAttendee));
+
+    
+  
+    if (updatedAttendee.attendee_status == 1 && updateAttendee.fulfilled.match(result)) {
+      Toast.show({
+        type: 'customSuccess',
+        text1: 'Participant mis à jour ',
+        text2: `${updatedAttendee.first_name} ${updatedAttendee.last_name}`,
+      });
+    }
+  
     openSwipeable?.current?.close();
     onTriggerRefresh?.();
   };
+  
 
   const handleSwipeableOpen = swipeable => {
     if (openSwipeable && openSwipeable.current && openSwipeable !== swipeable) {

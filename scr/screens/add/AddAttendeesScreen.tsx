@@ -13,6 +13,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import MainHeader from '../../components/elements/header/MainHeader';
+import Toast from 'react-native-toast-message';
+
 
 const AddAttendeesScreen = ({navigation}) => {
   useFocusEffect(
@@ -118,6 +120,12 @@ const AddAttendeesScreen = ({navigation}) => {
         setSuccess(true);
         resetFields();
         triggerListRefresh();
+            // ✅ Show success toast here
+        Toast.show({
+          type: 'customSuccess',
+          text1: 'Participant ajouté ',
+          text2: `${prenom} ${nom}`,
+        });
       } else {
         setSuccess(false);
       }
@@ -144,7 +152,7 @@ const AddAttendeesScreen = ({navigation}) => {
 
   // Navigate back
   const handleGoBack = () => {
-    navigation.navigate('Attendees');
+    navigation.goBack();
   };
 
   return (
@@ -154,19 +162,6 @@ const AddAttendeesScreen = ({navigation}) => {
         onLeftPress={handleGoBack}
         title="Ajouter"
       />
-
-      {success === true && (
-        <SuccessComponent
-          onClose={() => setSuccess(null)}
-          text={'Participant ajouté avec succès'}
-        />
-      )}
-      {success === false && (
-        <FailComponent
-          onClose={() => setSuccess(null)}
-          text={'Participant non ajouté'}
-        />
-      )}
 
       <Spinner visible={loading} />
 

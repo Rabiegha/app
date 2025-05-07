@@ -97,7 +97,7 @@ const PrintComponent = ({navigateBack}) => {
           />
         </View>
       </TouchableOpacity>
-      {/* Section Format papier */}
+      {/* Section Format papier 
       <TouchableOpacity
         onPress={navigateToPaperFormat}
         style={[
@@ -116,7 +116,7 @@ const PrintComponent = ({navigateBack}) => {
             }}
           />
         </TouchableOpacity>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {/* Section Orientation */}
       <View
         style={[
