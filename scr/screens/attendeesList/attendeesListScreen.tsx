@@ -25,6 +25,7 @@ import useRegistrationData from '../../hooks/registration/useRegistrationData';
 import refreshIcon from '../../assets/images/icons/refresh.png';
 import colors from '../../assets/colors/colors';
 import Filtre from '../../assets/images/icons/Filtre.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const defaultFilterCriteria = {
   status: 'all',
@@ -50,6 +51,8 @@ const AttendeeListScreen = () => {
   const printStatus = useSelector(selectPrintStatus);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+  const insets = useSafeAreaInsets();
 
   const openModal = () => {
     setModalVisible(true);
@@ -90,24 +93,22 @@ const AttendeeListScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+
       <View style={{ flex: 1 }}>
-        <View style={styles.headerWrapper}>
           <MainHeader
             onLeftPress={handleLeftPress}
             onRightPress={openModal}
             RightIcon={Filtre}
             title={eventName}
           />
-        </View>
-        <View style={styles.mainContent}>
+        <View style={[styles.mainContent,     {
+          paddingTop: insets.top + 5,
+        },]}>
             <Search style={styles.search} onChange={setSearchQuery} value={searchQuery} />
             <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />
             <ProgressBar progress={ratio} />
 
-            {/* 🔁 Bouton de reload */}
-            <TouchableOpacity style={styles.imageContainee} onPress={triggerChildRefresh}>
-              <Image style={styles.reloadImage} source={refreshIcon} />
-            </TouchableOpacity>
+
 
             {/* 🖨️ Print modal */}
             <View style={styles.printModal}>
@@ -118,6 +119,10 @@ const AttendeeListScreen = () => {
               />
             </View>
 
+                {/* 🔁 Bouton de reload */}
+            <TouchableOpacity style={styles.imageContainee} onPress={triggerChildRefresh}>
+              <Image style={styles.reloadImage} source={refreshIcon} />
+            </TouchableOpacity>
             {/* 📋 Liste des participants */}
             <MainAttendeeListItem
               ref={listRef}
@@ -185,26 +190,16 @@ const styles = StyleSheet.create({
     tintColor: colors.green,
   },
   imageContainee: {
-    height: 30,
-    width: 30,
-    position: 'absolute',
-    right: 25,
-    top: 170,
+    height: 40,
+    width: 40,
     zIndex: 20,
-
-  },
-  headerWrapper: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    backgroundColor: 'white',
+    marginBottom: 10,
+    marginLeft: 'auto', // ✅ Pushes the image to the right
   },
   mainContent: {
     flex: 1,
-    paddingTop: 120,
     paddingHorizontal: 20,
+    position : 'relative'
   },
 });
 

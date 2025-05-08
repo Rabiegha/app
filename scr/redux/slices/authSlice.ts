@@ -3,10 +3,11 @@ import {loginThunk} from '../thunks/auth/loginThunk';
 import {logoutThunk} from '../thunks/auth/logoutThunk';
 
 const initialState = {
-  currentUserId: '',
-  userInfo: {},
+  currentUserId: null as string | null,
+  userType: null as string | null,
+  userInfo: null as any,       
   isLoading: false,
-  error: null,
+  error: null as string | null,
 };
 
 const authSlice = createSlice({
@@ -26,6 +27,7 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.userInfo = action.payload;
       state.currentUserId = action.payload.current_user_login_details_id;
+      state.userType = action.payload.user_type_name;
       state.error = null;
     });
     builder.addCase(loginThunk.rejected, (state, action) => {
@@ -39,14 +41,12 @@ const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(logoutThunk.fulfilled, state => {
-      state.isLoading = false;
-      state.error = null;
-      state.currentUserId = '';
-      state.userInfo = {};
+      Object.assign(state, initialState); // quick reset
     });
     builder.addCase(logoutThunk.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload || 'Logout failed';
+      Object.assign(state, initialState); // quick reset
     });
   },
 });

@@ -8,7 +8,6 @@ import ErrorView from '../../../elements/view/ErrorView.tsx';
 import SessionStats from '../../sessionAttendeeList/SessionStatsComponent.tsx';
 import ProgressBar from '../../../elements/progress/ProgressBar.tsx';
 import BaseFlatList from '../../../elements/list/BaseFlatList.tsx';
-import colors from '../../../../assets/colors/colors.tsx';
 
 type Props = {
   searchQuery: string;

@@ -31,12 +31,11 @@ const MoreScreen = ({ route, navigation }) => {
   const dispatch           = useDispatch();
   const printStatus        = useSelector(selectPrintStatus);
   const userId             = useSelector(selectCurrentUserId);
-
+  const { eventId } = useEvent();
   /* ---------------------------------------------------------------- */
   /* Navigation params                                                */
   /* ---------------------------------------------------------------- */
   const {
-    eventId,
     attendeeId,
     attendeeStatus: initialStatus,
     badgePdfUrl,
@@ -135,6 +134,8 @@ const MoreScreen = ({ route, navigation }) => {
         JobTitle={attendeeDetails.jobTitle}
         attendeeStatus={localAttendeeStatus}
         organization={attendeeDetails.organization}
+        commentaire={attendeeDetails.commentaire}
+        attendeeId = {attendeeId}
         attendeeStatusChangeDatetime={attendeeDetails.attendeeStatusChangeDatetime}
         handleButton={handleButton}
         share={sendPdf}
@@ -142,6 +143,7 @@ const MoreScreen = ({ route, navigation }) => {
         loading={loadingButton}
         modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
         type={type}
+        onFieldUpdateSuccess={triggerRefresh}
       />
     );
   };

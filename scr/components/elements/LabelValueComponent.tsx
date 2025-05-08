@@ -1,9 +1,10 @@
 // LabelValueComponent.js
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native'; // Assuming you're using Expo for icons
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; // Assuming you're using Expo for icons
 import colors from '../../assets/colors/colors';
+import modify from '../../assets/images/icons/Modifier.png'
 
-const LabelValueComponent = ({label, value, value2}) => {
+const LabelValueComponent = ({label, value, value2, showButton, modifyHandle}) => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -12,11 +13,16 @@ const LabelValueComponent = ({label, value, value2}) => {
           {value} {value2}
         </Text>
       </View>
-      {/*  <TouchableOpacity
-        onPress={modify}
-        style={[styles.editButton, {display: modifyDisplay}]}>
-        <Image source={modifier} style={styles.buttonImage} />
-      </TouchableOpacity> */}
+
+      {showButton && (
+        <>
+          <TouchableOpacity
+            onPress={modifyHandle}
+            style={[styles.editButton]}>
+            <Image source={modify} style={styles.buttonImage} />
+      </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 };
@@ -31,6 +37,7 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'column',
     flex: 1,
+    marginBottom: 5
   },
   label: {
     fontSize: 14,
@@ -43,8 +50,8 @@ const styles = StyleSheet.create({
     color: colors.darkGrey,
   },
   buttonImage: {
-    width: 23,
-    height: 23,
+    width: 25,
+    height: 30,
     tintColor: colors.darkGrey,
     zIndex: 2,
   },
@@ -53,7 +60,7 @@ const styles = StyleSheet.create({
     width: 15,
     height: 23,
     zIndex: 2,
-    display: 'none',
+
   },
 });
 

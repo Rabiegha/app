@@ -14,7 +14,9 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendeeId: string) => 
     phone: '-',
     organization: '-',
     jobTitle: '-',
+    commentaire: '-',
     attendeeStatus: '-',
+    theAttendeeId: '-',
     attendeeStatusChangeDatetime: '-',
   });
 
@@ -43,6 +45,8 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendeeId: string) => 
             phone: attendee.phone || '-',
             organization: attendee.organization || '-',
             jobTitle: attendee.designation || '-',
+            theAttendeeId: attendee.attendee_id || '-',
+            commentaire: attendee.comment || '-',
             attendeeStatusChangeDatetime: attendee.nice_attendee_status_change_datetime || '-',
             attendeeStatus: attendee.attendee_status|| '-',
           });

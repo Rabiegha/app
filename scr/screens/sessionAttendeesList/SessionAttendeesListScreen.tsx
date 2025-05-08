@@ -99,7 +99,7 @@ const SessionAttendeesListScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   emptyContainer: {
     flex: 1,
@@ -118,12 +118,11 @@ const styles = StyleSheet.create({
     tintColor: colors.green,
   },
   imageContainee: {
-    height: 30,
-    width: 30,
-    position: 'absolute',
-    right: 25,
-    top: 10,
+    height: 40,
+    width: 40,
     zIndex: 20,
+    marginLeft: 'auto',
+    top: 30,
 
   },
   floatingButton: {

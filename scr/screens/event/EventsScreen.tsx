@@ -8,7 +8,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import {useEvent} from '../../context/EventContext';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {useDispatch, useSelector} from 'react-redux';
-import {selectIsLoading} from '../../redux/selectors/auth/authSelectors';
+import {selectCurrentUserId, selectIsLoading} from '../../redux/selectors/auth/authSelectors';
 import {logoutThunk} from '../../redux/thunks/auth/logoutThunk';
 import TabsNavigator from '../../navigation/EventsNavigator';
 import { useEventSelector } from '../../utils/event/selectEvent';
@@ -25,6 +25,8 @@ const EventsScreen = () => {
   );
 
 
+  const userId = useSelector(selectCurrentUserId);
+
 
   const {clearSessionDetails} = useEvent();
   const isLoading = useSelector(selectIsLoading);
@@ -40,9 +42,11 @@ const EventsScreen = () => {
 
   const dispatch = useDispatch();
 
-  const handleGoBack = () => {
-    dispatch(logoutThunk());
-    navigation.navigate('Connexion');
+  const handleLogOut = async () => {
+    console.log('userId', userId);
+    await dispatch(logoutThunk()).unwrap();
+    navigation.reset({ index: 0, routes: [{ name: 'Connexion' }] });
+
   };
 
   const [opacity, setOpacity] = useState(0);
@@ -61,7 +65,7 @@ const EventsScreen = () => {
       <View style={globalStyle.backgroundWhite}>
         <HeaderEvent
           onLeftPress={clearSearch}
-          onRightPress={handleGoBack}
+          onRightPress={handleLogOut}
           opacity={opacity}
         />
         <View style={styles.container}>

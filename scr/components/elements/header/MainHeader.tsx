@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../../../assets/colors/colors';
 import Retour from '../../../assets/images/icons/Retour.png';
 
-const MainHeader = ({ onLeftPress, title, onRightPress, RightIcon = null, backgroundColor = 'white', color = colors.darkGrey, leftButtonTintColor = colors.green }) => {
+const MainHeader = ({ onLeftPress, title, onRightPress, RightIcon = null, backgroundColor = 'white', color = colors.darkGrey, leftButtonTintColor = colors.green, rightBottonColor = colors.darkGrey, size = 20 }) => {
   const insets = useSafeAreaInsets();
 
   return (
@@ -12,10 +12,10 @@ const MainHeader = ({ onLeftPress, title, onRightPress, RightIcon = null, backgr
       <TouchableOpacity onPress={onLeftPress} style={styles.backButton}>
         <Image source={Retour} style={[styles.leftButton, {tintColor: leftButtonTintColor}]} />
       </TouchableOpacity>
-      <Text style={[styles.Title, {color: color}]}>{title}</Text>
+      <Text style={[styles.title, {color: color}]}>{title}</Text>
       {RightIcon ? (
         <TouchableOpacity onPress={onRightPress} style={styles.backButton}>
-          <Image source={RightIcon} style={styles.rightButton} />
+          <Image source={RightIcon} style={{tintColor: rightBottonColor, height: size, width: size}} />
         </TouchableOpacity>
       ) : (
         <View style={{ width: 40 }} />
@@ -31,29 +31,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingBottom: 12,
-    zIndex: 10,
-    height: 80,
+    minHeight: 110,
   },
   backButton: {
     padding: 10,
   },
-  Title: {
+  title: {
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: 18,
     maxWidth: 200,
-    color: colors.darkGrey,
-    height: 'auto',
+    flexShrink: 2,
   },
   leftButton: {
     width: 15,
     height: 23,
     tintColor: colors.green,
-  },
-  rightButton: {
-    tintColor: colors.darkGrey,
-    width: 20,
-    height: 20,
   },
 });
 

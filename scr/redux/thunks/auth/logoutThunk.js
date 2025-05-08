@@ -22,9 +22,10 @@ export const logoutThunk = createAsyncThunk(
       const url = `${BASE_URL}/ajax_user_logout/?current_user_login_details_id=${currentUserId}`;
       const response = await axios.post(url, { signal: controller.signal });
 
-      clearTimeout(timeout); // ✅ Annule le timeout si la requête réussit
+      clearTimeout(timeout);
 
       if (response.data.status) {
+        await persistor.purge();
         return;
       } else {
         return thunkAPI.rejectWithValue('Logout failed');
