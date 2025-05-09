@@ -9,10 +9,9 @@ import {
   Dimensions,
 } from 'react-native';
 import {RNCamera} from 'react-native-camera';
-import MaskedView from '@react-native-masked-view/masked-view';
 import Svg, {Defs, Mask, Rect} from 'react-native-svg';
 
-import image from '../../../assets/images/icons/Scan.png';
+import image from '../../../assets/images/icons/Gift.png';
 import colors from '../../../assets/colors/colors';
 import MaskedViewComponent from './MaskedView';
 import Popup from './popup';
@@ -22,15 +21,27 @@ const BOX_SIZE      = width * 0.7;                // scan window size
 const WINDOW_TOP    = (height - BOX_SIZE) / 2;    // centred vertically
 const OVERLAY_COLOR = 'rgba(0,0,0,0.55)';       // dim shade
 type Props = {
-    onBarCodeRead?: (e: any) => void;
-    goBack?: () => void;
-    attendeeName : string,
-    scanStatus: string,
-    popupContent?: React.ReactNode;
-    mainPopupContent?: React.ReactNode;
-  };
-  
-  const MainScanComponent = ({ onBarCodeRead, goBack, attendeeName, scanStatus, popupContent, mainPopupContent, ref }: Props) => (
+  onBarCodeRead?: (e: any) => void;
+  goBack?: () => void;
+  attendeeName: string;
+  scanStatus: string;
+  popupContent?: React.ReactNode;
+  mainPopupContent?: React.ReactNode;
+  isButtonShown?: boolean;
+  isButtonActive?: boolean;
+  handleButtonPress,
+};
+
+  const MainScanComponent = ({   onBarCodeRead,
+    goBack,
+    attendeeName,
+    scanStatus,
+    popupContent,
+    mainPopupContent,
+    isButtonShown = false,
+    isButtonActive = false,
+    handleButtonPress,
+    ref, }: Props) => (
     <RNCamera
       ref={ref}
       style={styles.camera}
@@ -85,15 +96,23 @@ type Props = {
       </View>
 
 
-      {/* ────── BOTTOM ACTIONS ────── 
+      {/* ────── BOTTOM ACTIONS ────── */}
       <View style={styles.bottomButtons}>
-        <TouchableOpacity style={styles.bottomIcon}>
+      {isButtonShown && (
+        <TouchableOpacity
+          onPress={handleButtonPress}
+          style={[
+            styles.bottomIcon,
+            {backgroundColor: isButtonActive ? colors.green : 'black'},
+          ]}>
           <Image source={image} style={styles.iconImage} resizeMode="contain" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bottomIcon}>
+      )}
+
+{/*         <TouchableOpacity style={styles.bottomIcon}>
           <Image source={image} style={styles.iconImage} resizeMode="contain" />
-        </TouchableOpacity>
-      </View> */}
+        </TouchableOpacity> */}
+      </View> 
 
       {/* bottom pill indicator */}
       <View style={styles.indicator} />
@@ -152,10 +171,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: 40,
-    zIndex: 2,
+    zIndex: 1000,
   },
-  bottomIcon: {backgroundColor: 'black', padding: 18, borderRadius: 50},
-  iconImage:  {width: 28, height: 28, tintColor: 'white'},
+  bottomIcon: {backgroundColor: colors.green, padding: 18, borderRadius: 50},
+  iconImage:  {width: 35, height: 35, tintColor: 'white'},
 
   /* ─── Pill indicator ─── */
   indicator: {

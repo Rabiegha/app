@@ -18,6 +18,7 @@ import { RNCamera } from 'react-native-camera';
 import DetailsModal from './detailsModal';
 import {useFetchAttendeeCounts} from '../../hooks/attendee/useFetchAttendeeCounts';
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 
 const MainScanScreen = () => {
@@ -27,7 +28,6 @@ const MainScanScreen = () => {
       // Screen focused
       console.log('Scan screen focused');
       hasScanned.current = false;
-  
       return () => {
         // Screen unfocused: cleanup
         console.log('Scan screen unfocused — cleaning up');
@@ -36,7 +36,6 @@ const MainScanScreen = () => {
       };
     }, [])
   );
-  
     const cameraRef = useRef<RNCamera>(null);
     const userId = useSelector(selectCurrentUserId);
     const { eventId } = useActiveEvent();
@@ -44,6 +43,12 @@ const MainScanScreen = () => {
     const [attendeeName, setAttendeeName] = useState('');
     const [scanStatus, setScanStatus] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+
+    const [isButtonActive, setIsButtonActive] = useState(false);   // NEW
+
+    const handleButtonPress = () => {
+      setIsButtonActive(prev => !prev);
+    };
 
 
     const navigation = useNavigation();
@@ -64,7 +69,6 @@ const MainScanScreen = () => {
 
 
     const { partnerCount, childSessionCount, loading, fetchCounts } = useFetchAttendeeCounts();
-    
 
 
     const onBarCodeRead = async ({data}) => {
@@ -84,20 +88,31 @@ const MainScanScreen = () => {
               });
 
               setAttendeeName(attendee?.attendee_name || 'Unknown');
-              setScanStatus('found');
-              await fetchCounts(attendee?.attendee_id);
+              setScanStatus('found')
 
-              await delay(1000);
-      
-              setModalVisible(true);
-              
+              if (isButtonActive){
+                await fetchCounts(attendee?.attendee_id);
+
+                await delay(1000);
+                setModalVisible(true);
+              } else {
+                  Toast.show({
+                    type: 'customSuccess',
+                    text1: attendee?.attendee_name || 'Scan réussi',
+                    text2: 'a bien été enregistré',
+                  });
+                  setTimeout(() => {
+                    hasScanned.current = false;
+                    resetScanner();
+                  }, 2000);
+              }
+
             } else {
                 setScanStatus('not_found');
-                
-                setTimeout(() => {  
+                setTimeout(() => {
                   hasScanned.current = false;
                   resetScanner();
-                }, 2000);  
+                }, 2000);
               }
         } catch (error) {
             console.error('Error during scanning:', error);
@@ -120,6 +135,9 @@ const MainScanScreen = () => {
             goBack={goBack}
             attendeeName={attendeeName}
             scanStatus={scanStatus}
+            isButtonShown={true}
+            isButtonActive={isButtonActive}
+            handleButtonPress={handleButtonPress}
             mainPopupContent={
                 <>
                 <DetailsModal

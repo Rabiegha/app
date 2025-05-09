@@ -57,7 +57,6 @@ const SessionScanScreen = () => {
             console.log('API Response:', response);
             if (response.status === true) {
               const attendee = response.attendee_details;
-      
               setAttendeeData({
                 id: attendee?.attendee_id || 'N/A',  // Default fallback
                 name: attendee?.attendee_name || 'Unknown Attendee',

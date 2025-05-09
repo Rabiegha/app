@@ -54,6 +54,7 @@ const ListItem = React.memo(
       }
     };
 
+
     // Print & Check-In
     const {printDocument} = usePrintDocument();
     const handlePrintAndCheckIn = async () => {
