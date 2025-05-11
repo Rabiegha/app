@@ -25,7 +25,7 @@ type Props = {
   goBack?: () => void;
   attendeeName: string;
   scanStatus: string;
-  popupContent?: React.ReactNode;
+  sessionScanStats?: React.ReactNode;
   mainPopupContent?: React.ReactNode;
   isButtonShown?: boolean;
   isButtonActive?: boolean;
@@ -36,7 +36,7 @@ type Props = {
     goBack,
     attendeeName,
     scanStatus,
-    popupContent,
+    sessionScanStats,
     mainPopupContent,
     isButtonShown = false,
     isButtonActive = false,
@@ -87,7 +87,7 @@ type Props = {
 
     {/* ────── Popup ────── */}
       <View style={styles.statsWrapper}>
-        {popupContent}
+        {sessionScanStats}
       </View>
 
       {/* ────── mainScreenPopup ────── */}
