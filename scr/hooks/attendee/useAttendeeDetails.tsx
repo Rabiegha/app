@@ -18,6 +18,7 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendeeId: string) => 
     attendeeStatus: '-',
     theAttendeeId: '-',
     attendeeStatusChangeDatetime: '-',
+    urlBadgePdf: '-',
   });
 
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,8 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendeeId: string) => 
             theAttendeeId: attendee.attendee_id || '-',
             commentaire: attendee.comment || '-',
             attendeeStatusChangeDatetime: attendee.nice_attendee_status_change_datetime || '-',
-            attendeeStatus: attendee.attendee_status|| '-',
+            attendeeStatus: attendee.attendee_status || '-',
+            urlBadgePdf : attendee. badge_pdf_url  || '-',
           });
           setError(null);
         } else {

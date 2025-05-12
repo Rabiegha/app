@@ -20,12 +20,13 @@ import FiltreComponent from '../../components/filtre/FiltreComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
 import { setPrintStatus } from '../../redux/slices/printerSlice';
-import PrintModal from '../../components/elements/modals/CheckinPrintModal';
+import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
 import refreshIcon from '../../assets/images/icons/refresh.png';
 import colors from '../../assets/colors/colors';
 import Filtre from '../../assets/images/icons/Filtre.png';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 
 const defaultFilterCriteria = {
   status: 'all',
@@ -48,9 +49,10 @@ const AttendeeListScreen = () => {
   const [filterCriteria, setFilterCriteria] = useState(defaultFilterCriteria);
 
   const { totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary } = useRegistrationData({ refreshTrigger1: refreshTrigger });
-  const printStatus = useSelector(selectPrintStatus);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+  const { status: printStatus, clearStatus } = usePrintStatus();
 
   const insets = useSafeAreaInsets();
 
@@ -110,28 +112,21 @@ const AttendeeListScreen = () => {
 
 
 
-            {/* 🖨️ Print modal */}
-            <View style={styles.printModal}>
-              <PrintModal
-                onClose={() => dispatch(setPrintStatus(null))}
-                visible={!!printStatus}
-                status={printStatus}
-              />
-            </View>
-
                 {/* 🔁 Bouton de reload */}
             <TouchableOpacity style={styles.imageContainee} onPress={triggerChildRefresh}>
               <Image style={styles.reloadImage} source={refreshIcon} />
             </TouchableOpacity>
             {/* 📋 Liste des participants */}
-            <MainAttendeeListItem
-              ref={listRef}
-              searchQuery={searchQuery}
-              onShowNotification={() => setSuccess(true)}
-              filterCriteria={filterCriteria}
-              onTriggerRefresh={handleTriggerRefresh}
-              summary={summary}
-            />
+
+              <MainAttendeeListItem
+                ref={listRef}
+                searchQuery={searchQuery}
+                onShowNotification={() => setSuccess(true)}
+                filterCriteria={filterCriteria}
+                onTriggerRefresh={handleTriggerRefresh}
+                summary={summary}
+              />
+
 
             {/* 🧾 Modal de filtre */}
             <Modal animationType="none" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
@@ -157,6 +152,15 @@ const AttendeeListScreen = () => {
                 </TouchableWithoutFeedback>
               </TouchableOpacity>
             </Modal>
+
+              {/* 🖨️ Print modal */}
+            {printStatus && (
+              <CheckinPrintModal
+                visible={true}
+                status={printStatus}
+                onClose={clearStatus}
+              />
+            )}
           </View>
         </View>
       </SafeAreaView>

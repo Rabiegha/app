@@ -114,20 +114,20 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
     dispatch(updateAttendeeLocally(updatedAttendee));
     const result = await dispatch(updateAttendee(updatedAttendee));
 
-    
-  
-    if (updatedAttendee.attendee_status == 1 && updateAttendee.fulfilled.match(result)) {
+
+
+/*     if (updatedAttendee.attendee_status == 1 && updateAttendee.fulfilled.match(result)) {
       Toast.show({
         type: 'customSuccess',
         text1: 'Participant mis à jour ',
         text2: `${updatedAttendee.first_name} ${updatedAttendee.last_name}`,
       });
-    }
-  
+    } */
+
     openSwipeable?.current?.close();
     onTriggerRefresh?.();
   };
-  
+
 
   const handleSwipeableOpen = swipeable => {
     if (openSwipeable && openSwipeable.current && openSwipeable !== swipeable) {

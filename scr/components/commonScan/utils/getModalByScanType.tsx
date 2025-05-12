@@ -22,7 +22,7 @@ export const getModalByScanType = ({ scanType, props, isButtonActive }: Props) =
         <CheckinPrintModal
           status={props.status}
           onClose={props.onClosePrintModal}
-          visible={true} // même si ça ne sert plus
+          visible={true}
         />
       );
 

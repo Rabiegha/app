@@ -17,29 +17,28 @@ type Props = {
 };
 
 const CheckinPrintModal = ({ visible, status, onClose }: Props) => {
-  console.log('[CheckinPrintModal]', { status });
+  // 1️⃣  Ne rends rien si invisible OU pas de status
+  if (!visible || !status) return null;
 
-  if (!status) return null;
-
-  const config = printStatusConfig[status];
-
+  const config = status ? printStatusConfig[status] : undefined;
 
   return (
     <Modal
       transparent
-      visible={visible}
       animationType="slide"
-      onRequestClose={onClose}>
+      visible={visible}   // 2️⃣  on laisse React gérer
+      onRequestClose={onClose}
+    >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalBackground}>
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
-              <Text style={styles.text}>{config.message}</Text>
+              <Text style={styles.text}>{config?.message}</Text>
               <LottieView
-                source={config.animation}
+                source={config?.animation}
                 autoPlay
-                loop={config.loop}
-                style={[styles.animation, { height: config.height }]}
+                loop={config?.loop}
+                style={[styles.animation, { height: config?.height }]}
               />
             </View>
           </TouchableWithoutFeedback>

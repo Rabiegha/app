@@ -30,7 +30,6 @@ const ScanScreen = ({scanType: propScanType}: Props) => {
         useCallback(() => {
           // Quand l'écran est focus
           scan.resetScanner();
-      
           return () => {
             // Quand on quitte l'écran (optionnel)
             scan.resetScanner(); // utile aussi ici pour éviter les conflits

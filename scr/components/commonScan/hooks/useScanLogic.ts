@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { handleScan } from '../utils/handleScan';
 import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
@@ -10,6 +10,7 @@ import { useActiveEvent } from '../../../utils/event/useActiveEvent';
 import { selectCurrentUserId } from '../../../redux/selectors/auth/authSelectors';
 import usePrintDocument from '../../../hooks/print/usePrintDocument';
 import { usePrintStatus } from '../../../printing/context/PrintStatusContext';
+import useFetchAttendeeDetails from '../../../hooks/attendee/useAttendeeDetails';
 
 
 export const useScanLogic = (scanType: ScanType, userId: string) => {
@@ -26,6 +27,14 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
   const { eventId } = useActiveEvent();
   const { capacity, totalCheckedIn, loading : statsLoading } = useSessionRegistrationData({ refreshTrigger1: refreshTrigger });
   const { partnerCount, childSessionCount, loading, fetchCounts } = useFetchAttendeeCounts();
+
+
+  const [attendeeId, setAttendeeId] = useState<string | null>(null);
+  const { attendeeDetails, loading: detailsLoading, error } = useFetchAttendeeDetails(refreshTrigger, attendeeId || '');
+
+
+
+
   const { setStatus } = usePrintStatus();
 
   const { submitComment, loading: addingComment, error: addCommentError, resetError: resetAddError } = useAddComment();
@@ -54,6 +63,9 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
       setAttendeeName,
       setScanStatus,
       afterSuccess: async (attendee) => {
+        setScanStatus('found');
+        setAttendeeId(attendee.id);
+        await new Promise(resolve => setTimeout(resolve, 1000));
         switch (scanType) {
           case ScanType.Partner:
             await fetchCounts(attendee.attendee_id);
@@ -67,6 +79,9 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
               text2: 'a bien été enregistré',
             });
             setRefreshTrigger(prev => prev + 1);
+            setTimeout(() => {
+              resetScanner();
+            }, 1000);
             break;
             case ScanType.Main:
 
@@ -75,25 +90,18 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
                 } else {
                   setStatus('checkin_success');
                   await new Promise(resolve => setTimeout(resolve, 1000));
-                  await printDocument(attendee.badge_pdf_url); 
+                  await printDocument(attendeeDetails.urlBadgePdf);
                   setRefreshTrigger(prev => prev + 1);
+                  setTimeout(() => {
+                    resetScanner();
+                  }, 1500);
                 }
             break;
-              
         }
-        setTimeout(() => {
-            hasScanned.current = false;
-            // Ne reset que si ce n’est pas un partner, et pas un main avec bouton actif
-            const shouldReset =
-              scanType === ScanType.Partner ? false :
-              scanType === ScanType.Main && isButtonActive ? false :
-              true;
-          
-            if (shouldReset) resetScanner();
-          }, 1500);
-          
+
       },
       afterFailure: async () => {
+        setScanStatus('not_found');
         setTimeout(() => {
           hasScanned.current = false;
           resetScanner();
