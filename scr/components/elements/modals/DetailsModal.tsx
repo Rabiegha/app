@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import colors from '../../assets/colors/colors';
-import LoadingView from '../../components/elements/view/LoadingView';
-import ErrorView from '../../components/elements/view/ErrorView';
+import colors from '../../../assets/colors/colors';
+import LoadingView from '../view/LoadingView';
+import ErrorView from '../view/ErrorView';
 
 type Props = {
   visible: boolean;

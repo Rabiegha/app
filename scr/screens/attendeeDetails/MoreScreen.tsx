@@ -8,7 +8,6 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
-import PrintModal from '../../components/elements/modals/PrintModal';
 import LoadingView from '../../components/elements/view/LoadingView';
 import ErrorView from '../../components/elements/view/ErrorView';
 
@@ -22,6 +21,7 @@ import { useEvent } from '../../context/EventContext';
 import { setPrintStatus } from '../../redux/slices/printerSlice';
 import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
+import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 
 const MoreScreen = ({ route, navigation }) => {
   /* ---------------------------------------------------------------- */
@@ -161,7 +161,7 @@ const MoreScreen = ({ route, navigation }) => {
 
       <View style={[globalStyle.container, styles.profil]}>
         {/* Print status modal stays available at all times */}
-        <PrintModal
+        <CheckinPrintModal
           visible={!!printStatus}
           status={printStatus}
           onClose={() => dispatch(setPrintStatus(null))}

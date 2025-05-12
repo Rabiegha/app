@@ -17,7 +17,7 @@ export default [
   },
   {
     name: 'Scan',
-    component: () => <ScanScreen scanType={ScanType.Main} />,
+    component: () => <ScanScreen scanType={ScanType.Partner} />,
     icon: require('../../../assets/images/icons/Scan.png'),
     label: '',
     isMiddle: true,

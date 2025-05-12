@@ -1,4 +1,24 @@
 import { scanAttendee } from "../../../services/scanAttendeeService";
+import { ScanType } from "../types/scan";
+
+export type HandleScanParams = {
+  data: string;
+  scanType: ScanType;
+  userId: string;
+  eventId: string;
+  setAttendeeData: React.Dispatch<React.SetStateAction<any>>;
+  setAttendeeName: React.Dispatch<React.SetStateAction<string>>;
+  setScanStatus: React.Dispatch<React.SetStateAction<string>>;
+  afterSuccess: (attendee: any) => Promise<void>;
+  afterFailure: () => Promise<void>;
+
+  // Ajoute les fonctions spécifiques utilisées dans le switch
+  fetchCounts?: (id: string) => Promise<void>;
+  setModalVisible?: (val: boolean) => void;
+  setRefreshTrigger?: React.Dispatch<React.SetStateAction<number>>;
+  resetScanner?: () => void;
+  hasScanned?: React.MutableRefObject<boolean>;
+};
 
 
 export const handleScan = async ({
@@ -10,9 +30,10 @@ export const handleScan = async ({
   setAttendeeName,
   afterSuccess,
   afterFailure,
-}) => {
+}: HandleScanParams) => {
   try {
     const response = await scanAttendee(userId, eventId, data);
+    console.log('dataSentToThe', data, userId , eventId)
     if (response.status === true) {
       const attendee = response.attendee_details;
 

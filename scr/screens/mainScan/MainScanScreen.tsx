@@ -15,7 +15,7 @@ import ProgressBar from '../../components/elements/progress/ProgressBar';
 import colors from '../../assets/colors/colors';
 import MainScanComponent from '../../components/screens/mainScan/MainScanComponent';
 import { RNCamera } from 'react-native-camera';
-import DetailsModal from './detailsModal';
+import DetailsModal from '../../components/elements/modals/DetailsModal';
 import {useFetchAttendeeCounts} from '../../hooks/attendee/useFetchAttendeeCounts';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';

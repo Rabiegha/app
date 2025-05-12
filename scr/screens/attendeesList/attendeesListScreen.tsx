@@ -20,7 +20,7 @@ import FiltreComponent from '../../components/filtre/FiltreComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
 import { setPrintStatus } from '../../redux/slices/printerSlice';
-import PrintModal from '../../components/elements/modals/PrintModal';
+import PrintModal from '../../components/elements/modals/CheckinPrintModal';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
 import refreshIcon from '../../assets/images/icons/refresh.png';
 import colors from '../../assets/colors/colors';

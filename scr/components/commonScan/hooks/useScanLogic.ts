@@ -8,8 +8,11 @@ import useSessionRegistrationData from '../../../hooks/registration/useSessionRe
 import { ScanType } from '../types/scan';
 import { useActiveEvent } from '../../../utils/event/useActiveEvent';
 import { selectCurrentUserId } from '../../../redux/selectors/auth/authSelectors';
+import usePrintDocument from '../../../hooks/print/usePrintDocument';
+import { usePrintStatus } from '../../../printing/context/PrintStatusContext';
 
-export const useScanLogic = (scanType: ScanType) => {
+
+export const useScanLogic = (scanType: ScanType, userId: string) => {
   const hasScanned = useRef(false);
   const [attendeeName, setAttendeeName] = useState('');
   const [attendeeData, setAttendeeData] = useState(null);
@@ -20,12 +23,14 @@ export const useScanLogic = (scanType: ScanType) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isButtonActive, setIsButtonActive] = useState(false);
 
-  const userId = useSelector(selectCurrentUserId);
   const { eventId } = useActiveEvent();
-  const { capacity, totalCheckedIn } = useSessionRegistrationData({ refreshTrigger1: refreshTrigger });
+  const { capacity, totalCheckedIn, loading : statsLoading } = useSessionRegistrationData({ refreshTrigger1: refreshTrigger });
   const { partnerCount, childSessionCount, loading, fetchCounts } = useFetchAttendeeCounts();
+  const { setStatus } = usePrintStatus();
 
   const { submitComment, loading: addingComment, error: addCommentError, resetError: resetAddError } = useAddComment();
+
+  const {printDocument} = usePrintDocument();
 
   const resetScanner = () => {
     setAttendeeName('');
@@ -63,15 +68,30 @@ export const useScanLogic = (scanType: ScanType) => {
             });
             setRefreshTrigger(prev => prev + 1);
             break;
-          case ScanType.Main:
-            setModalVisible(true);
-            break;
-        }
+            case ScanType.Main:
 
+                if (isButtonActive) {
+                  setModalVisible(true);
+                } else {
+                  setStatus('checkin_success');
+                  await new Promise(resolve => setTimeout(resolve, 1000));
+                  await printDocument(attendee.badge_pdf_url); 
+                  setRefreshTrigger(prev => prev + 1);
+                }
+            break;
+              
+        }
         setTimeout(() => {
-          hasScanned.current = false;
-          if (scanType !== ScanType.Partner) resetScanner();
-        }, 1500);
+            hasScanned.current = false;
+            // Ne reset que si ce n’est pas un partner, et pas un main avec bouton actif
+            const shouldReset =
+              scanType === ScanType.Partner ? false :
+              scanType === ScanType.Main && isButtonActive ? false :
+              true;
+          
+            if (shouldReset) resetScanner();
+          }, 1500);
+          
       },
       afterFailure: async () => {
         setTimeout(() => {
