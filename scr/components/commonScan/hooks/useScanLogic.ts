@@ -11,6 +11,7 @@ import { selectCurrentUserId } from '../../../redux/selectors/auth/authSelectors
 import usePrintDocument from '../../../hooks/print/usePrintDocument';
 import { usePrintStatus } from '../../../printing/context/PrintStatusContext';
 import useFetchAttendeeDetails from '../../../hooks/attendee/useAttendeeDetails';
+import { fetchAttendeesList } from '../../../services/getAttendeesListService';
 
 
 export const useScanLogic = (scanType: ScanType, userId: string) => {
@@ -48,6 +49,11 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
     setModalVisible(false);
     setComment('');
     hasScanned.current = false;
+  };
+
+  const getBadgeUrl = async (userId, eventId, attendeeId) => {
+    const [details] = await fetchAttendeesList(userId, eventId, attendeeId);
+    return details?.badge_pdf_url || '';
   };
 
   const onBarCodeRead = async ({ data }) => {
@@ -90,7 +96,8 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
                 } else {
                   setStatus('checkin_success');
                   await new Promise(resolve => setTimeout(resolve, 1000));
-                  await printDocument(attendeeDetails.urlBadgePdf);
+                  const badgeUrl = await getBadgeUrl(userId, eventId, attendee.id);
+                  await printDocument(badgeUrl);
                   setRefreshTrigger(prev => prev + 1);
                   setTimeout(() => {
                     resetScanner();
