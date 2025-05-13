@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RNCamera } from 'react-native-camera';
-import MainScanComponent from '../../components/screens/mainScan/MainScanComponent';
 import SessionStats from '../../components/screens/sessionAttendeeList/SessionStatsComponent';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
 import { getModalByScanType } from '../../components/commonScan/utils/getModalByScanType';
@@ -15,6 +14,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import { usePrintStatus } from '../../printing/context/PrintStatusContext';
+import MainScanComponent from '../../components/commonScan/MainScanComponent';
 
 
 
@@ -71,7 +71,7 @@ const ScanScreen = ({scanType: propScanType}: Props) => {
 
   const modal = getModalByScanType({
     scanType,
-    isButtonActive: scan.isButtonActive,
+    isGiftModeActive: scan.isGiftModeActive,
     props: {
       visible: scan.modalVisible,
       onRequestClose: scan.resetScanner,
@@ -116,9 +116,14 @@ const ScanScreen = ({scanType: propScanType}: Props) => {
         sessionScanStats={sessionScanStats}
         mainPopupContent={modal}
         isButtonShown={scanType === ScanType.Main}
-        isButtonActive={scan.isButtonActive}
-        handleButtonPress={() => {
-          scan.setIsButtonActive(!scan.isButtonActive);
+        isGiftModeActive={scan.isGiftModeActive}
+        isPrintModeActive={scan.isPrintModeActive}
+        handleGiftButtonPress={() => {
+          scan.setIsGiftModeActive(!scan.isGiftModeActive);
+          // logique personnalisée ici
+        }}
+        handlePrintButtonPress={() => {
+          scan.setIsPrintModeActive(!scan.isPrintModeActive);
           // logique personnalisée ici
         }}
       />

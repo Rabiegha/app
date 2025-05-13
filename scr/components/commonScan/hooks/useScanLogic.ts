@@ -23,7 +23,8 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [comment, setComment] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
-  const [isButtonActive, setIsButtonActive] = useState(false);
+  const [isGiftModeActive, setIsGiftModeActive] = useState(false);
+  const [isPrintModeActive, setIsPrintModeActive] = useState(false);
 
   const { eventId } = useActiveEvent();
   const { capacity, totalCheckedIn, loading : statsLoading } = useSessionRegistrationData({ refreshTrigger1: refreshTrigger });
@@ -91,13 +92,21 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
             break;
             case ScanType.Main:
 
-                if (isButtonActive) {
+                if (isGiftModeActive) {
                   setModalVisible(true);
                 } else {
-                  setStatus('checkin_success');
-                  await new Promise(resolve => setTimeout(resolve, 1000));
-                  const badgeUrl = await getBadgeUrl(userId, eventId, attendee.id);
-                  await printDocument(badgeUrl);
+                  if (isPrintModeActive) {
+                    setStatus('checkin_success');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    const badgeUrl = await getBadgeUrl(userId, eventId, attendee.id);
+                    await printDocument(badgeUrl);
+                  } else {
+                    Toast.show({
+                      type: 'customSuccess',
+                      text1: attendee.attendee_name,
+                      text2: 'a bien été enregistré',
+                    });
+                  }
                   setRefreshTrigger(prev => prev + 1);
                   setTimeout(() => {
                     resetScanner();
@@ -126,8 +135,10 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
     setComment,
     showSuccess,
     setShowSuccess,
-    isButtonActive,
-    setIsButtonActive,
+    isGiftModeActive,
+    setIsGiftModeActive,
+    isPrintModeActive,
+    setIsPrintModeActive,
     setModalVisible,
     onBarCodeRead,
     resetScanner,

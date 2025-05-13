@@ -37,7 +37,6 @@ function AppNavigator() {
         component={userType === 'Partner' ? PartnerTabNavigator : TabNavigator}
       />
       <Stack.Screen name="SessionAttendeesList" component={SessionAttendeesListScreen} />
-      <Stack.Screen name="SessionsScanScreen" component={SessionScanScreen} />
       <Stack.Screen name="More" component={MoreScreen} />
       <Stack.Screen name="Edit" component={EditScreen} />
       <Stack.Screen name="Badge" component={BadgeScreen} />
