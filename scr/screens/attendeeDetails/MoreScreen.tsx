@@ -22,14 +22,14 @@ import { setPrintStatus } from '../../redux/slices/printerSlice';
 import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
+import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 
 const MoreScreen = ({ route, navigation }) => {
   /* ---------------------------------------------------------------- */
   /* Context & Redux                                                 */
   /* ---------------------------------------------------------------- */
   const { triggerListRefresh, updateAttendee } = useEvent();
-  const dispatch           = useDispatch();
-  const printStatus        = useSelector(selectPrintStatus);
+  const { status: printStatus, clearStatus } = usePrintStatus();
   const userId             = useSelector(selectCurrentUserId);
   const { eventId } = useEvent();
   /* ---------------------------------------------------------------- */
@@ -71,8 +71,11 @@ const MoreScreen = ({ route, navigation }) => {
   const handleBadgePress = () =>
     navigation.navigate('Badge', { attendeeId, eventId, badgePdfUrl, badgeImageUrl });
 
+
+  const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
+  const nodePrinterId = selectedNodePrinter?.id;
   const { printDocument } = usePrintDocument();
-  const handlePrintDocument = () => printDocument(badgePdfUrl);
+  const handlePrintDocument = () => printDocument(badgePdfUrl, nodePrinterId);
 
   const sendPdf = async () => {
     try {
@@ -161,11 +164,13 @@ const MoreScreen = ({ route, navigation }) => {
 
       <View style={[globalStyle.container, styles.profil]}>
         {/* Print status modal stays available at all times */}
-        <CheckinPrintModal
-          visible={!!printStatus}
-          status={printStatus}
-          onClose={() => dispatch(setPrintStatus(null))}
-        />
+            {printStatus && (
+              <CheckinPrintModal
+                visible={true}
+                status={printStatus}
+                onClose={clearStatus}
+              />
+            )}
 
         {/* The area below is where we swap in loading / error / data */}
         {renderContent()}

@@ -6,9 +6,7 @@ import {setPrintStatus} from '../../redux/slices/printerSlice';
 import {
   selectOrientation,
   selectDpi,
-  selectAutoPrint,
   selectPaperFormat,
-  selectSelectedNodePrinter,
 } from '../../redux/selectors/print/printerSelectors';
 
 export const useNodePrint = () => {
@@ -17,20 +15,12 @@ export const useNodePrint = () => {
   const dpi = useSelector(selectDpi);
   const selectedPaperFormat = useSelector(selectPaperFormat);
 
-  // selectedNodePrinter
-  const selectedNodePrinter = useSelector(selectSelectedNodePrinter);
 
   //
   const dispatch = useDispatch();
-  // selectedWiFiPrinters
-  const selectedWiFiPrinters = useSelector(
-    state => state.printers.selectedWiFiPrinter,
-  );
 
-  const nodePrinterId = selectedNodePrinter?.id;
-
-  const sendPrintJob = async fileBase64 => {
-    if (!nodePrinterId) {
+  const sendPrintJob = async (fileBase64: string, printerId: string) => {
+    if (!printerId) {
       dispatch(setPrintStatus('No printer selected'));
       return;
     }
@@ -39,7 +29,7 @@ export const useNodePrint = () => {
 
     try {
       const printJob = {
-        printerId: nodePrinterId,
+        printerId: printerId,
         title: 'Print Job From Attendee', // replace this with attendee name + badge
         contentType: 'pdf_base64',
         content: fileBase64,

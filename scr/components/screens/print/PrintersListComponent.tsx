@@ -61,6 +61,7 @@ const PrintersList = () => {
   /* initial load */
   useEffect(() => {
     fetchPrinters(true);
+    console.log('log', selectedNodePrinter.id)
   }, [fetchPrinters]);
 
   const triggerRefresh = () => {
@@ -89,6 +90,12 @@ const PrintersList = () => {
       setLoadingPrinter(false);
     }
   };
+
+  useEffect(() => {
+  if (selectedNodePrinter) {
+    console.log('[PrintersList] nouveau printer sélectionné :', selectedNodePrinter.id);
+  }
+}, [selectedNodePrinter]);
 
   if (error) {
     return (

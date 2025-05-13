@@ -19,6 +19,7 @@ import usePrintDocument from '../../../../hooks/print/usePrintDocument';
 import { ListItemProps } from '../../../../types/listItem.types';
 import useFetchAttendeeDetails from '../../../../hooks/attendee/useAttendeeDetails';
 import {usePrintStatus} from '../../../../printing/context/PrintStatusContext';
+import { useStore } from 'react-redux';
 
 const {width} = Dimensions.get('window');
 let openSwipeableRef = null;
@@ -33,6 +34,9 @@ const ListItem = React.memo(
     const dispatch = useDispatch();
     const isSwipeOpen = useRef(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+      const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
+      const nodePrinterId = selectedNodePrinter?.id;
       const { setStatus } = usePrintStatus();
 
     // Redux: whether to show the company name in search
@@ -73,7 +77,7 @@ const ListItem = React.memo(
         await onUpdateAttendee(updatedAttendee);
         setStatus('checkin_success');
                   await new Promise(resolve => setTimeout(resolve, 1000));
-        printDocument(attendeeDetails.urlBadgePdf);
+        printDocument(item.badge_pdf_url, nodePrinterId);
       } catch (error) {
         console.error('Error while printing and checking in:', error);
       }

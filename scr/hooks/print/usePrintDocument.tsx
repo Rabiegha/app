@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Buffer } from 'buffer';
 import RNFS from 'react-native-fs';
 import { useSelector } from 'react-redux';
@@ -7,13 +7,11 @@ import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 
 const usePrintDocument = () => {
   const { sendPrintJob } = useNodePrint();
-  const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
-  const nodePrinterId = selectedNodePrinter?.id;
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
+
   const { status: printStatus, setStatus, clearStatus } = usePrintStatus();
 
   const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -41,15 +39,16 @@ const usePrintDocument = () => {
 
 
 
-  const printDocument = useCallback(async (documentUrl: string) => {
+
+  const printDocument = useCallback(async (documentUrl: string, printerId?: string) => {
     setLoading(true);
     setError(null);
     setMessage('');
     setSuccess(false);
     setStatus('printing');
-
+    console.log('selected printer', printerId)
     try {
-      if (!nodePrinterId) {
+      if (!printerId) {
         setStatus('no_printer');
         throw new Error('Aucune imprimante sélectionnée.');
       }
@@ -59,7 +58,7 @@ const usePrintDocument = () => {
 
       const cleanedBase64 = Buffer.from(Buffer.from(base64, 'base64')).toString('base64');
 
-      await sendPrintJob(cleanedBase64);
+      await sendPrintJob(cleanedBase64, printerId);
 
       await delay(1000);
       setSuccess(true);
@@ -88,7 +87,7 @@ const usePrintDocument = () => {
       setLoading(false);
       setTimeout(() => clearStatus(), 3000); // Allow some time for user feedback
     }
-  }, [nodePrinterId, sendPrintJob, setStatus, clearStatus]);
+  }, [sendPrintJob, setStatus, clearStatus]);
 
   return {
     printDocument,

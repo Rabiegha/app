@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import {
   View,
   Modal,
@@ -12,7 +12,6 @@ import {
 import MainAttendeeListItem, { ListHandle } from '../../components/screens/attendees/mainAttendeeList/MainAttendeeList';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
 import ProgressText from '../../components/elements/progress/ProgressionText';
-import { useNavigation } from '@react-navigation/native';
 import MainHeader from '../../components/elements/header/MainHeader';
 import { useEvent } from '../../context/EventContext';
 import Search from '../../components/elements/Search';
@@ -27,6 +26,7 @@ import colors from '../../assets/colors/colors';
 import Filtre from '../../assets/images/icons/Filtre.png';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePrintStatus } from '../../printing/context/PrintStatusContext';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const defaultFilterCriteria = {
   status: 'all',
@@ -39,6 +39,14 @@ const AttendeeListScreen = () => {
   const triggerChildRefresh = () => {
     listRef.current?.handleRefresh(); // 🟢 Appel direct de la méthode enfant
   };
+
+    useFocusEffect(
+    useCallback(() => {
+      // 1) on déclenche la remise à jour des stats (useRegistrationData)
+      setRefreshTrigger(p => p + 1);
+
+    }, []),
+  );
 
   const { eventName } = useEvent();
   const [refreshTrigger, setRefreshTrigger] = useState(0);

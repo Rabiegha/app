@@ -11,6 +11,7 @@ import { selectCurrentUserId } from '../../../redux/selectors/auth/authSelectors
 import usePrintDocument from '../../../hooks/print/usePrintDocument';
 import { usePrintStatus } from '../../../printing/context/PrintStatusContext';
 import useFetchAttendeeDetails from '../../../hooks/attendee/useAttendeeDetails';
+import { fetchAttendeesList } from '../../../services/getAttendeesListService';
 
 
 export const useScanLogic = (scanType: ScanType, userId: string) => {
@@ -30,7 +31,11 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
 
 
   const [attendeeId, setAttendeeId] = useState<string | null>(null);
-  const { attendeeDetails, loading: detailsLoading, error } = useFetchAttendeeDetails(refreshTrigger, attendeeId || '');
+  const { attendeeDetails } = useFetchAttendeeDetails(refreshTrigger, attendeeId || '');
+
+
+  const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
+  const nodePrinterId = selectedNodePrinter?.id;
 
 
 
@@ -40,6 +45,11 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
   const { submitComment, loading: addingComment, error: addCommentError, resetError: resetAddError } = useAddComment();
 
   const {printDocument} = usePrintDocument();
+
+  const getBadgeUrl = async (userId, eventId, attendeeId) => {
+  const [details] = await fetchAttendeesList(userId, eventId, attendeeId);
+  return details?.badge_pdf_url || '';
+};
 
   const resetScanner = () => {
     setAttendeeName('');
@@ -65,14 +75,15 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
       afterSuccess: async (attendee) => {
         setScanStatus('found');
         setAttendeeId(attendee.id);
-        await new Promise(resolve => setTimeout(resolve, 1000));
         switch (scanType) {
           case ScanType.Partner:
+            await new Promise(res => setTimeout(res, 1000));
             await fetchCounts(attendee.attendee_id);
             await new Promise(res => setTimeout(res, 1000));
             setModalVisible(true);
             break;
           case ScanType.Session:
+            await new Promise(res => setTimeout(res, 500));
             Toast.show({
               type: 'customSuccess',
               text1: attendee.attendee_name,
@@ -86,11 +97,13 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
             case ScanType.Main:
 
                 if (isButtonActive) {
+                  await new Promise(res => setTimeout(res, 1000));
                   setModalVisible(true);
                 } else {
                   setStatus('checkin_success');
                   await new Promise(resolve => setTimeout(resolve, 1000));
-                  await printDocument(attendeeDetails.urlBadgePdf);
+                  const badgeUrl = await getBadgeUrl(userId, eventId, attendee.id);
+                  await printDocument(badgeUrl, nodePrinterId);
                   setRefreshTrigger(prev => prev + 1);
                   setTimeout(() => {
                     resetScanner();
