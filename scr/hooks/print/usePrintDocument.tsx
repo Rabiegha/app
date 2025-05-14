@@ -70,7 +70,6 @@ const usePrintDocument = () => {
       console.error('[printDocument] error:', msg);
       setError(msg);
       setMessage(msg);
-
       setTimeout(() => {
         setStatus(prev => {
           const knownErrors = [

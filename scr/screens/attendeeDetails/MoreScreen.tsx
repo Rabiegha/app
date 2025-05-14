@@ -74,9 +74,12 @@ const MoreScreen = ({ route, navigation }) => {
 
 
   const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
-  const nodePrinterId = selectedNodePrinter?.id;
+
   const { printDocument } = usePrintDocument();
-  const handlePrintDocument = () => printDocument(badgePdfUrl, nodePrinterId);
+  const handlePrintDocument = useCallback(() => {
+
+   printDocument(badgePdfUrl, selectedNodePrinter?.id);
+ }, [badgePdfUrl, selectedNodePrinter?.id, printDocument]);
 
   const sendPdf = async () => {
     try {

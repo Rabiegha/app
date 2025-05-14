@@ -77,7 +77,8 @@ const ListItem = React.memo(
         await onUpdateAttendee(updatedAttendee);
         setStatus('checkin_success');
         await new Promise(resolve => setTimeout(resolve, 1000));
-        printDocument(item.badge_pdf_url);
+        printDocument(item.badge_pdf_url, nodePrinterId);
+        console.log('print sent to', selectedNodePrinter?.name);
       } catch (error) {
         console.error('Error while printing and checking in:', error);
       }
@@ -227,7 +228,7 @@ const ListItem = React.memo(
           </View>
         );
       },
-      [isCheckedIn]
+      [isCheckedIn, selectedNodePrinter?.id]
     );
 
     return (

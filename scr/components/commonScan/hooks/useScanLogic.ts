@@ -12,6 +12,7 @@ import usePrintDocument from '../../../hooks/print/usePrintDocument';
 import { usePrintStatus } from '../../../printing/context/PrintStatusContext';
 import useFetchAttendeeDetails from '../../../hooks/attendee/useAttendeeDetails';
 import { fetchAttendeesList } from '../../../services/getAttendeesListService';
+import { store } from '../../../redux/store';
 
 
 export const useScanLogic = (scanType: ScanType, userId: string) => {
@@ -47,10 +48,6 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
 
   const {printDocument} = usePrintDocument();
 
-  const getBadgeUrl = async (userId, eventId, attendeeId) => {
-  const [details] = await fetchAttendeesList(userId, eventId, attendeeId);
-  return details?.badge_pdf_url || '';
-};
 
   const resetScanner = () => {
     setAttendeeName('');
@@ -80,7 +77,7 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
       setScanStatus,
       afterSuccess: async (attendee) => {
         setScanStatus('found');
-        setAttendeeId(attendee.id);
+        setAttendeeId(attendee.attendee_id);
         switch (scanType) {
           case ScanType.Partner:
             await new Promise(res => setTimeout(res, 1000));
@@ -108,8 +105,11 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
                   if (isPrintModeActive) {
                     setStatus('checkin_success');
                     await new Promise(resolve => setTimeout(resolve, 1000));
-                    const badgeUrl = await getBadgeUrl(userId, eventId, attendee.id);
-                    await printDocument(badgeUrl);
+                    const currentPrinterId = store.getState().printers.selectedNodePrinter?.id;
+                    const [details] = await fetchAttendeesList(userId, eventId, attendee.attendee_id);
+                    const badgeUrl = details?.badge_pdf_url || '';
+                    console.log('sent badge url', badgeUrl);
+                    await printDocument(badgeUrl, currentPrinterId);
                   } else {
                     Toast.show({
                       type: 'customSuccess',
