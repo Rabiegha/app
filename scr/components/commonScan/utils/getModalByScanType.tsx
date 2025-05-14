@@ -7,16 +7,16 @@ import CheckinPrintModal from '../../elements/modals/CheckinPrintModal';
 type Props = {
   scanType: ScanType;
   props: any;
-  isButtonActive?: boolean;
+  isGiftModeActive?: boolean;
 };
 
-export const getModalByScanType = ({ scanType, props, isButtonActive }: Props) => {
+export const getModalByScanType = ({ scanType, props, isGiftModeActive }: Props) => {
   switch (scanType) {
     case ScanType.Partner:
       return <CommentModal {...props} />;
 
     case ScanType.Main:
-      return isButtonActive ? (
+      return isGiftModeActive ? (
         <DetailsModal {...props} />
       ) : (
         <CheckinPrintModal

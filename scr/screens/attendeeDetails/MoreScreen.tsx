@@ -28,9 +28,7 @@ const MoreScreen = ({ route, navigation }) => {
   /* ---------------------------------------------------------------- */
   /* Context & Redux                                                 */
   /* ---------------------------------------------------------------- */
-  const { triggerListRefresh, updateAttendee } = useEvent();
-  const { status: printStatus, clearStatus } = usePrintStatus();
-  const userId             = useSelector(selectCurrentUserId);
+  const { updateAttendee } = useEvent();
   const { eventId } = useEvent();
   /* ---------------------------------------------------------------- */
   /* Navigation params                                                */
@@ -62,6 +60,9 @@ const MoreScreen = ({ route, navigation }) => {
     () => setRefreshTrigger(prev => prev + 1),
     []
   );
+
+
+  const { status: printStatus, clearStatus } = usePrintStatus();
 
   /* ---------------------------------------------------------------- */
   /* Handlers                                                         */
@@ -104,7 +105,6 @@ const MoreScreen = ({ route, navigation }) => {
   /* update parent lists when status changes */
   useEffect(() => {
     updateAttendee(eventId, localAttendeeStatus);
-    triggerListRefresh();
   }, [localAttendeeStatus]);
 
   /* ---------------------------------------------------------------- */
@@ -164,13 +164,14 @@ const MoreScreen = ({ route, navigation }) => {
 
       <View style={[globalStyle.container, styles.profil]}>
         {/* Print status modal stays available at all times */}
-            {printStatus && (
-              <CheckinPrintModal
-                visible={true}
-                status={printStatus}
-                onClose={clearStatus}
-              />
-            )}
+        {/* 🖨️ Print modal */}
+        {printStatus && (
+        <CheckinPrintModal
+          visible={true}
+          status={printStatus}
+          onClose={clearStatus}
+        />
+      )}
 
         {/* The area below is where we swap in loading / error / data */}
         {renderContent()}

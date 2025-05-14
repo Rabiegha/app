@@ -11,10 +11,11 @@ import {
 import {RNCamera} from 'react-native-camera';
 import Svg, {Defs, Mask, Rect} from 'react-native-svg';
 
-import image from '../../../assets/images/icons/Gift.png';
-import colors from '../../../assets/colors/colors';
+import GiftIcon from '../../assets/images/icons/Gift.png';
+import PrintIcon from '../../assets/images/icons/Print.png';
+import colors from '../../assets/colors/colors';
 import MaskedViewComponent from './MaskedView';
-import Popup from './popup';
+import Popup from '../elements/modals/popup';
 
 const {width, height} = Dimensions.get('window');
 const BOX_SIZE      = width * 0.7;                // scan window size
@@ -28,8 +29,10 @@ type Props = {
   sessionScanStats?: React.ReactNode;
   mainPopupContent?: React.ReactNode;
   isButtonShown?: boolean;
-  isButtonActive?: boolean;
-  handleButtonPress,
+  isGiftModeActive?: boolean;
+  isPrintModeActive: boolean,
+  handleGiftButtonPress,
+  handlePrintButtonPress,
 };
 
   const MainScanComponent = ({   onBarCodeRead,
@@ -39,8 +42,10 @@ type Props = {
     sessionScanStats,
     mainPopupContent,
     isButtonShown = false,
-    isButtonActive = false,
-    handleButtonPress,
+    isGiftModeActive = false,
+    isPrintModeActive = false,
+    handleGiftButtonPress,
+    handlePrintButtonPress,
     ref, }: Props) => (
     <RNCamera
       ref={ref}
@@ -99,19 +104,29 @@ type Props = {
       {/* ────── BOTTOM ACTIONS ────── */}
       <View style={styles.bottomButtons}>
       {isButtonShown && (
-        <TouchableOpacity
-          onPress={handleButtonPress}
-          style={[
-            styles.bottomIcon,
-            {backgroundColor: isButtonActive ? colors.green : 'black'},
-          ]}>
-          <Image source={image} style={styles.iconImage} resizeMode="contain" />
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            onPress={handleGiftButtonPress}
+            style={[
+              styles.bottomIcon,
+              { backgroundColor: isGiftModeActive ? colors.green : 'black' },
+            ]}
+          >
+            <Image source={GiftIcon} style={styles.iconImage} resizeMode="contain" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handlePrintButtonPress}
+            style={[
+              styles.bottomIcon,
+              { backgroundColor: isPrintModeActive ? colors.green : 'black' },
+            ]}
+          >
+            <Image source={PrintIcon} style={styles.iconImage} resizeMode="contain" />
+          </TouchableOpacity>
+        </>
       )}
 
-{/*         <TouchableOpacity style={styles.bottomIcon}>
-          <Image source={image} style={styles.iconImage} resizeMode="contain" />
-        </TouchableOpacity> */}
       </View> 
 
       {/* bottom pill indicator */}
