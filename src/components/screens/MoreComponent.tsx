@@ -1,20 +1,13 @@
 import React, { useState } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Image,
-  Text,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
-} from 'react-native';
+import {ScrollView, StyleSheet, View, Image, Text} from 'react-native';
 import LabelValueComponent from '../elements/LabelValueComponent';
 import LargeButton from '../elements/buttons/LargeButton';
 import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
-import Icons from '@/assets/images/icons';
+import ScanIcon from '../../assets/images/icons/Scan.png';
+import EditIcon from '../../assets/images/icons/Modifier.png';
+import PrintIcon from '../../assets/images/icons/Print.png';
 import HoldButton from '../elements/buttons/HoldButton';
 import { insertSpaceBetweenPairs } from '../../hooks/useFormat';
 import { useSelector } from 'react-redux';
@@ -22,13 +15,9 @@ import { selectCurrentUserId, selectUserType } from '../../redux/selectors/auth/
 import { attendeeFieldConfig } from '../../utils/modify/attendeeFieldConfig';
 import ModifyFieldModal from '../elements/modals/ModifyFieldModal';
 import { useUpdateAttendeeField } from '../../hooks/edit/useUpdateAttendeeField';
-import { MoreComponentProps, AttendeeData, FieldConfig, BaseField } from './MoreComponent.types';
 
 
-/**
- * Component for displaying detailed attendee information with edit capabilities
- */
-const MoreComponent: React.FC<MoreComponentProps> = ({
+const MoreComponent = ({
   firstName,
   lastName,
   attendeeId,
@@ -49,7 +38,7 @@ const MoreComponent: React.FC<MoreComponentProps> = ({
 }) => {
 
   const userId = useSelector(selectCurrentUserId);
-  const formattedPhone = insertSpaceBetweenPairs(phone || '');
+  const formattedPhone = insertSpaceBetweenPairs(phone);
   const parsedAttendeeStatus = Number(attendeeStatus);
   const userType = useSelector(selectUserType);
 
@@ -57,7 +46,7 @@ const MoreComponent: React.FC<MoreComponentProps> = ({
 const isPartner = userType?.toLowerCase() === 'partner';
 
 
-const attendeeData: AttendeeData = {
+const attendeeData = {
   first_name: firstName,
   last_name: lastName,
   email,
@@ -152,10 +141,10 @@ const handleEditSubmit = async (newValue: string) => {
 
   try {
     const success = await submitFieldUpdate({
-      userId: userId || '',
+      userId,
       attendeeId,
       field: fieldName,
-      value: String(newValue), // Convert to string to fix type error
+      value: newValue,
     });
     if (success && typeof onFieldUpdateSuccess === 'function') {
       onFieldUpdateSuccess(); // ✅ trigger parent refresh
@@ -178,21 +167,21 @@ const handleEditSubmit = async (newValue: string) => {
       </View>
       <View style={styles.topButtonsContainer}>
         <SmallButton
-          imageSource={Icons.Print}
+          imageSource={PrintIcon}
           pressHandler={Print}
           backgroundColor={colors.green}
           tintColor={colors.greyCream}
         />
           {/*  ----  Edit button temporarily disabled  ----  
           // <SmallButton
-          //   imageSource={Icons.Modifier}
+          //   imageSource={EditIcon}
           //   pressHandler={modify}
           //   backgroundColor={colors.greyCream}
           //   tintColor={colors.darkGrey} 
           // /> */}
 
         <SmallButton
-          imageSource={Icons.Scan}
+          imageSource={ScanIcon}
           pressHandler={See}
           backgroundColor={colors.greyCream}
           tintColor={colors.darkGrey}
@@ -201,12 +190,8 @@ const handleEditSubmit = async (newValue: string) => {
       <View style={styles.container}>
       {baseFields
         .filter(field => {
-          // Type guard to check if field has hideForPartner or showForPartnerOnly properties
-          const hasHideForPartner = 'hideForPartner' in field;
-          const hasShowForPartnerOnly = 'showForPartnerOnly' in field;
-          
-          if (isPartner && hasHideForPartner && field.hideForPartner) return false;
-          if (!isPartner && hasShowForPartnerOnly && field.showForPartnerOnly) return false;
+          if (isPartner && field.hideForPartner) return false;
+          if (!isPartner && field.showForPartnerOnly) return false;
           return true;
         })
         .map((field, index) => (
@@ -215,7 +200,7 @@ const handleEditSubmit = async (newValue: string) => {
             label={field.label}
             value={field.value}
             showButton={field.showButton}
-            modifyHandle={field.fieldKey ? () => openEditModal(field.fieldKey as string) : undefined}
+            modifyHandle={field.fieldKey ? () => openEditModal(field.fieldKey) : undefined}
           />
 
 
@@ -228,14 +213,14 @@ const handleEditSubmit = async (newValue: string) => {
           {parsedAttendeeStatus === 0 ? (
             <LargeButton
               title="Check-in"
-              onPress={() => handleButton && handleButton()}
+              onPress={() => handleButton(1)}
               backgroundColor={colors.green}
               loading={loading}
             />
           ) : (
             <LargeButton
               title="Undo Check-in"
-              onPress={() => handleButton && handleButton()}
+              onPress={() => handleButton(0)}
               backgroundColor={colors.red}
               loading={loading}
             />
@@ -246,7 +231,7 @@ const handleEditSubmit = async (newValue: string) => {
         <ModifyFieldModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        label={editFieldKey in attendeeFieldConfig ? attendeeFieldConfig[editFieldKey as keyof typeof attendeeFieldConfig].label : ''}
+        label={attendeeFieldConfig[editFieldKey]?.label || ''}
         initialValue={editValue}
         onSubmit={handleEditSubmit}
       />
@@ -257,9 +242,6 @@ const handleEditSubmit = async (newValue: string) => {
   );
 };
 
-/**
- * Styles for the MoreComponent
- */
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',

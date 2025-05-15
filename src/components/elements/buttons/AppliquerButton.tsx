@@ -1,23 +1,12 @@
-// AppliquerButton.tsx
+// CustomButton.js
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Image,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import {TouchableOpacity, Text, StyleSheet, Dimensions} from 'react-native';
+import {Image} from 'react-native';
 import colors from '../../../assets/colors/colors';
-import { AppliquerButtonProps } from './AppliquerButton.types';
 
-/**
- * Apply button component with green background
- */
-const AppliquerButton: React.FC<AppliquerButtonProps> = ({ onPress, Titre, style }) => {
+const AppliquerButton = ({onPress, Titre}) => {
   return (
-    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
       <Text style={styles.buttonText}>{Titre}</Text>
     </TouchableOpacity>
   );
@@ -25,13 +14,7 @@ const AppliquerButton: React.FC<AppliquerButtonProps> = ({ onPress, Titre, style
 
 const {width} = Dimensions.get('window');
 
-/**
- * Styles for the AppliquerButton component
- */
-const styles = StyleSheet.create<{
-  button: ViewStyle;
-  buttonText: TextStyle;
-}>({
+const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.green,
     padding: 10,

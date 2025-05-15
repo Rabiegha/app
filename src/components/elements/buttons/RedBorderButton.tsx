@@ -1,19 +1,8 @@
-// RedBorderButton.tsx
+// RedBorderButton.js
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
-import { RedBorderButtonProps } from './RedBorderButton.types';
+import {TouchableOpacity, Text, StyleSheet, Dimensions} from 'react-native';
 
-/**
- * Button component with colored border and text
- */
-const RedBorderButton: React.FC<RedBorderButtonProps> = ({ onPress, Titre, color, style }) => {
+const RedBorderButton = ({ onPress, Titre, color, style }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -30,13 +19,7 @@ const RedBorderButton: React.FC<RedBorderButtonProps> = ({ onPress, Titre, color
 
 export default RedBorderButton;
 
-/**
- * Styles for the RedBorderButton component
- */
-const styles = StyleSheet.create<{
-  button: ViewStyle;
-  buttonText: TextStyle;
-}>({
+const styles = StyleSheet.create({
   button: {
     backgroundColor: 'transparent',
     padding: 10,

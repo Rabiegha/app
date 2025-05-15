@@ -7,12 +7,12 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import Icons from '@/assets/images/icons';
+import Verifie from '../../../assets/images/icons/Verifie.png';
+import closeButton from '../../../assets/images/icons/closeButton.png';
 import colors from '../../../assets/colors/colors';
 import Toast from 'react-native-toast-message';
-import { BaseToastProps } from './Toast.types';
 
-const SuccessToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
+const SuccessToast = ({text1, text2, ...rest}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const SuccessToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
     <Animated.View style={[styles.notification, {opacity: fadeAnim}]}>
       <View style={styles.textNotification}>
         <Image
-          source={Icons.Verifie}
+          source={Verifie}
           resizeMode="contain"
           style={{
             width: 15,
@@ -46,7 +46,7 @@ const SuccessToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
         {text2 ? <Text style={styles.buttonText}>{text2}: </Text> : null}
       </View>
       <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-        <Image source={Icons.closeButton} style={styles.buttonImage} />
+        <Image source={closeButton} style={styles.buttonImage} />
       </TouchableOpacity>
     </Animated.View>
   );

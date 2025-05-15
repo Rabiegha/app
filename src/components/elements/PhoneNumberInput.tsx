@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,33 +10,23 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   StyleSheet,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
-  ListRenderItemInfo,
 } from 'react-native';
 import down from '../../assets/images/down.png';
 import globalStyle from '../../assets/styles/globalStyle';
-import { countryData } from '../../assets/countryData';
-import { PhoneInputProps, CountryData } from './PhoneNumberInput.types';
+import {countryData} from '../../assets/countryData';
 
 const {width} = Dimensions.get('window');
 
-/**
- * Phone number input component with country code selector
- */
-const PhoneInput: React.FC<PhoneInputProps> = ({
+const PhoneInput = ({
   phoneNumber,
   onChangeText,
   placeholder,
   placeholderTextColor,
-  containerStyle,
-  inputStyle,
 }) => {
-  const [areas, setAreas] = useState<CountryData[]>([]);
-  const [selectedArea, setSelectedArea] = useState<CountryData | null>(null);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [localPhoneNumber, setLocalPhoneNumber] = useState<string>(selectedArea?.dial_code || '');
+  const [areas, setAreas] = useState([]);
+  const [selectedArea, setSelectedArea] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [localPhoneNumber, setLocalPhoneNumber] = useState(selectedArea?.dial_code);
 
   // Load the country data directly from the file
   useEffect(() => {
@@ -57,16 +47,14 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   }, [selectedArea]);
 
   // Handle the change in the phone number input
-  const handlePhoneNumberChange = (text: string): void => {
+  const handlePhoneNumberChange = text => {
     setLocalPhoneNumber(text);
-    if (selectedArea) {
-      onChangeText(selectedArea.dial_code + text);
-    }
+    onChangeText(selectedArea.dial_code + text);
   };
 
   // Render countries codes modal
   const renderAreasCodesModal = () => {
-    const renderItem = ({ item }: ListRenderItemInfo<CountryData>): React.ReactElement => {
+    const renderItem = ({item}) => {
       return (
         <TouchableOpacity
           style={{
@@ -77,9 +65,14 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
             setSelectedArea(item);
             setModalVisible(false);
           }}>
-          <Text style={{fontSize: 24}}>
-            {item.flag}
-          </Text>
+          <Image
+            source={item.flag}
+            style={{
+              height: 20,
+              width: 30,
+              marginRight: 10,
+            }}
+          />
 
           <Text style={{fontSize: 16, color: '#000'}}>{item.name}</Text>
         </TouchableOpacity>
@@ -106,8 +99,11 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
                 data={areas}
                 renderItem={renderItem}
                 keyExtractor={item => item.code}
-                showsVerticalScrollIndicator={false}
-                style={{padding: 20}}
+                verticalScrollIndicator={false}
+                style={{
+                  padding: 20,
+                  marginBottom: 20,
+                }}
               />
             </View>
           </View>
@@ -117,19 +113,21 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   };
 
   return (
-    <View style={[globalStyle.input, containerStyle]}>
-      <View style={[styles.inputContainer, inputStyle]}>
+    <View style={globalStyle.input}>
+      <View style={styles.inputContainer}>
         <TouchableOpacity
           style={styles.countryCodeButton}
-          onPress={() => setModalVisible(true)}>
+          /* onPress={() => setModalVisible(true)} */>
           <View style={styles.countryCodeIconContainer}>
             <Image source={down} style={styles.countryCodeIcon} />
           </View>
 
           <View style={styles.countryFlagContainer}>
-            <Text style={{fontSize: 24}}>
-              {selectedArea?.flag}
-            </Text>
+            <Image
+              source={selectedArea?.flag}
+              resizeMode="contain"
+              style={styles.countryFlag}
+            />
           </View>
 
           <View style={styles.countryCodeTextContainer}>
@@ -153,9 +151,6 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   );
 };
 
-/**
- * Styles for the PhoneInput component
- */
 const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',

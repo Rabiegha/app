@@ -82,8 +82,8 @@ const SessionScanScreen = () => {
             hasScanned.current = false; 
           }, 1000);  
         }
-        
-    }
+
+    };
 
     return (
     <View style={styles.container}>

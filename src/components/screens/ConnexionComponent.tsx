@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
   ScrollView,
@@ -6,32 +6,24 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
 } from 'react-native';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
-import Icons from '@/assets/images/icons';
+import showPasswordIcon from '../../assets/images/icons/Vu.png';
+import hidePasswordIcon from '../../assets/images/icons/Pas-vu.png';
 import FailComponent from '../elements/notifications/FailComponent';
 import LargeButton from '../elements/buttons/LargeButton';
-import { AuthContext } from '../../context/AuthContext';
-import { ConnexionComponentProps } from './ConnexionComponent.types';
+import {AuthContext} from '../../context/AuthContext';
 
-/**
- * Component for user login screen
- */
-const ConnexionComponent: React.FC<ConnexionComponentProps> = ({
+const ConnexionComponent = ({
   userName,
   password,
   setUserName,
   setPassword,
   handleLogin,
-  style,
 }) => {
-  // State for toggling password visibility and tracking login success
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [success, setSuccess] = useState(null);
 
   return (
     <ScrollView
@@ -64,7 +56,7 @@ const ConnexionComponent: React.FC<ConnexionComponentProps> = ({
           style={styles.togglePasswordButton}
           onPress={() => setShowPassword(!showPassword)}>
           <Image
-            source={showPassword ? Icons.PasVu : Icons.Vu}
+            source={showPassword ? hidePasswordIcon : showPasswordIcon}
             style={styles.togglePasswordIcon}
           />
         </TouchableOpacity>
@@ -74,23 +66,13 @@ const ConnexionComponent: React.FC<ConnexionComponentProps> = ({
           title="Connexion"
           onPress={handleLogin}
           backgroundColor={colors.green}
-          loading={false}
         />
       </View>
     </ScrollView>
   );
 };
 
-/**
- * Styles for the ConnexionComponent
- */
-const styles = StyleSheet.create<{
-  container: ViewStyle;
-  passwordInputContainer: ViewStyle;
-  passwordInput: ViewStyle;
-  togglePasswordButton: ViewStyle;
-  togglePasswordIcon: ImageStyle;
-}>({
+const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,

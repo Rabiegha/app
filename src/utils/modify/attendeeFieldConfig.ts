@@ -1,34 +1,28 @@
-import { AttendeeFieldConfig } from './attendeeFieldConfig.types';
-import { AttendeeData } from '../../components/screens/MoreComponent.types';
-
-/**
- * Configuration for attendee fields that can be modified
- */
-export const attendeeFieldConfig: AttendeeFieldConfig = {
+export const attendeeFieldConfig = {
     comment: {
       label: 'Commentaire',
       fieldName: 'comment', //
-      accessor: (a: AttendeeData): string => a.comment || '',
+      accessor: (a) => a.comment || '',
     },
     email: {
       label: 'Adresse mail',
       fieldName: 'email',
-      accessor: (a: AttendeeData): string => a.email || '',
+      accessor: (a) => a.email || '',
     },
     organization: {
       label: 'Entreprise',
       fieldName: 'organization',
-      accessor: (a: AttendeeData): string => a.organization || '',
+      accessor: (a) => a.organization || '',
     },
     jobTitle: {
       label: 'Job Title',
       fieldName: 'designation', // 🧠 this must match API field (e.g., `designation`)
-      accessor: (a: AttendeeData): string => a.jobTitle || '',
+      accessor: (a) => a.jobTitle || '',
     },
     phone: {
       label: 'Téléphone',
       fieldName: 'phone',
-      accessor: (a: AttendeeData): string => a.phone || '',
+      accessor: (a) => a.phone || '',
     },
   };
   

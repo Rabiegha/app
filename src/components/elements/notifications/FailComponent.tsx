@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   Animated,
   StyleSheet,
@@ -6,19 +6,13 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
-import Icons from '@/assets/images/icons';
-import { FailComponentProps } from './FailComponent.types';
+import Fermer from '../../../assets/images/icons/Fermer.png';
+import closeButton from '../../../assets/images/icons/closeButton.png';
 
-/**
- * Component for displaying error notifications
- */
-const FailComponent: React.FC<FailComponentProps> = ({ onClose, text, style }) => {
-  const fadeAnim = useRef<Animated.Value>(new Animated.Value(0)).current;
+const FailComponent = ({onClose, text}) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Si isVisible est true, démarrez l'animation
@@ -33,7 +27,7 @@ const FailComponent: React.FC<FailComponentProps> = ({ onClose, text, style }) =
     <Animated.View style={[styles.notification, {opacity: fadeAnim}]}>
       <View style={styles.textNotification}>
         <Image
-          source={Icons.Fermer}
+          source={Fermer}
           resizeMode="contain"
           style={{
             width: 13,
@@ -45,22 +39,13 @@ const FailComponent: React.FC<FailComponentProps> = ({ onClose, text, style }) =
         <Text style={styles.buttonText}>{text}</Text>
       </View>
       <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-        <Image source={Icons.closeButton} style={styles.buttonImage} />
+        <Image source={closeButton} style={styles.buttonImage} />
       </TouchableOpacity>
     </Animated.View>
   );
 };
 
-/**
- * Styles for the FailComponent
- */
-const styles = StyleSheet.create<{
-  notification: ViewStyle;
-  textNotification: ViewStyle;
-  closeButton: ViewStyle;
-  buttonImage: ImageStyle;
-  buttonText: TextStyle;
-}>({
+const styles = StyleSheet.create({
   notification: {
     position: 'absolute',
     right: 0,

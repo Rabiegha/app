@@ -28,6 +28,10 @@ const PrintComponent = ({navigateBack}) => {
     navigation.navigate('PaperFormat');
   };
 
+    const selectedNodePrinter = useSelector(
+      state => state.printers.selectedNodePrinter,
+    );
+
   // Sélecteurs Redux
 
   const orientation = useSelector(selectOrientation);
@@ -39,7 +43,6 @@ const PrintComponent = ({navigateBack}) => {
   // Fonction pour gérer le toggle du switch Auto Print
   const handleSwitchToggle = () => {
     dispatch(setAutoPrint(!autoPrint));
-    console.log('Auto Print mis à jour:', !autoPrint);
   };
   //options
 

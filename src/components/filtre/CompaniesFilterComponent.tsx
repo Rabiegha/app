@@ -1,4 +1,4 @@
-// CompaniesFilterComponent.tsx
+// CompaniesFilterComponent.js
 
 import React, { useState } from 'react';
 import {
@@ -9,27 +9,19 @@ import {
   ActivityIndicator,
   TextInput,
   FlatList,
-  ViewStyle,
-  TextStyle,
 } from 'react-native';
 import colors from '../../assets/colors/colors';
 import useEventOrganizations from '../../hooks/useEventOrganizations';
-import RedBorderButton from '../elements/buttons/RedBorderButton';
-import { CompaniesFilterComponentProps, Organization } from './CompaniesFilterComponent.types';
 
-/**
- * Component for filtering attendees by company/organization
- */
-const CompaniesFilterComponent: React.FC<CompaniesFilterComponentProps> = ({ 
-  filterCriteria, 
-  setFilterCriteria,
-  style 
-}) => {
+// For demonstration, a simple "RedBorderButton" or any custom button
+import RedBorderButton from '../elements/buttons/RedBorderButton';
+
+const CompaniesFilterComponent = ({ filterCriteria, setFilterCriteria }) => {
 
   // Our custom hook now returns { organizations, loading, error, refetch }
   const { organizations, loading, error, refetch } = useEventOrganizations();
 
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // 1) While loading
   if (loading) {
@@ -43,7 +35,7 @@ const CompaniesFilterComponent: React.FC<CompaniesFilterComponentProps> = ({
         <Text style={styles.errorText}>
           Oops, there was a problem fetching the companies:
           {'\n'}
-          {error?.message || error?.toString?.()}
+          {error.message || error.toString()}
         </Text>
 
         {/* Retry button */}
@@ -57,14 +49,13 @@ const CompaniesFilterComponent: React.FC<CompaniesFilterComponentProps> = ({
   }
 
   // 3) If no error, proceed with data
-  // Convert organizations to string array of names
-  const augmentedCompanies: string[] = ['None', ...organizations.map(org => typeof org === 'object' && org !== null ? org.name : String(org))];
-  const filteredOrganizations: string[] = augmentedCompanies.filter((companyName: string) =>
+  const augmentedCompanies = ['None', ...organizations];
+  const filteredOrganizations = augmentedCompanies.filter(companyName =>
     companyName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // On press
-  const handleCompanyPress = (companyName: string): void => {
+  const handleCompanyPress = (companyName) => {
     if (companyName === 'None') {
       setFilterCriteria(prev => ({
         ...prev,
@@ -79,7 +70,7 @@ const CompaniesFilterComponent: React.FC<CompaniesFilterComponentProps> = ({
   };
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={styles.container}>
       <Text style={styles.title}>Companies</Text>
 
       <TextInput
@@ -122,21 +113,7 @@ const CompaniesFilterComponent: React.FC<CompaniesFilterComponentProps> = ({
 
 export default CompaniesFilterComponent;
 
-/**
- * Styles for the CompaniesFilterComponent
- */
-const styles = StyleSheet.create<{
-  container: ViewStyle;
-  errorContainer: ViewStyle;
-  errorText: TextStyle;
-  title: TextStyle;
-  infoText: TextStyle;
-  searchInput: TextStyle;
-  option: ViewStyle;
-  checkbox: ViewStyle;
-  checked: ViewStyle;
-  optionText: TextStyle;
-}>({
+const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     marginTop: 20,

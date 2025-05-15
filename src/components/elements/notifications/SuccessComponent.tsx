@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   Animated,
   StyleSheet,
@@ -6,19 +6,13 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
 } from 'react-native';
-import Icons from '@/assets/images/icons';
+import Verifie from '../../../assets/images/icons/Verifie.png';
+import closeButton from '../../../assets/images/icons/closeButton.png';
 import colors from '../../../assets/colors/colors';
-import { SuccessComponentProps } from './SuccessComponent.types';
 
-/**
- * Component for displaying success notifications
- */
-const SuccessComponent: React.FC<SuccessComponentProps> = ({ onClose, text, style }) => {
-  const fadeAnim = useRef<Animated.Value>(new Animated.Value(0)).current; // Initial value
+const SuccessComponent = ({onClose, text}) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value
 
   useEffect(() => {
     // Si isVisible est true, démarrez l'animation
@@ -33,7 +27,7 @@ const SuccessComponent: React.FC<SuccessComponentProps> = ({ onClose, text, styl
     <Animated.View style={[styles.notification, {opacity: fadeAnim}]}>
       <View style={styles.textNotification}>
         <Image
-          source={Icons.Verifie}
+          source={Verifie}
           resizeMode="contain"
           style={{
             width: 15,
@@ -45,22 +39,13 @@ const SuccessComponent: React.FC<SuccessComponentProps> = ({ onClose, text, styl
         <Text style={styles.buttonText}>{text}</Text>
       </View>
       <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-        <Image source={Icons.closeButton} style={styles.buttonImage} />
+        <Image source={closeButton} style={styles.buttonImage} />
       </TouchableOpacity>
     </Animated.View>
   );
 };
 
-/**
- * Styles for the SuccessComponent
- */
-const styles = StyleSheet.create<{
-  notification: ViewStyle;
-  textNotification: ViewStyle;
-  closeButton: ViewStyle;
-  buttonImage: ImageStyle;
-  buttonText: TextStyle;
-}>({
+const styles = StyleSheet.create({
   notification: {
     position: 'absolute',
     top: 70,

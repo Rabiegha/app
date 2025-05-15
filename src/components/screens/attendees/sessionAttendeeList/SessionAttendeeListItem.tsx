@@ -12,14 +12,10 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import colors from '../../../../assets/colors/colors';
 import {useEvent} from '../../../../context/EventContext';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Accepted from '../../../../assets/images/icons/Accepted.png';
-import {useSelector, useDispatch} from 'react-redux';
-import usePrintDocument from '../../../../hooks/print/usePrintDocument';
 import { ListItemProps } from '../../../../types/listItem.types';
 
 const {width} = Dimensions.get('window');
-let openSwipeableRef = null;
 let isTypeModeActive = true;
 
 
@@ -27,9 +23,6 @@ const ListItem = React.memo(
   ({ item,  searchQuery = '', onUpdateAttendee, onSwipeableOpen }: ListItemProps) => {
     const navigation = useNavigation();
     const {triggerListRefresh} = useEvent();
-    const swipeableRef = useRef(null);
-    const dispatch = useDispatch();
-    const isSwipeOpen = useRef(false);
 
     // Redux: whether to show the company name in search
     const isSearchByCompanyMode = true;
@@ -51,23 +44,6 @@ const ListItem = React.memo(
         triggerListRefresh();
       } catch (error) {
         console.error('Error updating attendee status:', error);
-      }
-    };
-
-    // Print & Check-In
-    const {printDocument} = usePrintDocument();
-    const handlePrintAndCheckIn = async () => {
-      try {
-        const updatedAttendee = {
-          ...item,
-          attendee_status: 1,
-        };
-        setIsCheckedIn(true);
-        await onUpdateAttendee(updatedAttendee);
-        triggerListRefresh();
-        printDocument(item.badge_pdf_url);
-      } catch (error) {
-        console.error('Error while printing and checking in:', error);
       }
     };
 

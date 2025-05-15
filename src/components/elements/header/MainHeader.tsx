@@ -2,15 +2,15 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../../../assets/colors/colors';
-import Icons from '@/assets/images/icons';
+import Retour from '../../../assets/images/icons/Retour.png';
 
 const MainHeader = ({ onLeftPress, title, onRightPress, RightIcon = null, backgroundColor = 'white', color = colors.darkGrey, leftButtonTintColor = colors.green, rightBottonColor = colors.darkGrey, size = 20 }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.headerContainer, { paddingTop: insets.top + 12, backgroundColor}]}>
+    <View style={[styles.headerContainer, { paddingTop: insets.top + 5, backgroundColor}]}>
       <TouchableOpacity onPress={onLeftPress} style={styles.backButton}>
-        <Image source={Icons.Retour} style={[styles.leftButton, {tintColor: leftButtonTintColor}]} />
+        <Image source={Retour} style={[styles.leftButton, {tintColor: leftButtonTintColor}]} />
       </TouchableOpacity>
       <Text style={[styles.title, {color: color}]}>{title}</Text>
       {RightIcon ? (

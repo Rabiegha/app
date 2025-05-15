@@ -1,39 +1,75 @@
+// Centralized icon imports
+import Acceder from './Acceder.png';
+import Accepted from './Accepted.png';
+import Ajouts from './Ajouts.png';
+import Checked from './Checked.png';
+import Download from './Download.png';
+import Fermer from './Fermer.png';
+import Filtre from './Filtre.png';
+import Gift from './Gift.png';
+import Infos from './Infos.png';
+import LogOut from './Log-out.png';
+import Modifier from './Modifier.png';
+import NotChecked from './Not-checked.png';
+import Outils from './Outils.png';
+import Partager from './Partager.png';
+import Participant from './Participant.png';
+import PasVu from './Pas-vu.png';
+import Paysage from './Paysage.png';
+import Portrait from './Portrait.png';
+import Print from './Print.png';
+import Profil from './Profil.png';
+import Rechercher from './Rechercher.png';
+import Refuse from './Refuse.png';
+import Rejected from './Rejected.png';
+import Retour from './Retour.png';
+import Scan from './Scan.png';
+import ScanCamera from './ScanCamera.png';
+import Supp from './Supp.png';
+import Verifie from './Verifie.png';
+import Vu from './Vu.png';
+import checkedIn from './checkedIn.png';
+import closeButton from './closeButton.png';
+import notCheckedIn from './notCheckedIn.png';
+import refresh from './refresh.png';
+import totalAttendees from './totalAttendees.png';
+
+// Export all icons as a single object
 const Icons = {
-    Acceder: require('./Acceder.png'),
-    Accepted: require('./Accepted.png'),
-    Ajouts: require('./Ajouts.png'),
-    Checked: require('./Checked.png'),
-    checkedIn: require('./checkedIn.png'),
-    closeButton: require('./closeButton.png'),
-    Download: require('./Download.png'),
-    Fermer: require('./Fermer.png'),
-    Filtre: require('./Filtre.png'),
-    Gift: require('./Gift.png'),
-    Infos: require('./Infos.png'),
-    LogOut: require('./Log-out.png'),
-    Modifier: require('./Modifier.png'),
-    NotChecked: require('./Not-checked.png'),
-    notCheckedIn: require('./notCheckedIn.png'),
-    Outils: require('./Outils.png'),
-    Partager: require('./Partager.png'),
-    Participant: require('./Participant.png'),
-    PasVu: require('./Pas-vu.png'),
-    Paysage: require('./Paysage.png'),
-    Portrait: require('./Portrait.png'),
-    Print: require('./Print.png'),
-    Profil: require('./Profil.png'),
-    Rechercher: require('./Rechercher.png'),
-    refresh: require('./refresh.png'),
-    Refuse: require('./Refuse.png'),
-    Rejected: require('./Rejected.png'),
-    Retour: require('./Retour.png'),
-    Scan: require('./Scan.png'),
-    ScanCamera: require('./ScanCamera.png'),
-    Supp: require('./Supp.png'),
-    totalAttendees: require('./totalAttendees.png'),
-    Verifie: require('./Verifie.png'),
-    Vu: require('./Vu.png'),
-  };
-  
-  export default Icons;
-  
+  Acceder,
+  Accepted,
+  Ajouts,
+  Checked,
+  Download,
+  Fermer,
+  Filtre,
+  Gift,
+  Infos,
+  LogOut,
+  Modifier,
+  NotChecked,
+  Outils,
+  Partager,
+  Participant,
+  PasVu,
+  Paysage,
+  Portrait,
+  Print,
+  Profil,
+  Rechercher,
+  Refuse,
+  Rejected,
+  Retour,
+  Scan,
+  ScanCamera,
+  Supp,
+  Verifie,
+  Vu,
+  checkedIn,
+  closeButton,
+  notCheckedIn,
+  refresh,
+  totalAttendees,
+};
+
+export default Icons;

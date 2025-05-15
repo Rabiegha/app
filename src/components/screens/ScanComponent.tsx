@@ -37,13 +37,13 @@ const ScanComponent = () => {
 
   const userId = useSelector(selectCurrentUserId);
 
+  const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
+  const nodePrinterId = selectedNodePrinter?.id;
+
   const {printDocument} = usePrintDocument();
 
   const printStatus = useSelector(selectPrintStatus);
   const autoPrint = useSelector(selectAutoPrint);
-  const selectedNodePrinter = useSelector(
-    state => state.printers.selectedNodePrinter,
-  );
 
   useEffect(() => {
     const nodePrinterId = selectedNodePrinter?.id;

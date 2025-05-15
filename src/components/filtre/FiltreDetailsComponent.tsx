@@ -1,28 +1,23 @@
-// FiltreDetailsComponent.tsx
+// FiltreDetailsComponent.js
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import colors from '../../assets/colors/colors';
 import CompaniesFilterComponent from './CompaniesFilterComponent';
-import { FiltreDetailsComponentProps, StatusOption } from './FiltreDetailsComponent.types';
 
-/**
- * Component for displaying and selecting filter options
- */
-const FiltreDetailsComponent: React.FC<FiltreDetailsComponentProps> = ({
+const FiltreDetailsComponent = ({
   filterCriteria,
   setFilterCriteria,
   tout,
   checkedIn,
   notChechkedIn,
-  style,
 }) => {
-  const statusOptions: StatusOption[] = [
+  const statusOptions = [
     { status: 'all', label: `Tous les participants (${tout || 0})` },
     { status: 'checked-in', label: `Checked In (${checkedIn || 0})` },
     { status: 'not-checked-in', label: `Not Checked In (${notChechkedIn || 0})` },
   ];
 
-  const handleStatusPress = (newStatus: string): void => {
+  const handleStatusPress = (newStatus) => {
     setFilterCriteria(prev => ({
       ...prev,
       status: newStatus,
@@ -30,7 +25,7 @@ const FiltreDetailsComponent: React.FC<FiltreDetailsComponentProps> = ({
   };
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={styles.container}>
       <Text style={styles.title}>États</Text>
       <View style={styles.optionsContainer}>
         {statusOptions.map(({ status, label }) => (
@@ -61,18 +56,7 @@ const FiltreDetailsComponent: React.FC<FiltreDetailsComponentProps> = ({
 
 export default FiltreDetailsComponent;
 
-/**
- * Styles for the FiltreDetailsComponent
- */
-const styles = StyleSheet.create<{
-  container: ViewStyle;
-  title: TextStyle;
-  optionsContainer: ViewStyle;
-  option: ViewStyle;
-  checkbox: ViewStyle;
-  checked: ViewStyle;
-  optionText: TextStyle;
-}>({
+const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.darkerGrey,
     borderRadius: 12,

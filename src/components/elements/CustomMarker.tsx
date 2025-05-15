@@ -1,23 +1,18 @@
 import React from 'react';
-import {View, Image, StyleSheet} from 'react-native';
-import Icons from '@/assets/images/icons';
+import {View, Image, StyleSheet, Animated} from 'react-native';
+import ScanCameraIcon from '../../assets/images/icons/ScanCamera.png';
 
-type Props = {
-  markerColor?: string;
-};
-
-const CustomMarker: React.FC<Props> = ({markerColor}) => {
+const CustomMarker = ({markerColor}) => {
   return (
     <View style={styles.rectangleContainer}>
       <Image
-        source={Icons.ScanCamera}
+        source={ScanCameraIcon}
         style={[styles.imageStyle, {tintColor: markerColor}]}
         resizeMode="contain"
       />
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   rectangleContainer: {
     height: 250,

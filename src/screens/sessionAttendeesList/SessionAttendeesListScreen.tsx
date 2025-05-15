@@ -57,7 +57,7 @@ const SessionAttendeesListScreen = () => {
     };
 
     const handleNavigationToScan = () => {
-      navigation.navigate('SessionsScanScreen');
+      navigation.navigate('ScanScreen', { scanType: 'session' });
     };
 
 

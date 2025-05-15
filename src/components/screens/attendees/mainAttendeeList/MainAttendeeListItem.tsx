@@ -17,6 +17,9 @@ import Accepted from '../../../../assets/images/icons/Accepted.png';
 import {useSelector, useDispatch} from 'react-redux';
 import usePrintDocument from '../../../../hooks/print/usePrintDocument';
 import { ListItemProps } from '../../../../types/listItem.types';
+import useFetchAttendeeDetails from '../../../../hooks/attendee/useAttendeeDetails';
+import {usePrintStatus} from '../../../../printing/context/PrintStatusContext';
+import { useStore } from 'react-redux';
 
 const {width} = Dimensions.get('window');
 let openSwipeableRef = null;
@@ -30,6 +33,11 @@ const ListItem = React.memo(
     const swipeableRef = useRef(null);
     const dispatch = useDispatch();
     const isSwipeOpen = useRef(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+      const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
+      const nodePrinterId = selectedNodePrinter?.id;
+      const { setStatus } = usePrintStatus();
 
     // Redux: whether to show the company name in search
     const isSearchByCompanyMode = true;
@@ -37,6 +45,9 @@ const ListItem = React.memo(
     // Local "checked in" state
     const initialSwitchState = item.attendee_status == 1;
     const [isCheckedIn, setIsCheckedIn] = useState(initialSwitchState);
+
+      const { attendeeDetails } =
+      useFetchAttendeeDetails(refreshTrigger, item.id);
 
     // Toggle attendee_status
     const handleSwitchToggle = async () => {
@@ -48,7 +59,6 @@ const ListItem = React.memo(
           attendee_status: newAttendeeStatus,
         };
         await onUpdateAttendee(updatedAttendee);
-        triggerListRefresh();
       } catch (error) {
         console.error('Error updating attendee status:', error);
       }
@@ -65,8 +75,10 @@ const ListItem = React.memo(
         };
         setIsCheckedIn(true);
         await onUpdateAttendee(updatedAttendee);
-        triggerListRefresh();
-        printDocument(item.badge_pdf_url);
+        setStatus('checkin_success');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        printDocument(item.badge_pdf_url, nodePrinterId);
+        console.log('print sent to', selectedNodePrinter?.name);
       } catch (error) {
         console.error('Error while printing and checking in:', error);
       }
@@ -216,7 +228,7 @@ const ListItem = React.memo(
           </View>
         );
       },
-      [isCheckedIn]
+      [isCheckedIn, selectedNodePrinter?.id]
     );
 
     return (

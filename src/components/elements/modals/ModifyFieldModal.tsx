@@ -8,24 +8,18 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  ViewStyle,
-  TextStyle,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
-import { ModifyFieldModalProps } from './ModifyFieldModal.types';
 
-/**
- * Modal component for modifying a field value
- */
+type Props = {
+  visible: boolean;
+  onClose: () => void;
+  label: string;
+  initialValue: string;
+  onSubmit: (newValue: string) => Promise<boolean>;
+};
 
-const ModifyFieldModal: React.FC<ModifyFieldModalProps> = ({ 
-  visible, 
-  onClose, 
-  label, 
-  initialValue, 
-  onSubmit,
-  style 
-}) => {
+const ModifyFieldModal = ({ visible, onClose, label, initialValue, onSubmit }: Props) => {
   const [value, setValue] = useState(initialValue);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -98,22 +92,7 @@ const ModifyFieldModal: React.FC<ModifyFieldModalProps> = ({
   );
 };
 
-/**
- * Styles for the ModifyFieldModal component
- */
-const styles = StyleSheet.create<{
-  overlay: ViewStyle;
-  modalContainer: ViewStyle;
-  title: TextStyle;
-  input: TextStyle; // Changed from ViewStyle to TextStyle to support fontSize
-  buttonRow: ViewStyle;
-  button: ViewStyle;
-  cancel: ViewStyle;
-  confirm: ViewStyle;
-  buttonText: TextStyle;
-  success: TextStyle;
-  error: TextStyle;
-}>({
+const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'white',

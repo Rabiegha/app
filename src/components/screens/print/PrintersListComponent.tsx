@@ -28,7 +28,7 @@ const PrintersList = () => {
   const [loadingPrinter, setLoadingPrinter] = useState(false);
   const [refreshing, setRefreshing] = useState(false); 
   const [error, setError] = useState(false);
- 
+
 
   const selectedNodePrinter = useSelector(
     state => state.printers.selectedNodePrinter,
@@ -42,7 +42,7 @@ const PrintersList = () => {
       setLoadingNodePrinters(false);
       setError(true);
     }, 10000); // timeout après 5s
-  
+
     try {
       const printersList = await getNodePrinters();
       clearTimeout(timeout);
@@ -56,7 +56,7 @@ const PrintersList = () => {
       setRefreshing(false);
     }
   }, []);
-  
+
 
   /* initial load */
   useEffect(() => {
@@ -89,6 +89,12 @@ const PrintersList = () => {
       setLoadingPrinter(false);
     }
   };
+
+  useEffect(() => {
+  if (selectedNodePrinter) {
+    console.log('[PrintersList] nouveau printer sélectionné :', selectedNodePrinter.name);
+  }
+}, [selectedNodePrinter]);
 
   if (error) {
     return (

@@ -1,36 +1,20 @@
 import React from 'react';
-import { View, Switch, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import {View, Switch, StyleSheet} from 'react-native';
 import colors from '../../assets/colors/colors';
-import { CustomSwitchProps } from './Switch.types';
 
-/**
- * Custom switch component with styled track colors
- */
-const CustomSwitch: React.FC<CustomSwitchProps> = ({
-  value,
-  onValueChange,
-  style,
-  trackColorFalse = colors.grey,
-  trackColorTrue = colors.green
-}) => {
+const CustomSwitch = ({value, onValueChange}) => {
   return (
-    <View style={[styles.switchContainer, style]}>
+    <View style={styles.switchContainer}>
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{false: trackColorFalse, true: trackColorTrue}}
+        trackColor={{false: colors.grey, true: colors.green}}
       />
     </View>
   );
 };
 
-/**
- * Styles for the CustomSwitch component
- */
-const styles = StyleSheet.create<{
-  switchContainer: ViewStyle;
-  switchLabel: TextStyle;
-}>({
+const styles = StyleSheet.create({
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -1,29 +1,17 @@
-// SmallButton.tsx
+// CustomButton.js
 import React from 'react';
-import {
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Image,
-  ViewStyle,
-  ImageStyle,
-} from 'react-native';
+import {TouchableOpacity, StyleSheet, Dimensions, Image} from 'react-native';
 import colors from '../../../assets/colors/colors';
-import { SmallButtonProps } from './SmallButton.types';
 
-/**
- * Small button component with an icon
- */
-const SmallButton: React.FC<SmallButtonProps> = ({
+const SmallButton = ({
   imageSource,
   pressHandler,
   backgroundColor,
   tintColor,
-  style,
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, {backgroundColor}]}
+      style={[styles.button, {tintColor}, {backgroundColor}]}
       onPress={pressHandler}>
       {imageSource && (
         <Image source={imageSource} style={[styles.image, {tintColor}]} />
@@ -32,13 +20,7 @@ const SmallButton: React.FC<SmallButtonProps> = ({
   );
 };
 
-/**
- * Styles for the SmallButton component
- */
-const styles = StyleSheet.create<{
-  button: ViewStyle;
-  image: ImageStyle;
-}>({
+const styles = StyleSheet.create({
   button: {
     borderRadius: 10,
     alignItems: 'center',

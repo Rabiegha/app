@@ -1,8 +1,10 @@
+import React from 'react';
 import AddAttendeesScreen from '../../screens/add/AddAttendeesScreen';
 import PrintScreen from '../../screens/print/PrintScreen';
 import MenuNavigator from './MenuNavigator';
 import EventDashboardStackNavigator from '../eventDashBoard/EventDashboardStack';
-import MainScanScreen from '../../screens/mainScan/MainScanScreen';
+import ScanScreen from '../../screens/scanScreen/ScanScreen';
+import { ScanType } from '../../components/commonScan/types/scan';
 
 export default [
   {
@@ -27,7 +29,7 @@ export default [
   },
   {
     name: 'Scan',
-    component: MainScanScreen,
+    component: () => <ScanScreen scanType={ScanType.Main} />,
     icon: require('../../assets/images/icons/Scan.png'),
     label: '',
     isMiddle: true,

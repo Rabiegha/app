@@ -14,7 +14,8 @@ import SuccessComponent from '../elements/notifications/SuccessComponent';
 import FailComponent from '../elements/notifications/FailComponent';
 import {CheckBox} from 'react-native-elements';
 import colors from '../../assets/colors/colors';
-import Icons from '@/assets/images/icons';
+import notChecked from '../../assets/images/icons/Not-checked.png';
+import Checked from '../../assets/images/icons/Checked.png';
 import {Picker} from '@react-native-picker/picker';
 import {Dropdown} from 'react-native-element-dropdown';
 
@@ -207,7 +208,7 @@ const AddAttendeesComponent = ({
           title={'Check-in'}
           checkedIcon={
             <Image
-              source={Icons.NotChecked}
+              source={notChecked}
               resizeMode="contain"
               style={{
                 width: 20,
@@ -218,7 +219,7 @@ const AddAttendeesComponent = ({
           }
           uncheckedIcon={
             <Image
-              source={Icons.Checked}
+              source={Checked}
               resizeMode="contain"
               style={{
                 width: 20,

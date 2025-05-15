@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   Animated,
   StyleSheet,
@@ -6,18 +6,14 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ImageStyle,
-  TextStyle,
-  ViewStyle,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
-import Icons from '@/assets/images/icons';
+import Fermer from '../../../assets/images/icons/Fermer.png';
+import closeButton from '../../../assets/images/icons/closeButton.png';
 import Toast from 'react-native-toast-message';
-import { ErrorToastProps } from './ErrorToast.types';
 
-const ErrorToast: React.FC<ErrorToastProps> = ({ text1, text2, style }) => {
-  // Animation value for fade-in effect
-  const fadeAnim = useRef<Animated.Value>(new Animated.Value(0)).current;
+const ErrorToast = ({text1, text2, ...rest}) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Si isVisible est true, démarrez l'animation
@@ -28,10 +24,7 @@ const ErrorToast: React.FC<ErrorToastProps> = ({ text1, text2, style }) => {
     }).start();
   }, [fadeAnim]);
 
-  /**
-   * Handles the close button press by hiding the toast
-   */
-  const handleClose = (): void => {
+  const handleClose = () => {
     Toast.hide();
   };
 
@@ -39,7 +32,7 @@ const ErrorToast: React.FC<ErrorToastProps> = ({ text1, text2, style }) => {
     <Animated.View style={[styles.notification, {opacity: fadeAnim}]}>
       <View style={styles.textNotification}>
         <Image
-          source={Icons.Fermer}
+          source={Fermer}
           resizeMode="contain"
           style={{
             width: 13,
@@ -52,22 +45,13 @@ const ErrorToast: React.FC<ErrorToastProps> = ({ text1, text2, style }) => {
         {text2 ? <Text style={styles.buttonText}> {text2}</Text> : null}
       </View>
       <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-        <Image source={Icons.closeButton} style={styles.buttonImage} />
+        <Image source={closeButton} style={styles.buttonImage} />
       </TouchableOpacity>
     </Animated.View>
   );
 };
 
-/**
- * Styles for the ErrorToast component
- */
-const styles = StyleSheet.create<{
-  notification: ViewStyle;
-  textNotification: ViewStyle;
-  buttonText: TextStyle;
-  closeButton: ViewStyle;
-  buttonImage: ImageStyle;
-}>({
+const styles = StyleSheet.create({
   notification: {
     position: 'absolute',
     right: 0,

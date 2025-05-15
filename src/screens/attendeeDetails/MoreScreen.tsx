@@ -8,7 +8,6 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
-import PrintModal from '../../components/elements/modals/PrintModal';
 import LoadingView from '../../components/elements/view/LoadingView';
 import ErrorView from '../../components/elements/view/ErrorView';
 
@@ -22,15 +21,14 @@ import { useEvent } from '../../context/EventContext';
 import { setPrintStatus } from '../../redux/slices/printerSlice';
 import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
+import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
+import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 
 const MoreScreen = ({ route, navigation }) => {
   /* ---------------------------------------------------------------- */
   /* Context & Redux                                                 */
   /* ---------------------------------------------------------------- */
-  const { triggerListRefresh, updateAttendee } = useEvent();
-  const dispatch           = useDispatch();
-  const printStatus        = useSelector(selectPrintStatus);
-  const userId             = useSelector(selectCurrentUserId);
+  const { updateAttendee } = useEvent();
   const { eventId } = useEvent();
   /* ---------------------------------------------------------------- */
   /* Navigation params                                                */
@@ -63,6 +61,9 @@ const MoreScreen = ({ route, navigation }) => {
     []
   );
 
+
+  const { status: printStatus, clearStatus } = usePrintStatus();
+
   /* ---------------------------------------------------------------- */
   /* Handlers                                                         */
   /* ---------------------------------------------------------------- */
@@ -71,8 +72,14 @@ const MoreScreen = ({ route, navigation }) => {
   const handleBadgePress = () =>
     navigation.navigate('Badge', { attendeeId, eventId, badgePdfUrl, badgeImageUrl });
 
+
+  const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
+
   const { printDocument } = usePrintDocument();
-  const handlePrintDocument = () => printDocument(badgePdfUrl);
+  const handlePrintDocument = useCallback(() => {
+
+   printDocument(badgePdfUrl, selectedNodePrinter?.id);
+ }, [badgePdfUrl, selectedNodePrinter?.id, printDocument]);
 
   const sendPdf = async () => {
     try {
@@ -101,7 +108,6 @@ const MoreScreen = ({ route, navigation }) => {
   /* update parent lists when status changes */
   useEffect(() => {
     updateAttendee(eventId, localAttendeeStatus);
-    triggerListRefresh();
   }, [localAttendeeStatus]);
 
   /* ---------------------------------------------------------------- */
@@ -161,11 +167,14 @@ const MoreScreen = ({ route, navigation }) => {
 
       <View style={[globalStyle.container, styles.profil]}>
         {/* Print status modal stays available at all times */}
-        <PrintModal
-          visible={!!printStatus}
+        {/* 🖨️ Print modal */}
+        {printStatus && (
+        <CheckinPrintModal
+          visible={true}
           status={printStatus}
-          onClose={() => dispatch(setPrintStatus(null))}
+          onClose={clearStatus}
         />
+      )}
 
         {/* The area below is where we swap in loading / error / data */}
         {renderContent()}

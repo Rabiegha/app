@@ -1,35 +1,16 @@
 import React from 'react';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Dimensions,
-  Image,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
-} from 'react-native';
+import {View, TextInput, StyleSheet, Dimensions, Image} from 'react-native';
 import colors from '../../assets/colors/colors';
-import Icons from '@/assets/images/icons';
-import { SearchProps } from './Search.types';
+import RechercherIcon from '../../assets/images/icons/Rechercher.png';
 
 const windowWidth = Dimensions.get('window').width;
 
-/**
- * Search input component with search icon
- */
-const Search: React.FC<SearchProps> = ({
-  onChange,
-  value,
-  containerStyle,
-  inputStyle,
-  ...rest
-}) => {
+const Search = ({ onChange, value }) => {
   return (
-    <View style={[styles.searchBarContainer, containerStyle]}>
+    <View style={styles.searchBarContainer}>
       <View style={styles.iconContainer}>
         <Image
-          source={Icons.Rechercher}
+          source={RechercherIcon}
           resizeMode="contain"
           style={{
             width: 23,
@@ -39,25 +20,17 @@ const Search: React.FC<SearchProps> = ({
         />
       </View>
       <TextInput
-        style={[styles.searchInput, inputStyle]}
+        style={styles.searchInput}
         placeholder="Rechercher..."
         placeholderTextColor="#999"
         onChangeText={onChange}
         value={value}
-        {...rest}
       />
     </View>
   );
 };
 
-/**
- * Styles for the Search component
- */
-const styles = StyleSheet.create<{
-  searchBarContainer: ViewStyle;
-  iconContainer: ViewStyle;
-  searchInput: TextStyle;
-}>({
+const styles = StyleSheet.create({
   searchBarContainer: {
     width: '100%',
     height: 50,

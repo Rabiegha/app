@@ -2,7 +2,8 @@ import React from 'react';
 import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../../../assets/colors/colors';
-import Icons from '@/assets/images/icons';
+import retourIcon from '../../../assets/images/icons/Retour.png';
+import logOutIcon from '../../../assets/images/icons/Log-out.png';
 
 const HeaderEvent = ({ onLeftPress, onRightPress, opacity = 1 }) => {
   const insets = useSafeAreaInsets();
@@ -13,14 +14,14 @@ const HeaderEvent = ({ onLeftPress, onRightPress, opacity = 1 }) => {
         onPress={onLeftPress}
         style={[styles.button, { opacity }]}
       >
-        <Image source={Icons.Retour} style={styles.backButtonImage} />
+        <Image source={retourIcon} style={styles.backButtonImage} />
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={onRightPress}
         style={styles.button}
       >
-        <Image source={Icons.LogOut} style={styles.logoutButtonImage} />
+        <Image source={logOutIcon} style={styles.logoutButtonImage} />
       </TouchableOpacity>
     </View>
   );

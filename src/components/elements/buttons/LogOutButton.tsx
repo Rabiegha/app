@@ -1,27 +1,15 @@
-// LogOutButton.tsx
+// CustomButton.js
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Image,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
-} from 'react-native';
+import {TouchableOpacity, Text, StyleSheet, Dimensions} from 'react-native';
 import colors from '../../../assets/colors/colors';
-import Icons from '@/assets/images/icons';
-import { LogOutButtonProps } from './LogOutButton.types';
+import {Image} from 'react-native';
+import logOutIcon from '../../../assets/images/icons/Log-out.png';
 
-/**
- * Button component for logging out
- */
-const LogOutButton: React.FC<LogOutButtonProps> = ({ onPress, style }) => {
+const LogOutButton = ({onPress}) => {
   return (
-    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
       <Image
-        source={Icons.LogOut}
+        source={logOutIcon}
         resizeMode="contain"
         style={{
           width: 17,
@@ -37,13 +25,7 @@ const LogOutButton: React.FC<LogOutButtonProps> = ({ onPress, style }) => {
 
 const {width} = Dimensions.get('window');
 
-/**
- * Styles for the LogOutButton component
- */
-const styles = StyleSheet.create<{
-  button: ViewStyle;
-  buttonText: TextStyle;
-}>({
+const styles = StyleSheet.create({
   button: {
     backgroundColor: 'transparent',
     padding: 10,

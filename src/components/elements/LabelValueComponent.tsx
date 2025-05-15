@@ -1,30 +1,10 @@
-// LabelValueComponent.tsx
+// LabelValueComponent.js
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; // Assuming you're using Expo for icons
 import colors from '../../assets/colors/colors';
-import Icons from '@/assets/images/icons';
-import { LabelValueProps } from './LabelValueComponent.types';
+import modify from '../../assets/images/icons/Modifier.png'
 
-/**
- * Component for displaying a label-value pair with an optional edit button
- */
-const LabelValueComponent: React.FC<LabelValueProps> = ({
-  label,
-  value,
-  value2,
-  showButton,
-  modifyHandle,
-  style,
-}) => {
+const LabelValueComponent = ({label, value, value2, showButton, modifyHandle}) => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -39,7 +19,7 @@ const LabelValueComponent: React.FC<LabelValueProps> = ({
           <TouchableOpacity
             onPress={modifyHandle}
             style={[styles.editButton]}>
-            <Image source={Icons.Modifier} style={styles.buttonImage} />
+            <Image source={modify} style={styles.buttonImage} />
       </TouchableOpacity>
         </>
       )}
@@ -47,17 +27,7 @@ const LabelValueComponent: React.FC<LabelValueProps> = ({
   );
 };
 
-/**
- * Styles for the LabelValueComponent
- */
-const styles = StyleSheet.create<{
-  container: ViewStyle;
-  content: ViewStyle;
-  label: TextStyle;
-  value: TextStyle;
-  buttonImage: ImageStyle;
-  editButton: ViewStyle;
-}>({
+const styles = StyleSheet.create({
   container: {
     marginBottom: 12,
     flexDirection: 'row',

@@ -1,6 +1,8 @@
 import PartnerAttendeesListScreen from '../../../screens/partner/PartnerListScreen';
 import ProfileScreen from '../../../screens/profil/Profil';
-import ScanPartnerScreen from '../../../screens/partner/scan/ScanPartnerScreen';
+import ScanScreen from '../../../screens/scanScreen/ScanScreen';
+import { ScanType } from '../../../components/commonScan/types/scan';
+import React from 'react';
 
 export default [
   {
@@ -15,7 +17,7 @@ export default [
   },
   {
     name: 'Scan',
-    component: ScanPartnerScreen,
+    component: () => <ScanScreen scanType={ScanType.Partner} />,
     icon: require('../../../assets/images/icons/Scan.png'),
     label: '',
     isMiddle: true,
