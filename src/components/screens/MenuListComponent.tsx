@@ -1,10 +1,24 @@
-// MenuListComponent.js
+// MenuListComponent.tsx
 import React, { useState } from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import colors from '../../assets/colors/colors';
-import Acceder from '../../assets/images/icons/Acceder.png';
+import Icons from '../../assets/images/icons';
 
-const MenuListComponent = ({ sections }) => {
+interface Button {
+  title: string;
+  action: () => void;
+}
+
+interface Section {
+  title: string;
+  buttons: Button[];
+}
+
+interface MenuListComponentProps {
+  sections: Section[];
+}
+
+const MenuListComponent = ({ sections }: MenuListComponentProps) => {
   return (
     <View>
       {sections.map((section, index) => (
@@ -17,7 +31,7 @@ const MenuListComponent = ({ sections }) => {
               onPress={button.action}>
               <Text style={styles.buttonText}>{button.title}</Text>
               <Image
-                source={Acceder}
+                source={Icons.Acceder}
                 resizeMode="contain"
                 style={{
                   width: 10,

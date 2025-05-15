@@ -2,12 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {Image, Text, StyleSheet, TouchableOpacity, View} from 'react-native';
 import colors from '../../../assets/colors/colors';
 import LargeButton from '../../elements/buttons/LargeButton';
-import Acceder from '../../../assets/images/icons/Acceder.png';
+import Icons from '../../../assets/images/icons';
 import CustomSwitch from '../../elements/Switch';
 import Slider from '@react-native-community/slider';
-import Paysage from '../../../assets/images/icons/Paysage.png';
-import Portrait from '../../../assets/images/icons/Portrait.png';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, NavigationProp, ParamListBase} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {setOption, setAutoPrint} from '../../../redux/slices/printerSlice';
 import {
@@ -16,20 +14,24 @@ import {
   selectAutoPrint,
 } from '../../../redux/selectors/print/printerSelectors';
 
-const PrintComponent = ({navigateBack}) => {
-  const navigation = useNavigation();
+interface PrintComponentProps {
+  navigateBack: () => void;
+}
+
+const PrintComponent = ({navigateBack}: PrintComponentProps) => {
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
 
   //navigation
   const navigateToPrinters = () => {
-    navigation.navigate('Printers');
+    navigation.navigate('Printers' as never);
   };
   const navigateToPaperFormat = () => {
-    navigation.navigate('PaperFormat');
+    navigation.navigate('PaperFormat' as never);
   };
 
     const selectedNodePrinter = useSelector(
-      state => state.printers.selectedNodePrinter,
+      (state: any) => state.printers.selectedNodePrinter,
     );
 
   // Sélecteurs Redux
@@ -47,7 +49,7 @@ const PrintComponent = ({navigateBack}) => {
   //options
 
   // Fonction pour sélectionner l'orientation
-  const handleSelectOrientation = value => {
+  const handleSelectOrientation = (value: string) => {
     dispatch(setOption({optionName: 'orientation', value}));
     console.log('Orientation sélectionnée:', value);
   };
@@ -55,7 +57,7 @@ const PrintComponent = ({navigateBack}) => {
   // Fonction pour sélectionner le DPI
   const dpiValues = [0, 150, 300, 450, 600];
 
-  const handleSelectDpi = valueIndex => {
+  const handleSelectDpi = (valueIndex: number) => {
     if (valueIndex < 1) {
       // Prevent selecting values below 25%
       valueIndex = 1;
@@ -64,7 +66,7 @@ const PrintComponent = ({navigateBack}) => {
     dispatch(setOption({optionName: 'dpi', value: selectedDpi}));
   };
 
-  const getResolutionText = dpiPercentage => {
+  const getResolutionText = (dpiPercentage: number): string => {
     if (dpiPercentage === 0) {
       return 'Très basse résolution';
     } else if (dpiPercentage <= 25) {
@@ -90,7 +92,7 @@ const PrintComponent = ({navigateBack}) => {
         <Text style={styles.title}>Imprimantes</Text>
         <View style={styles.backButton}>
           <Image
-            source={Acceder}
+            source={Icons.Acceder}
             resizeMode="contain"
             style={{
               width: 16,
@@ -110,7 +112,7 @@ const PrintComponent = ({navigateBack}) => {
         <Text style={styles.title}>Format papier</Text>
         <TouchableOpacity onPress={undefined} style={styles.backButton}>
           <Image
-            source={Acceder}
+            source={Icons.Acceder}
             resizeMode="contain"
             style={{
               width: 18,
@@ -151,7 +153,7 @@ const PrintComponent = ({navigateBack}) => {
             </Text>
             <View style={styles.backButton}>
               <Image
-                source={Portrait}
+                source={Icons.Portrait}
                 style={[
                   styles.buttonImage,
                   {
@@ -187,7 +189,7 @@ const PrintComponent = ({navigateBack}) => {
             </Text>
             <View style={styles.backButton}>
               <Image
-                source={Paysage}
+                source={Icons.Paysage}
                 style={[
                   styles.buttonImage,
                   {
@@ -257,6 +259,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginBottom: 12,
+  },
+  backButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ResolutionWrapper: {
     width: '100%',

@@ -2,20 +2,24 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import colors from '../../assets/colors/colors';
 import userIcon from '../../assets/images/user.png';
-import LogoutIcon from '../../assets/images/icons/Log-out.png';
+import Icons from '../../assets/images/icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
 import { selectUserInfo } from '../../redux/selectors/auth/authSelectors';
 import MainHeader from '../../components/elements/header/MainHeader';
 import { logoutThunk } from '../../redux/thunks/auth/logoutThunk';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
 
-const ProfileScreen = ({ onLogout }) => {
+interface ProfileScreenProps {
+    onLogout?: () => void;
+}
 
-    const navigation = useNavigation();
-    const dispatch = useDispatch();
+const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
+    const navigation = useNavigation<NavigationProp<ParamListBase>>();
+    const dispatch = useDispatch<AppDispatch>();
     const handleLogOut = async () => {
         await dispatch(logoutThunk()).unwrap();
-        navigation.reset({ index: 0, routes: [{ name: 'Connexion' }] });
+        navigation.reset({ index: 0, routes: [{ name: 'Connexion' }] } as any);
 
       };
 
@@ -58,7 +62,7 @@ const ProfileScreen = ({ onLogout }) => {
 
                 {/* 
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogOut}>
-                <Image source={LogoutIcon} style={styles.logoutIcon} />
+                <Image source={Icons['Log-out']} style={styles.logoutIcon} />
                 <Text style={styles.logoutText}>Se déconnecter</Text>
                 </TouchableOpacity> 
                 */}

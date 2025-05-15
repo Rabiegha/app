@@ -1,16 +1,22 @@
 import React from 'react';
 import {View, TextInput, StyleSheet, Dimensions, Image} from 'react-native';
 import colors from '../../assets/colors/colors';
-import RechercherIcon from '../../assets/images/icons/Rechercher.png';
+import Icons from '../../assets/images/icons';
 
 const windowWidth = Dimensions.get('window').width;
 
-const Search = ({ onChange, value }) => {
+interface SearchProps {
+  onChange: (text: string) => void;
+  value: string;
+  style?: any; // Allow custom styles to be passed
+}
+
+const Search = ({ onChange, value, style }: SearchProps) => {
   return (
-    <View style={styles.searchBarContainer}>
+    <View style={[styles.searchBarContainer, style]}>
       <View style={styles.iconContainer}>
         <Image
-          source={RechercherIcon}
+          source={Icons.Rechercher}
           resizeMode="contain"
           style={{
             width: 23,

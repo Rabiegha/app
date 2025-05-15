@@ -3,9 +3,16 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../../../assets/colors/colors';
-import retourIcon from '../../../assets/images/icons/Retour.png';
+import Icons from '../../../assets/images/icons';
 
-const HeaderComponent = ({ title, handlePress, color, backgroundColor }) => {
+interface HeaderComponentProps {
+  title: string;
+  handlePress?: () => void;
+  color: string;
+  backgroundColor: string;
+}
+
+const HeaderComponent = ({ title, handlePress, color, backgroundColor }: HeaderComponentProps) => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
@@ -21,7 +28,7 @@ const HeaderComponent = ({ title, handlePress, color, backgroundColor }) => {
       ]}
     >
       <TouchableOpacity onPress={handlePress || handleGoBack} style={styles.backButton}>
-        <Image source={retourIcon} style={styles.buttonImage} />
+        <Image source={Icons.Retour} style={styles.buttonImage} />
       </TouchableOpacity>
       <View style={styles.titleContainer}>
         <Text style={[styles.title, { color }]} numberOfLines={1}>

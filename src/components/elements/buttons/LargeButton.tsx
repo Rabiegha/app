@@ -1,9 +1,16 @@
-// LargeButton.js
+// LargeButton.tsx
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
 import colors from '../../../assets/colors/colors';
 
-const LargeButton = ({title, onPress, backgroundColor, loading}) => {
+interface LargeButtonProps {
+  title: string;
+  onPress: () => void;
+  backgroundColor: string;
+  loading?: boolean;
+}
+
+const LargeButton = ({title, onPress, backgroundColor, loading = false}: LargeButtonProps) => {
   return (
     <TouchableOpacity
       style={[styles.button, {backgroundColor}]}

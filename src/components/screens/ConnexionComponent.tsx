@@ -9,11 +9,18 @@ import {
 } from 'react-native';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
-import showPasswordIcon from '../../assets/images/icons/Vu.png';
-import hidePasswordIcon from '../../assets/images/icons/Pas-vu.png';
+import Icons from '../../assets/images/icons';
 import FailComponent from '../elements/notifications/FailComponent';
 import LargeButton from '../elements/buttons/LargeButton';
 import {AuthContext} from '../../context/AuthContext';
+
+interface ConnexionComponentProps {
+  userName: string;
+  password: string;
+  setUserName: (text: string) => void;
+  setPassword: (text: string) => void;
+  handleLogin: () => void;
+}
 
 const ConnexionComponent = ({
   userName,
@@ -21,9 +28,9 @@ const ConnexionComponent = ({
   setUserName,
   setPassword,
   handleLogin,
-}) => {
+}: ConnexionComponentProps) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [success, setSuccess] = useState(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
 
   return (
     <ScrollView
@@ -56,7 +63,7 @@ const ConnexionComponent = ({
           style={styles.togglePasswordButton}
           onPress={() => setShowPassword(!showPassword)}>
           <Image
-            source={showPassword ? hidePasswordIcon : showPasswordIcon}
+            source={showPassword ? Icons.PasVu : Icons.Vu}
             style={styles.togglePasswordIcon}
           />
         </TouchableOpacity>
@@ -66,6 +73,7 @@ const ConnexionComponent = ({
           title="Connexion"
           onPress={handleLogin}
           backgroundColor={colors.green}
+          loading={false}
         />
       </View>
     </ScrollView>

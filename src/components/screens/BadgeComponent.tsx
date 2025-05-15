@@ -3,14 +3,21 @@ import {StyleSheet, Image, View, Text} from 'react-native';
 import LargeButton from '../elements/buttons/LargeButton';
 import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
-import downloadIcon from '../../assets/images/icons/Download.png';
-import printIcon from '../../assets/images/icons/Print.png';
+import Icons from '../../assets/images/icons';
+// @ts-ignore - Missing type definitions
 import Gif from 'react-native-gif';
 import EmptyView from '../elements/view/EmptyView';
 import emptyAnimation from '../../assets/animations/Empty.json';
 import LottieView from 'lottie-react-native';
 
-const BadgeComponent = ({imageUri, share, download, print}) => {
+interface BadgeComponentProps {
+  imageUri: string;
+  share: () => void;
+  download: () => void;
+  print: () => void;
+}
+
+const BadgeComponent = ({imageUri, share, download, print}: BadgeComponentProps) => {
   const [imageLoaded, setImageLoaded] = useState(true);
 
   return (
@@ -37,13 +44,13 @@ const BadgeComponent = ({imageUri, share, download, print}) => {
         <View style={styles.buttonsContainer}>
           <View style={styles.topButtonsContainer}>
             <SmallButton
-              imageSource={downloadIcon}
+              imageSource={Icons.Download}
               pressHandler={download}
               backgroundColor={colors.greyCream}
               tintColor={colors.darkGrey}
             />
             <SmallButton
-              imageSource={printIcon}
+              imageSource={Icons.Print}
               pressHandler={print}
               backgroundColor={colors.greyCream}
               tintColor={colors.darkGrey}

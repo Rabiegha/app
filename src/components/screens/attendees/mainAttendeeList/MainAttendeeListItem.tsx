@@ -13,7 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import colors from '../../../../assets/colors/colors';
 import {useEvent} from '../../../../context/EventContext';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import Accepted from '../../../../assets/images/icons/Accepted.png';
+import Icons from '../../../../assets/images/icons';
 import {useSelector, useDispatch} from 'react-redux';
 import usePrintDocument from '../../../../hooks/print/usePrintDocument';
 import { ListItemProps } from '../../../../types/listItem.types';
@@ -22,7 +22,7 @@ import {usePrintStatus} from '../../../../printing/context/PrintStatusContext';
 import { useStore } from 'react-redux';
 
 const {width} = Dimensions.get('window');
-let openSwipeableRef = null;
+let openSwipeableRef: Swipeable | null = null;
 let isTypeModeActive = true;
 
 
@@ -258,7 +258,7 @@ const ListItem = React.memo(
               {/* Check icon */}
                {isCheckedIn && !isTypeModeActive ? (
                 <Image
-                  source={Accepted}
+                  source={Icons.Accepted}
                   resizeMode="contain"
                   style={styles.checkedIcon}
                 />
@@ -275,7 +275,7 @@ const ListItem = React.memo(
                   {/* Check icon */}
                   {isCheckedIn ? (
                     <Image
-                      source={Accepted}
+                      source={Icons.Accepted}
                       resizeMode="contain"
                       style={styles.checkedIconInsideIndicator}
                     />

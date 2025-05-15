@@ -5,12 +5,25 @@ import MenuNavigator from './MenuNavigator';
 import EventDashboardStackNavigator from '../eventDashBoard/EventDashboardStack';
 import ScanScreen from '../../screens/scanScreen/ScanScreen';
 import { ScanType } from '../../components/commonScan/types/scan';
+import Icons from '../../assets/images/icons';
+import { ComponentType } from 'react';
 
-export default [
+interface TabScreenConfig {
+  name: string;
+  component: ComponentType<any>;
+  icon: any;
+  label: string;
+  isMiddle: boolean;
+  hideTabBar: boolean;
+  height: number;
+  width: number;
+}
+
+const tabScreensConfig: TabScreenConfig[] = [
   {
     name: 'EventDashboard',
     component: EventDashboardStackNavigator,
-    icon: require('../../assets/images/icons/Participant.png'),
+    icon: Icons.Participant,
     label: 'Participants',
     isMiddle: false,
     hideTabBar: false,
@@ -20,7 +33,7 @@ export default [
   {
     name: 'Add',
     component: AddAttendeesScreen,
-    icon: require('../../assets/images/icons/Ajouts.png'),
+    icon: Icons.Ajouts,
     label: 'Ajouts',
     isMiddle: false,
     hideTabBar: false,
@@ -30,7 +43,7 @@ export default [
   {
     name: 'Scan',
     component: () => <ScanScreen scanType={ScanType.Main} />,
-    icon: require('../../assets/images/icons/Scan.png'),
+    icon: Icons.Scan,
     label: '',
     isMiddle: true,
     hideTabBar: true,
@@ -40,7 +53,7 @@ export default [
   {
     name: 'Print',
     component: PrintScreen,
-    icon: require('../../assets/images/icons/Print.png'),
+    icon: Icons.Print,
     label: 'Imprimer',
     isMiddle: false,
     hideTabBar: false,
@@ -50,7 +63,7 @@ export default [
   {
     name: 'Menu',
     component: MenuNavigator,
-    icon: require('../../assets/images/icons/Outils.png'),
+    icon: Icons.Outils,
     label: 'Menu',
     isMiddle: false,
     hideTabBar: true,
@@ -58,3 +71,5 @@ export default [
     width: 30,
   },
 ];
+
+export default tabScreensConfig;

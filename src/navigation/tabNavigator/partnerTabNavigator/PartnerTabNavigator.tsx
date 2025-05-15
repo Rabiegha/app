@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Platform, StyleSheet } from 'react-native';
+import { View, Platform, StyleSheet, ViewStyle } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { TabBarIcon } from '../../../components/navigation/TabBarIconComponent';
 import { ScanButton } from '../../../components/navigation/scanButton';
 import ModalFilter from '../../../components/elements/modals/ModalFilter';
@@ -8,21 +9,20 @@ import TAB_SCREENS from './PartnerTabScreensConfig.tsx';
 import colors from '../../../assets/colors/colors';
 import useKeyboardOffset from '../../../hooks/keyboard/useKeyboardOffset';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ParamListBase, RouteProp } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
-function getScreenOptions(route, keyboardOffset) {
+function getScreenOptions(route: RouteProp<ParamListBase, string>, keyboardOffset: number): BottomTabNavigationOptions {
   const currentTab = TAB_SCREENS.find(tab => tab.name === route.name);
   const hideTabBar = currentTab?.hideTabBar || false;
 
   return {
-    tabBarStyle: [
-      styles.tabBarStyle,
-      {
-        bottom: keyboardOffset ? -keyboardOffset : 25,
-        ...(hideTabBar && { display: 'none' }),
-      }
-    ],
+    tabBarStyle: {
+      ...styles.tabBarStyle,
+      bottom: keyboardOffset ? -keyboardOffset : 25,
+      ...(hideTabBar && { display: 'none' as const }),
+    },
     tabBarItemStyle: styles.tabBarItemStyle,
     tabBarActiveTintColor: colors.green,
     tabBarInactiveTintColor: colors.greyCream,
@@ -55,7 +55,7 @@ function PartnerTabNavigator() {
                 <TabBarIcon icon={icon} label={label} focused={focused} height={height} width={width} />
               ),
               tabBarButton: isMiddle
-                ? props => <ScanButton key={props.key} {...props} />
+                ? (props) => <ScanButton {...props} onPress={() => {}} />
                 : undefined,
             }}
           />

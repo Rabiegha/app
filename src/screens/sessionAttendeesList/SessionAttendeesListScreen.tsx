@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View  } from 'react-native';
 import colors from '../../assets/colors/colors';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle';
 import {useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import { useActiveEvent } from '../../utils/event/useActiveEvent';
 import { useFocusEffect } from '@react-navigation/native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import useSessionRegistrationData from '../../hooks/registration/useSessionRegistrationSData';
 import useFetchSessionAttendeeList from '../../hooks/attendee/useFetchSessionAttendeeList';
 import SessionListAttendee from '../../components/screens/attendees/sessionAttendeeList/SessionAttendeeList';
-import refreshIcon from '../../assets/images/icons/refresh.png';
+import Icons from '../../assets/images/icons';
 import MainHeader from '../../components/elements/header/MainHeader';
-import ScanIcon from '../../assets/images/icons/Scan.png'
 
 
+
+interface RouteParams {
+    eventName?: string;
+}
 
 const SessionAttendeesListScreen = () => {
-
-
-    const route = useRoute();
-    const navigation = useNavigation();
+    const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
+    const navigation = useNavigation<NavigationProp<ParamListBase>>();
     const [refreshing, setRefreshing] = useState(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const {capacity, totalCheckedIn} = useSessionRegistrationData({ refreshTrigger1: refreshTrigger });
@@ -57,7 +58,7 @@ const SessionAttendeesListScreen = () => {
     };
 
     const handleNavigationToScan = () => {
-      navigation.navigate('ScanScreen', { scanType: 'session' });
+      navigation.navigate('ScanScreen', { scanType: 'session' } as never);
     };
 
 
@@ -74,7 +75,7 @@ const SessionAttendeesListScreen = () => {
       <View style={styles.container}>
       {/* 🔁 Bouton de reload */}
       <TouchableOpacity style={styles.imageContainee} onPress={handleRefresh}>
-        <Image style={styles.reloadImage} source={refreshIcon} />
+        <Image style={styles.reloadImage} source={Icons.refresh} />
       </TouchableOpacity>
       <SessionListAttendee
         searchQuery={''}
@@ -89,7 +90,7 @@ const SessionAttendeesListScreen = () => {
       />
       {/* ➕ Floating Button */}
       <TouchableOpacity style={styles.floatingButton} onPress={handleNavigationToScan}>
-        <Image source={ScanIcon} style={styles.floatingIcon} />
+        <Image source={Icons.Scan} style={styles.floatingIcon} />
       </TouchableOpacity>
       </View>
     </View>

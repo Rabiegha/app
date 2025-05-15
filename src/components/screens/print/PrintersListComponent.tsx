@@ -16,12 +16,19 @@ import {
 import colors from '../../../assets/colors/colors';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {getNodePrinters} from '../../../services/printNodeService';
-import refreshIcon from '../../../assets/images/icons/refresh.png';
+import Icons from '../../../assets/images/icons';
 import ErrorView from '../../elements/view/ErrorView';
 
+interface Printer {
+  id: string;
+  name: string;
+  state: 'online' | 'offline';
+  description?: string;
+}
+
 const PrintersList = () => {
-  const [wifiPrinters, setWifiPrinters] = useState([]);
-  const [nodePrinters, setNodePrinters] = useState([]);
+  const [wifiPrinters, setWifiPrinters] = useState<Printer[]>([]);
+  const [nodePrinters, setNodePrinters] = useState<Printer[]>([]);
   const dispatch = useDispatch();
   const [loadingWifiPrinters, setLoadingWifiPrinters] = useState(true);
   const [loadingNodePrinters, setLoadingNodePrinters] = useState(true);
@@ -31,7 +38,7 @@ const PrintersList = () => {
 
 
   const selectedNodePrinter = useSelector(
-    state => state.printers.selectedNodePrinter,
+    (state: any) => state.printers.selectedNodePrinter,
   );
 
 
@@ -75,7 +82,7 @@ const PrintersList = () => {
     printer => printer.state === 'offline',
   );
 
-  const handleSelectNodePrinter = async printer => {
+  const handleSelectNodePrinter = async (printer: Printer) => {
     setLoadingPrinter(true);
     try {
       if (selectedNodePrinter && selectedNodePrinter.name === printer.name) {
@@ -113,7 +120,7 @@ const PrintersList = () => {
 
       {/* 🔁 Bouton de reload */}
       <TouchableOpacity style={styles.imageContainee} onPress={triggerRefresh}>
-              <Image style={styles.reloadImage} source={refreshIcon} />
+              <Image style={styles.reloadImage} source={Icons.refresh} />
             </TouchableOpacity>
 
       {/* Online Printers */}

@@ -13,27 +13,32 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { useEvent } from '../../../../context/EventContext.tsx';
-import colors from '../../../../assets/colors/colors.tsx';
-import { AuthContext } from '../../../../context/AuthContext.tsx';
-import ListItem from './MainAttendeeListItem.tsx';
+import { useEvent } from '../../../../context/EventContext';
+import colors from '../../../../assets/colors/colors';
+import { AuthContext } from '../../../../context/AuthContext';
+import ListItem from './MainAttendeeListItem';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentUserId } from '../../../../redux/selectors/auth/authSelectors.tsx';
-import EmptyView from '../../../elements/view/EmptyView.tsx';
-import LoadingView from '../../../elements/view/LoadingView.tsx';
-import ErrorView from '../../../elements/view/ErrorView.tsx';
-import { fetchMainAttendees } from '../../../../redux/thunks/attendee/mainAttendeesThunk.tsx';
-import { updateAttendee } from '../../../../redux/thunks/attendee/updateAttendeeThunk.tsx';
-import { updateAttendeeLocally } from '../../../../redux/slices/attendee/attendeesListSlice.tsx';
-import BaseFlatList from '../../../elements/list/BaseFlatList.tsx';
-import { Attendee } from '../../../../types/attendee.types.ts';
+import { selectCurrentUserId } from '../../../../redux/selectors/auth/authSelectors';
+import EmptyView from '../../../elements/view/EmptyView';
+import LoadingView from '../../../elements/view/LoadingView';
+import ErrorView from '../../../elements/view/ErrorView';
+import { fetchMainAttendees } from '../../../../redux/thunks/attendee/mainAttendeesThunk';
+import { updateAttendee } from '../../../../redux/thunks/attendee/updateAttendeeThunk';
+import { updateAttendeeLocally } from '../../../../redux/slices/attendee/attendeesListSlice';
+import BaseFlatList from '../../../elements/list/BaseFlatList';
+import { Attendee } from '../../../../types/attendee.types';
 import Toast from 'react-native-toast-message';
 
+
+interface FilterCriteria {
+  status: string;
+  [key: string]: any;
+}
 
 type Props = {
   searchQuery: string;
   onTriggerRefresh?: () => void;
-  filterCriteria: any;
+  filterCriteria: FilterCriteria;
   onShowNotification?: () => void;
   summary?: any;
 };
@@ -44,7 +49,8 @@ export type ListHandle = {
 
 const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, filterCriteria }, ref) => {
   const dispatch = useDispatch();
-  const { eventId } = useEvent();
+  const event = useEvent();
+  const eventId = event ? event.eventId : undefined;
   const { isDemoMode } = useContext(AuthContext);
   const userId = useSelector(selectCurrentUserId);
   const { data: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendees);
@@ -52,7 +58,7 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
   const [refreshing, setRefreshing] = useState(false);
   const [visibleCount, setVisibleCount] = useState(20);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [openSwipeable, setOpenSwipeable] = useState(null);
+  const [openSwipeable, setOpenSwipeable] = useState<React.RefObject<any> | null>(null);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
   const simulateEmpty = false;
 
@@ -80,6 +86,8 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
   }, [userId, eventId, isDemoMode]);
 
   const totalFilteredData = useMemo(() => {
+    if (!allAttendees) return [];
+    
     let filtered = [...allAttendees];
 
     if (filterCriteria.status === 'checked-in') {
@@ -110,7 +118,7 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
   );
 
 
-  const handleUpdateAttendee = async updatedAttendee => {
+  const handleUpdateAttendee = async (updatedAttendee: Attendee) => {
     dispatch(updateAttendeeLocally(updatedAttendee));
     const result = await dispatch(updateAttendee(updatedAttendee));
 
@@ -129,7 +137,7 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
   };
 
 
-  const handleSwipeableOpen = swipeable => {
+  const handleSwipeableOpen = (swipeable: React.RefObject<any>) => {
     if (openSwipeable && openSwipeable.current && openSwipeable !== swipeable) {
       openSwipeable.current.close();
     }

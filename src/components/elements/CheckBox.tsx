@@ -1,10 +1,17 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import React from 'react';
+import {Image} from 'react-native';
 import {CheckBox} from 'react-native-elements';
 import colors from '../../assets/colors/colors';
-import CheckedIcon from '../../assets/images/icons/Checked.png';
+import Icons from '../../assets/images/icons';
 
-const CheckBoxComponent = ({key, isChecked, onPress, title}) => {
+interface CheckBoxComponentProps {
+  key?: string | number;
+  isChecked: boolean;
+  onPress: () => void;
+  title: string;
+}
+
+const CheckBoxComponent = ({key, isChecked, onPress, title}: CheckBoxComponentProps) => {
   return (
     <CheckBox
       key={key}
@@ -12,7 +19,7 @@ const CheckBoxComponent = ({key, isChecked, onPress, title}) => {
       checked={isChecked}
       checkedIcon={
         <Image
-          source={CheckedIcon}
+          source={Icons.Checked}
           resizeMode="contain"
           style={{
             width: 20,

@@ -6,24 +6,29 @@ import {
   View,
 } from 'react-native';
 import colors from '../../assets/colors/colors';
-import {useNavigation, useFocusEffect, useRoute} from '@react-navigation/native';
+import {useNavigation, useFocusEffect, useRoute, NavigationProp, ParamListBase, RouteProp} from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 import {useActiveEvent} from '../../utils/event/useActiveEvent';
-import refreshIcon from '../../assets/images/icons/refresh.png';
+import Icons from '../../assets/images/icons';
 import MainHeader from '../../components/elements/header/MainHeader';
 import CommonAttendeeList from '../../components/elements/commonAttendeeList/CommonAttendeeList';
 import useFetchPartnerAttendeeList from '../../hooks/attendee/useFetchPartnerList';
 import { useEvent } from '../../context/EventContext';
 
+interface EventContextType {
+  eventId: number;
+  eventName: string;
+}
+
 const PartnerAttendeesListScreen = () => {
-  const route = useRoute();
-  const navigation = useNavigation();
+  const route = useRoute<RouteProp<ParamListBase, string>>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const [refreshing, setRefreshing] = useState(false);
 
   const userId = useSelector(selectCurrentUserId);
-  const {eventId, eventName} = useEvent();
+  const {eventId, eventName} = useEvent() as EventContextType;
   const {attendees, isLoading, error, fetchData} = useFetchPartnerAttendeeList(userId, eventId);
 
   useFocusEffect(
@@ -51,7 +56,7 @@ const PartnerAttendeesListScreen = () => {
         onLeftPress={handleGoBack}
         onRightPress={handleRefresh}
         title={eventName || 'Participants'}
-        RightIcon={refreshIcon}
+        RightIcon={Icons.refresh}
         rightBottonColor = {colors.green}
         size = {30}
       />

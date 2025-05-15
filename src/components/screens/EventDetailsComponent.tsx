@@ -1,9 +1,24 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
-import totalAttendeeIcon from '../../assets/images/icons/totalAttendees.png';
-import checkedInIcon from '../../assets/images/icons/checkedIn.png';
-import notCheckedIcon from '../../assets/images/icons/notCheckedIn.png';
+import Icons from '../../assets/images/icons';
 import colors from '../../assets/colors/colors';
+
+interface EventDetailsPerTypeComponentProps {
+  totalAttendees: number;
+  totalCheckedIn: number;
+  totalNotCheckedIn: number;
+  totalAttendeesAction: () => void;
+  checkedInAction: () => void;
+  notCheckedOInAction: () => void;
+}
+
+interface EventDetailItem {
+  backgroundColor: string;
+  label: string;
+  value: number;
+  source: any; // Using any for image source type
+  action: () => void;
+}
 
 const EventDetailsPerTypeComponent = ({
   totalAttendees,
@@ -12,32 +27,32 @@ const EventDetailsPerTypeComponent = ({
   totalAttendeesAction,
   checkedInAction,
   notCheckedOInAction,
-}) => {
-  const data = [
+}: EventDetailsPerTypeComponentProps) => {
+  const data: EventDetailItem[] = [
     {
       backgroundColor: colors.detailsBlue,
       label: 'Total des participants',
       value: totalAttendees,
-      source: totalAttendeeIcon,
+      source: Icons.totalAttendees,
       action: totalAttendeesAction,
     },
     {
       backgroundColor: colors.detailsGreen,
       label: 'Checked In',
       value: totalCheckedIn,
-      source: checkedInIcon,
+      source: Icons.checkedIn,
       action: checkedInAction,
     },
     {
       backgroundColor: colors.detailOrange,
       label: 'Not Checked In',
       value: totalNotCheckedIn,
-      source: notCheckedIcon,
+      source: Icons.notCheckedIn,
       action: notCheckedOInAction,
     },
   ];
   return (
-    <View style={styles.container}>
+    <View style={{flex: 1}}>
       {data.map((item, index) => {
         return (
           <View key={index} style={styles.elementContainer}>

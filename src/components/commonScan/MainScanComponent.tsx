@@ -11,8 +11,7 @@ import {
 import {RNCamera} from 'react-native-camera';
 import Svg, {Defs, Mask, Rect} from 'react-native-svg';
 
-import GiftIcon from '../../assets/images/icons/Gift.png';
-import PrintIcon from '../../assets/images/icons/Print.png';
+import Icons from '../../assets/images/icons';
 import colors from '../../assets/colors/colors';
 import MaskedViewComponent from './MaskedView';
 import Popup from '../elements/modals/popup';
@@ -30,12 +29,14 @@ type Props = {
   mainPopupContent?: React.ReactNode;
   isButtonShown?: boolean;
   isGiftModeActive?: boolean;
-  isPrintModeActive: boolean,
-  handleGiftButtonPress,
-  handlePrintButtonPress,
+  isPrintModeActive: boolean;
+  handleGiftButtonPress: () => void;
+  handlePrintButtonPress: () => void;
+  ref?: React.RefObject<RNCamera>;
 };
 
-  const MainScanComponent = ({   onBarCodeRead,
+const MainScanComponent = ({
+    onBarCodeRead,
     goBack,
     attendeeName,
     scanStatus,
@@ -46,7 +47,8 @@ type Props = {
     isPrintModeActive = false,
     handleGiftButtonPress,
     handlePrintButtonPress,
-    ref, }: Props) => (
+    ref,
+}: Props) => (
     <RNCamera
       ref={ref}
       style={styles.camera}
@@ -112,7 +114,7 @@ type Props = {
               { backgroundColor: isGiftModeActive ? colors.green : 'black' },
             ]}
           >
-            <Image source={GiftIcon} style={styles.iconImage} resizeMode="contain" />
+            <Image source={Icons.Gift} style={styles.iconImage} resizeMode="contain" />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -122,7 +124,7 @@ type Props = {
               { backgroundColor: isPrintModeActive ? colors.green : 'black' },
             ]}
           >
-            <Image source={PrintIcon} style={styles.iconImage} resizeMode="contain" />
+            <Image source={Icons.Print} style={styles.iconImage} resizeMode="contain" />
           </TouchableOpacity>
         </>
       )}

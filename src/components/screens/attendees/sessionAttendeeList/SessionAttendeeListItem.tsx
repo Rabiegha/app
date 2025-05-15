@@ -12,7 +12,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import colors from '../../../../assets/colors/colors';
 import {useEvent} from '../../../../context/EventContext';
-import Accepted from '../../../../assets/images/icons/Accepted.png';
+import Icons from '../../../../assets/images/icons';
 import { ListItemProps } from '../../../../types/listItem.types';
 
 const {width} = Dimensions.get('window');
@@ -205,7 +205,7 @@ const ListItem = React.memo(
               {/* Check icon */}
                {isCheckedIn && !isTypeModeActive ? (
                 <Image
-                  source={Accepted}
+                  source={Icons.Accepted}
                   resizeMode="contain"
                   style={styles.checkedIcon}
                 />

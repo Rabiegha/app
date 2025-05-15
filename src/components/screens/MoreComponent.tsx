@@ -5,9 +5,7 @@ import LargeButton from '../elements/buttons/LargeButton';
 import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
-import ScanIcon from '../../assets/images/icons/Scan.png';
-import EditIcon from '../../assets/images/icons/Modifier.png';
-import PrintIcon from '../../assets/images/icons/Print.png';
+import Icons from '../../assets/images/icons';
 import HoldButton from '../elements/buttons/HoldButton';
 import { insertSpaceBetweenPairs } from '../../hooks/useFormat';
 import { useSelector } from 'react-redux';
@@ -16,6 +14,26 @@ import { attendeeFieldConfig } from '../../utils/modify/attendeeFieldConfig';
 import ModifyFieldModal from '../elements/modals/ModifyFieldModal';
 import { useUpdateAttendeeField } from '../../hooks/edit/useUpdateAttendeeField';
 
+
+interface MoreComponentProps {
+  firstName: string;
+  lastName: string;
+  attendeeId: string;
+  email: string;
+  phone: string;
+  attendeeStatus: string | number;
+  organization: string;
+  JobTitle: string;
+  commentaire: string;
+  attendeeStatusChangeDatetime: string;
+  See: () => void;
+  Print: () => void;
+  handleButton: () => void;
+  loading: boolean;
+  modify: () => void;
+  type: string;
+  onFieldUpdateSuccess?: () => void;
+}
 
 const MoreComponent = ({
   firstName,
@@ -35,7 +53,7 @@ const MoreComponent = ({
   modify,
   type,
   onFieldUpdateSuccess,
-}) => {
+}: MoreComponentProps) => {
 
   const userId = useSelector(selectCurrentUserId);
   const formattedPhone = insertSpaceBetweenPairs(phone);
@@ -147,7 +165,7 @@ const handleEditSubmit = async (newValue: string) => {
       value: newValue,
     });
     if (success && typeof onFieldUpdateSuccess === 'function') {
-      onFieldUpdateSuccess(); // ✅ trigger parent refresh
+      onFieldUpdateSuccess();
     }
     return success;
   } catch (err) {
@@ -167,21 +185,21 @@ const handleEditSubmit = async (newValue: string) => {
       </View>
       <View style={styles.topButtonsContainer}>
         <SmallButton
-          imageSource={PrintIcon}
+              imageSource={Icons.Print}
           pressHandler={Print}
           backgroundColor={colors.green}
           tintColor={colors.greyCream}
         />
           {/*  ----  Edit button temporarily disabled  ----  
           // <SmallButton
-          //   imageSource={EditIcon}
+          //   imageSource={Icons.Edit}
           //   pressHandler={modify}
           //   backgroundColor={colors.greyCream}
           //   tintColor={colors.darkGrey} 
           // /> */}
 
         <SmallButton
-          imageSource={ScanIcon}
+              imageSource={Icons.Scan}
           pressHandler={See}
           backgroundColor={colors.greyCream}
           tintColor={colors.darkGrey}
