@@ -1,9 +1,9 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
-import {AuthProvider} from './scr/context/AuthContext';
-import {EventProvider} from './scr/context/EventContext';
-import {store, persistor} from './scr/redux/store';
+import {AuthProvider} from './src/context/AuthContext';
+import {EventProvider} from './src/context/EventContext';
+import {store, persistor} from './src/redux/store';
 
 export default function AppProviders({children}) {
   return (

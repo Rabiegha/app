@@ -11,8 +11,9 @@ import Verifie from '../../../assets/images/icons/Verifie.png';
 import closeButton from '../../../assets/images/icons/closeButton.png';
 import colors from '../../../assets/colors/colors';
 import Toast from 'react-native-toast-message';
+import { BaseToastProps } from './Toast.types';
 
-const SuccessToast = ({text1, text2, ...rest}) => {
+const SuccessToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value
 
   useEffect(() => {

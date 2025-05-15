@@ -1,18 +1,23 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import React from 'react';
+import {Image} from 'react-native';
 import {CheckBox} from 'react-native-elements';
 import colors from '../../assets/colors/colors';
-import CheckedIcon from '../../assets/images/icons/Checked.png';
+import Icons from '@/assets/images/icons';
 
-const CheckBoxComponent = ({key, isChecked, onPress, title}) => {
+type Props = {
+  isChecked: boolean;
+  onPress: () => void;
+  title: string;
+};
+
+const CheckBoxComponent: React.FC<Props> = ({isChecked, onPress, title}) => {
   return (
     <CheckBox
-      key={key}
       title={title}
       checked={isChecked}
       checkedIcon={
         <Image
-          source={CheckedIcon}
+          source={Icons.Checked} // ✅ Using centralized import
           resizeMode="contain"
           style={{
             width: 20,

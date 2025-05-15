@@ -11,8 +11,9 @@ import colors from '../../../assets/colors/colors';
 import Fermer from '../../../assets/images/icons/Fermer.png';
 import closeButton from '../../../assets/images/icons/closeButton.png';
 import Toast from 'react-native-toast-message';
+import { BaseToastProps } from './Toast.types';
 
-const ErrorToast = ({text1, text2, ...rest}) => {
+const ErrorToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
