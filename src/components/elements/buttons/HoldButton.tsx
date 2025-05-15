@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, { useState, useRef } from 'react';
 import {
   TouchableWithoutFeedback,
   View,
@@ -7,23 +7,36 @@ import {
   Animated,
   ActivityIndicator,
   Dimensions,
+  ViewStyle,
+  TextStyle,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
+import { HoldButtonProps } from './HoldButton.types';
 
-const HoldButton = ({
+/**
+ * Button component that requires the user to hold it for a specified duration
+ * before triggering the onPress action
+ */
+const HoldButton: React.FC<HoldButtonProps> = ({
   title,
   onPress,
   backgroundColor,
   holdColor = colors.lightGreen, // Color to change to during hold
   holdDuration = 3000,
   loading,
+  style,
 }) => {
-  const [holdTimeout, setHoldTimeout] = useState(null);
-  const [isHolding, setIsHolding] = useState(false);
-  const animatedValue = useRef(new Animated.Value(0)).current;
-  const colorAnimatedValue = useRef(new Animated.Value(0)).current; // Animated value for color change
+  // State for tracking hold timeout and animation values
+  const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isHolding, setIsHolding] = useState<boolean>(false);
+  const animatedValue = useRef<Animated.Value>(new Animated.Value(0)).current;
+  const colorAnimatedValue = useRef<Animated.Value>(new Animated.Value(0)).current; // Animated value for color change
 
-  const handlePressIn = () => {
+  /**
+   * Handles the press-in event on the button
+   * Starts the hold timer and animations
+   */
+  const handlePressIn = (): void => {
     if (loading) {
       return;
     }
@@ -48,7 +61,11 @@ const HoldButton = ({
     }).start();
   };
 
-  const handlePressOut = () => {
+  /**
+   * Handles the press-out event on the button
+   * Cancels the hold timer and resets animations
+   */
+  const handlePressOut = (): void => {
     if (loading) {
       return;
     }
@@ -107,7 +124,14 @@ const HoldButton = ({
 
 const {width} = Dimensions.get('window');
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the HoldButton component
+ */
+const styles = StyleSheet.create<{
+  button: ViewStyle;
+  buttonText: TextStyle;
+  progressBar: ViewStyle;
+}>({
   button: {
     width: width - 40,
     padding: 10,

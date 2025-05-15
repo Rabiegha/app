@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Animated,
   StyleSheet,
@@ -6,14 +6,18 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ImageStyle,
+  TextStyle,
+  ViewStyle,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
 import Icons from '@/assets/images/icons';
 import Toast from 'react-native-toast-message';
-import { BaseToastProps } from './Toast.types';
+import { ErrorToastProps } from './ErrorToast.types';
 
-const ErrorToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+const ErrorToast: React.FC<ErrorToastProps> = ({ text1, text2, style }) => {
+  // Animation value for fade-in effect
+  const fadeAnim = useRef<Animated.Value>(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Si isVisible est true, démarrez l'animation
@@ -24,7 +28,10 @@ const ErrorToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
     }).start();
   }, [fadeAnim]);
 
-  const handleClose = () => {
+  /**
+   * Handles the close button press by hiding the toast
+   */
+  const handleClose = (): void => {
     Toast.hide();
   };
 
@@ -51,7 +58,16 @@ const ErrorToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
   );
 };
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the ErrorToast component
+ */
+const styles = StyleSheet.create<{
+  notification: ViewStyle;
+  textNotification: ViewStyle;
+  buttonText: TextStyle;
+  closeButton: ViewStyle;
+  buttonImage: ImageStyle;
+}>({
   notification: {
     position: 'absolute',
     right: 0,

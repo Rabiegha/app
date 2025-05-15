@@ -1,16 +1,26 @@
 import React from 'react';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
 import colors from '../../assets/colors/colors';
+import { ScanButtonProps } from './scanButton.types';
 
-export function ScanButton({children, onPress}) {
+/**
+ * Button component for the scan action in the tab bar
+ */
+export function ScanButton({ children, onPress, containerStyle, buttonStyle }: ScanButtonProps) {
   return (
-    <TouchableOpacity style={styles.scanButtonContainer} onPress={onPress}>
-      <View style={styles.scanButton}>{children}</View>
+    <TouchableOpacity style={[styles.scanButtonContainer, containerStyle]} onPress={onPress}>
+      <View style={[styles.scanButton, buttonStyle]}>{children}</View>
     </TouchableOpacity>
   );
 }
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the ScanButton component
+ */
+const styles = StyleSheet.create<{
+  scanButtonContainer: ViewStyle;
+  scanButton: ViewStyle;
+}>({
   scanButtonContainer: {
     top: -20,
     justifyContent: 'center',

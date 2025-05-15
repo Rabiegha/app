@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Animated,
   StyleSheet,
@@ -6,12 +6,19 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
+  TextStyle,
+  ImageStyle,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
 import Icons from '@/assets/images/icons';
+import { FailComponentProps } from './FailComponent.types';
 
-const FailComponent = ({onClose, text}) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+/**
+ * Component for displaying error notifications
+ */
+const FailComponent: React.FC<FailComponentProps> = ({ onClose, text, style }) => {
+  const fadeAnim = useRef<Animated.Value>(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Si isVisible est true, démarrez l'animation
@@ -44,7 +51,16 @@ const FailComponent = ({onClose, text}) => {
   );
 };
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the FailComponent
+ */
+const styles = StyleSheet.create<{
+  notification: ViewStyle;
+  textNotification: ViewStyle;
+  closeButton: ViewStyle;
+  buttonImage: ImageStyle;
+  buttonText: TextStyle;
+}>({
   notification: {
     position: 'absolute',
     right: 0,

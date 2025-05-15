@@ -1,11 +1,20 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, ViewStyle, TextStyle, ImageStyle } from 'react-native';
 import React from 'react';
 import colors from '../../../assets/colors/colors';
 import EventImage from '../../../assets/images/user.png';
+import { EventDachboardTopComponentProps } from './eventDachboardTop.types';
 
-const EventDachboardTopComponent = ({eventImage, eventName, eventDetails}) => {
+/**
+ * Component for displaying event information at the top of the dashboard
+ */
+const EventDachboardTopComponent: React.FC<EventDachboardTopComponentProps> = ({
+  eventImage,
+  eventName,
+  eventDetails,
+  style
+}) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <View style={styles.imageContainer}>
         <Image source={
                 eventImage
@@ -18,7 +27,16 @@ const EventDachboardTopComponent = ({eventImage, eventName, eventDetails}) => {
   );
 };
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the EventDachboardTopComponent
+ */
+const styles = StyleSheet.create<{
+  container: ViewStyle;
+  imageContainer: ViewStyle;
+  image: ImageStyle;
+  title: TextStyle;
+  text: TextStyle;
+}>({
   container: {
     marginHorizontal: 30,
     justifyContent: 'center',

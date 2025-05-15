@@ -7,22 +7,29 @@ import {
   Text,
   StyleSheet,
   TouchableWithoutFeedback,
+  ViewStyle,
+  TextStyle,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import acceptedAnimation from '@/assets/animations/Accepted.json';
 import rejectedAnimation from '@/assets/animations/Rejected.json';
 import printingAnimation from '@/assets/animations/Printing.json';
 import colors from '../../../assets/colors/colors';
+import { PrintModalProps } from './PrintModal.types';
 
-const PrintModal = ({onClose, visible, status}) => {
+/**
+ * Modal component for displaying print job status with animations
+ */
+const PrintModal: React.FC<PrintModalProps> = ({ onClose, visible, status }) => {
   if (!visible || !status) {
     return null;
   }
 
-  let message = '';
-  let animationSource = null;
-  let shouldLoop = false;
-  let height = 100;
+  // Initialize state variables
+  let message: string = '';
+  let animationSource: any = null;
+  let shouldLoop: boolean = false;
+  let height: number = 100;
 
   switch (status) {
     // Statuts d'impression
@@ -78,7 +85,15 @@ const PrintModal = ({onClose, visible, status}) => {
   );
 };
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the PrintModal component
+ */
+const styles = StyleSheet.create<{
+  modalBackground: ViewStyle;
+  modalContent: ViewStyle;
+  text: TextStyle;
+  animation: ViewStyle;
+}>({
   modalBackground: {
     flex: 1, 
     alignItems: 'center',

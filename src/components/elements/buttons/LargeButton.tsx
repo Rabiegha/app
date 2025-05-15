@@ -1,9 +1,27 @@
-// LargeButton.js
+// LargeButton.tsx
 import React from 'react';
-import {TouchableOpacity, Text, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 import colors from '../../../assets/colors/colors';
+import { LargeButtonProps } from './LargeButton.types';
 
-const LargeButton = ({title, onPress, backgroundColor, loading}) => {
+/**
+ * Large button component with optional loading state
+ */
+const LargeButton: React.FC<LargeButtonProps> = ({
+  title,
+  onPress,
+  backgroundColor,
+  loading = false,
+  style,
+}) => {
   return (
     <TouchableOpacity
       style={[styles.button, {backgroundColor}]}
@@ -20,7 +38,13 @@ const LargeButton = ({title, onPress, backgroundColor, loading}) => {
 
 const {width} = Dimensions.get('window');
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the LargeButton component
+ */
+const styles = StyleSheet.create<{
+  button: ViewStyle;
+  buttonText: TextStyle;
+}>({
   button: {
     backgroundColor: colors.green,
     padding: 10,

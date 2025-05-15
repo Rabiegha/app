@@ -1,10 +1,14 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, ViewStyle, TextStyle, ImageStyle } from 'react-native';
 import colors from '../../assets/colors/colors';
+import { TabBarIconProps } from './TabBarIconComponent.types';
 
-export function TabBarIcon({ icon, label, focused, height = 24, width = 24 }) {
+/**
+ * Component for rendering tab bar icons with optional labels
+ */
+export function TabBarIcon({ icon, label, focused, height = 24, width = 24, style }: TabBarIconProps) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Image
         source={icon}
         resizeMode="contain"
@@ -26,7 +30,14 @@ export function TabBarIcon({ icon, label, focused, height = 24, width = 24 }) {
   );
 }
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the TabBarIcon component
+ */
+const styles = StyleSheet.create<{
+  container: ViewStyle;
+  icon: ImageStyle;
+  label: TextStyle;
+}>({
   container: {
     alignItems: 'center',
     justifyContent: 'center',

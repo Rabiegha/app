@@ -1,16 +1,20 @@
 import React from 'react';
-import {Image} from 'react-native';
-import {CheckBox} from 'react-native-elements';
+import { Image, ImageStyle } from 'react-native';
+import { CheckBox, CheckBoxProps as RNECheckBoxProps } from 'react-native-elements';
 import colors from '../../assets/colors/colors';
 import Icons from '@/assets/images/icons';
+import { CheckBoxProps } from './CheckBox.types';
 
-type Props = {
-  isChecked: boolean;
-  onPress: () => void;
-  title: string;
-};
+/**
+ * Custom checkbox component using react-native-elements
+ */
 
-const CheckBoxComponent: React.FC<Props> = ({isChecked, onPress, title}) => {
+const CheckBoxComponent: React.FC<CheckBoxProps> = ({
+  isChecked,
+  onPress,
+  title,
+  style
+}) => {
   return (
     <CheckBox
       title={title}

@@ -1,10 +1,30 @@
-// LabelValueComponent.js
+// LabelValueComponent.tsx
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ViewStyle,
+  TextStyle,
+  ImageStyle,
+} from 'react-native';
 import colors from '../../assets/colors/colors';
 import Icons from '@/assets/images/icons';
+import { LabelValueProps } from './LabelValueComponent.types';
 
-const LabelValueComponent = ({label, value, value2, showButton, modifyHandle}) => {
+/**
+ * Component for displaying a label-value pair with an optional edit button
+ */
+const LabelValueComponent: React.FC<LabelValueProps> = ({
+  label,
+  value,
+  value2,
+  showButton,
+  modifyHandle,
+  style,
+}) => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -27,7 +47,17 @@ const LabelValueComponent = ({label, value, value2, showButton, modifyHandle}) =
   );
 };
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the LabelValueComponent
+ */
+const styles = StyleSheet.create<{
+  container: ViewStyle;
+  content: ViewStyle;
+  label: TextStyle;
+  value: TextStyle;
+  buttonImage: ImageStyle;
+  editButton: ViewStyle;
+}>({
   container: {
     marginBottom: 12,
     flexDirection: 'row',

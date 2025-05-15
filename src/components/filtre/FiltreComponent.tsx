@@ -1,14 +1,18 @@
-// FiltreComponent.js
+// FiltreComponent.tsx
 
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, ViewStyle } from 'react-native';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import FiltreDetailsComponent from './FiltreDetailsComponent';
-import RedBorderButton from '../elements/buttons/RedBorderButton'; // assume we can override styles
+import RedBorderButton from '../elements/buttons/RedBorderButton';
 import MainHeader from '../elements/header/MainHeader';
+import { FiltreComponentProps, FilterCriteria } from './FiltreComponent.types';
 
-const FiltreComponent = ({
+/**
+ * Component for filtering attendees by various criteria
+ */
+const FiltreComponent: React.FC<FiltreComponentProps> = ({
   initialFilter,
   defaultFilter,
   onApply,
@@ -16,21 +20,24 @@ const FiltreComponent = ({
   tout,
   checkedIn,
   notChechkedIn,
+  style,
 }) => {
   // Local (temporary) state for filters
-  const [tempFilterCriteria, setTempFilterCriteria] = useState(initialFilter);
+  const [tempFilterCriteria, setTempFilterCriteria] = useState<FilterCriteria>(initialFilter);
 
   useEffect(() => {
     setTempFilterCriteria(initialFilter);
   }, [initialFilter]);
 
   return (
-    <View style={[styles.rootContainer, globalStyle.backgroundBlack]}>
+    <View style={[styles.rootContainer, globalStyle.backgroundBlack, style]}>
       <MainHeader
         color={colors.greyCream}
         onLeftPress={onCancel}
         title={'Filtre'}
-        backgroundColor= {colors.darkGrey}
+        backgroundColor={colors.darkGrey}
+        onRightPress={() => {}}
+        RightIcon={null}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContainer} nestedScrollEnabled
@@ -70,7 +77,15 @@ const FiltreComponent = ({
 
 export default FiltreComponent;
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the FiltreComponent
+ */
+const styles = StyleSheet.create<{
+  rootContainer: ViewStyle;
+  scrollContainer: ViewStyle;
+  buttonsColumn: ViewStyle;
+  fullWidthButton: ViewStyle;
+}>({
   rootContainer: {
     flex: 1, 
     position: 'relative',

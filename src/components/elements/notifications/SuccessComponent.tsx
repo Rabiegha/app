@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Animated,
   StyleSheet,
@@ -6,12 +6,19 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  ViewStyle,
+  TextStyle,
+  ImageStyle,
 } from 'react-native';
 import Icons from '@/assets/images/icons';
 import colors from '../../../assets/colors/colors';
+import { SuccessComponentProps } from './SuccessComponent.types';
 
-const SuccessComponent = ({onClose, text}) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value
+/**
+ * Component for displaying success notifications
+ */
+const SuccessComponent: React.FC<SuccessComponentProps> = ({ onClose, text, style }) => {
+  const fadeAnim = useRef<Animated.Value>(new Animated.Value(0)).current; // Initial value
 
   useEffect(() => {
     // Si isVisible est true, démarrez l'animation
@@ -44,7 +51,16 @@ const SuccessComponent = ({onClose, text}) => {
   );
 };
 
-const styles = StyleSheet.create({
+/**
+ * Styles for the SuccessComponent
+ */
+const styles = StyleSheet.create<{
+  notification: ViewStyle;
+  textNotification: ViewStyle;
+  closeButton: ViewStyle;
+  buttonImage: ImageStyle;
+  buttonText: TextStyle;
+}>({
   notification: {
     position: 'absolute',
     top: 70,
