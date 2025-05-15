@@ -1,4 +1,4 @@
-// src/services/eventService.js
+// src/services/eventService.ts
 import axios from 'axios';
 import {PRINT_URL} from '../config/config';
 

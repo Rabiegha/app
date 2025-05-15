@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {fetchFutureEvents} from '../../thunks/event/fetchFutureEventsThunk.tsx';
+import {fetchFutureEvents} from '../../thunks/event/fetchFutureEventsThunk';
 
 const initialState = {
   events: null,

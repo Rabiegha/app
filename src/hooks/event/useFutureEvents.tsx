@@ -1,4 +1,4 @@
-// useEventsData.js
+// useEventsData.ts
 import {useEffect, useContext, useCallback} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {AuthContext} from '../../context/AuthContext';

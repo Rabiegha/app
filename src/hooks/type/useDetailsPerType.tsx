@@ -1,4 +1,4 @@
-// useLiveData.js
+// useLiveData.ts
 
 import {useState, useEffect} from 'react';
 import {useEvent} from '../../context/EventContext';

@@ -3,7 +3,16 @@ import { cleanParams } from '../utils/api/cleanParams';
 import { handleApiSuccess } from '../utils/api/handleApiSuccess';
 import mainApi from '../config/mainApi';
 
-export const getSessionsList = async (currentUserLoginDetailsId, eventId) => {
+export const getSessionsList = async (currentUserLoginDetailsId: string | null, eventId: string | null) => {
+  // Validate required parameters before making the API call
+  if (!currentUserLoginDetailsId) {
+    throw new Error('No user is currently logged in');
+  }
+  
+  if (!eventId) {
+    throw new Error('No event selected');
+  }
+  
   try {
     const params = cleanParams({
       current_user_login_details_id: currentUserLoginDetailsId,

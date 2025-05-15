@@ -1,4 +1,4 @@
-// FiltreComponent.js
+// FiltreComponent.ts
 
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';

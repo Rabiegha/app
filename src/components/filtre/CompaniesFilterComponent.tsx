@@ -1,4 +1,4 @@
-// CompaniesFilterComponent.js
+// CompaniesFilterComponent.ts
 
 import React, { useState } from 'react';
 import {

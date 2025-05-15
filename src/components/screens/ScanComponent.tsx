@@ -1,4 +1,4 @@
-// src/components/ScannerComponent.js
+// src/components/ScannerComponent.ts
 
 import React, {useState, useEffect, useRef} from 'react';
 import {Text, View, StyleSheet, Animated} from 'react-native';

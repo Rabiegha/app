@@ -1,4 +1,4 @@
-// src/modals/ScanModal.js
+// src/modals/ScanModal.ts
 
 import React from 'react';
 import {

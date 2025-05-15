@@ -1,10 +1,21 @@
 import { TOAST_MESSAGES } from '../../constants/toastMessages';
 import { showToast } from '../ui/toastUtils';
 
-export const handleApiError = (error, customMessage = TOAST_MESSAGES.errors.generic) => {
+export const handleApiError = (error: any, customMessage = TOAST_MESSAGES.errors.generic) => {
   let finalMessage = TOAST_MESSAGES.errors.generic;
+  let shouldShowToast = true;
 
-  if (error.code === 'ECONNABORTED') {
+  // Check if this is a known auth error (like after logout)
+  const isAuthError = error.message === 'No user is currently logged in' || 
+                      error.message === 'No event selected' ||
+                      (error.response && error.response.status === 401);
+
+  if (isAuthError) {
+    // Don't show toast for auth errors after logout
+    finalMessage = error.message;
+    shouldShowToast = false;
+    console.log('Auth error (expected after logout):', error.message);
+  } else if (error.code === 'ECONNABORTED') {
     finalMessage = TOAST_MESSAGES.errors.timeout;
   } else if (error.response) {
     console.error(`${customMessage} - Server error:`, error.response);
@@ -17,7 +28,10 @@ export const handleApiError = (error, customMessage = TOAST_MESSAGES.errors.gene
     finalMessage = TOAST_MESSAGES.errors.custom(error.message);
   }
 
-  // ✅ Show toast and return a JS Error
-  showToast('customError' ,'Erreur', finalMessage);
+  // Only show toast if it's not an auth error
+  if (shouldShowToast) {
+    showToast('customError', 'Erreur', finalMessage);
+  }
+  
   return new Error(finalMessage);
 };

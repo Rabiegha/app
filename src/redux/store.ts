@@ -1,9 +1,9 @@
-// redux/store.js
+// redux/store.ts
 
-import {configureStore} from '@reduxjs/toolkit';
+import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import {persistStore, persistReducer} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {combineReducers} from 'redux';
+import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 
 import printerReducer from './slices/printerSlice';
 import pastEventsReducer from './slices/event/pastEventsSlice';
@@ -39,6 +39,7 @@ const isKioskModePersistConfig = {
   key: 'isKioskMode',
   storage: AsyncStorage,
 };
+
 const isSearchByCompanyModeConfig = {
   key: 'isSearchByCompanyMode',
   storage: AsyncStorage,
@@ -73,3 +74,11 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
+// Export types for Redux usage
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+// Create typed hooks
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

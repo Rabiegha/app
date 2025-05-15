@@ -1,4 +1,4 @@
-// persistTransforms.js
+// persistTransforms.ts
 import {createTransform} from 'redux-persist';
 
 export const omitLoadingAndErrorTransform = createTransform(

@@ -1,13 +1,14 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {loginThunk} from '../thunks/auth/loginThunk';
 import {logoutThunk} from '../thunks/auth/logoutThunk';
+import {AuthState} from '../../types/auth.types';
 
-const initialState = {
-  currentUserId: null as string | null,
-  userType: null as string | null,
-  userInfo: null as any,       
+const initialState: AuthState = {
+  currentUserId: null,
+  userType: null,
+  userInfo: null,       
   isLoading: false,
-  error: null as string | null,
+  error: null,
 };
 
 const authSlice = createSlice({
@@ -32,7 +33,7 @@ const authSlice = createSlice({
     });
     builder.addCase(loginThunk.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.payload || 'Login failed';
+      state.error = action.payload ? action.payload : 'Login failed';
     });
 
     // Logout
@@ -45,7 +46,7 @@ const authSlice = createSlice({
     });
     builder.addCase(logoutThunk.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.payload || 'Logout failed';
+      state.error = action.payload ? action.payload : 'Logout failed';
       Object.assign(state, initialState); // quick reset
     });
   },

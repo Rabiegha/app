@@ -1,4 +1,4 @@
-// RedBorderButton.js
+// RedBorderButton.ts
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet, Dimensions} from 'react-native';
 

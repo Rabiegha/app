@@ -1,4 +1,4 @@
-// src/hooks/useFormat.js
+// src/hooks/useFormat.ts
 export const insertSpaceBetweenPairs = (str) => {
     if (str == null) {
       return '';

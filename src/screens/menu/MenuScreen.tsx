@@ -1,20 +1,33 @@
-// MenuScreen.js
-import React, {useContext} from 'react';
-import {View, StyleSheet, StatusBar, ScrollView} from 'react-native';
+// MenuScreen.tsx
+import React from 'react';
+import {View, StyleSheet, StatusBar, ScrollView, Alert} from 'react-native';
 import colors from '../../assets/colors/colors';
 import LogOutButton from '../../components/elements/buttons/LogOutButton';
 import {CommonActions, useFocusEffect, useNavigation} from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle';
 import MenuListComponent from '../../components/screens/MenuListComponent';
-import {AuthContext} from '../../context/AuthContext';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { logoutThunk } from '../../redux/thunks/auth/logoutThunk';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from '../../redux/store';
 import MainHeader from '../../components/elements/header/MainHeader';
+import { selectIsLoading, selectError } from '../../redux/selectors/auth/authSelectors';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const MenuScreen = ({}) => {
-  const {isLoading, logout} = useContext(AuthContext);
-  const navigation = useNavigation();
+// Define the navigation types
+type RootStackParamList = {
+  Tabs: { screen: string };
+  Connexion: undefined;
+  Menu: { screen: string };
+  // Add other screens as needed
+};
+
+type MenuScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const MenuScreen = () => {
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
+  const navigation = useNavigation<MenuScreenNavigationProp>();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -49,16 +62,46 @@ const MenuScreen = ({}) => {
     },
   ];
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const handleLogout = () => {
-    dispatch(logoutThunk());
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{name: 'Connexion'}],
-      }),
-    );
+  const handleLogout = async () => {
+    try {
+      // Show a confirmation dialog
+      Alert.alert(
+        'Logout',
+        'Are you sure you want to log out?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Logout',
+            onPress: async () => {
+              try {
+                // Use unwrap to properly handle async/await with createAsyncThunk
+                await dispatch(logoutThunk()).unwrap();
+                // Only navigate after successful logout
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{name: 'Connexion'}],
+                  }),
+                );
+              } catch (err) {
+                // Handle logout error
+                const errorMessage = err instanceof Error ? err.message : 'There was a problem logging out';
+                Alert.alert('Logout Failed', errorMessage);
+              }
+            },
+          },
+        ],
+        {cancelable: true},
+      );
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.error('Logout error:', errorMessage);
+    }
   };
 
   const goBack = () => {
@@ -78,7 +121,10 @@ const MenuScreen = ({}) => {
       <ScrollView style={globalStyle.container}>
         <View style={styles.container}>
           <MenuListComponent sections={sections} />
-          <LogOutButton onPress={handleLogout} />
+          <LogOutButton 
+            onPress={handleLogout} 
+            disabled={isLoading} 
+          />
         </View>
       </ScrollView>
     </View>
@@ -89,7 +135,8 @@ export default MenuScreen;
 
 const styles = StyleSheet.create({
   container: {
-    // Remove the fixed height
-  height: 1000,
+    // Use flex instead of fixed height for better responsiveness
+    flex: 1,
+    minHeight: 1000,
   },
 });

@@ -1,4 +1,4 @@
-// CustomButton.js
+// CustomButton.ts
 import React from 'react';
 import {TouchableOpacity, StyleSheet, Dimensions, Image} from 'react-native';
 import colors from '../../../assets/colors/colors';

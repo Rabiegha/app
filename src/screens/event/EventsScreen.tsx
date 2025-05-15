@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, StyleSheet, Animated, StatusBar, Platform} from 'react-native';
+import {View, StyleSheet, Animated, StatusBar, Platform, Alert} from 'react-native';
 import {NavigationContainer, useFocusEffect} from '@react-navigation/native';
 import Search from '../../components/elements/Search';
 import {useNavigation} from '@react-navigation/native';
@@ -7,12 +7,13 @@ import HeaderEvent from '../../components/elements/header/HeaderEvent';
 import globalStyle from '../../assets/styles/globalStyle';
 import {useEvent} from '../../context/EventContext';
 import Spinner from 'react-native-loading-spinner-overlay';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
+import {useAppDispatch} from '../../redux/store';
 import {selectCurrentUserId, selectIsLoading} from '../../redux/selectors/auth/authSelectors';
 import {logoutThunk} from '../../redux/thunks/auth/logoutThunk';
 import TabsNavigator from '../../navigation/EventsNavigator';
 import { useEventSelector } from '../../utils/event/selectEvent';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Define the navigation types
 type RootStackParamList = {
@@ -22,7 +23,7 @@ type RootStackParamList = {
   // Add other screens as needed
 };
 
-type EventsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
+type EventsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 // Composant principal EventsScreen
 const EventsScreen = () => {
@@ -51,13 +52,42 @@ const EventsScreen = () => {
     navigation.navigate('Tabs', {screen: 'EventDashboard'});
   };
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleLogOut = async () => {
-    console.log('userId', userId);
-    await dispatch(logoutThunk()).unwrap();
-    navigation.reset({ index: 0, routes: [{ name: 'Connexion' }] });
-
+    try {
+      // Show a confirmation dialog
+      Alert.alert(
+        'Logout',
+        'Are you sure you want to log out?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Logout',
+            onPress: async () => {
+              try {
+                console.log('userId', userId);
+                // Use unwrap to properly handle async/await with createAsyncThunk
+                await dispatch(logoutThunk()).unwrap();
+                // Only navigate after successful logout
+                navigation.reset({ index: 0, routes: [{ name: 'Connexion' }] });
+              } catch (err) {
+                // Handle logout error
+                const errorMessage = err instanceof Error ? err.message : 'There was a problem logging out';
+                Alert.alert('Logout Failed', errorMessage);
+              }
+            },
+          },
+        ],
+        {cancelable: true},
+      );
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.error('Logout error:', errorMessage);
+    }
   };
 
   const [opacity, setOpacity] = useState(0);

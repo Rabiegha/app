@@ -1,4 +1,4 @@
-// hooks/useRegistrationData.js
+// hooks/useRegistrationData.ts
 import { useState, useEffect, useCallback } from 'react';
 import useRegistrationSummary from './useRegistrationSummary';
 import { useSelector } from 'react-redux';

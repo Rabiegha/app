@@ -4,24 +4,29 @@ import {TouchableOpacity, Text, StyleSheet, Dimensions, Image} from 'react-nativ
 import colors from '../../../assets/colors/colors';
 import Icons from '../../../assets/images/icons';
 
-interface LogOutButtonProps {
+export interface LogOutButtonProps {
   onPress: () => void;
+  disabled?: boolean;
 }
 
-const LogOutButton = ({onPress}: LogOutButtonProps) => {
+const LogOutButton = ({onPress, disabled = false}: LogOutButtonProps) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity 
+      style={[styles.button, disabled && styles.buttonDisabled]} 
+      onPress={onPress}
+      disabled={disabled}
+    >
       <Image
         source={Icons.LogOut}
         resizeMode="contain"
         style={{
           width: 17,
           height: 17,
-          tintColor: colors.red,
+          tintColor: disabled ? colors.grey : colors.red,
           marginRight: 10,
         }}
       />
-      <Text style={styles.buttonText}>Log out</Text>
+      <Text style={[styles.buttonText, disabled && styles.buttonTextDisabled]}>Log out</Text>
     </TouchableOpacity>
   );
 };
@@ -41,10 +46,17 @@ const styles = StyleSheet.create({
     borderColor: colors.red,
     flexDirection: 'row',
   },
+  buttonDisabled: {
+    borderColor: colors.grey,
+    opacity: 0.7,
+  },
   buttonText: {
     color: colors.red,
     fontSize: 15,
     fontWeight: 'bold',
+  },
+  buttonTextDisabled: {
+    color: colors.grey,
   },
 });
 

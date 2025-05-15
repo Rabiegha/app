@@ -1,9 +1,10 @@
 import { useEvent } from '../../context/EventContext';
+import { Session } from '../../types/session';
 
 export const useSessionSelector = () => {
   const { updateSessionDetails } = useEvent();
 
-  return (session) => {
+  return (session: Session) => {
     const {
       ems_secret_code,
       event_id,

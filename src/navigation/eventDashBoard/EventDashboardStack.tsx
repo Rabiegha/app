@@ -1,4 +1,4 @@
-// EventStackNavigator.js
+// EventStackNavigator.ts
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AttendeesListScreen from '../../screens/attendeesList/attendeesListScreen';

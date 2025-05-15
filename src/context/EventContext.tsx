@@ -1,17 +1,74 @@
-import React, {createContext, useContext, useState, useEffect} from 'react';
+import React, {createContext, useContext, useState, useEffect, ReactNode} from 'react';
 import {MMKV} from 'react-native-mmkv';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Session } from '../types/session';
 
-const EventContext = createContext();
+interface EventContextType {
+  secretCode: string;
+  eventId: string;
+  eventName: string;
+  niceStartDate: string;
+  eventLogo: string;
+  sessionDetails: SessionDetails | null;
+  updateEventDetails: (params: {
+    newSecretCode: string;
+    newEventId: string;
+    newEventName: string;
+    newNiceStartDate: string;
+    newEventLogo?: string;
+  }) => void;
+  updateSessionDetails: (params: {
+    newSecretCode: string;
+    newEventId: string;
+    newEventName: string;
+    newNiceStartDate: string;
+  }) => void;
+  clearSessionDetails: () => void;
+  triggerListRefresh: () => void;
+  isLoggedIn: boolean;
+  login: (status: boolean) => void;
+  updateStatsPassees: (params: { newTotalePassees: string }) => void;
+  setStatsAvenir: React.Dispatch<React.SetStateAction<{ totaleAvenir: string }>>;
+  updateStatsAvenir: (params: { newTotaleAvenir: string }) => void;
+  setStatsPassees: React.Dispatch<React.SetStateAction<{ totalePassees: string }>>;
+  updateAttendee: (eventId: string, updatedAttendee: any) => Promise<void>;
+  addAttendee: (eventId: string, newAttendee: any) => Promise<void>;
+  attendeesRefreshKey: number;
+}
+
+interface SessionDetails {
+  secretCode: string;
+  eventId: string;
+  eventName: string;
+  niceStartDate: string;
+}
+
+interface EventProviderProps {
+  children: ReactNode;
+}
+
+const EventContext = createContext<EventContextType | undefined>(undefined);
 
 // Initialize MMKV storage
 const storage = new MMKV();
 
-export const useEvent = () => useContext(EventContext);
+export const useEvent = (): EventContextType => {
+  const context = useContext(EventContext);
+  if (context === undefined) {
+    throw new Error('useEvent must be used within an EventProvider');
+  }
+  return context;
+};
 
-export const EventProvider = ({children}) => {
+export const EventProvider = ({children}: EventProviderProps) => {
   // Event Details
-  const [eventDetails, setEventDetails] = useState({
+  const [eventDetails, setEventDetails] = useState<{
+    secretCode: string;
+    eventId: string;
+    eventName: string;
+    niceStartDate: string;
+    eventLogo: string;
+  }>({
     secretCode: '',
     eventId: '',
     eventName: '',
@@ -19,7 +76,7 @@ export const EventProvider = ({children}) => {
     eventLogo: '',
   });
   //Session details
-  const [sessionDetails, setSessionDetails] = useState(null);
+  const [sessionDetails, setSessionDetails] = useState<SessionDetails | null>(null);
   // Event Stats
   const [statsAvenir, setStatsAvenir] = useState({
     totaleAvenir: '',
@@ -33,7 +90,7 @@ export const EventProvider = ({children}) => {
   useEffect(() => {
     // AUth get auth status from MMKV
     const storedStatus = storage.getBoolean('login_status');
-    setIsLoggedIn(storedStatus);
+    setIsLoggedIn(storedStatus || false);
 
     // Event Get last seelected event from MMKV
     const storedEvent = storage.getString('eventDetails');
@@ -44,14 +101,26 @@ export const EventProvider = ({children}) => {
     }
   }, []);
 
-  const updateEventDetails = ({newSecretCode, newEventId, newEventName, newNiceStartDate, newEventLogo}) => {
+  const updateEventDetails = ({
+    newSecretCode,
+    newEventId,
+    newEventName,
+    newNiceStartDate,
+    newEventLogo
+  }: {
+    newSecretCode: string;
+    newEventId: string;
+    newEventName: string;
+    newNiceStartDate: string;
+    newEventLogo?: string;
+  }) => {
 
     const eventData = {
       secretCode: newSecretCode,
       eventId: newEventId,
       eventName: newEventName,
       niceStartDate: newNiceStartDate,
-      eventLogo: newEventLogo,
+      eventLogo: newEventLogo || '',
     };
     setEventDetails(eventData);
     storage.set('eventDetails', JSON.stringify(eventData));
@@ -66,7 +135,17 @@ export const EventProvider = ({children}) => {
 
   };
 
-  const updateSessionDetails = ({newSecretCode, newEventId, newEventName, newNiceStartDate}) => {
+  const updateSessionDetails = ({
+    newSecretCode,
+    newEventId,
+    newEventName,
+    newNiceStartDate
+  }: {
+    newSecretCode: string;
+    newEventId: string;
+    newEventName: string;
+    newNiceStartDate: string;
+  }) => {
     const sessionData = {
       secretCode: newSecretCode,
       eventId: newEventId,
@@ -85,23 +164,23 @@ export const EventProvider = ({children}) => {
 
 
 
-  const updateStatsAvenir = ({newTotaleAvenir}) => {
+  const updateStatsAvenir = ({newTotaleAvenir}: { newTotaleAvenir: string }) => {
     setStatsAvenir({
       totaleAvenir: newTotaleAvenir,
     });
     console.log('newTotaleAvenir', newTotaleAvenir);
   };
 
-  const updateStatsPassees = ({newTotalePassees}) => {
+  const updateStatsPassees = ({newTotalePassees}: { newTotalePassees: string }) => {
     setStatsPassees({
       totalePassees: newTotalePassees,
     });
     console.log('newTotalePassees', newTotalePassees);
   };
 
-  const login = status => {
+  const login = (status: boolean) => {
     setIsLoggedIn(status);
-    storage.set('login_status', status.toString());
+    storage.set('login_status', status);
   };
 
   const triggerListRefresh = () => {
@@ -109,7 +188,7 @@ export const EventProvider = ({children}) => {
     /* console.log('List refresh triggered, new attendeesRefreshKey:', attendeesRefreshKey + 1); */
   };
 
-  const updateAttendee = async (eventId, updatedAttendee) => {
+  const updateAttendee = async (eventId: string, updatedAttendee: any) => {
     console.log('Updating attendee locally:', updatedAttendee);
     const key = `attendees_${eventId}`;
     const value = await AsyncStorage.getItem(key);
@@ -118,7 +197,7 @@ export const EventProvider = ({children}) => {
       if (!Array.isArray(parsedData)) {
         parsedData = [];
       }
-      const updatedData = parsedData.map(attendee =>
+      const updatedData = parsedData.map((attendee: any) =>
         attendee.id == updatedAttendee.id ? updatedAttendee : attendee,
       );
       await AsyncStorage.setItem(key, JSON.stringify(updatedData));
@@ -127,7 +206,7 @@ export const EventProvider = ({children}) => {
     }
   };
 
-  const addAttendee = async (eventId, newAttendee) => {
+  const addAttendee = async (eventId: string, newAttendee: any) => {
     console.log('Adding new attendee locally:', newAttendee);
     const key = `attendees_${eventId}`;
     const value = await AsyncStorage.getItem(key);

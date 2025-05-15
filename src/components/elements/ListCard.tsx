@@ -1,4 +1,4 @@
-// components/ListCard.js
+// components/ListCard.ts
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import colors from '../../assets/colors/colors';

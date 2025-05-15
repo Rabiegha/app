@@ -13,10 +13,11 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useSessionSelector } from '../../utils/session/useSessionSelector';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
 import colors from '../../assets/colors/colors';
+import { Session, SessionNavigationParams } from '../../types/session';
 
 const SessionOverviewScreen = () => {
-  const navigation = useNavigation();
-  const [sessions, setSessions] = useState([]);
+  const navigation = useNavigation<any>();
+  const [sessions, setSessions] = useState<Session[]>([]);
   const { eventId } = useEvent();
   const userId = useSelector(selectCurrentUserId);
   const selectSession = useSessionSelector();
@@ -31,6 +32,13 @@ const SessionOverviewScreen = () => {
   const fetchSessions = async () => {
     try {
       setError(false);
+      // Check if userId and eventId are available before making the API call
+      if (!userId || !eventId) {
+        console.log('User ID or Event ID not available, skipping session fetch');
+        setSessions([]);
+        return;
+      }
+      
       const response = await getSessionsList(userId, eventId);
       setSessions(response.data); // ou .event_child_list selon ton API
     } catch (error) {
@@ -47,19 +55,26 @@ const SessionOverviewScreen = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    fetchSessions().finally(() => setLoading(false));
+    // Only fetch sessions if both userId and eventId are available
+    if (userId && eventId) {
+      setLoading(true);
+      fetchSessions().finally(() => setLoading(false));
+    } else {
+      // Reset sessions if user is not logged in or no event is selected
+      setSessions([]);
+      setLoading(false);
+    }
   }, [userId, eventId]);
 
-  const handleSessionSelect = (session) => {
+  const handleSessionSelect = (session: Session) => {
     selectSession(session);
     navigation.navigate('SessionAttendeesList', {
       capacity: session.capacity,
       eventName: session.event_name,
-    });
+    } as SessionNavigationParams);
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: Session }) => (
     <ListCard
       title={item.event_name}
       subtitle1={item.nice_start_datetime}
