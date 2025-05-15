@@ -5,9 +5,7 @@ import LargeButton from '../elements/buttons/LargeButton';
 import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
-import ScanIcon from '../../assets/images/icons/Scan.png';
-import EditIcon from '../../assets/images/icons/Modifier.png';
-import PrintIcon from '../../assets/images/icons/Print.png';
+import Icons from '@/assets/images/icons';
 import HoldButton from '../elements/buttons/HoldButton';
 import { insertSpaceBetweenPairs } from '../../hooks/useFormat';
 import { useSelector } from 'react-redux';
@@ -167,21 +165,21 @@ const handleEditSubmit = async (newValue: string) => {
       </View>
       <View style={styles.topButtonsContainer}>
         <SmallButton
-          imageSource={PrintIcon}
+          imageSource={Icons.Print}
           pressHandler={Print}
           backgroundColor={colors.green}
           tintColor={colors.greyCream}
         />
           {/*  ----  Edit button temporarily disabled  ----  
           // <SmallButton
-          //   imageSource={EditIcon}
+          //   imageSource={Icons.Modifier}
           //   pressHandler={modify}
           //   backgroundColor={colors.greyCream}
           //   tintColor={colors.darkGrey} 
           // /> */}
 
         <SmallButton
-          imageSource={ScanIcon}
+          imageSource={Icons.Scan}
           pressHandler={See}
           backgroundColor={colors.greyCream}
           tintColor={colors.darkGrey}

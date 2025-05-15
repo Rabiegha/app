@@ -8,8 +8,7 @@ import {
   View,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
-import Fermer from '../../../assets/images/icons/Fermer.png';
-import closeButton from '../../../assets/images/icons/closeButton.png';
+import Icons from '@/assets/images/icons';
 import Toast from 'react-native-toast-message';
 import { BaseToastProps } from './Toast.types';
 
@@ -33,7 +32,7 @@ const ErrorToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
     <Animated.View style={[styles.notification, {opacity: fadeAnim}]}>
       <View style={styles.textNotification}>
         <Image
-          source={Fermer}
+          source={Icons.Fermer}
           resizeMode="contain"
           style={{
             width: 13,
@@ -46,7 +45,7 @@ const ErrorToast: React.FC<BaseToastProps> = ({text1, text2, ...rest}) => {
         {text2 ? <Text style={styles.buttonText}> {text2}</Text> : null}
       </View>
       <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-        <Image source={closeButton} style={styles.buttonImage} />
+        <Image source={Icons.closeButton} style={styles.buttonImage} />
       </TouchableOpacity>
     </Animated.View>
   );

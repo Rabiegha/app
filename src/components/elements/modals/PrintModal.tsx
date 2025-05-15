@@ -1,4 +1,4 @@
-// src/modals/ScanModal.js
+// src/modals/PrintModal.tsx
 
 import React from 'react';
 import {
@@ -9,9 +9,9 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
-import acceptedAnimation from '../../../assets/animations/Accepted.json';
-import rejectedAnimation from '../../../assets/animations/Rejected.json';
-import printingAnimation from '../../../assets/animations/Printing.json';
+import acceptedAnimation from '@/assets/animations/Accepted.json';
+import rejectedAnimation from '@/assets/animations/Rejected.json';
+import printingAnimation from '@/assets/animations/Printing.json';
 import colors from '../../../assets/colors/colors';
 
 const PrintModal = ({onClose, visible, status}) => {

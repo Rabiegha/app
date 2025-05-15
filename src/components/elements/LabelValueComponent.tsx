@@ -1,8 +1,8 @@
 // LabelValueComponent.js
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; // Assuming you're using Expo for icons
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import colors from '../../assets/colors/colors';
-import modify from '../../assets/images/icons/Modifier.png'
+import Icons from '@/assets/images/icons';
 
 const LabelValueComponent = ({label, value, value2, showButton, modifyHandle}) => {
   return (
@@ -19,7 +19,7 @@ const LabelValueComponent = ({label, value, value2, showButton, modifyHandle}) =
           <TouchableOpacity
             onPress={modifyHandle}
             style={[styles.editButton]}>
-            <Image source={modify} style={styles.buttonImage} />
+            <Image source={Icons.Modifier} style={styles.buttonImage} />
       </TouchableOpacity>
         </>
       )}

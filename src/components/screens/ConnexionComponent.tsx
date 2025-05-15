@@ -9,8 +9,7 @@ import {
 } from 'react-native';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
-import showPasswordIcon from '../../assets/images/icons/Vu.png';
-import hidePasswordIcon from '../../assets/images/icons/Pas-vu.png';
+import Icons from '@/assets/images/icons';
 import FailComponent from '../elements/notifications/FailComponent';
 import LargeButton from '../elements/buttons/LargeButton';
 import {AuthContext} from '../../context/AuthContext';
@@ -56,7 +55,7 @@ const ConnexionComponent = ({
           style={styles.togglePasswordButton}
           onPress={() => setShowPassword(!showPassword)}>
           <Image
-            source={showPassword ? hidePasswordIcon : showPasswordIcon}
+            source={showPassword ? Icons.PasVu : Icons.Vu}
             style={styles.togglePasswordIcon}
           />
         </TouchableOpacity>

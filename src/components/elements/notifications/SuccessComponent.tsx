@@ -7,8 +7,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import Verifie from '../../../assets/images/icons/Verifie.png';
-import closeButton from '../../../assets/images/icons/closeButton.png';
+import Icons from '@/assets/images/icons';
 import colors from '../../../assets/colors/colors';
 
 const SuccessComponent = ({onClose, text}) => {
@@ -27,7 +26,7 @@ const SuccessComponent = ({onClose, text}) => {
     <Animated.View style={[styles.notification, {opacity: fadeAnim}]}>
       <View style={styles.textNotification}>
         <Image
-          source={Verifie}
+          source={Icons.Verifie}
           resizeMode="contain"
           style={{
             width: 15,
@@ -39,7 +38,7 @@ const SuccessComponent = ({onClose, text}) => {
         <Text style={styles.buttonText}>{text}</Text>
       </View>
       <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-        <Image source={closeButton} style={styles.buttonImage} />
+        <Image source={Icons.closeButton} style={styles.buttonImage} />
       </TouchableOpacity>
     </Animated.View>
   );

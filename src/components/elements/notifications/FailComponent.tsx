@@ -8,8 +8,7 @@ import {
   View,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
-import Fermer from '../../../assets/images/icons/Fermer.png';
-import closeButton from '../../../assets/images/icons/closeButton.png';
+import Icons from '@/assets/images/icons';
 
 const FailComponent = ({onClose, text}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -27,7 +26,7 @@ const FailComponent = ({onClose, text}) => {
     <Animated.View style={[styles.notification, {opacity: fadeAnim}]}>
       <View style={styles.textNotification}>
         <Image
-          source={Fermer}
+          source={Icons.Fermer}
           resizeMode="contain"
           style={{
             width: 13,
@@ -39,7 +38,7 @@ const FailComponent = ({onClose, text}) => {
         <Text style={styles.buttonText}>{text}</Text>
       </View>
       <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-        <Image source={closeButton} style={styles.buttonImage} />
+        <Image source={Icons.closeButton} style={styles.buttonImage} />
       </TouchableOpacity>
     </Animated.View>
   );

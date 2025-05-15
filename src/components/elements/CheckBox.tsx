@@ -17,7 +17,7 @@ const CheckBoxComponent: React.FC<Props> = ({isChecked, onPress, title}) => {
       checked={isChecked}
       checkedIcon={
         <Image
-          source={Icons.Checked} // ✅ Using centralized import
+          source={Icons.Checked}
           resizeMode="contain"
           style={{
             width: 20,
