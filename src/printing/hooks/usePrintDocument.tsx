@@ -66,10 +66,7 @@ const usePrintDocument = (): PrintDocumentHook => {
         setStatus('no_printer');
         throw new Error('Aucune imprimante sélectionnée.');
       }
-
-      logger.log('[printDocument] documentUrl:', documentUrl, 'sent to', selectedPrinter?.name || 'unknown printer');
-      
-      // Fetch and convert document to base64
+            // Fetch and convert document to base64
       const base64 = await fetchDocumentAsBase64(documentUrl, (status, errorMsg) => {
         setStatus(status as any);
         throw new Error(errorMsg);
@@ -83,6 +80,7 @@ const usePrintDocument = (): PrintDocumentHook => {
 
       // Handle success
       await delay(1000);
+      logger.log('[printDocument] documentUrl:', documentUrl, 'sent to', selectedPrinter?.name || 'unknown printer');
       setSuccess(true);
       setStatus('success');
       setMessage('Document imprimé avec succès.');

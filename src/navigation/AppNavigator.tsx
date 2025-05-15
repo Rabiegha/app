@@ -4,7 +4,6 @@ import {AuthContext} from '../context/AuthContext';
 import ConnexionScreen from '../screens/auth/ConnexionScreen';
 import EventsScreen from '../screens/event/EventsScreen';
 import MoreScreen from '../screens/attendeeDetails/MoreScreen';
-import EditScreen from '../screens/attendeeDetails/EditScreen';
 import BadgeScreen from '../screens/attendeeDetails/BadgeScreen';
 import PrintresListScreen from '../screens/print/PrintersListScreen';
 import PaperFormat from '../screens/print/PaperFormatScreen';
@@ -15,7 +14,6 @@ import TabNavigator from './tabNavigator/TabNavigator';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId, selectUserType} from '../redux/selectors/auth/authSelectors';
 import SessionAttendeesListScreen from '../screens/sessionAttendeesList/SessionAttendeesListScreen';
-import SessionScanScreen from '../screens/sessionsScan/SessionScanScreen';
 import PartnerTabNavigator from './tabNavigator/partnerTabNavigator/PartnerTabNavigator';
 import ScanScreen from '../screens/scanScreen/ScanScreen';
 
@@ -38,7 +36,6 @@ function AppNavigator() {
       />
       <Stack.Screen name="SessionAttendeesList" component={SessionAttendeesListScreen} />
       <Stack.Screen name="More" component={MoreScreen} />
-      <Stack.Screen name="Edit" component={EditScreen} />
       <Stack.Screen name="Badge" component={BadgeScreen} />
       <Stack.Screen name="ScanScreen" component={ScanScreen} />
       <Stack.Screen name="Printers" component={PrintresListScreen} />

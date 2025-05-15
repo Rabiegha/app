@@ -2,8 +2,17 @@ import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../../../assets/colors/colors';
+import {Event, PartialEvent} from '../../../types/event.types';
 
-const ListEvents = ({
+interface ListEventsProps {
+  eventData: PartialEvent;
+  searchQuery: string;
+  onPress: (event: Event) => void;
+  eventDate?: string;
+  eventType?: string;
+}
+
+const ListEvents: React.FC<ListEventsProps> = ({
   eventData,
   searchQuery,
   onPress,
@@ -12,7 +21,7 @@ const ListEvents = ({
 }) => {
   const navigation = useNavigation();
 
-  const highlightSearch = (text, query) => {
+  const highlightSearch = (text: string, query: string) => {
     if (!query.trim()) {
       return <Text style={{color: 'black'}}>{text}</Text>;
     }
@@ -36,14 +45,14 @@ const ListEvents = ({
   };
 
   return (
-    <TouchableOpacity onPress={() => onPress(eventData)}>
+    <TouchableOpacity onPress={() => onPress(eventData as Event)}>
       <View style={styles.listItemContainer}>
         <View style={styles.dateLieu}>
           <Text style={styles.dateLieuText}>{eventDate}</Text>
           <Text style={styles.dateLieuText}>{eventType}</Text>
         </View>
         <Text style={styles.itemName}>
-          {highlightSearch(eventData.event_name, searchQuery)}
+          {highlightSearch(eventData.event_name || '', searchQuery)}
         </Text>
       </View>
     </TouchableOpacity>

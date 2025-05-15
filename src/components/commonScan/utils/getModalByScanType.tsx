@@ -1,8 +1,8 @@
 import React from 'react';
 import { ScanType } from '../types/scan';
-import CommentModal from '../../../screens/partner/scan/CommentModal';
 import DetailsModal from '../../elements/modals/DetailsModal';
 import CheckinPrintModal from '../../elements/modals/CheckinPrintModal';
+import CommentModal from '@/components/elements/modals/CommentModal';
 
 type Props = {
   scanType: ScanType;

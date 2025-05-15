@@ -12,6 +12,17 @@ import {selectCurrentUserId, selectIsLoading} from '../../redux/selectors/auth/a
 import {logoutThunk} from '../../redux/thunks/auth/logoutThunk';
 import TabsNavigator from '../../navigation/EventsNavigator';
 import { useEventSelector } from '../../utils/event/selectEvent';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+// Define the navigation types
+type RootStackParamList = {
+  Tabs: { screen: string };
+  Connexion: undefined;
+  Events: undefined;
+  // Add other screens as needed
+};
+
+type EventsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 // Composant principal EventsScreen
 const EventsScreen = () => {
@@ -31,7 +42,7 @@ const EventsScreen = () => {
   const {clearSessionDetails} = useEvent();
   const isLoading = useSelector(selectIsLoading);
   const [searchQuery, setSearchQuery] = useState('');
-  const navigation = useNavigation();
+  const navigation = useNavigation<EventsScreenNavigationProp>();
   const selectEvent = useEventSelector();
 
   const handleEventSelect = (event) => {

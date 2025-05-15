@@ -5,7 +5,12 @@ import globalStyle from '../../../assets/styles/globalStyle';
 import LottieView from 'lottie-react-native';
 import errorAnimation from '../../../assets/animations/Error.json';
 
-export default function ErrorView({handleRetry}) {
+interface ErrorViewProps {
+  handleRetry: () => void;
+  message?: string;
+}
+
+export default function ErrorView({handleRetry, message = 'An error occurred'}: ErrorViewProps) {
   return (
     <View style={[styles.container, globalStyle.backgroundWhite]}>
       <LottieView
@@ -14,6 +19,7 @@ export default function ErrorView({handleRetry}) {
         loop={true}
         style={styles.gifStyle}
       />
+      {message && <Text style={styles.errorMessage}>{message}</Text>}
       <TouchableOpacity style={styles.button} onPress={handleRetry}>
         <Text style={styles.buttonTexte}>Reload</Text>
       </TouchableOpacity>
@@ -38,4 +44,10 @@ const styles = StyleSheet.create({
      padding: 0,
      alignSelf: 'center',
     },
+  errorMessage: {
+    color: colors.red,
+    marginVertical: 10,
+    textAlign: 'center',
+    fontSize: 16,
+  },
 });

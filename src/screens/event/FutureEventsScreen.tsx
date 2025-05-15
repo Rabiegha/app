@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {View, StyleSheet, StatusBar, Text, SectionList} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useRoute, RouteProp, ParamListBase} from '@react-navigation/native';
 
 import ListEvents from '../../components/screens/events/ListEvents';
 import colors from '../../assets/colors/colors';
@@ -11,8 +11,30 @@ import ErrorView from '../../components/elements/view/ErrorView';
 import LoadingView from '../../components/elements/view/LoadingView';
 import EmptyView from '../../components/elements/view/EmptyView';
 import useFutureEvents from '../../hooks/event/useFutureEvents';
+import {Event} from '../../types/event.types';
 
-const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
+// Define types for the component props
+interface FutureEventsScreenProps {
+  searchQuery?: string;
+  onEventSelect?: (event: Event) => void;
+}
+
+// Define the route params type
+type FutureEventsRouteParams = {
+  searchQuery?: string;
+  onEventSelect?: (event: Event) => void;
+};
+
+const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
+  const route = useRoute<RouteProp<Record<string, FutureEventsRouteParams>, string>>();
+  
+  // Get props either directly or from route params
+  const searchQuery = props.searchQuery || route.params?.searchQuery || '';
+  const onEventSelect = props.onEventSelect || route.params?.onEventSelect || ((event) => {
+    console.log('Event selected:', event);
+    // Default implementation if no handler is provided
+  });
+
   const {events, loading, error, clearData} = useFutureEvents();
   const {sections, eventsToday} = useFilteredAndSectionedEvents(
     events,
@@ -44,7 +66,7 @@ const FutureEventsScreen = ({searchQuery, onEventSelect}) => {
     }
   }
 
-  const handleSelectEvent = event => {
+  const handleSelectEvent = (event: Event) => {
     onEventSelect(event);
   };
 

@@ -1,123 +1,179 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Modal,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
+  Pressable,
   TextInput,
-  Image,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
-const CommentModal = ({
-  visible,
-  onClose,
-  onPress, // Make sure this prop is passed correctly and used for a meaningful action
-  value,
-  onChangeText,
-  isValidationMessageVisible,
-}) => {
-  return (
-    <Modal
-      transparent={true}
-      visible={visible}
-      animationType="slide"
-      onRequestClose={onClose}>
-      <View style={styles.modalBackground}>
-        <View style={styles.modalContent}>
-          <Text style={styles.title}>Commentaire</Text>
-          {isValidationMessageVisible ? (
-            <View style={styles.accepted}>
-              <Text style={styles.text}>Participant enregistré.</Text>
-              <Image
-                source={require('../../assets/images/Accepted.gif')}
-                style={styles.gifStyle}
-              />
-            </View>
-          ) : (
-            <>
-              <TextInput
-                style={styles.textArea}
-                multiline={true}
-                numberOfLines={4}
-                placeholder="Entrez votre commentaire ici..."
-                value={value}
-                onChangeText={onChangeText}
-                placeholderTextColor={colors.grey}
-              />
-              <TouchableOpacity style={styles.button} onPress={onPress}>
-                <Text style={styles.buttonText}>Ajouter</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onClose}>
-                <Text style={styles.buttonText2}>Fermer</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
-      </View>
-    </Modal>
-  );
+import LoadingView from '../../../components/elements/view/LoadingView';
+import ErrorView from '../../../components/elements/view/ErrorView';
+
+type Props = {
+  visible: boolean;
+  onRequestClose: () => void;
+  onAddPress: () => void;
+  sessionCount: number;
+  partnerCount: number;
+  attendeeName: string;
+  loading: boolean;
+  error: string | null;
+  onRetry: () => void;
+  comment: string;
+  setComment: (text: string) => void;
+  showSuccess?: boolean;
 };
 
+const CommentModal = ({
+  visible,
+  onRequestClose,
+  onAddPress,
+  attendeeName,
+  loading,
+  error,
+  onRetry,
+  comment,
+  setComment,
+  showSuccess
+}: Props) => (
+  <Modal
+    animationType="fade"
+    transparent
+    visible={visible}
+    onRequestClose={onRequestClose}
+  >
+    <Pressable style={styles.overlay} onPress={onRequestClose} />
+
+    <View style={styles.modalContainer}>
+      <TouchableOpacity style={styles.closeButton} onPress={onRequestClose}>
+        <Text style={styles.closeText}>✕</Text>
+      </TouchableOpacity>
+
+      {loading ? (
+        <LoadingView />
+      ) : error ? (
+        <ErrorView message={error} handleRetry={onRetry} />
+      ) : (
+        <>
+          {showSuccess ? (
+  <Text style={styles.successText}>✅ Commentaire ajouté !</Text>
+) : (
+  <>
+            <Text style={styles.title}>{attendeeName}</Text>
+
+            {/* Title and TextArea */}
+            <Text style={styles.commentLabel}>Ajouter un commentaire</Text>
+            <TextInput
+            style={styles.textArea}
+            value={comment}
+            onChangeText={setComment}
+            placeholder="Écrivez votre commentaire ici..."
+            placeholderTextColor={colors.grey}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+            />
+
+            <TouchableOpacity style={styles.profileButton} onPress={onAddPress}>
+            <Text style={styles.profileButtonText}>Ajouter</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={onRequestClose}>
+            <Text style={styles.fermerText}>Fermer</Text>
+            </TouchableOpacity>
+        </>
+        )}
+
+        </>
+      )}
+    </View>
+  </Modal>
+);
+
 const styles = StyleSheet.create({
-  modalBackground: {
-    flex: 1,
-    top: 200,
-    alignItems: 'center',
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    marginBottom: 10,
-  },
-  modalContent: {
-    width: '80%',
+  modalContainer: {
+    position: 'absolute',
+    top: '25%',
+    alignSelf: 'center',
+    width: '85%',
     backgroundColor: 'white',
-    padding: 20,
+    borderRadius: 16,
+    padding: 24,
     alignItems: 'center',
-    borderRadius: 10,
+    zIndex: 1,
+    paddingTop: 50,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    padding: 6,
+  },
+  closeText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.darkGrey,
+  },
+  title: {
+    fontSize: 18,
+    marginVertical: 8,
+    color: colors.darkGrey,
+    fontWeight: 'bold',
   },
   text: {
-    marginBottom: 10,
+    fontSize: 16,
+    marginVertical: 4,
+    color: colors.darkGrey,
+  },
+  commentLabel: {
+    alignSelf: 'flex-start',
+    marginTop: 16,
+    marginBottom: 8,
+    fontWeight: 'bold',
+    color: colors.darkGrey,
+    fontSize: 14,
   },
   textArea: {
-    width: '100%',
-    height: 100,
     backgroundColor: colors.greyCream,
-    borderColor: colors.darkGrey,
-    borderWidth: 0,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginBottom: 10,
-    textAlignVertical: 'top',
-    borderRadius: 10,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: colors.green,
-    paddingHorizontal: 110,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  buttonText: {
-    fontWeight: 'bold',
+    width: '100%',
+    borderRadius: 8,
+    padding: 10,
+    minHeight: 100,
     fontSize: 14,
+    color: colors.darkGrey,
+  },
+  profileButton: {
+    backgroundColor: colors.green,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginTop: 16,
+    marginBottom: 12,
+  },
+  profileButtonText: {
     color: 'white',
-    textAlign: 'center',
+    fontWeight: '600',
   },
-  buttonText2: {
+  fermerText: {
+    color: colors.grey,
+    fontSize: 14,
+    marginTop: 4,
+  },
+  successText: {
+    fontSize: 16,
+    fontWeight: 'bold',
     color: colors.green,
+    textAlign: 'center',
+    marginVertical: 20,
   },
-  gifStyle: {
-    height: 100,
-    width: 100,
-  },
-  accepted: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  
 });
 
 export default CommentModal;

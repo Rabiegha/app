@@ -1,14 +1,36 @@
 import React from 'react';
 import {View, StyleSheet, FlatList} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useRoute, RouteProp} from '@react-navigation/native';
 import ListEvents from '../../components/screens/events/ListEvents';
 import globalStyle from '../../assets/styles/globalStyle';
 import usePastEvents from '../../hooks/event/usePastEvents';
 import EmptyView from '../../components/elements/view/EmptyView';
 import ErrorView from '../../components/elements/view/ErrorView';
 import LoadingView from '../../components/elements/view/LoadingView';
+import {Event} from '../../types/event.types';
 
-const PastEventsScreen = ({searchQuery, onEventSelect}) => {
+// Define types for the component props
+interface PastEventsScreenProps {
+  searchQuery?: string;
+  onEventSelect?: (event: Event) => void; 
+}
+
+// Define the route params type
+type PastEventsRouteParams = {
+  searchQuery?: string;
+  onEventSelect?: (event: Event) => void; 
+};
+
+const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
+  const route = useRoute<RouteProp<Record<string, PastEventsRouteParams>, string>>();
+  
+  // Get props either directly or from route params
+  const searchQuery = props.searchQuery || route.params?.searchQuery || '';
+  const onEventSelect = props.onEventSelect || route.params?.onEventSelect || ((event) => {
+    console.log('Event selected:', event);
+    // Default implementation if no handler is provided
+  });
+
   const {events, loading, error, clearData} = usePastEvents();
 
   useFocusEffect(
@@ -35,7 +57,7 @@ const PastEventsScreen = ({searchQuery, onEventSelect}) => {
     }
   }
 
-  const filteredEvents = (events ?? []).filter(event =>
+  const filteredEvents = (events ?? []).filter((event: Event) =>
     event.event_name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
