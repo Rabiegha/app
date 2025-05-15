@@ -1,6 +1,0 @@
-module Pods_attendee_attendeeTests {
-  umbrella header "Pods-attendee-attendeeTests-umbrella.h"
-
-  export *
-  module * { export * }
-}
