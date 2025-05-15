@@ -1,10 +1,10 @@
 import React, {forwardRef} from 'react';
 import {StyleSheet, View} from 'react-native';
-import EmptyView from '../../elements/view/EmptyView';
-import LoadingView from '../../elements/view/LoadingView';
-import ErrorView from '../../elements/view/ErrorView';
-import BaseFlatList from '../../elements/list/BaseFlatList';
-import CommonListItem from './CommonAttendeeListItem';
+import EmptyView from '../view/EmptyView.tsx';
+import LoadingView from '../view/LoadingView.tsx';
+import ErrorView from '../view/ErrorView.tsx';
+import BaseFlatList from '../list/BaseFlatList.tsx';
+import CommonListItem from './CommonAttendeeListItem.tsx';
 import { Attendee } from '../../../types/attendee.types.ts';
 
 type Props = {
