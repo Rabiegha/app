@@ -15,7 +15,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
 import { BASE_URL } from '../../config/config';
 
-import usePrintDocument from '../../hooks/print/usePrintDocument';
+import usePrintDocument from '../../printing/hooks/usePrintDocument';
 import useFetchAttendeeDetails from '../../hooks/attendee/useAttendeeDetails';
 import { useEvent } from '../../context/EventContext';
 import { setPrintStatus } from '../../redux/slices/printerSlice';
@@ -73,13 +73,10 @@ const MoreScreen = ({ route, navigation }) => {
     navigation.navigate('Badge', { attendeeId, eventId, badgePdfUrl, badgeImageUrl });
 
 
-  const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
-
   const { printDocument } = usePrintDocument();
-  const handlePrintDocument = useCallback(() => {
-
-   printDocument(badgePdfUrl, selectedNodePrinter?.id);
- }, [badgePdfUrl, selectedNodePrinter?.id, printDocument]);
+  const handlePrintDocument =() => {
+   printDocument(badgePdfUrl, undefined, true);
+ };
 
   const sendPdf = async () => {
     try {

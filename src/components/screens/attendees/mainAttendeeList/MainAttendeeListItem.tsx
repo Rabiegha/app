@@ -15,7 +15,7 @@ import {useEvent} from '../../../../context/EventContext';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icons from '../../../../assets/images/icons';
 import {useSelector, useDispatch} from 'react-redux';
-import usePrintDocument from '../../../../hooks/print/usePrintDocument';
+import usePrintDocument from '../../../../printing/hooks/usePrintDocument';
 import { ListItemProps } from '../../../../types/listItem.types';
 import useFetchAttendeeDetails from '../../../../hooks/attendee/useAttendeeDetails';
 import {usePrintStatus} from '../../../../printing/context/PrintStatusContext';
@@ -77,8 +77,7 @@ const ListItem = React.memo(
         await onUpdateAttendee(updatedAttendee);
         setStatus('checkin_success');
         await new Promise(resolve => setTimeout(resolve, 1000));
-        printDocument(item.badge_pdf_url, nodePrinterId);
-        console.log('print sent to', selectedNodePrinter?.name);
+        printDocument(item.badge_pdf_url, undefined, true);
       } catch (error) {
         console.error('Error while printing and checking in:', error);
       }

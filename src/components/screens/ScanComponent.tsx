@@ -9,7 +9,7 @@ import {useEvent} from '../../context/EventContext';
 import CustomMarker from '../elements/CustomMarker';
 import ScanModal from '../elements/modals/ScanModal';
 import {scanAttendee} from '../../services/scanAttendeeService';
-import usePrintDocument from '../../hooks/print/usePrintDocument';
+import usePrintDocument from '../../printing/hooks/usePrintDocument';
 import {useSelector} from 'react-redux';
 import {
   selectPrintStatus,

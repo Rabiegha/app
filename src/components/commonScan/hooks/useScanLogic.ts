@@ -8,7 +8,7 @@ import useSessionRegistrationData from '../../../hooks/registration/useSessionRe
 import { ScanType } from '../types/scan';
 import { useActiveEvent } from '../../../utils/event/useActiveEvent';
 import { selectCurrentUserId } from '../../../redux/selectors/auth/authSelectors';
-import usePrintDocument from '../../../hooks/print/usePrintDocument';
+import usePrintDocument from '../../../printing/hooks/usePrintDocument';
 import { usePrintStatus } from '../../../printing/context/PrintStatusContext';
 import useFetchAttendeeDetails from '../../../hooks/attendee/useAttendeeDetails';
 import { fetchAttendeesList } from '../../../services/getAttendeesListService';
@@ -105,11 +105,10 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
                   if (isPrintModeActive) {
                     setStatus('checkin_success');
                     await new Promise(resolve => setTimeout(resolve, 1000));
-                    const currentPrinterId = store.getState().printers.selectedNodePrinter?.id;
                     const [details] = await fetchAttendeesList(userId, eventId, attendee.attendee_id);
                     const badgeUrl = details?.badge_pdf_url || '';
                     console.log('sent badge url', badgeUrl);
-                    await printDocument(badgeUrl, currentPrinterId);
+                    await printDocument(badgeUrl, undefined, true); // Use store ID directly
                   } else {
                     Toast.show({
                       type: 'customSuccess',

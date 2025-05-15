@@ -4,6 +4,7 @@ import RNFS from 'react-native-fs';
 import { useSelector } from 'react-redux';
 import { useNodePrint } from './useNodePrint';
 import { usePrintStatus } from '../../printing/context/PrintStatusContext';
+import { store } from '../../redux/store';
 
 const usePrintDocument = () => {
   const { sendPrintJob } = useNodePrint();
@@ -37,18 +38,21 @@ const usePrintDocument = () => {
     }
   };
 
-
-
-
-  const printDocument = useCallback(async (documentUrl: string, printerId?: string) => {
+  const printDocument = useCallback(async (documentUrl: string, printerId?: string, useStoreId: boolean = false) => {
     setLoading(true);
     setError(null);
     setMessage('');
     setSuccess(false);
     setStatus('printing');
-    console.log('selected printer', printerId)
+    
+    // Get printer ID from store if requested and not provided directly
+    const effectivePrinterId = useStoreId ? 
+      store.getState().printers.selectedNodePrinter?.id : 
+      printerId;
+      
+    console.log('selected printer', effectivePrinterId)
     try {
-      if (!printerId) {
+      if (!effectivePrinterId) {
         setStatus('no_printer');
         throw new Error('Aucune imprimante sélectionnée.');
       }
@@ -58,7 +62,7 @@ const usePrintDocument = () => {
 
       const cleanedBase64 = Buffer.from(Buffer.from(base64, 'base64')).toString('base64');
 
-      await sendPrintJob(cleanedBase64, printerId);
+      await sendPrintJob(cleanedBase64, effectivePrinterId);
 
       await delay(1000);
       setSuccess(true);
