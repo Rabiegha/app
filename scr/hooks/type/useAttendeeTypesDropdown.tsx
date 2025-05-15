@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import {getAttendeeTypes} from '../../services/getAttendeeTypeService';
 import colors from '../../assets/colors/colors';
-import useUserId from '../useUserId';
+import useUserId from '../../hooks/useUserId';
 import {useSelector} from 'react-redux';
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 

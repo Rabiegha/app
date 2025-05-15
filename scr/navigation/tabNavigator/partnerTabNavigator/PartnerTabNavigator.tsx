@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, Platform, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TabBarIcon } from '../../../components/navigation/TabBarIconComponent.tsx';
-import { ScanButton } from '../../../components/navigation/scanButton.tsx';
-import ModalFilter from '../../../components/elements/modals/ModalFilter.tsx';
+import { TabBarIcon } from '../../../components/navigation/TabBarIconComponent';
+import { ScanButton } from '../../../components/navigation/scanButton';
+import ModalFilter from '../../../components/elements/modals/ModalFilter';
 import TAB_SCREENS from './PartnerTabScreensConfig.tsx';
-import colors from '../../../assets/colors/colors.tsx';
-import useKeyboardOffset from '../../../hooks/keyboard/useKeyboardOffset.tsx';
+import colors from '../../../assets/colors/colors';
+import useKeyboardOffset from '../../../hooks/keyboard/useKeyboardOffset';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
