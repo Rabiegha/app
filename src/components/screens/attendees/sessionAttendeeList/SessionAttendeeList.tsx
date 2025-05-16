@@ -1,10 +1,13 @@
 import React, { forwardRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import SessionAttendeeListItem from './SessionAttendeeListItem';
-import SessionStats from '../../sessionAttendeeList/SessionStatsComponent';
-import ProgressBar from '../../../elements/progress/ProgressBar';
-import BaseAttendeeList from '../../../common/attendee/BaseAttendeeList';
-import { ListHandle } from '../../../common/attendee/types/attendeeList.types';
+
+import ListItem from './SessionAttendeeListItem.tsx';
+import EmptyView from '../../../elements/view/EmptyView.tsx';
+import LoadingView from '../../../elements/view/LoadingView.tsx';
+import ErrorView from '../../../elements/view/ErrorView.tsx';
+import SessionStats from '../../sessionAttendeeList/SessionStatsComponent.tsx';
+import ProgressBar from '../../../elements/progress/ProgressBar.tsx';
+import BaseFlatList from '../../../elements/list/BaseFlatList.tsx';
 
 type Props = {
   searchQuery: string;
@@ -18,7 +21,11 @@ type Props = {
   totalCheckedIn?: number;
 };
 
-const SessionAttendeeList = forwardRef<ListHandle, Props>(
+export type ListHandle = {
+  handleRefresh: () => void;
+};
+
+const SessionListAttendee = forwardRef<ListHandle, Props>(
   ({
     handleRefresh,
     refreshing,
@@ -28,41 +35,42 @@ const SessionAttendeeList = forwardRef<ListHandle, Props>(
     capacity,
     ratio,
     totalCheckedIn,
-    searchQuery,
   }, ref) => {
+    if (isLoading) {
+      return <LoadingView />;
+    }
+
+    if (error) {
+      return <ErrorView handleRetry={handleRefresh} />;
+    }
+
     return (
-      <BaseAttendeeList
-        ref={ref}
-        searchQuery={searchQuery}
-        onTriggerRefresh={handleRefresh}
-        refreshing={refreshing}
-        attendees={attendees}
-        isLoading={isLoading}
-        error={error}
-        renderItem={(item) => (
-          <SessionAttendeeListItem
-            item={item}
-            searchQuery={searchQuery}
-            onUpdateAttendee={async (attendee) => {
-              // Implement any session-specific update logic here if needed
-              // This is a placeholder for any future implementation
-            }}
-          />
-        )}
-      >
-        <View style={styles.statsContainer}>
-          <SessionStats scannedCount={totalCheckedIn} totalCount={capacity} />
-          <ProgressBar progress={ratio} />
-        </View>
-      </BaseAttendeeList>
+      <View style={styles.list}>
+        <SessionStats scannedCount={totalCheckedIn} totalCount={capacity} />
+        <ProgressBar progress={ratio} />
+
+        <BaseFlatList
+          data={attendees}
+          renderItem={({ item }) => <ListItem item={item} />}
+          keyExtractor={(item) => item.id.toString()}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          emptyText="Aucun participant trouvé"
+          ListEmptyComponent={
+            <EmptyView text="Aucun participant trouvé" handleRetry={handleRefresh} />
+          }
+        />
+
+      </View>
     );
   }
 );
 
 const styles = StyleSheet.create({
-  statsContainer: {
+  list: {
+    flex: 1,
     paddingHorizontal: 10,
   },
 });
 
-export default SessionAttendeeList;
+export default SessionListAttendee;

@@ -37,7 +37,7 @@ const AttendeeListScreen = () => {
   const listRef = useRef<ListHandle>(null);
 
   const triggerChildRefresh = () => {
-    listRef.current?.handleRefresh();
+    listRef.current?.handleRefresh(); // 🟢 Appel direct de la méthode enfant
   };
 
     useFocusEffect(
