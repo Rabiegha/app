@@ -1,27 +1,14 @@
 import PartnerAttendeesListScreen from '../../../screens/partner/PartnerListScreen';
 import ProfileScreen from '../../../screens/profil/Profil';
-import ScanScreen from '../../../screens/scanScreen/ScanScreen';
 import { ScanType } from '../../../components/commonScan/types/scan';
 import React from 'react';
-import Icons from '../../../assets/images/icons';
-import { ComponentType } from 'react';
+import ScanScreen from '@/screens/scanScreen/ScanScreen';
 
-interface TabScreenConfig {
-  name: string;
-  component: ComponentType<any>;
-  icon: any;
-  label: string;
-  isMiddle: boolean;
-  hideTabBar: boolean;
-  height: number;
-  width: number;
-}
-
-const partnerTabScreensConfig: TabScreenConfig[] = [
+export default [
   {
     name: 'Attendees',
     component: PartnerAttendeesListScreen,
-    icon: Icons.Participant,
+    icon: require('../../../assets/images/icons/Participant.png'),
     label: 'Participants',
     isMiddle: false,
     hideTabBar: false,
@@ -31,7 +18,7 @@ const partnerTabScreensConfig: TabScreenConfig[] = [
   {
     name: 'Scan',
     component: () => <ScanScreen scanType={ScanType.Partner} />,
-    icon: Icons.Scan,
+    icon: require('../../../assets/images/icons/Scan.png'),
     label: '',
     isMiddle: true,
     hideTabBar: true,
@@ -41,7 +28,7 @@ const partnerTabScreensConfig: TabScreenConfig[] = [
   {
     name: 'Profile',
     component: ProfileScreen,
-    icon: Icons.Profil,
+    icon: require('../../../assets/images/icons/Profil.png'),
     label: 'Profile',
     isMiddle: false,
     hideTabBar: true,
@@ -49,5 +36,3 @@ const partnerTabScreensConfig: TabScreenConfig[] = [
     width: 30,
   },
 ];
-
-export default partnerTabScreensConfig;

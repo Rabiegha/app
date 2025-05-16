@@ -15,11 +15,14 @@ import Icons from '../../assets/images/icons';
 import colors from '../../assets/colors/colors';
 import MaskedViewComponent from './MaskedView';
 import Popup from '../elements/modals/popup';
+import { useSelector } from 'react-redux';
+import { selectUserType } from '@/redux/selectors/auth/authSelectors';
 
 const {width, height} = Dimensions.get('window');
 const BOX_SIZE      = width * 0.7;                // scan window size
 const WINDOW_TOP    = (height - BOX_SIZE) / 2;    // centred vertically
-const OVERLAY_COLOR = 'rgba(0,0,0,0.55)';       // dim shade
+const OVERLAY_COLOR = 'rgba(0,0,0,0.55)';
+
 type Props = {
   onBarCodeRead?: (e: any) => void;
   goBack?: () => void;
@@ -48,7 +51,13 @@ const MainScanComponent = ({
     handleGiftButtonPress,
     handlePrintButtonPress,
     ref,
-}: Props) => (
+}: Props) => {
+  const userType = useSelector(selectUserType);
+
+  // Determine if user is a partner
+  const isPartner = userType?.toLowerCase() === 'partner';
+  
+  return (
     <RNCamera
       ref={ref}
       style={styles.camera}
@@ -105,7 +114,7 @@ const MainScanComponent = ({
 
       {/* ────── BOTTOM ACTIONS ────── */}
       <View style={styles.bottomButtons}>
-      {isButtonShown && (
+      {(isButtonShown && !isPartner) && (
         <>
           <TouchableOpacity
             onPress={handleGiftButtonPress}
@@ -134,7 +143,8 @@ const MainScanComponent = ({
       {/* bottom pill indicator */}
       <View style={styles.indicator} />
     </RNCamera>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   camera:    {flex: 1},
