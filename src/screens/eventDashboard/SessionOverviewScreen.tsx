@@ -78,7 +78,7 @@ const SessionOverviewScreen = () => {
       setLoading(false);
     }
   }, [userId, eventId, fetchSessions]);
-  
+
   // Filter sessions based on search query and filters
   useEffect(() => {
     if (!allSessions || allSessions.length === 0) {
@@ -102,33 +102,23 @@ const SessionOverviewScreen = () => {
         return session.location === selectedLocation;
       });
     }
-    
+  
     // Apply status filter
     if (selectedStatus) {
       filteredSessions = filteredSessions.filter(session => {
         return getSessionStatus(session) === selectedStatus;
       });
     }
-    
-    // Apply time of day filter
+  
+    // Apply horaire (time slot) filter
     if (selectedHoraire) {
       filteredSessions = filteredSessions.filter(session => {
-        const time = session.nice_start_datetime.split(' ')[1];
-        const hour = parseInt(time.split(':')[0], 10);
-        
-        switch (selectedHoraire) {
-          case 'Morning':
-            return hour >= 5 && hour < 12;
-          case 'Noon':
-            return hour >= 12 && hour < 18;
-          case 'Evening':
-            return hour >= 18 || hour < 5;
-          default:
-            return true;
-        }
+        // Get time part from nice_start_datetime (e.g. "29/04/2025 12:00 AM")
+        const timePart = session.nice_start_datetime?.split(' ')[1] + ' ' + session.nice_start_datetime?.split(' ')[2];
+        return timePart === selectedHoraire;
       });
     }
-    
+  
     // Sort sessions - upcoming ones first, then future ones, then past ones
     const sortedSessions = sortSessionsByStatus(filteredSessions);
     setSessions(sortedSessions);
@@ -152,7 +142,7 @@ const SessionOverviewScreen = () => {
         subtitle2={`${item.location ? `${item.location} • ` : ''}Capacity ${item.capacity}`}
         searchQuery={searchQuery}
         onPress={() => handleSessionSelect(item)}
-        status={status}
+        sessionStatus={status}
       />
     );
   };
@@ -167,7 +157,6 @@ const SessionOverviewScreen = () => {
 
   const handleApplyFilters = (filters: {
     selectedLocation: string | null;
-    selectedDate: string | null; 
     selectedStatus: SessionStatus | null;
     selectedHoraire: string | null;
   }) => {
@@ -175,7 +164,7 @@ const SessionOverviewScreen = () => {
     setSelectedStatus(filters.selectedStatus);
     setSelectedHoraire(filters.selectedHoraire);
   };
-  
+
   if (loading && !refreshing) {
     return <LoadingView />;
   }
@@ -212,7 +201,7 @@ const SessionOverviewScreen = () => {
         )}
 
         {/* Filtre par date supprimé */}
-        
+      
         {selectedStatus && (
           <TouchableOpacity
             style={styles.filterChip}
@@ -222,7 +211,7 @@ const SessionOverviewScreen = () => {
             <Image source={Icons.Fermer} style={styles.filterChipIcon} />
           </TouchableOpacity>
         )}
-        
+      
         {selectedHoraire && (
           <TouchableOpacity
             style={styles.filterChip}
@@ -233,7 +222,7 @@ const SessionOverviewScreen = () => {
           </TouchableOpacity>
         )}
       </View>
-      
+    
       <FlatList
         data={sessions}
         keyExtractor={item => item.event_id.toString()}
@@ -276,15 +265,14 @@ const SessionOverviewScreen = () => {
           </View>
         }
       />
-      
+    
       <FloatingSearchButton onPress={handleOpenFilterModal} />
-      
+    
       <SessionFilterModal
         visible={filterModalVisible}
         onClose={handleCloseFilterModal}
         searchQuery={searchQuery}
         selectedLocation={selectedLocation}
-        selectedDate={null}
         selectedStatus={selectedStatus}
         selectedHoraire={selectedHoraire}
         onApplyFilters={handleApplyFilters}

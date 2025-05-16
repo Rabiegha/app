@@ -1,66 +1,62 @@
 import { Session } from '../../types/session';
 
 export enum SessionStatus {
-  UPCOMING = 'upcoming',  // Dans moins de 15 minutes
-  FUTURE = 'future',     // Plus de 15 minutes dans le futur
+  FUTURE = 'future',     // Sessions futures
   PAST = 'past'          // Sessions passées
 }
 
 /**
  * Détermine le statut d'une session en fonction de sa date
  * @param session Objet session
- * @returns Le statut de la session (upcoming, future, ou past)
+ * @returns Le statut de la session (future ou past)
  */
 export const getSessionStatus = (session: Session): SessionStatus => {
   // Parser la date de début de la session
   const dateStr = session.nice_start_datetime;
   
-  // Format général attendu: "DD MMM YYYY à HH:MM"
-  const regex = /(\d{1,2})\s+([A-Za-zûé]+)\s+(\d{4})\s+à\s+(\d{1,2}):(\d{2})/;
-  const match = dateStr.match(regex);
-  
-  if (!match) {
-    return SessionStatus.FUTURE; // Par défaut
+  if (!dateStr) {
+    return SessionStatus.FUTURE; // Par défaut si pas de date
   }
   
-  // Le format semble être "DD MMM YYYY à HH:MM" en français
-  const day = parseInt(match[1], 10);
-  const monthStr = match[2].toLowerCase();
-  const year = parseInt(match[3], 10);
-  const hours = parseInt(match[4], 10);
-  const minutes = parseInt(match[5], 10);
-  
-  // Conversion du mois en nombre (0-11)
-  const monthMap: Record<string, number> = {
-    'jan': 0, 'fév': 1, 'mar': 2, 'avr': 3, 'mai': 4, 'juin': 5,
-    'juil': 6, 'août': 7, 'sep': 8, 'oct': 9, 'nov': 10, 'déc': 11
-  };
-  
-  let month = -1;
-  for (const [key, value] of Object.entries(monthMap)) {
-    if (monthStr.startsWith(key)) {
-      month = value;
-      break;
+  try {
+    // Format attendu: "DD/MM/YYYY HH:MM AM/PM", par exemple "29/04/2025 12:00 AM"
+    const [datePart, timePart, ampm] = dateStr.split(' ');
+    if (!datePart || !timePart) {
+      return SessionStatus.FUTURE;
     }
-  }
-  
-  if (month === -1) {
-    return SessionStatus.FUTURE; // Si mois non reconnu
-  }
-  
-  const sessionDate = new Date(year, month, day, hours, minutes);
-  const now = new Date();
-  
-  // Calculer la différence en minutes
-  const diffMs = sessionDate.getTime() - now.getTime();
-  const diffMinutes = diffMs / (1000 * 60);
-  
-  if (diffMinutes < 0) {
-    return SessionStatus.PAST;
-  } else if (diffMinutes <= 15) {
-    return SessionStatus.UPCOMING;
-  } else {
-    return SessionStatus.FUTURE;
+    
+    const [day, month, year] = datePart.split('/').map(num => parseInt(num, 10));
+    let [hours, minutes] = timePart.split(':').map(num => parseInt(num, 10));
+    
+    // Ajuster les heures pour le format AM/PM
+    if (ampm && ampm.toUpperCase() === 'PM' && hours < 12) {
+      hours += 12;
+    } else if (ampm && ampm.toUpperCase() === 'AM' && hours === 12) {
+      hours = 0;
+    }
+    
+    // Construire la date (mois en JS commence à 0)
+    const sessionDate = new Date(year, month - 1, day, hours, minutes);
+    const now = new Date();
+    
+    // Si la date n'est pas valide, retourner FUTURE par défaut
+    if (isNaN(sessionDate.getTime())) {
+      console.log('Date invalide:', dateStr);
+      return SessionStatus.FUTURE;
+    }
+    
+    // Calculer la différence en minutes
+    const diffMs = sessionDate.getTime() - now.getTime();
+    
+    // Si la session est dans le passé
+    if (diffMs < 0) {
+      return SessionStatus.PAST;
+    } else {
+      return SessionStatus.FUTURE;
+    }
+  } catch (error) {
+    console.error('Erreur lors du parsing de la date:', dateStr, error);
+    return SessionStatus.FUTURE; // En cas d'erreur, retourner FUTURE par défaut
   }
 };
 
@@ -73,10 +69,9 @@ export const sortSessionsByStatus = (sessions: Session[]): Session[] => {
   // Créer une fonction pour obtenir le poids de priorité par statut
   const getStatusPriority = (status: SessionStatus): number => {
     switch (status) {
-      case SessionStatus.UPCOMING: return 0; // Priorité maximale
-      case SessionStatus.FUTURE: return 1;
-      case SessionStatus.PAST: return 2;
-      default: return 3;
+      case SessionStatus.FUTURE: return 0; // Priorité maximale
+      case SessionStatus.PAST: return 1;
+      default: return 2;
     }
   };
 

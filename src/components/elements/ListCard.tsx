@@ -20,8 +20,6 @@ const ListCard = ({ title, subtitle1, subtitle2, searchQuery = '', sessionStatus
     if (!sessionStatus) return null;
     
     switch (sessionStatus) {
-      case SessionStatus.UPCOMING:
-        return styles.upcomingTag;
       case SessionStatus.FUTURE:
         return styles.futureTag;
       case SessionStatus.PAST:
@@ -36,8 +34,6 @@ const ListCard = ({ title, subtitle1, subtitle2, searchQuery = '', sessionStatus
     if (!sessionStatus) return '';
     
     switch (sessionStatus) {
-      case SessionStatus.UPCOMING:
-        return 'À venir';
       case SessionStatus.FUTURE:
         return 'Programmée';
       case SessionStatus.PAST:

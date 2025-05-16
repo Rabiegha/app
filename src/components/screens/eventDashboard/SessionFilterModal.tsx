@@ -13,6 +13,7 @@ import {
 import colors from '../../../assets/colors/colors';
 import Icons from '../../../assets/images/icons';
 import { useSessionLocations } from '../../../hooks/sessions/useSessionLocations';
+import { useSessionHoraires } from '../../../hooks/sessions/useSessionHoraires';
 import { SessionStatus } from '../../../utils/date/sessionDateUtils';
 
 const { height } = Dimensions.get('window');
@@ -22,12 +23,10 @@ interface SessionFilterModalProps {
   onClose: () => void;
   searchQuery: string;
   selectedLocation: string | null;
-  selectedDate: string | null;
   selectedStatus?: SessionStatus | null;
   selectedHoraire?: string | null;
   onApplyFilters: (filters: {
     selectedLocation: string | null;
-    selectedDate: string | null;
     selectedStatus: SessionStatus | null;
     selectedHoraire: string | null;
   }) => void;
@@ -38,17 +37,18 @@ const SessionFilterModal = ({
   onClose,
   searchQuery: _searchQuery,
   selectedLocation: initialLocation,
-  selectedDate: initialDate,
+
   selectedStatus: initialStatus = null,
   selectedHoraire: initialHoraire = null,
   onApplyFilters,
 }: SessionFilterModalProps) => {
   const [selectedLocation, setSelectedLocation] = useState<string | null>(initialLocation);
-  const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
+
   const [selectedStatus, setSelectedStatus] = useState<SessionStatus | null>(initialStatus);
   const [selectedHoraire, setSelectedHoraire] = useState<string | null>(initialHoraire);
   const [animation] = useState(new Animated.Value(height));
-  const { locations, dates, loading } = useSessionLocations();
+  const { locations, loading: locationsLoading } = useSessionLocations();
+  const { horaires, loading: horairesLoading } = useSessionHoraires();
 
   useEffect(() => {
     if (visible) {
@@ -66,15 +66,13 @@ const SessionFilterModal = ({
 
   useEffect(() => {
     setSelectedLocation(initialLocation);
-    setSelectedDate(initialDate);
     setSelectedStatus(initialStatus);
     setSelectedHoraire(initialHoraire);
-  }, [initialDate, initialLocation, initialStatus, initialHoraire]);
+  }, [initialLocation, initialStatus, initialHoraire]);
 
   const handleApplyFilters = () => {
     onApplyFilters({
       selectedLocation,
-      selectedDate,
       selectedStatus,
       selectedHoraire,
     });
@@ -83,7 +81,8 @@ const SessionFilterModal = ({
 
   const handleReset = () => {
     setSelectedLocation(null);
-    setSelectedDate(null);
+    setSelectedHoraire(null);
+    setSelectedStatus(null);
   };
 
   return (
@@ -131,39 +130,21 @@ const SessionFilterModal = ({
             keyExtractor={(item) => item}
             horizontal={false}
             showsVerticalScrollIndicator={false}
-            ListEmptyComponent={loading ? <Text style={styles.emptyText}>Chargement...</Text> : <Text style={styles.emptyText}>Aucun emplacement disponible</Text>}
+            ListEmptyComponent={locationsLoading ? <Text style={styles.emptyText}>Chargement...</Text> : <Text style={styles.emptyText}>Aucun emplacement disponible</Text>}
             style={styles.filterList}
           />
 
-          {/* Liste des dates */}
-          <Text style={styles.sectionTitle}>Filtre par date</Text>
-          <FlatList
-            data={dates}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[styles.filterItem, selectedDate === item && styles.selectedItem]}
-                onPress={() => setSelectedDate(item === selectedDate ? null : item)}
-              >
-                <Text style={styles.filterItemText}>{item}</Text>
-                {selectedDate === item && <Image source={Icons.Checked} style={styles.checkmark} />}
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item}
-            horizontal={false}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={loading ? <Text style={styles.emptyText}>Chargement...</Text> : <Text style={styles.emptyText}>Aucune date disponible</Text>}
-            style={styles.filterList}
-          />
+
 
           {/* Liste des statuts de session */}
           <Text style={styles.sectionTitle}>Filtre par statut</Text>
           <View style={styles.statusContainer}>
-            <TouchableOpacity
+           {/*  <TouchableOpacity
               style={[styles.statusItem, selectedStatus === SessionStatus.UPCOMING && styles.selectedStatusItem]}
               onPress={() => setSelectedStatus(selectedStatus === SessionStatus.UPCOMING ? null : SessionStatus.UPCOMING)}
             >
               <Text style={[styles.statusText, selectedStatus === SessionStatus.UPCOMING && styles.selectedStatusText]}>À venir</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={[styles.statusItem, selectedStatus === SessionStatus.FUTURE && styles.selectedStatusItem]}
               onPress={() => setSelectedStatus(selectedStatus === SessionStatus.FUTURE ? null : SessionStatus.FUTURE)}
@@ -180,26 +161,23 @@ const SessionFilterModal = ({
 
           {/* Filtre par horaire */}
           <Text style={styles.sectionTitle}>Filtre par horaire</Text>
-          <View style={styles.horaireContainer}>
-            <TouchableOpacity
-              style={[styles.horaireItem, selectedHoraire === 'matin' && styles.selectedHoraireItem]}
-              onPress={() => setSelectedHoraire(selectedHoraire === 'matin' ? null : 'matin')}
-            >
-              <Text style={[styles.horaireText, selectedHoraire === 'matin' && styles.selectedHoraireText]}>Matin</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.horaireItem, selectedHoraire === 'midi' && styles.selectedHoraireItem]}
-              onPress={() => setSelectedHoraire(selectedHoraire === 'midi' ? null : 'midi')}
-            >
-              <Text style={[styles.horaireText, selectedHoraire === 'midi' && styles.selectedHoraireText]}>Midi</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.horaireItem, selectedHoraire === 'soir' && styles.selectedHoraireItem]}
-              onPress={() => setSelectedHoraire(selectedHoraire === 'soir' ? null : 'soir')}
-            >
-              <Text style={[styles.horaireText, selectedHoraire === 'soir' && styles.selectedHoraireText]}>Soir</Text>
-            </TouchableOpacity>
-          </View>
+          <FlatList
+            data={horaires}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[styles.filterItem, selectedHoraire === item && styles.selectedItem]}
+                onPress={() => setSelectedHoraire(item === selectedHoraire ? null : item)}
+              >
+                <Text style={styles.filterItemText}>{item}</Text>
+                {selectedHoraire === item && <Image source={Icons.Checked} style={styles.checkmark} />}
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item}
+            horizontal={false}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={horairesLoading ? <Text style={styles.emptyText}>Chargement...</Text> : <Text style={styles.emptyText}>Aucun horaire disponible</Text>}
+            style={styles.filterList}
+          />
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -272,7 +250,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginRight: 10,
     marginBottom: 10,
-    backgroundColor: colors.lightGrey,
+    backgroundColor: colors.greyCream,
     borderRadius: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -291,17 +269,17 @@ const styles = StyleSheet.create({
   statusContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
     marginBottom: 15,
   },
   statusItem: {
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 20,
-    backgroundColor: colors.lightGrey,
+    backgroundColor: colors.greyCream,
     marginBottom: 10,
     width: '30%',
     alignItems: 'center',
+    marginRight: 10,
   },
   selectedStatusItem: {
     backgroundColor: colors.green,
@@ -314,32 +292,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
   },
-  horaireContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  horaireItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-    backgroundColor: colors.lightGrey,
-    marginBottom: 10,
-    width: '30%',
-    alignItems: 'center',
-  },
-  selectedHoraireItem: {
-    backgroundColor: colors.green,
-  },
-  horaireText: {
-    fontSize: 14,
-    color: colors.darkGrey,
-  },
-  selectedHoraireText: {
-    color: 'white',
-    fontWeight: '600',
-  },
+
   loadingText: {
     color: colors.darkGrey,
     fontStyle: 'italic',
@@ -380,6 +333,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
     alignItems: 'center',
+    marginBottom: 10,
   },
   resetButtonText: {
     color: colors.green,
