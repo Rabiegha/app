@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
+     // Added padding at the bottom to ensure space for the floating button
   },
   emptyContainer: {
     flex: 1,
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   },
   floatingButton: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 70,
     width: 100,
     height: 100,
     borderRadius: 50,
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     // ✅ Elevation for Android
     elevation: 25,
   
-    zIndex: 10,
+    zIndex: 999, // Increased zIndex to ensure it's above all other elements
   },
   floatingIcon: {
     width: 50,
