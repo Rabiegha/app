@@ -1,5 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import Icons from '../../assets/images/icons';
 import colors from '../../assets/colors/colors';
 
@@ -20,7 +26,7 @@ interface EventDetailItem {
   action: () => void;
 }
 
-const EventDetailsPerTypeComponent = ({
+const EventDetailsComponent = ({
   totalAttendees,
   totalCheckedIn,
   totalNotCheckedIn,
@@ -52,42 +58,58 @@ const EventDetailsPerTypeComponent = ({
     },
   ];
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.container}>
       {data.map((item, index) => {
         return (
-          <View key={index} style={styles.elementContainer}>
+          <TouchableOpacity
+            key={index}
+            style={styles.elementContainer}
+            onPress={item.action}
+            activeOpacity={0.8}
+          >
             <View
               style={[
                 styles.imageContainer,
                 {backgroundColor: item.backgroundColor},
               ]}>
               <Image
-                style={[styles.image]}
+                style={styles.image}
                 source={item.source}
                 resizeMode="contain"
               />
             </View>
-            <TouchableOpacity
-              onPress={item.action}
-              style={styles.textContainer}>
+            <View style={styles.textContainer}>
               <Text style={styles.label}>{item.label}</Text>
               <Text style={styles.value}>{item.value}</Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         );
       })}
     </View>
   );
 };
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingVertical: 10,
+  },
   elementContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 20,
+    borderRadius: 15,
+    overflow: 'hidden',
+    backgroundColor: colors.greyCream,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
   },
   imageContainer: {
-    borderRadius: 20,
-    padding: 20,
+    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 70,
   },
   image: {
     width: 32,
@@ -95,20 +117,22 @@ const styles = StyleSheet.create({
     tintColor: 'white',
   },
   textContainer: {
+    flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 30,
-    backgroundColor: colors.greyCream,
-    borderRadius: 20,
-    width: 280,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
   label: {
-    fontWeight: '800',
+    fontWeight: '700',
     fontSize: 16,
     color: colors.darkGrey,
+    marginBottom: 4,
   },
   value: {
     color: colors.green,
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
 
-export default EventDetailsPerTypeComponent;
+export default EventDetailsComponent;
