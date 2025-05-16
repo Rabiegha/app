@@ -10,7 +10,6 @@ import colors from '../../../assets/colors/colors';
 import useKeyboardOffset from '../../../hooks/keyboard/useKeyboardOffset';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,7 +34,6 @@ function getScreenOptions(route: RouteProp<ParamListBase, string>, keyboardOffse
 function PartnerTabNavigator() {
   const { keyboardOffset } = useKeyboardOffset();
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
-  const navigation = useNavigation();
 
   const insets = useSafeAreaInsets();
 
@@ -57,7 +55,7 @@ function PartnerTabNavigator() {
                 <TabBarIcon icon={icon} label={label} focused={focused} height={height} width={width} />
               ),
               tabBarButton: isMiddle
-                ? (props) => <ScanButton {...props} onPress={() => navigation.navigate('Scan')} />
+                ? (props) => <ScanButton {...props} onPress={() => {}} />
                 : undefined,
             }}
           />
