@@ -113,7 +113,7 @@ const { status: printStatus, clearStatus } = usePrintStatus();
             title={eventName}
           />
         <View style={[styles.mainContent,     {
-          paddingTop: insets.top + 5,
+          paddingTop: 35 ,
         },]}>
             <Search style={styles.search} onChange={setSearchQuery} value={searchQuery} />
             <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />

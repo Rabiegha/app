@@ -77,7 +77,15 @@ const ListItem = React.memo(
         await onUpdateAttendee(updatedAttendee);
         setStatus('checkin_success');
         await new Promise(resolve => setTimeout(resolve, 1000));
-        printDocument(item.badge_pdf_url, undefined, true);
+
+        // Check if badge URL exists and is valid before printing
+        if (item.badge_pdf_url && typeof item.badge_pdf_url === 'string' && item.badge_pdf_url.trim() !== '') {
+          printDocument(item.badge_pdf_url, undefined, true);
+        } else {
+          console.error('Badge PDF URL is empty or invalid:', item.badge_pdf_url);
+          // Optionally show a user-friendly error message
+          // setStatus('badge_missing');
+        }
       } catch (error) {
         console.error('Error while printing and checking in:', error);
       }

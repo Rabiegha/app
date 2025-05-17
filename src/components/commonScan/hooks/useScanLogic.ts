@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { handleScan } from '../utils/handleScan';
 import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
@@ -7,12 +7,10 @@ import { useFetchAttendeeCounts } from '../../../hooks/attendee/useFetchAttendee
 import useSessionRegistrationData from '../../../hooks/registration/useSessionRegistrationSData';
 import { ScanType } from '../types/scan';
 import { useActiveEvent } from '../../../utils/event/useActiveEvent';
-import { selectCurrentUserId } from '../../../redux/selectors/auth/authSelectors';
 import usePrintDocument from '../../../printing/hooks/usePrintDocument';
 import { usePrintStatus } from '../../../printing/context/PrintStatusContext';
 import useFetchAttendeeDetails from '../../../hooks/attendee/useAttendeeDetails';
 import { fetchAttendeesList } from '../../../services/getAttendeesListService';
-import { store } from '../../../redux/store';
 
 
 export const useScanLogic = (scanType: ScanType, userId: string) => {
@@ -38,6 +36,7 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
 
   const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
   const nodePrinterId = selectedNodePrinter?.id;
+
 
 
 
@@ -77,6 +76,7 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
       setScanStatus,
       afterSuccess: async (attendee) => {
         setScanStatus('found');
+        setTimeout(() => setScanStatus('idle'), 2000);
         setAttendeeId(attendee.attendee_id);
         switch (scanType) {
           case ScanType.Partner:
@@ -95,11 +95,13 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
             setRefreshTrigger(prev => prev + 1);
             setTimeout(() => {
               resetScanner();
-            }, 1000);
+            },1000);
             break;
             case ScanType.Main:
 
                 if (isGiftModeActive) {
+                  await fetchCounts(attendee?.attendee_id);
+                  await new Promise(res => setTimeout(res, 1000));
                   setModalVisible(true);
                 } else {
                   if (isPrintModeActive) {
