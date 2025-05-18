@@ -10,8 +10,6 @@ import React, {
 } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useEvent } from '../../../../context/EventContext';
-import { AuthContext } from '../../../../context/AuthContext';
-import ListItem from './MainAttendeeListItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../../../redux/selectors/auth/authSelectors';
 import EmptyView from '../../../elements/view/EmptyView';
@@ -20,6 +18,7 @@ import ErrorView from '../../../elements/view/ErrorView';
 import BaseFlatList from '../../../elements/list/BaseFlatList';
 import { Attendee } from '../../../../types/attendee.types';
 import { fetchAttendeesList } from '@/redux/slices/attendee/attendeeSlice';
+import MainAttendeeListItem from './MainAttendeeListItem';
 
 
 // Types
@@ -174,16 +173,7 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
   );
 
 
-  // Update local checked-in map when attendees change
-  useEffect(() => {
-    if (allAttendees && allAttendees.length > 0) {
-      const newCheckedInMap = allAttendees.reduce((acc: Record<string | number, boolean>, attendee: Attendee) => {
-        acc[attendee.id] = attendee.attendee_status === 1;
-        return acc;
-      }, {} as Record<string | number, boolean>);
-      setCheckedInMap(newCheckedInMap);
-    }
-  }, [allAttendees]);
+  // Update local checked-in map when attendees change - removed duplicate effect
   
   // Handle swipeable open/close
   const handleSwipeableOpen = useCallback((swipeable: React.RefObject<any>) => {
@@ -217,6 +207,19 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
     }, 500);
   }, [visibleCount, totalFilteredData.length, isLoadingMore]);
 
+  // Define all hooks before any conditional returns
+  // Wrap the toggle check-in handler to close swipeable after action
+  const handleToggleCheckInWithClose = useCallback(async (attendee: Attendee) => {
+    await onToggleCheckIn(attendee);
+    openSwipeable?.current?.close();
+  }, [onToggleCheckIn, openSwipeable]);
+
+  // Wrap the print and check-in handler to close swipeable after action
+  const handlePrintAndCheckInWithClose = useCallback(async (attendee: Attendee) => {
+    await onPrintAndCheckIn(attendee);
+    openSwipeable?.current?.close();
+  }, [onPrintAndCheckIn, openSwipeable]);
+
   // Render based on loading/error state
   if (isLoadingList) {
     return (
@@ -240,14 +243,14 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
       <BaseFlatList<Attendee>
         data={filteredData}
         renderItem={({ item }) => (
-          <ListItem
+          <MainAttendeeListItem
             item={item}
             searchQuery={debouncedSearchQuery}
             isCheckedIn={checkedInMap[item.id] || false}
             isSearchByCompanyMode={isSearchByCompanyMode}
             onSwipeableOpen={handleSwipeableOpen}
-            onPrintAndCheckIn={onPrintAndCheckIn}
-            onToggleCheckIn={onToggleCheckIn}
+            onPrintAndCheckIn={handlePrintAndCheckInWithClose}
+            onToggleCheckIn={handleToggleCheckInWithClose}
           />
         )}
         keyExtractor={item => item.id.toString()}

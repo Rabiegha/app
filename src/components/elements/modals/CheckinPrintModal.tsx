@@ -5,9 +5,12 @@ import {
   Text,
   StyleSheet,
   TouchableWithoutFeedback,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import colors from '../../../assets/colors/colors';
+import Icons from '../../../assets/images/icons';
 import { printStatusConfig } from '../../../printing/constants/printStatusConfig';
 
 type Props = {
@@ -33,7 +36,12 @@ const CheckinPrintModal = ({ visible, status, onClose }: Props) => {
         <View style={styles.modalBackground}>
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
-              <Text style={styles.text}>{config?.message}</Text>
+              <View style={styles.headerContainer}>
+                <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                  <Image source={Icons.Fermer} style={styles.closeIcon} />
+                </TouchableOpacity>
+                <Text style={styles.text}>{config?.message}</Text>
+              </View>
               <LottieView
                 source={config?.animation}
                 autoPlay
@@ -67,12 +75,30 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  text: {
+  headerContainer: {
+    width: '100%',
+    position: 'relative',
     marginBottom: 10,
+  },
+  text: {
+    width: '100%',
     color: colors.darkGrey,
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '500',
+    paddingHorizontal: 30, // Add padding to make room for the close button
+  },
+  closeButton: {
+    position: 'absolute',
+    top: -2, // Adjust to align with the text vertically
+    right: 0,
+    zIndex: 10,
+    padding: 5,
+  },
+  closeIcon: {
+    width: 20,
+    height: 20,
+    tintColor: colors.darkGrey,
   },
   animation: {
     width: 200,

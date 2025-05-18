@@ -265,6 +265,11 @@ const AttendeeListScreen = () => {
     
     if (success) {
       setStatus('checkin_success');
+      
+      // Reset status after 2 seconds
+      setTimeout(() => {
+        if (setStatus) setStatus(null);
+      }, 2000);
     } else {
       // Revert local changes if API update failed
       dispatch(updateAttendeeLocally({
@@ -316,7 +321,13 @@ const AttendeeListScreen = () => {
               <MainAttendeeListItem
                 ref={listRef}
                 searchQuery={searchQuery}
-                onShowNotification={() => setStatus('checkin_success')}
+                onShowNotification={() => {
+                  setStatus('checkin_success');
+                  // Reset status after 2 seconds
+                  setTimeout(() => {
+                    if (setStatus) setStatus(null);
+                  }, 2000);
+                }}
                 filterCriteria={filterCriteria}
                 onTriggerRefresh={handleTriggerRefresh}
                 summary={summary}

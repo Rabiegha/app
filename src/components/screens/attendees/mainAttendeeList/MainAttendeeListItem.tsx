@@ -16,6 +16,12 @@ import SwipeableAttendeeItem from './SwipeableAttendeeItem';
 // Global flag for type mode - consider moving this to a context or Redux store
 let isTypeModeActive = true;
 
+// Define the navigation type outside the component
+type RootStackParamList = {
+  More: { attendeeId: number, comment: string };
+  // Add other screens as needed
+};
+
 interface ListItemProps {
   item: Attendee;
   searchQuery?: string;
@@ -36,13 +42,8 @@ const MainAttendeeListItem = React.memo(
     onPrintAndCheckIn,
     onToggleCheckIn
   }: ListItemProps) => {
-    // Define the navigation type
-type RootStackParamList = {
-  More: { attendeeId: number, comment: string };
-  // Add other screens as needed
-};
-
-const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    // Use the navigation hook consistently
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     // Simplified handlers that delegate to parent components
     const handleSwitchToggle = () => {
