@@ -6,7 +6,7 @@ import Icons from '../../../assets/images/icons';
 
 interface MainHeaderProps {
   onLeftPress: () => void;
-  title: string;
+  title?: string;
   onRightPress?: () => void;
   RightIcon?: any; // Using any for image source type
   backgroundColor?: string;
