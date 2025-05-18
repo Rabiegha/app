@@ -10,7 +10,6 @@ import React, {
 } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useEvent } from '../../../../context/EventContext';
-import colors from '../../../../assets/colors/colors';
 import { AuthContext } from '../../../../context/AuthContext';
 import ListItem from './MainAttendeeListItem';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,13 +17,9 @@ import { selectCurrentUserId } from '../../../../redux/selectors/auth/authSelect
 import EmptyView from '../../../elements/view/EmptyView';
 import LoadingView from '../../../elements/view/LoadingView';
 import ErrorView from '../../../elements/view/ErrorView';
-
-import { updateAttendee } from '../../../../redux/thunks/attendee/updateAttendeeThunk';
 import BaseFlatList from '../../../elements/list/BaseFlatList';
 import { Attendee } from '../../../../types/attendee.types';
-import { fetchAttendeesList, updateAttendeeLocally } from '@/redux/slices/attendee/attendeeSlice';
-import usePrintDocument from '../../../../printing/hooks/usePrintDocument';
-import { usePrintStatus } from '../../../../printing/context/PrintStatusContext';
+import { fetchAttendeesList } from '@/redux/slices/attendee/attendeeSlice';
 
 
 // Types
@@ -50,7 +45,7 @@ export type ListHandle = {
 };
 
 // Custom hooks
-function useAttendeeData(userId: string | null, eventId: string | null | undefined, isDemoMode: boolean, onRefresh?: () => void) {
+function useAttendeeData(userId: string | null, eventId: string | null | undefined, onRefresh?: () => void) {
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(false);
   const { list: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendee);
@@ -59,14 +54,14 @@ function useAttendeeData(userId: string | null, eventId: string | null | undefin
     if (!userId || !eventId) return;
     
     setRefreshing(true);
-    await dispatch(fetchAttendeesList({ userId, eventId, isDemoMode }) as any);
+    await dispatch(fetchAttendeesList({ userId, eventId }) as any);
     setRefreshing(false);
     onRefresh?.();
-  }, [userId, eventId, isDemoMode, dispatch, onRefresh]);
+  }, [userId, eventId, dispatch, onRefresh]);
   
   useEffect(() => {
     handleRefresh();
-  }, [userId, eventId, isDemoMode]);
+  }, [userId, eventId]);
   
   return { allAttendees, isLoadingList, error, refreshing, handleRefresh };
 }
@@ -117,7 +112,6 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({
   const dispatch = useDispatch();
   const event = useEvent();
   const eventId = event ? event.eventId : undefined;
-  const { isDemoMode } = useContext(AuthContext);
   const userId = useSelector(selectCurrentUserId);
   
   // Local state
@@ -138,7 +132,7 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({
     error, 
     refreshing, 
     handleRefresh 
-  } = useAttendeeData(userId, eventId, isDemoMode, onTriggerRefresh);
+  } = useAttendeeData(userId, eventId, onTriggerRefresh);
   
   // Expose refresh method to parent via ref
   useImperativeHandle(ref, () => ({

@@ -16,7 +16,8 @@ import MainHeader from '../../components/elements/header/MainHeader';
 import { useEvent } from '../../context/EventContext';
 import Search from '../../components/elements/Search';
 import FiltreComponent from '../../components/filtre/FiltreComponent';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from '../../redux/store';
 import { fetchAttendeesList, updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
 import { updateAttendee } from '../../redux/thunks/attendee/updateAttendeeThunk';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
@@ -40,8 +41,6 @@ const defaultFilterCriteria = {
 const AttendeeListScreen = () => {
   const listRef = useRef<ListHandle>(null);
   const { eventName, eventId } = useEvent();
-  const authContext = useContext(AuthContext);
-  const isDemoMode = authContext ? (authContext as any).isDemoMode : false;
   const userId = useSelector(selectCurrentUserId);
   
   // State management
@@ -49,11 +48,10 @@ const AttendeeListScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAnimation] = useState<Animated.Value>(new Animated.Value(-300));
-  const [success, setSuccess] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState(defaultFilterCriteria);
   
   // Redux and API related hooks
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const { printDocument } = usePrintDocument();
   const { status: printStatus, clearStatus, setStatus } = usePrintStatus();
@@ -65,19 +63,19 @@ const AttendeeListScreen = () => {
   const { totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary } = useRegistrationData({ refreshTrigger1: refreshTrigger });
   
   // Fetch attendees when screen is focused
-  useFocusEffect(
-    useCallback(() => {
-      fetchAttendeesData();
-      setRefreshTrigger(p => p + 1);
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchAttendeesData();
+  //     setRefreshTrigger(p => p + 1);
+  //   }, []),
+  // );
   
   // Fetch attendees data from API
-  const fetchAttendeesData = async () => {
-    if (userId && eventId) {
-      await dispatch(fetchAttendeesList({ userId, eventId: eventId as string, isDemoMode: isDemoMode || false } as any));
-    }
-  };
+  // const fetchAttendeesData = async () => {
+  //   if (userId && eventId) {
+  //     await dispatch(fetchAttendeesList({ userId, eventId: eventId as string }));
+  //   }
+  // };
   
   // Direct refresh trigger for the child component
   const triggerChildRefresh = () => {
@@ -186,6 +184,7 @@ const AttendeeListScreen = () => {
     
     // Update in Redux and API
     await handleUpdateAttendee(updatedAttendee);
+    setStatus('checkin_success');
   };
   
   // Trigger refresh for child components
@@ -229,7 +228,7 @@ const AttendeeListScreen = () => {
               <MainAttendeeListItem
                 ref={listRef}
                 searchQuery={searchQuery}
-                onShowNotification={() => setSuccess(true)}
+                onShowNotification={() => setStatus('checkin_success')}
                 filterCriteria={filterCriteria}
                 onTriggerRefresh={handleTriggerRefresh}
                 summary={summary}

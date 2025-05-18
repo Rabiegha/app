@@ -108,12 +108,24 @@ const MoreScreen = ({ route, navigation }) => {
 
   const handleCheckinButton = async (status: 0 | 1) => {
     if (userId && eventId && attendeeId) {
-      await updateAttendeeStatus({
-        userId,
-        eventId,
-        attendeeId,
-        status
-      });
+      try {
+        // First update the status
+        await updateAttendeeStatus({
+          userId,
+          eventId,
+          attendeeId,
+          status
+        });
+        
+        // Then fetch the updated attendee details to get the new timestamp
+        await fetchAttendeeDetails({
+          userId,
+          eventId,
+          attendeeId
+        });
+      } catch (error) {
+        console.error('Error during check-in process:', error);
+      }
     }
   };
 
@@ -121,15 +133,18 @@ const MoreScreen = ({ route, navigation }) => {
   /* Render helpers                                                   */
   /* ---------------------------------------------------------------- */
   const renderContent = () => {
-    if (isLoadingDetails && !attendeeDetails) {
+    // Always show loading first when we're fetching data
+    if (isLoadingDetails) {
       return (
         <View style={styles.filler}>
           <LoadingView />
         </View>
       );
     }
-  
-    if (error) {
+    
+    // Only show error if we're not loading and have a real error
+    // This prevents the error view from flashing during initial load
+    if (error && !isLoadingDetails) {
       return (
         <View style={styles.filler}>
           <ErrorView handleRetry={fetchData} />
@@ -137,7 +152,8 @@ const MoreScreen = ({ route, navigation }) => {
       );
     }
 
-    if (!attendeeDetails) {
+    // Only show this if we're not loading and have no data
+    if (!attendeeDetails && !isLoadingDetails) {
       return (
         <View style={styles.filler}>
           <ErrorView message="No attendee details found" handleRetry={fetchData} />
@@ -145,24 +161,40 @@ const MoreScreen = ({ route, navigation }) => {
       );
     }
 
+    // We've already checked for !attendeeDetails above, so we know it exists here
+    // But TypeScript still needs the null check, so we'll use a default empty object if needed
+    const details = attendeeDetails || {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      jobTitle: '',
+      attendeeStatus: 0,
+      organization: '',
+      commentaire: '',
+      attendeeStatusChangeDatetime: '',
+      type: '',
+      urlBadgePdf: ''
+    };
+    
     return (
       <MoreComponent
         See={handleBadgePress}
-        firstName={attendeeDetails.firstName}
-        lastName={attendeeDetails.lastName}
-        email={attendeeDetails.email}
-        phone={attendeeDetails.phone}
-        JobTitle={attendeeDetails.jobTitle}
-        attendeeStatus={attendeeDetails.attendeeStatus}
-        organization={attendeeDetails.organization}
-        commentaire={attendeeDetails.commentaire}
+        firstName={details.firstName}
+        lastName={details.lastName}
+        email={details.email}
+        phone={details.phone}
+        JobTitle={details.jobTitle}
+        attendeeStatus={details.attendeeStatus}
+        organization={details.organization}
+        commentaire={details.commentaire}
         attendeeId={attendeeId}
-        attendeeStatusChangeDatetime={attendeeDetails.attendeeStatusChangeDatetime}
+        attendeeStatusChangeDatetime={details.attendeeStatusChangeDatetime}
         handleCheckinButton={handleCheckinButton}
         Print={handlePrintDocument}
         loading={isUpdating}
         modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
-        type={type}
+        type={details.type}
         onFieldUpdateSuccess={triggerRefresh}
       />
     );
@@ -199,9 +231,15 @@ const MoreScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   profil: {
-    height: 1700,
+    flex: 1,
+    minHeight: 500,
   },
-  filler: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  filler: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    height: '100%',
+  },
 });
 
 export default MoreScreen;

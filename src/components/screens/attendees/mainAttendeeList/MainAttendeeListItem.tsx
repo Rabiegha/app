@@ -6,6 +6,7 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import colors from '../../../../assets/colors/colors';
 import Icons from '../../../../assets/images/icons';
 import { Attendee } from '../../../../types/attendee.types';
@@ -20,7 +21,6 @@ interface ListItemProps {
   searchQuery?: string;
   isCheckedIn: boolean;
   isSearchByCompanyMode: boolean;
-  onUpdateAttendee: (attendee: Attendee) => Promise<void>;
   onSwipeableOpen?: (ref: React.RefObject<any>) => void;
   onPrintAndCheckIn: (attendee: Attendee) => Promise<void>;
   onToggleCheckIn: (attendee: Attendee) => Promise<void>;
@@ -32,12 +32,17 @@ const ListItem = React.memo(
     searchQuery = '', 
     isCheckedIn,
     isSearchByCompanyMode,
-    onUpdateAttendee, 
     onSwipeableOpen,
     onPrintAndCheckIn,
     onToggleCheckIn
   }: ListItemProps) => {
-    const navigation = useNavigation();
+    // Define the navigation type
+type RootStackParamList = {
+  More: { attendeeId: number };
+  // Add other screens as needed
+};
+
+const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     // Simplified handlers that delegate to parent components
     const handleSwitchToggle = () => {
@@ -52,26 +57,8 @@ const ListItem = React.memo(
     const handleItemPress = () => {
       navigation.navigate('More', {
         attendeeId: item.id,
-        eventId: item.event_id,
-        firstName: item.first_name,
-        lastName: item.last_name,
-        email: item.email,
-        phone: item.phone,
-        attendeeStatus: item.attendee_status,
-        jobTitle: item.designation,
-        organization: item.organization,
-        type: item.attendee_type_name,
-        typeId: item.attendee_type_id,
-        badgePdfUrl: item.badge_pdf_url,
-        badgeImageUrl: item.badge_image_url,
-        attendeeTypeBackgroundColor: item.attendee_type_background_color,
-        attendeeStatusChangeDatetime: item.attendee_status_change_datetime,
       });
     };
-
-
-
-
 
     return (
       <SwipeableAttendeeItem

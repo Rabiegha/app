@@ -1,12 +1,15 @@
 // hooks/edit/useUpdateAttendeeField.ts
 import { useState } from 'react';
-import { updateAttendeeField } from '../../services/updateAttendeeField';
+import { useDispatch } from 'react-redux';
+import { updateAttendeeFieldThunk } from '../../redux/slices/attendee/attendeeSlice';
+import { AppDispatch } from '../../redux/store';
 
 
 export const useUpdateAttendeeField = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const submitFieldUpdate = async ({
     userId,
@@ -23,9 +26,24 @@ export const useUpdateAttendeeField = () => {
       setLoading(true);
       setError(null);
       setSuccess(false);
-      await updateAttendeeField({ userId, attendeeId, field, value });
-      setSuccess(true);
-      return true;
+      
+      // Use the Redux thunk instead of calling the service directly
+      const result = await dispatch(updateAttendeeFieldThunk({
+        userId,
+        attendeeId,
+        field,
+        value
+      }));
+      
+      // Check if the action was fulfilled or rejected
+      if (updateAttendeeFieldThunk.fulfilled.match(result)) {
+        setSuccess(true);
+        return true;
+      } else {
+        // Handle rejection
+        setError(result.payload as string || 'Update failed');
+        return false;
+      }
     } catch (err) {
       setError(err.message);
       return false;

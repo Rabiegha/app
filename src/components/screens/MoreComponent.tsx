@@ -108,6 +108,7 @@ const baseFields = [
   {
     label: 'Type:',
     value: type || '-',
+    showButton: true,
   },
   {
     label: 'Nom:',
@@ -117,25 +118,30 @@ const baseFields = [
     fieldKey: 'email',
     label: 'Adresse mail:',
     value: email || '-',
+    showButton: true,
   },
   {
     fieldKey: 'phone',
     label: 'Téléphone:',
     value: formattedPhone || '-',
+    showButton: true,
   },
   {
     fieldKey: 'organization',
     label: 'Entreprise:',
     value: organization || '-',
+    showButton: true,
   },
   {
     fieldKey: 'jobTitle',
     label: 'Job Title:',
     value: JobTitle || '-',
+    showButton: true,
   },
   {
     label: 'Date de check-in:',
-    value: parsedAttendeeStatus ? attendeeStatusChangeDatetime : '-',
+    value: parsedAttendeeStatus === 1 && attendeeStatusChangeDatetime && attendeeStatusChangeDatetime !== '-' ? 
+      attendeeStatusChangeDatetime : '-',
   },
   {
     fieldKey: 'comment',

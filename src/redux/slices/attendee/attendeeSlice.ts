@@ -13,6 +13,30 @@ import {
   mapAttendeeToDetails
 } from '../../../services/attendeeService';
 
+// Helper function to map API field names to selectedAttendee property names
+const mapFieldToSelectedAttendee = (field: string, value: string): Partial<AttendeeDetails> => {
+  // Map API field names to selectedAttendee property names
+  switch (field) {
+    case 'first_name':
+      return { firstName: value };
+    case 'last_name':
+      return { lastName: value };
+    case 'email':
+      return { email: value };
+    case 'phone':
+      return { phone: value };
+    case 'organization':
+      return { organization: value };
+    case 'job_title':
+      return { jobTitle: value };
+    case 'comment':
+      return { commentaire: value };
+    default:
+      // Return an empty object if the field doesn't map to any property
+      return {};
+  }
+};
+
 // State type
 interface AttendeeState {
   list: Attendee[];
@@ -71,13 +95,16 @@ export const updateAttendeeFieldThunk = createAsyncThunk(
   'attendees/updateField',
   async (params: UpdateAttendeeFieldParams, { rejectWithValue }) => {
     try {
+      // Use the updateAttendeeField from attendeeService.ts
       const success = await updateAttendeeField(params);
       if (success) {
         return { attendeeId: params.attendeeId, field: params.field, value: params.value };
       }
       return rejectWithValue('Field update failed');
     } catch (error) {
-      return rejectWithValue('Field update failed');
+      // Provide more detailed error message if available
+      const errorMessage = error instanceof Error ? error.message : 'Field update failed';
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -165,13 +192,38 @@ const attendeeSlice = createSlice({
       // Update field cases
       .addCase(updateAttendeeFieldThunk.pending, (state) => {
         state.isUpdating = true;
+        state.error = null;
       })
-      .addCase(updateAttendeeFieldThunk.fulfilled, (state) => {
+      .addCase(updateAttendeeFieldThunk.fulfilled, (state, action: PayloadAction<{ attendeeId: string, field: string, value: string }>) => {
+        const { attendeeId, field, value } = action.payload;
+        
+        // Update in list
+        state.list = state.list.map(attendee => {
+          if (attendee.id.toString() === attendeeId.toString()) {
+            return {
+              ...attendee,
+              // Use bracket notation to update the dynamic field
+              [field]: value
+            };
+          }
+          return attendee;
+        });
+        
+        // Update selected attendee if it's the same one
+        if (state.selectedAttendee && state.selectedAttendee.theAttendeeId === attendeeId.toString()) {
+          state.selectedAttendee = {
+            ...state.selectedAttendee,
+            // Map API field names to selectedAttendee property names
+            // This mapping might need to be adjusted based on your actual field names
+            ...mapFieldToSelectedAttendee(field, value)
+          };
+        }
+        
         state.isUpdating = false;
       })
-      .addCase(updateAttendeeFieldThunk.rejected, (state) => {
+      .addCase(updateAttendeeFieldThunk.rejected, (state, action) => {
         state.isUpdating = false;
-        state.error = 'Failed to update attendee field';
+        state.error = action.error.message || 'Failed to update attendee field';
       });
   },
 });
