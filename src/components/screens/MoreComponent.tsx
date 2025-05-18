@@ -218,7 +218,7 @@ const handleEditSubmit = async (newValue: string) => {
             key={index}
             label={field.label}
             value={field.value}
-            showButton={isPartner ? field.fieldKey === '' : field.showButton}
+            showButton={isPartner ? field.fieldKey === 'comment' : field.showButton}
             modifyHandle={field.fieldKey ? () => openEditModal(field.fieldKey) : undefined}
           />
       ))}

@@ -42,7 +42,7 @@ const MoreScreen = ({ route, navigation }) => {
   /* ---------------------------------------------------------------- */
   const {
     attendeeId,
-    type,
+    comment,
   } = route.params;
 
   /* ---------------------------------------------------------------- */
@@ -227,7 +227,7 @@ const MoreScreen = ({ route, navigation }) => {
         JobTitle={details.jobTitle}
         attendeeStatus={details.attendeeStatus}
         organization={details.organization}
-        commentaire={details.commentaire}
+        commentaire={comment}
         attendeeId={attendeeId}
         attendeeStatusChangeDatetime={details.attendeeStatusChangeDatetime}
         handleCheckinButton={handleCheckinButton}

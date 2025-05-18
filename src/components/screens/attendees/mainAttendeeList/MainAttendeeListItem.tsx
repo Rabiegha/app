@@ -38,7 +38,7 @@ const MainAttendeeListItem = React.memo(
   }: ListItemProps) => {
     // Define the navigation type
 type RootStackParamList = {
-  More: { attendeeId: number };
+  More: { attendeeId: number, comment: string };
   // Add other screens as needed
 };
 
@@ -57,6 +57,7 @@ const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>(
     const handleItemPress = () => {
       navigation.navigate('More', {
         attendeeId: item.id,
+        comment: item.comment || '',
       });
     };
 

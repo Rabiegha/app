@@ -7,11 +7,18 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import colors from '../../../assets/colors/colors';
 import {ListItemProps} from '../../../types/listItem.types';
 
+// Define the navigation type
+type RootStackParamList = {
+  More: { attendeeId: number; comment: string };
+  // Add other screens as needed
+};
+
 const CommonListItem = React.memo(({item, searchQuery = ''}: ListItemProps) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isSearchByCompanyMode = true;
 
   const highlightSearch = (text: string, query: string) => {
@@ -60,20 +67,7 @@ const CommonListItem = React.memo(({item, searchQuery = ''}: ListItemProps) => {
   const handleItemPress = () => {
     navigation.navigate('More', {
       attendeeId: item.id,
-      eventId: item.event_id,
-      firstName: item.first_name,
-      lastName: item.last_name,
-      email: item.email,
-      phone: item.phone,
-      attendeeStatus: item.attendee_status,
-      jobTitle: item.designation,
-      organization: item.organization,
-      type: item.attendee_type_name,
-      typeId: item.attendee_type_id,
-      badgePdfUrl: item.badge_pdf_url,
-      badgeImageUrl: item.badge_image_url,
-      attendeeTypeBackgroundColor: item.attendee_type_background_color,
-      attendeeStatusChangeDatetime: item.attendee_status_change_datetime,
+      comment: item.comment || '',
     });
   };
 
