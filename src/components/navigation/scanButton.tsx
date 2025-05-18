@@ -1,8 +1,13 @@
-import React from 'react';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import React, { ReactNode } from 'react';
+import { View, TouchableOpacity, StyleSheet, GestureResponderEvent } from 'react-native';
 import colors from '../../assets/colors/colors';
 
-export function ScanButton({children, onPress}) {
+interface ScanButtonProps {
+  children: ReactNode;
+  onPress?: (event: GestureResponderEvent) => void;
+}
+
+export function ScanButton({ children, onPress }: ScanButtonProps) {
   return (
     <TouchableOpacity style={styles.scanButtonContainer} onPress={onPress}>
       <View style={styles.scanButton}>{children}</View>
