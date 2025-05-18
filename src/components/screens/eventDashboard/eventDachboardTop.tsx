@@ -7,10 +7,10 @@ const EventDachboardTopComponent = ({eventImage, eventName, eventDetails}) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image source={
+        {/* <Image source={
                 eventImage
                 ? {uri: eventImage} 
-                : EventImage} style={styles.image} />
+                : EventImage} style={styles.image} /> */}
       </View>
       <Text style={styles.title}>{eventName}</Text>
       <Text style={styles.text}>{eventDetails}</Text>
