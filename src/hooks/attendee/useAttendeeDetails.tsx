@@ -15,7 +15,7 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendeeId: string) => 
     organization: '-',
     jobTitle: '-',
     commentaire: '-',
-    attendeeStatus: '-',
+    attendeeStatus: 0,
     theAttendeeId: '-',
     attendeeStatusChangeDatetime: '-',
     urlBadgePdf: '-',
@@ -49,8 +49,8 @@ const useFetchAttendeeDetails = (refreshTrigger: number, attendeeId: string) => 
             theAttendeeId: attendee.attendee_id || '-',
             commentaire: attendee.comment || '-',
             attendeeStatusChangeDatetime: attendee.nice_attendee_status_change_datetime || '-',
-            attendeeStatus: attendee.attendee_status || '-',
-            urlBadgePdf : attendee. badge_pdf_url  || '-',
+            attendeeStatus: attendee.attendee_status || 0,
+            urlBadgePdf : attendee.badge_pdf_url  || '-',
           });
           setError(null);
         } else {

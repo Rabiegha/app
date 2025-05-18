@@ -11,7 +11,8 @@ import futureEventsReducer from './slices/event/futureEventsSlice';
 import authReducer from './slices/authSlice';
 import scanReducer from './slices/scanModeSlice';
 import searchSlice from './slices/searchModeSlice';
-import attendeesRecude from './slices/attendee/attendeesListSlice';
+import attendeesReducer from './slices/attendee/attendeesListSlice';
+import attendeeReducer from './slices/attendee/attendeeSlice';
 import sessionAttendeesReducer from './slices/attendee/sessionAttendeesListSlice';
 
 // pastEvents
@@ -47,7 +48,8 @@ const isSearchByCompanyModeConfig = {
 
 const rootReducer = combineReducers({
   printers: printerReducer,
-  attendees: attendeesRecude,
+  attendees: attendeesReducer,
+  attendee: attendeeReducer,
   sessionAttendees: sessionAttendeesReducer,
   scan: persistReducer(isKioskModePersistConfig, scanReducer),
   search: persistReducer(isSearchByCompanyModeConfig, searchSlice),
@@ -70,6 +72,10 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
+      immutableCheck: {
+        warnAfter: 128,
+        ignoredPaths: ['attendees', 'attendee.list'],
+      },
     }),
 });
 

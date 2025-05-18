@@ -28,7 +28,7 @@ interface MoreComponentProps {
   attendeeStatusChangeDatetime: string;
   See: () => void;
   Print: () => void;
-  handleButton: () => void;
+  handleCheckinButton: (status: 0 | 1) => Promise<void>;
   loading: boolean;
   modify: () => void;
   type: string;
@@ -48,7 +48,7 @@ const MoreComponent = ({
   attendeeStatusChangeDatetime,
   See,
   Print,
-  handleButton,
+  handleCheckinButton,
   loading,
   modify,
   type,
@@ -190,14 +190,6 @@ const handleEditSubmit = async (newValue: string) => {
           backgroundColor={colors.green}
           tintColor={colors.greyCream}
         />
-          {/*  ----  Edit button temporarily disabled  ----  
-          // <SmallButton
-          //   imageSource={Icons.Edit}
-          //   pressHandler={modify}
-          //   backgroundColor={colors.greyCream}
-          //   tintColor={colors.darkGrey} 
-          // /> */}
-
         <SmallButton
               imageSource={Icons.Scan}
           pressHandler={See}
@@ -220,8 +212,6 @@ const handleEditSubmit = async (newValue: string) => {
             showButton={field.showButton}
             modifyHandle={field.fieldKey ? () => openEditModal(field.fieldKey) : undefined}
           />
-
-
       ))}
 
         </View>
@@ -231,14 +221,14 @@ const handleEditSubmit = async (newValue: string) => {
           {parsedAttendeeStatus === 0 ? (
             <LargeButton
               title="Check-in"
-              onPress={() => handleButton(1)}
+              onPress={() => handleCheckinButton(1)}
               backgroundColor={colors.green}
               loading={loading}
             />
           ) : (
             <LargeButton
               title="Undo Check-in"
-              onPress={() => handleButton(0)}
+              onPress={() => handleCheckinButton(0)}
               backgroundColor={colors.red}
               loading={loading}
             />

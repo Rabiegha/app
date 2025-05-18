@@ -1,10 +1,8 @@
 // MoreScreen.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import axios from 'axios';
-import Share from 'react-native-share';
-import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
@@ -13,31 +11,34 @@ import ErrorView from '../../components/elements/view/ErrorView';
 
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
-import { BASE_URL } from '../../config/config';
 
 import usePrintDocument from '../../printing/hooks/usePrintDocument';
-import useFetchAttendeeDetails from '../../hooks/attendee/useAttendeeDetails';
-import { useEvent } from '../../context/EventContext';
-import { setPrintStatus } from '../../redux/slices/printerSlice';
-import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 import { usePrintStatus } from '../../printing/context/PrintStatusContext';
+import { useActiveEvent } from '../../utils/event/useActiveEvent';
+import { useAttendee } from '../../hooks/attendee/useAttendee';
 
 const MoreScreen = ({ route, navigation }) => {
   /* ---------------------------------------------------------------- */
-  /* Context & Redux                                                 */
+  /* Context & Redux                                                   */
   /* ---------------------------------------------------------------- */
-  const { updateAttendee } = useEvent();
-  const { eventId } = useEvent();
+  const userId = useSelector(selectCurrentUserId);
+  const { eventId } = useActiveEvent();
+  const { 
+    attendeeDetails, 
+    isLoadingDetails, 
+    isUpdating, 
+    error,
+    fetchAttendeeDetails, 
+    updateAttendeeStatus 
+  } = useAttendee();
+
   /* ---------------------------------------------------------------- */
   /* Navigation params                                                */
   /* ---------------------------------------------------------------- */
   const {
     attendeeId,
-    attendeeStatus: initialStatus,
-    badgePdfUrl,
-    badgeImageUrl,
     type,
   } = route.params;
 
@@ -45,22 +46,44 @@ const MoreScreen = ({ route, navigation }) => {
   /* Local state                                                      */
   /* ---------------------------------------------------------------- */
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [loadingButton , setLoadingButton ] = useState(false);
-  const [localAttendeeStatus, setLocalAttendeeStatus] = useState(initialStatus);
 
   /* ---------------------------------------------------------------- */
   /* Data fetching                                                    */
   /* ---------------------------------------------------------------- */
-  const { attendeeDetails, loading, error } =
-    useFetchAttendeeDetails(refreshTrigger, attendeeId);
+  const fetchData = useCallback(() => {
+    if (userId && eventId && attendeeId) {
+      fetchAttendeeDetails({
+        userId,
+        eventId,
+        attendeeId
+      });
+    }
+  }, [userId, eventId, attendeeId, fetchAttendeeDetails]);
 
+  // Fetch data on mount and when dependencies change
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Refresh when coming back to this screen
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
+
+  // Refresh when refresh trigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      fetchData();
+    }
+  }, [refreshTrigger, fetchData]);
 
   /* refresh helper */
   const triggerRefresh = useCallback(
     () => setRefreshTrigger(prev => prev + 1),
     []
   );
-
 
   const { status: printStatus, clearStatus } = usePrintStatus();
 
@@ -70,48 +93,35 @@ const MoreScreen = ({ route, navigation }) => {
   const handleBackPress = () => navigation.goBack();
 
   const handleBadgePress = () =>
-    navigation.navigate('Badge', { attendeeId, eventId, badgePdfUrl, badgeImageUrl });
-
+    navigation.navigate('Badge', { 
+      attendeeId, 
+      eventId, 
+      badgePdfUrl: attendeeDetails?.urlBadgePdf 
+    });
 
   const { printDocument } = usePrintDocument();
-  const handlePrintDocument =() => {
-   printDocument(badgePdfUrl, undefined, true);
- };
-
-  const sendPdf = async () => {
-    try {
-      await Share.open({ url: badgePdfUrl, type: 'application/pdf' });
-    } catch (err) { console.error(err); }
-  };
-
-  const handleButton = async (status: 0 | 1) => {
-    setLoadingButton(true);
-
-    try {
-      const url = `${BASE_URL}/update_event_attendee_attendee_status/?event_id=${eventId}&attendee_id=${attendeeId}&attendee_status=${status}`;
-      const res = await axios.post(url);
-
-      if (res.data.status) {
-        setLocalAttendeeStatus(status);
-        triggerRefresh();
-      }
-    } catch (err) {
-      console.error('Error updating attendee status:', err);
-    } finally {
-      setLoadingButton(false);
+  const handlePrintDocument = () => {
+    if (attendeeDetails?.urlBadgePdf) {
+      printDocument(attendeeDetails.urlBadgePdf, undefined, true);
     }
   };
 
-  /* update parent lists when status changes */
-  useEffect(() => {
-    updateAttendee(eventId, localAttendeeStatus);
-  }, [localAttendeeStatus]);
+  const handleCheckinButton = async (status: 0 | 1) => {
+    if (userId && eventId && attendeeId) {
+      await updateAttendeeStatus({
+        userId,
+        eventId,
+        attendeeId,
+        status
+      });
+    }
+  };
 
   /* ---------------------------------------------------------------- */
   /* Render helpers                                                   */
   /* ---------------------------------------------------------------- */
   const renderContent = () => {
-    if (loading) {
+    if (isLoadingDetails && !attendeeDetails) {
       return (
         <View style={styles.filler}>
           <LoadingView />
@@ -122,7 +132,15 @@ const MoreScreen = ({ route, navigation }) => {
     if (error) {
       return (
         <View style={styles.filler}>
-          <ErrorView handleRetry={triggerRefresh} />
+          <ErrorView handleRetry={fetchData} />
+        </View>
+      );
+    }
+
+    if (!attendeeDetails) {
+      return (
+        <View style={styles.filler}>
+          <ErrorView message="No attendee details found" handleRetry={fetchData} />
         </View>
       );
     }
@@ -135,15 +153,14 @@ const MoreScreen = ({ route, navigation }) => {
         email={attendeeDetails.email}
         phone={attendeeDetails.phone}
         JobTitle={attendeeDetails.jobTitle}
-        attendeeStatus={localAttendeeStatus}
+        attendeeStatus={attendeeDetails.attendeeStatus}
         organization={attendeeDetails.organization}
         commentaire={attendeeDetails.commentaire}
-        attendeeId = {attendeeId}
+        attendeeId={attendeeId}
         attendeeStatusChangeDatetime={attendeeDetails.attendeeStatusChangeDatetime}
-        handleButton={handleButton}
-        share={sendPdf}
+        handleCheckinButton={handleCheckinButton}
         Print={handlePrintDocument}
-        loading={loadingButton}
+        loading={isUpdating}
         modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
         type={type}
         onFieldUpdateSuccess={triggerRefresh}
@@ -166,12 +183,12 @@ const MoreScreen = ({ route, navigation }) => {
         {/* Print status modal stays available at all times */}
         {/* 🖨️ Print modal */}
         {printStatus && (
-        <CheckinPrintModal
-          visible={true}
-          status={printStatus}
-          onClose={clearStatus}
-        />
-      )}
+          <CheckinPrintModal
+            visible={true}
+            status={printStatus}
+            onClose={clearStatus}
+          />
+        )}
 
         {/* The area below is where we swap in loading / error / data */}
         {renderContent()}

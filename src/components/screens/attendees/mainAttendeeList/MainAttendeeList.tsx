@@ -22,12 +22,12 @@ import { selectCurrentUserId } from '../../../../redux/selectors/auth/authSelect
 import EmptyView from '../../../elements/view/EmptyView';
 import LoadingView from '../../../elements/view/LoadingView';
 import ErrorView from '../../../elements/view/ErrorView';
-import { fetchMainAttendees } from '../../../../redux/thunks/attendee/mainAttendeesThunk';
+
 import { updateAttendee } from '../../../../redux/thunks/attendee/updateAttendeeThunk';
 import { updateAttendeeLocally } from '../../../../redux/slices/attendee/attendeesListSlice';
 import BaseFlatList from '../../../elements/list/BaseFlatList';
 import { Attendee } from '../../../../types/attendee.types';
-import Toast from 'react-native-toast-message';
+import { fetchAttendeesList } from '@/redux/slices/attendee/attendeeSlice';
 
 
 interface FilterCriteria {
@@ -53,7 +53,7 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
   const eventId = event ? event.eventId : undefined;
   const { isDemoMode } = useContext(AuthContext);
   const userId = useSelector(selectCurrentUserId);
-  const { data: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendees);
+  const { list: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendee);
 
   const [refreshing, setRefreshing] = useState(false);
   const [visibleCount, setVisibleCount] = useState(20);
@@ -67,11 +67,10 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await dispatch(fetchMainAttendees({ userId, eventId, isDemoMode }));
+    await dispatch(fetchAttendeesList({ userId, eventId, isDemoMode }));
     setRefreshing(false);
     onTriggerRefresh?.();
   };
-
   useImperativeHandle(ref, () => ({
     handleRefresh,
   }));
@@ -118,20 +117,9 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
   );
 
 
-  const handleUpdateAttendee = async (updatedAttendee: Attendee) => {
+  const   handleUpdateAttendee = async (updatedAttendee: Attendee) => {
     dispatch(updateAttendeeLocally(updatedAttendee));
     const result = await dispatch(updateAttendee(updatedAttendee));
-
-
-
-/*     if (updatedAttendee.attendee_status == 1 && updateAttendee.fulfilled.match(result)) {
-      Toast.show({
-        type: 'customSuccess',
-        text1: 'Participant mis à jour ',
-        text2: `${updatedAttendee.first_name} ${updatedAttendee.last_name}`,
-      });
-    } */
-
     openSwipeable?.current?.close();
     onTriggerRefresh?.();
   };
@@ -168,7 +156,7 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
       );}
 
   return (
-    <View >
+    <View style={styles.listContainer}>
       <BaseFlatList<Attendee>
           data={filteredData}
           renderItem={({ item }) => (
@@ -203,6 +191,11 @@ const styles = StyleSheet.create({
   },
   viewsContainer: {
     flex: 1,
+  },
+  listContainer: {
+    flex: 1,
+    height: '100%',
+    width: '100%',
   },
 });
 

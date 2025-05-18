@@ -17,11 +17,8 @@ import Icons from '../../../../assets/images/icons';
 import {useSelector, useDispatch} from 'react-redux';
 import usePrintDocument from '../../../../printing/hooks/usePrintDocument';
 import { ListItemProps } from '../../../../types/listItem.types';
-import useFetchAttendeeDetails from '../../../../hooks/attendee/useAttendeeDetails';
 import {usePrintStatus} from '../../../../printing/context/PrintStatusContext';
-import { useStore } from 'react-redux';
 
-const {width} = Dimensions.get('window');
 let openSwipeableRef: Swipeable | null = null;
 let isTypeModeActive = true;
 
@@ -29,14 +26,9 @@ let isTypeModeActive = true;
 const ListItem = React.memo(
   ({ item,  searchQuery = '', onUpdateAttendee, onSwipeableOpen }: ListItemProps) => {
     const navigation = useNavigation();
-    const {triggerListRefresh} = useEvent();
     const swipeableRef = useRef(null);
-    const dispatch = useDispatch();
     const isSwipeOpen = useRef(false);
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-      const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
-      const nodePrinterId = selectedNodePrinter?.id;
       const { setStatus } = usePrintStatus();
 
     // Redux: whether to show the company name in search
@@ -45,9 +37,6 @@ const ListItem = React.memo(
     // Local "checked in" state
     const initialSwitchState = item.attendee_status == 1;
     const [isCheckedIn, setIsCheckedIn] = useState(initialSwitchState);
-
-      const { attendeeDetails } =
-      useFetchAttendeeDetails(refreshTrigger, item.id);
 
     // Toggle attendee_status
     const handleSwitchToggle = async () => {
@@ -235,7 +224,7 @@ const ListItem = React.memo(
           </View>
         );
       },
-      [isCheckedIn, selectedNodePrinter?.id]
+      [isCheckedIn,]
     );
 
     return (

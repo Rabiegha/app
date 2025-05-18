@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import { handleScan } from '../utils/handleScan';
 import Toast from 'react-native-toast-message';
-import { useSelector } from 'react-redux';
 import { useAddComment } from '../../../hooks/edit/useAddComment';
 import { useFetchAttendeeCounts } from '../../../hooks/attendee/useFetchAttendeeCounts';
 import useSessionRegistrationData from '../../../hooks/registration/useSessionRegistrationSData';
@@ -9,7 +8,6 @@ import { ScanType } from '../types/scan';
 import { useActiveEvent } from '../../../utils/event/useActiveEvent';
 import usePrintDocument from '../../../printing/hooks/usePrintDocument';
 import { usePrintStatus } from '../../../printing/context/PrintStatusContext';
-import useFetchAttendeeDetails from '../../../hooks/attendee/useAttendeeDetails';
 import { fetchAttendeesList } from '../../../services/getAttendeesListService';
 
 
@@ -29,13 +27,6 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
   const { capacity, totalCheckedIn, loading : statsLoading } = useSessionRegistrationData({ refreshTrigger1: refreshTrigger });
   const { partnerCount, childSessionCount, loading, fetchCounts } = useFetchAttendeeCounts();
 
-
-  const [attendeeId, setAttendeeId] = useState<string | null>(null);
-  const { attendeeDetails } = useFetchAttendeeDetails(refreshTrigger, attendeeId || '');
-
-
-  const selectedNodePrinter = useSelector((state: any) => state.printers.selectedNodePrinter);
-  const nodePrinterId = selectedNodePrinter?.id;
 
 
 
@@ -57,10 +48,6 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
     hasScanned.current = false;
   };
 
-  const getBadgeUrl = async (userId, eventId, attendeeId) => {
-    const [details] = await fetchAttendeesList(userId, eventId, attendeeId);
-    return details?.badge_pdf_url || '';
-  };
 
   const onBarCodeRead = async ({ data }) => {
     if (hasScanned.current) return;
@@ -77,7 +64,6 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
       afterSuccess: async (attendee) => {
         setScanStatus('found');
         setTimeout(() => setScanStatus('idle'), 2000);
-        setAttendeeId(attendee.attendee_id);
         switch (scanType) {
           case ScanType.Partner:
             await new Promise(res => setTimeout(res, 1000));
@@ -153,6 +139,7 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
     resetScanner,
     capacity,
     totalCheckedIn,
+    statsLoading,
     partnerCount,
     childSessionCount,
     loading,

@@ -4,7 +4,7 @@ import { fetchMainAttendees } from '../../thunks/attendee/mainAttendeesThunk';
 
 
 const attendeesSlice = createSlice({
-  name: 'attendees',
+  name: 'attendeesss',
   initialState: {
     data: [],
     isLoadingList: false,
