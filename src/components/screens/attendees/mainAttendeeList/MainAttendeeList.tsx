@@ -6,13 +6,9 @@ import React, {
   useMemo,
   useImperativeHandle,
   forwardRef,
+  useCallback,
 } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useEvent } from '../../../../context/EventContext';
 import colors from '../../../../assets/colors/colors';
 import { AuthContext } from '../../../../context/AuthContext';
@@ -24,12 +20,14 @@ import LoadingView from '../../../elements/view/LoadingView';
 import ErrorView from '../../../elements/view/ErrorView';
 
 import { updateAttendee } from '../../../../redux/thunks/attendee/updateAttendeeThunk';
-import { updateAttendeeLocally } from '../../../../redux/slices/attendee/attendeesListSlice';
 import BaseFlatList from '../../../elements/list/BaseFlatList';
 import { Attendee } from '../../../../types/attendee.types';
-import { fetchAttendeesList } from '@/redux/slices/attendee/attendeeSlice';
+import { fetchAttendeesList, updateAttendeeLocally } from '@/redux/slices/attendee/attendeeSlice';
+import usePrintDocument from '../../../../printing/hooks/usePrintDocument';
+import { usePrintStatus } from '../../../../printing/context/PrintStatusContext';
 
 
+// Types
 interface FilterCriteria {
   status: string;
   [key: string]: any;
@@ -41,60 +39,54 @@ type Props = {
   filterCriteria: FilterCriteria;
   onShowNotification?: () => void;
   summary?: any;
+  // Business logic handlers from parent - now required
+  onUpdateAttendee: (attendee: Attendee) => Promise<void>;
+  onPrintAndCheckIn: (attendee: Attendee) => Promise<void>;
+  onToggleCheckIn: (attendee: Attendee) => Promise<void>;
 };
 
 export type ListHandle = {
   handleRefresh: () => void;
 };
 
-const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTriggerRefresh, filterCriteria }, ref) => {
+// Custom hooks
+function useAttendeeData(userId: string | null, eventId: string | null | undefined, isDemoMode: boolean, onRefresh?: () => void) {
   const dispatch = useDispatch();
-  const event = useEvent();
-  const eventId = event ? event.eventId : undefined;
-  const { isDemoMode } = useContext(AuthContext);
-  const userId = useSelector(selectCurrentUserId);
-  const { list: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendee);
-
   const [refreshing, setRefreshing] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(20);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [openSwipeable, setOpenSwipeable] = useState<React.RefObject<any> | null>(null);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
-  const simulateEmpty = false;
-
-  const isSearchByCompanyMode = true;
-  const deferredQuery = useDeferredValue(debouncedSearchQuery);
-
-  const handleRefresh = async () => {
+  const { list: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendee);
+  
+  const handleRefresh = useCallback(async () => {
+    if (!userId || !eventId) return;
+    
     setRefreshing(true);
-    await dispatch(fetchAttendeesList({ userId, eventId, isDemoMode }));
+    await dispatch(fetchAttendeesList({ userId, eventId, isDemoMode }) as any);
     setRefreshing(false);
-    onTriggerRefresh?.();
-  };
-  useImperativeHandle(ref, () => ({
-    handleRefresh,
-  }));
-
-  useEffect(() => {
-    const timeout = setTimeout(() => setDebouncedSearchQuery(searchQuery), 200);
-    return () => clearTimeout(timeout);
-  }, [searchQuery]);
-
+    onRefresh?.();
+  }, [userId, eventId, isDemoMode, dispatch, onRefresh]);
+  
   useEffect(() => {
     handleRefresh();
   }, [userId, eventId, isDemoMode]);
+  
+  return { allAttendees, isLoadingList, error, refreshing, handleRefresh };
+}
 
-  const totalFilteredData = useMemo(() => {
+function useAttendeeFiltering(allAttendees: Attendee[], searchQuery: string, filterCriteria: FilterCriteria, isSearchByCompanyMode: boolean) {
+  const deferredQuery = useDeferredValue(searchQuery);
+  
+  return useMemo(() => {
     if (!allAttendees) return [];
     
     let filtered = [...allAttendees];
 
+    // Apply status filter
     if (filterCriteria.status === 'checked-in') {
-      filtered = filtered.filter(a => a.attendee_status == 1);
+      filtered = filtered.filter(a => a.attendee_status === 1);
     } else if (filterCriteria.status === 'not-checked-in') {
-      filtered = filtered.filter(a => a.attendee_status == 0);
+      filtered = filtered.filter(a => a.attendee_status === 0);
     }
 
+    // Apply search filter
     const q = deferredQuery.trim().toLowerCase();
     if (q) {
       const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
@@ -107,40 +99,126 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
       });
     }
 
+    // Sort by check-in status
     filtered.sort((a, b) => a.attendee_status - b.attendee_status);
     return filtered;
-  }, [allAttendees, deferredQuery, filterCriteria]);
+  }, [allAttendees, deferredQuery, filterCriteria, isSearchByCompanyMode]);
+}
 
+const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ 
+  searchQuery, 
+  onTriggerRefresh, 
+  filterCriteria,
+  onUpdateAttendee,
+  onPrintAndCheckIn,
+  onToggleCheckIn
+}, ref) => {
+  // Context and Redux
+  const dispatch = useDispatch();
+  const event = useEvent();
+  const eventId = event ? event.eventId : undefined;
+  const { isDemoMode } = useContext(AuthContext);
+  const userId = useSelector(selectCurrentUserId);
+  
+  // Local state
+  const [visibleCount, setVisibleCount] = useState(20);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [openSwipeable, setOpenSwipeable] = useState<React.RefObject<any> | null>(null);
+  const [checkedInMap, setCheckedInMap] = useState<Record<string | number, boolean>>({});
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  
+  // Configuration
+  const isSearchByCompanyMode = true;
+  const simulateEmpty = false;
+  
+  // Use custom hooks for data fetching and filtering
+  const { 
+    allAttendees, 
+    isLoadingList, 
+    error, 
+    refreshing, 
+    handleRefresh 
+  } = useAttendeeData(userId, eventId, isDemoMode, onTriggerRefresh);
+  
+  // Expose refresh method to parent via ref
+  useImperativeHandle(ref, () => ({
+    handleRefresh: () => {
+      handleRefresh();
+      onTriggerRefresh?.();
+    },
+  }));
+  
+  // Search query debouncing
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebouncedSearchQuery(searchQuery), 200);
+    return () => clearTimeout(timeout);
+  }, [searchQuery]);
+  
+  // Initialize checked-in map when attendees list changes
+  useEffect(() => {
+    if (allAttendees && allAttendees.length > 0) {
+      const newCheckedInMap = allAttendees.reduce((acc: Record<string | number, boolean>, attendee: Attendee) => {
+        acc[attendee.id] = attendee.attendee_status === 1;
+        return acc;
+      }, {} as Record<string | number, boolean>);
+      setCheckedInMap(newCheckedInMap);
+    }
+  }, [allAttendees]);
+  
+  // Filter and process attendee data
+  const totalFilteredData = useAttendeeFiltering(allAttendees, debouncedSearchQuery, filterCriteria, isSearchByCompanyMode);
+  
+  // Paginate the data
   const filteredData = useMemo(
     () => (simulateEmpty ? [] : totalFilteredData.slice(0, visibleCount)),
-    [totalFilteredData, visibleCount]
+    [totalFilteredData, visibleCount, simulateEmpty]
   );
 
 
-  const   handleUpdateAttendee = async (updatedAttendee: Attendee) => {
-    dispatch(updateAttendeeLocally(updatedAttendee));
-    const result = await dispatch(updateAttendee(updatedAttendee));
-    openSwipeable?.current?.close();
-    onTriggerRefresh?.();
-  };
-
-
-  const handleSwipeableOpen = (swipeable: React.RefObject<any>) => {
+  // Update local checked-in map when attendees change
+  useEffect(() => {
+    if (allAttendees && allAttendees.length > 0) {
+      const newCheckedInMap = allAttendees.reduce((acc: Record<string | number, boolean>, attendee: Attendee) => {
+        acc[attendee.id] = attendee.attendee_status === 1;
+        return acc;
+      }, {} as Record<string | number, boolean>);
+      setCheckedInMap(newCheckedInMap);
+    }
+  }, [allAttendees]);
+  
+  // Handle swipeable open/close
+  const handleSwipeableOpen = useCallback((swipeable: React.RefObject<any>) => {
     if (openSwipeable && openSwipeable.current && openSwipeable !== swipeable) {
       openSwipeable.current.close();
     }
     setOpenSwipeable(swipeable);
-  };
+  }, [openSwipeable]);
+  
+  // Close swipeable after update
+  const handleAttendeeUpdate = useCallback(async (attendee: Attendee) => {
+    await onUpdateAttendee(attendee);
+    openSwipeable?.current?.close();
+    
+    // Update local checked-in state
+    setCheckedInMap(prev => ({
+      ...prev,
+      [attendee.id]: attendee.attendee_status === 1
+    }));
+  }, [onUpdateAttendee, openSwipeable]);
 
-  const handleLoadMore = () => {
-    if (visibleCount >= totalFilteredData.length || isLoadingMore) {return;}
+
+  // Load more items when scrolling
+  const handleLoadMore = useCallback(() => {
+    if (visibleCount >= totalFilteredData.length || isLoadingMore) return;
+    
     setIsLoadingMore(true);
     setTimeout(() => {
       setVisibleCount(prev => prev + 50);
       setIsLoadingMore(false);
     }, 500);
-  };
+  }, [visibleCount, totalFilteredData.length, isLoadingMore]);
 
+  // Render based on loading/error state
   if (isLoadingList) {
     return (
       <View style={styles.viewsContainer}>
@@ -149,46 +227,52 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ searchQuery, onTri
     );
   }
 
-  if (error) {return (
+  if (error) {
+    return (
       <View style={styles.viewsContainer}>
         <ErrorView handleRetry={handleRefresh} />
       </View>
-      );}
+    );
+  }
 
+  // Main list render
   return (
     <View style={styles.listContainer}>
       <BaseFlatList<Attendee>
-          data={filteredData}
-          renderItem={({ item }) => (
-            <ListItem
-              item={item}
-              searchQuery={debouncedSearchQuery}
-              onUpdateAttendee={handleUpdateAttendee}
-              onSwipeableOpen={handleSwipeableOpen}
-            />
-          )}
-          keyExtractor={item => item.id.toString()}
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          onEndReached={handleLoadMore}
-          isLoadingMore={isLoadingMore}
-          footerEnabled={true}
-          ListEmptyComponent={
-            <View style={styles.viewsContainer}>
-              <EmptyView text={''} handleRetry={handleRefresh} />
-            </View>
-          }
-        />
+        data={filteredData}
+        renderItem={({ item }) => (
+          <ListItem
+            item={item}
+            searchQuery={debouncedSearchQuery}
+            isCheckedIn={checkedInMap[item.id] || false}
+            isSearchByCompanyMode={isSearchByCompanyMode}
+            onUpdateAttendee={handleAttendeeUpdate}
+            onSwipeableOpen={handleSwipeableOpen}
+            onPrintAndCheckIn={onPrintAndCheckIn}
+            onToggleCheckIn={onToggleCheckIn}
+          />
+        )}
+        keyExtractor={item => item.id.toString()}
+        refreshing={refreshing}
+        onRefresh={() => {
+          handleRefresh();
+          onTriggerRefresh?.();
+        }}
+        onEndReached={handleLoadMore}
+        isLoadingMore={isLoadingMore}
+        footerEnabled={true}
+        ListEmptyComponent={
+          <View style={styles.viewsContainer}>
+            <EmptyView text={''} handleRetry={handleRefresh} />
+          </View>
+        }
+      />
     </View>
   );
 });
 
+// Styles
 const styles = StyleSheet.create({
-  loaderContainer: {
-    paddingVertical: 16,
-    alignItems: 'center',
-    height: '100%',
-  },
   viewsContainer: {
     flex: 1,
   },

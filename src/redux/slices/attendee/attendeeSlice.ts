@@ -95,6 +95,13 @@ const attendeeSlice = createSlice({
     clearSelectedAttendee(state) {
       state.selectedAttendee = null;
     },
+
+    updateAttendeeLocally(state, action) {
+        const updated = action.payload;
+        state.list = state.list.map(attendee =>
+          attendee.id === updated.id ? updated : attendee
+        );
+      },
   },
   extraReducers: (builder) => {
     builder
@@ -169,5 +176,5 @@ const attendeeSlice = createSlice({
   },
 });
 
-export const { clearAttendees, clearSelectedAttendee } = attendeeSlice.actions;
+export const { clearAttendees, clearSelectedAttendee, updateAttendeeLocally } = attendeeSlice.actions;
 export default attendeeSlice.reducer;

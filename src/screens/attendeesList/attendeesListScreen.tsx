@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect, useContext } from 'react';
 import {
   View,
   Modal,
@@ -17,8 +17,9 @@ import { useEvent } from '../../context/EventContext';
 import Search from '../../components/elements/Search';
 import FiltreComponent from '../../components/filtre/FiltreComponent';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectPrintStatus } from '../../redux/selectors/print/printerSelectors';
-import { setPrintStatus } from '../../redux/slices/printerSlice';
+import { fetchAttendeesList, updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
+import { updateAttendee } from '../../redux/thunks/attendee/updateAttendeeThunk';
+import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
 import Icons from '../../assets/images/icons';
@@ -27,6 +28,9 @@ import colors from '../../assets/colors/colors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import usePrintDocument from '../../printing/hooks/usePrintDocument';
+import { AuthContext } from '../../context/AuthContext';
+import { Attendee } from '../../types/attendee.types';
 
 const defaultFilterCriteria = {
   status: 'all',
@@ -35,33 +39,50 @@ const defaultFilterCriteria = {
 
 const AttendeeListScreen = () => {
   const listRef = useRef<ListHandle>(null);
-
-  const triggerChildRefresh = () => {
-    listRef.current?.handleRefresh(); // 🟢 Appel direct de la méthode enfant
-  };
-
-    useFocusEffect(
-    useCallback(() => {
-      // 1) on déclenche la remise à jour des stats (useRegistrationData)
-      setRefreshTrigger(p => p + 1);
-
-    }, []),
-  );
-
-  const { eventName } = useEvent();
+  const { eventName, eventId } = useEvent();
+  const authContext = useContext(AuthContext);
+  const isDemoMode = authContext ? (authContext as any).isDemoMode : false;
+  const userId = useSelector(selectCurrentUserId);
+  
+  // State management
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAnimation] = useState<Animated.Value>(new Animated.Value(-300));
   const [success, setSuccess] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState(defaultFilterCriteria);
-
-  const { totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary } = useRegistrationData({ refreshTrigger1: refreshTrigger });
+  
+  // Redux and API related hooks
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
-  // Use the properly typed PrintStatus context
-const { status: printStatus, clearStatus } = usePrintStatus();
+  const { printDocument } = usePrintDocument();
+  const { status: printStatus, clearStatus, setStatus } = usePrintStatus();
+  
+  // Attendee data from Redux
+  const { list: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendee);
+  
+  // Registration data for stats
+  const { totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary } = useRegistrationData({ refreshTrigger1: refreshTrigger });
+  
+  // Fetch attendees when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchAttendeesData();
+      setRefreshTrigger(p => p + 1);
+    }, []),
+  );
+  
+  // Fetch attendees data from API
+  const fetchAttendeesData = async () => {
+    if (userId && eventId) {
+      await dispatch(fetchAttendeesList({ userId, eventId: eventId as string, isDemoMode: isDemoMode || false } as any));
+    }
+  };
+  
+  // Direct refresh trigger for the child component
+  const triggerChildRefresh = () => {
+    listRef.current?.handleRefresh();
+  };
 
   const insets = useSafeAreaInsets();
 
@@ -90,6 +111,84 @@ const { status: printStatus, clearStatus } = usePrintStatus();
     }
   };
 
+  // Handle attendee updates
+  const handleUpdateAttendee = async (updatedAttendee: Attendee) => {
+    try {
+      // Update locally first for immediate UI feedback
+      dispatch(updateAttendeeLocally(updatedAttendee));
+      
+      // Then update on the server
+      await dispatch(updateAttendee(updatedAttendee) as any);
+      
+      // Refresh data after update
+      setRefreshTrigger(p => p + 1);
+      
+      return true; // Indicate success
+    } catch (error) {
+      console.error('Error updating attendee:', error);
+      return false; // Indicate failure
+    }
+  };
+  
+  // Handle print and check-in action
+  const handlePrintAndCheckIn = async (attendee: Attendee) => {
+    try {
+      // Update attendee status to checked-in
+      const updatedAttendee = {
+        ...attendee,
+        attendee_status: 1 as const,
+      };
+      
+      // First update Redux store locally for immediate UI feedback
+      dispatch(updateAttendeeLocally(updatedAttendee));
+      
+      // Show success notification immediately
+      setStatus('checkin_success');
+      
+      // Print badge if available
+      if (attendee.badge_pdf_url && 
+          typeof attendee.badge_pdf_url === 'string' && 
+          attendee.badge_pdf_url.trim() !== '') {
+        try {
+          // Print the badge right away
+          await printDocument(attendee.badge_pdf_url, undefined, true);
+        } catch (printError) {
+          console.error('Error printing badge:', printError);
+          setStatus('unknown_error');
+        }
+      } else {
+        console.error('Badge PDF URL is empty or invalid:', attendee.badge_pdf_url);
+        setStatus('file_not_found');
+      }
+      
+      // Then update on the server (don't wait for this to complete before printing)
+      try {
+        await dispatch(updateAttendee(updatedAttendee) as any);
+        // Refresh data after update
+        setRefreshTrigger(p => p + 1);
+      } catch (apiError) {
+        console.error('Error updating attendee on server:', apiError);
+        // Don't change the status if printing was successful
+      }
+    } catch (error) {
+      console.error('Error while printing and checking in:', error);
+      setStatus('unknown_error');
+    }
+  };
+  
+  // Handle toggle check-in status
+  const handleToggleCheckIn = async (attendee: Attendee) => {
+    // Toggle attendee status
+    const updatedAttendee = {
+      ...attendee,
+      attendee_status: attendee.attendee_status === 0 ? (1 as const) : (0 as const),
+    };
+    
+    // Update in Redux and API
+    await handleUpdateAttendee(updatedAttendee);
+  };
+  
+  // Trigger refresh for child components
   const handleTriggerRefresh = () => {
     setRefreshTrigger(p => p + 1);
   };
@@ -134,6 +233,12 @@ const { status: printStatus, clearStatus } = usePrintStatus();
                 filterCriteria={filterCriteria}
                 onTriggerRefresh={handleTriggerRefresh}
                 summary={summary}
+                // Pass down the business logic handlers
+                onUpdateAttendee={async (attendee) => {
+                await handleUpdateAttendee(attendee);
+              }}
+              onPrintAndCheckIn={handlePrintAndCheckIn}
+              onToggleCheckIn={handleToggleCheckIn}
               />
 
 
