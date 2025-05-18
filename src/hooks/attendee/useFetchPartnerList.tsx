@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
-import { fetchAttendeesList } from "../../services/getAttendeesListService";
+import { fetchPartnerAttendeesList } from "../../services/partner/getPartnerAttendeeListService";
+import { Attendee } from "../../types/attendee.types";
 
     
     
-    const useFetchPartnerAttendeeList = (userId: string, eventId: string)  => {
-        const [attendees, setAttendees] = useState<any[]>([]);
+    interface UseFetchPartnerAttendeeListResult {
+    attendees: Attendee[];
+    isLoading: boolean;
+    error: boolean;
+    fetchData: () => Promise<void>;
+}
+
+const useFetchPartnerAttendeeList = (userId: string, eventId: string): UseFetchPartnerAttendeeListResult => {
+        const [attendees, setAttendees] = useState<Attendee[]>([]);
         const [isLoading, setIsLoading] = useState(false);
         const [error, setError] = useState(false);
 
@@ -14,7 +22,8 @@ import { fetchAttendeesList } from "../../services/getAttendeesListService";
             try {
               setError(false);
               setIsLoading(true);
-              const response = await fetchAttendeesList(userId, eventId);
+              const response = await fetchPartnerAttendeesList(userId, eventId);
+              console.log('Partner attendees response:', response);
               setAttendees(response || []);
             } catch (err) {
               console.error('Error fetching session attendees', err);
