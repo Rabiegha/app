@@ -75,9 +75,9 @@ function useAttendeeFiltering(allAttendees: Attendee[], searchQuery: string, fil
     let filtered = [...allAttendees];
 
     // Apply status filter
-    if (filterCriteria.status === 'checked-in') {
+    if (filterCriteria && filterCriteria.status === 'checked-in') {
       filtered = filtered.filter(a => a.attendee_status === 1);
-    } else if (filterCriteria.status === 'not-checked-in') {
+    } else if (filterCriteria && filterCriteria.status === 'not-checked-in') {
       filtered = filtered.filter(a => a.attendee_status === 0);
     }
 
@@ -100,7 +100,7 @@ function useAttendeeFiltering(allAttendees: Attendee[], searchQuery: string, fil
   }, [allAttendees, deferredQuery, filterCriteria, isSearchByCompanyMode]);
 }
 
-const MainAttendeeListItem = forwardRef<ListHandle, Props>(({ 
+const MainAttendeeList = forwardRef<ListHandle, Props>(({ 
   searchQuery, 
   onTriggerRefresh, 
   filterCriteria,
@@ -160,7 +160,12 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({
   }, [allAttendees]);
   
   // Filter and process attendee data
-  const totalFilteredData = useAttendeeFiltering(allAttendees, debouncedSearchQuery, filterCriteria, isSearchByCompanyMode);
+  const totalFilteredData = useAttendeeFiltering(
+    allAttendees, 
+    debouncedSearchQuery, 
+    filterCriteria || { status: '' }, 
+    isSearchByCompanyMode
+  );
   
   // Paginate the data
   const filteredData = useMemo(
@@ -240,7 +245,6 @@ const MainAttendeeListItem = forwardRef<ListHandle, Props>(({
             searchQuery={debouncedSearchQuery}
             isCheckedIn={checkedInMap[item.id] || false}
             isSearchByCompanyMode={isSearchByCompanyMode}
-            onUpdateAttendee={handleAttendeeUpdate}
             onSwipeableOpen={handleSwipeableOpen}
             onPrintAndCheckIn={onPrintAndCheckIn}
             onToggleCheckIn={onToggleCheckIn}
@@ -277,4 +281,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainAttendeeListItem;
+export default MainAttendeeList;

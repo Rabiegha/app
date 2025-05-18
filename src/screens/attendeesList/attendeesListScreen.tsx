@@ -19,7 +19,6 @@ import FiltreComponent from '../../components/filtre/FiltreComponent';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../redux/store';
 import { fetchAttendeesList, updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
-import { updateAttendee } from '../../redux/thunks/attendee/updateAttendeeThunk';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
@@ -32,6 +31,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import usePrintDocument from '../../printing/hooks/usePrintDocument';
 import { AuthContext } from '../../context/AuthContext';
 import { Attendee } from '../../types/attendee.types';
+import { useAttendee } from '../../hooks/attendee/useAttendee';
 
 const defaultFilterCriteria = {
   status: 'all',
@@ -55,6 +55,7 @@ const AttendeeListScreen = () => {
   const navigation = useNavigation();
   const { printDocument } = usePrintDocument();
   const { status: printStatus, clearStatus, setStatus } = usePrintStatus();
+  const { updateAttendeeStatus } = useAttendee();
   
   // Attendee data from Redux
   const { list: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendee);
@@ -109,47 +110,103 @@ const AttendeeListScreen = () => {
     }
   };
 
+  // Handle check-in functionality
+  const handleCheckIn = async (attendeeId: string, status: 0 | 1) => {
+    if (!userId || !eventId || !attendeeId) {
+      console.error('Missing required parameters for check-in');
+      return false;
+    }
+
+    try {
+      // Update the attendee status
+      const success = await updateAttendeeStatus({
+        userId,
+        eventId: eventId as string,
+        attendeeId,
+        status
+      }).catch((error: Error) => {
+        console.error('API call failed:', error);
+        return false;
+      });
+      
+      if (success) {
+        // Refresh data after successful update
+        setRefreshTrigger(p => p + 1);
+        return true; // Indicate success
+      } else {
+        return false; // Indicate failure
+      }
+    } catch (error) {
+      console.error('Error during check-in process:', error);
+      return false; // Indicate failure
+    }
+  };
+  
   // Handle attendee updates
   const handleUpdateAttendee = async (updatedAttendee: Attendee) => {
+    // Store original attendee state to revert if needed
+    const originalAttendee = allAttendees.find((a: Attendee) => a.id === updatedAttendee.id);
+    if (!originalAttendee) {
+      console.error('Cannot find original attendee to update');
+      return false;
+    }
+    
     try {
       // Update locally first for immediate UI feedback
-      dispatch(updateAttendeeLocally(updatedAttendee));
+      dispatch(updateAttendeeLocally({
+        ...updatedAttendee,
+        attendee_status: updatedAttendee.attendee_status
+      }));
       
       // Then update on the server
-      await dispatch(updateAttendee(updatedAttendee) as any);
+      const success = await handleCheckIn(
+        updatedAttendee.id.toString(),
+        updatedAttendee.attendee_status
+      );
       
-      // Refresh data after update
-      setRefreshTrigger(p => p + 1);
+      if (!success) {
+        // If server update failed, revert local changes
+        dispatch(updateAttendeeLocally(originalAttendee));
+        
+        // Show error to user
+        console.error('Failed to update attendee status on server');
+      }
       
-      return true; // Indicate success
+      return success; // Indicate success or failure
     } catch (error) {
       console.error('Error updating attendee:', error);
+      
+      // Revert local changes on error
+      dispatch(updateAttendeeLocally(originalAttendee));
+      
       return false; // Indicate failure
     }
   };
   
   // Handle print and check-in action
   const handlePrintAndCheckIn = async (attendee: Attendee) => {
+    // Store original attendee state to revert if needed
+    const originalAttendee = { ...attendee };
+    
     try {
-      // Update attendee status to checked-in
-      const updatedAttendee = {
-        ...attendee,
-        attendee_status: 1 as const,
-      };
-      
       // First update Redux store locally for immediate UI feedback
-      dispatch(updateAttendeeLocally(updatedAttendee));
+      dispatch(updateAttendeeLocally({
+        ...attendee,
+        attendee_status: 1 as const
+      }));
       
       // Show success notification immediately
       setStatus('checkin_success');
       
       // Print badge if available
+      let printSuccess = false;
       if (attendee.badge_pdf_url && 
           typeof attendee.badge_pdf_url === 'string' && 
           attendee.badge_pdf_url.trim() !== '') {
         try {
           // Print the badge right away
           await printDocument(attendee.badge_pdf_url, undefined, true);
+          printSuccess = true;
         } catch (printError) {
           console.error('Error printing badge:', printError);
           setStatus('unknown_error');
@@ -159,17 +216,33 @@ const AttendeeListScreen = () => {
         setStatus('file_not_found');
       }
       
-      // Then update on the server (don't wait for this to complete before printing)
+      // Then update on the server
       try {
-        await dispatch(updateAttendee(updatedAttendee) as any);
-        // Refresh data after update
-        setRefreshTrigger(p => p + 1);
+        const apiSuccess = await handleCheckIn(attendee.id.toString(), 1);
+        
+        if (!apiSuccess) {
+          // If server update failed but printing succeeded, inform the user
+          // but don't revert the UI state to avoid confusion
+          if (printSuccess) {
+            console.warn('Badge printed successfully, but server update failed. The attendee will need to be checked in again when online.');
+          } else {
+            // If neither printing nor server update succeeded, revert the local state
+            dispatch(updateAttendeeLocally(originalAttendee));
+            setStatus('unknown_error');
+          }
+        }
       } catch (apiError) {
         console.error('Error updating attendee on server:', apiError);
-        // Don't change the status if printing was successful
+        // Don't revert if printing was successful to avoid confusion
+        if (!printSuccess) {
+          dispatch(updateAttendeeLocally(originalAttendee));
+          setStatus('unknown_error');
+        }
       }
     } catch (error) {
       console.error('Error while printing and checking in:', error);
+      // Revert local changes
+      dispatch(updateAttendeeLocally(originalAttendee));
       setStatus('unknown_error');
     }
   };
@@ -177,14 +250,29 @@ const AttendeeListScreen = () => {
   // Handle toggle check-in status
   const handleToggleCheckIn = async (attendee: Attendee) => {
     // Toggle attendee status
-    const updatedAttendee = {
-      ...attendee,
-      attendee_status: attendee.attendee_status === 0 ? (1 as const) : (0 as const),
-    };
+    const newStatus = attendee.attendee_status === 0 ? (1 as const) : (0 as const);
+    // Store original status for reverting if needed
+    const originalStatus = attendee.attendee_status;
     
-    // Update in Redux and API
-    await handleUpdateAttendee(updatedAttendee);
-    setStatus('checkin_success');
+    // Update locally first for immediate UI feedback
+    dispatch(updateAttendeeLocally({
+      ...attendee,
+      attendee_status: newStatus
+    }));
+    
+    // Update in API
+    const success = await handleCheckIn(attendee.id.toString(), newStatus);
+    
+    if (success) {
+      setStatus('checkin_success');
+    } else {
+      // Revert local changes if API update failed
+      dispatch(updateAttendeeLocally({
+        ...attendee,
+        attendee_status: originalStatus
+      }));
+      setStatus('unknown_error');
+    }
   };
   
   // Trigger refresh for child components

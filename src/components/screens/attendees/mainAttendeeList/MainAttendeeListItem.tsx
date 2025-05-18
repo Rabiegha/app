@@ -26,7 +26,7 @@ interface ListItemProps {
   onToggleCheckIn: (attendee: Attendee) => Promise<void>;
 }
 
-const ListItem = React.memo(
+const MainAttendeeListItem = React.memo(
   ({ 
     item, 
     searchQuery = '', 
@@ -117,7 +117,7 @@ const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>(
   }
 );
 
-export default ListItem;
+export default MainAttendeeListItem;
 
 const styles = StyleSheet.create({
   listItemContainer: {

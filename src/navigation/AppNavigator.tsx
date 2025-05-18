@@ -16,6 +16,7 @@ import {selectCurrentUserId, selectUserType} from '../redux/selectors/auth/authS
 import SessionAttendeesListScreen from '../screens/sessionAttendeesList/SessionAttendeesListScreen';
 import PartnerTabNavigator from './tabNavigator/partnerTabNavigator/PartnerTabNavigator';
 import ScanScreen from '../screens/scanScreen/ScanScreen';
+import ProfileScreen from '../screens/profil/Profil';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,7 @@ function AppNavigator() {
       <Stack.Screen name="WebView" component={WebViewScreen} />
       <Stack.Screen name="Avenir" component={FutureEventsScreen} />
       <Stack.Screen name="Passees" component={PastEventsScreen} />
+      <Stack.Screen name="Profil" component={ProfileScreen} />
     </Stack.Navigator>
   );
 }

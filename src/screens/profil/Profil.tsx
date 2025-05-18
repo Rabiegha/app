@@ -5,10 +5,12 @@ import userIcon from '../../assets/images/user.png';
 import Icons from '../../assets/images/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import { selectUserInfo } from '../../redux/selectors/auth/authSelectors';
+import { selectIsLoading, selectUserInfo } from '../../redux/selectors/auth/authSelectors';
 import MainHeader from '../../components/elements/header/MainHeader';
 import { logoutThunk } from '../../redux/thunks/auth/logoutThunk';
-import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
+import { useNavigation, NavigationProp, ParamListBase, CommonActions } from '@react-navigation/native';
+import LogOutButton from '@/components/elements/buttons/LogOutButton';
+import LargeButton from '@/components/elements/buttons/LargeButton';
 
 interface ProfileScreenProps {
     onLogout?: () => void;
@@ -23,17 +25,53 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
 
       };
 
+
+  const isLoading = useSelector(selectIsLoading);
+
   const userInfo = useSelector(selectUserInfo);
 
   const name = `${userInfo?.first_name || ''} ${userInfo?.last_name || ''}`.trim();
   const email = userInfo?.email || '-';
   const role = userInfo?.user_type_name || '-';
 
-  const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to log out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Log out', onPress: onLogout },
-    ]);
+const handleLogout = async () => {
+    try {
+      // Show a confirmation dialog
+      Alert.alert(
+        'Logout',
+        'Are you sure you want to log out?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Logout',
+            onPress: async () => {
+              try {
+                // Use unwrap to properly handle async/await with createAsyncThunk
+                await dispatch(logoutThunk()).unwrap();
+                // Only navigate after successful logout
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{name: 'Connexion'}],
+                  }),
+                );
+              } catch (err) {
+                // Handle logout error
+                const errorMessage = err instanceof Error ? err.message : 'There was a problem logging out';
+                Alert.alert('Logout Failed', errorMessage);
+              }
+            },
+          },
+        ],
+        {cancelable: true},
+      );
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.error('Logout error:', errorMessage);
+    }
   };
 
   const goBack = () => {
@@ -59,15 +97,15 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
             <Text style={styles.label}>Rôle:</Text>
             <Text style={styles.value}>{role}</Text>
         </View>
-
-                {/* 
-                <TouchableOpacity style={styles.logoutButton} onPress={handleLogOut}>
-                <Image source={Icons['Log-out']} style={styles.logoutIcon} />
-                <Text style={styles.logoutText}>Se déconnecter</Text>
-                </TouchableOpacity> 
-                */}
-
         </View>
+        <View style={styles.buttonContainer}>
+        <LargeButton 
+            onPress={handleLogout}  
+            title={'Se deconnecter'}
+            backgroundColor={colors.red}
+          />
+        </View>
+
     </View>
     
   );
@@ -76,10 +114,10 @@ const ProfileScreen = ({ onLogout }: ProfileScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   contentContainer: {
     flex: 1,
-    backgroundColor: 'white',
     alignItems: 'center',
     padding: 20,
   },
@@ -131,6 +169,10 @@ const styles = StyleSheet.create({
     height: 20,
     tintColor: 'white',
   },
+  buttonContainer: {
+    marginBottom: 80,
+    width: '90%',
+  }
 });
 
 export default ProfileScreen;

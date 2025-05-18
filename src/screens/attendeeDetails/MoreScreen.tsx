@@ -3,6 +3,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
+import { useAppDispatch } from '../../redux/store';
+import { updateAttendeeLocally, clearSelectedAttendee } from '../../redux/slices/attendee/attendeeSlice';
 
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
@@ -25,6 +27,7 @@ const MoreScreen = ({ route, navigation }) => {
   /* ---------------------------------------------------------------- */
   const userId = useSelector(selectCurrentUserId);
   const { eventId } = useActiveEvent();
+  const dispatch = useAppDispatch();
   const { 
     attendeeDetails, 
     isLoadingDetails, 
@@ -68,7 +71,12 @@ const MoreScreen = ({ route, navigation }) => {
   // Refresh when coming back to this screen
   useFocusEffect(
     useCallback(() => {
+      // Set loading state to true immediately when screen is focused
+      // This will prevent showing error view during transition
       fetchData();
+      
+      // Only clear data when navigating away, don't show error state
+      return () => {};
     }, [fetchData])
   );
 
@@ -107,24 +115,56 @@ const MoreScreen = ({ route, navigation }) => {
   };
 
   const handleCheckinButton = async (status: 0 | 1) => {
-    if (userId && eventId && attendeeId) {
+    if (userId && eventId && attendeeId && attendeeDetails) {
+      // Store the original status to revert if needed
+      const originalStatus = attendeeDetails.attendeeStatus as 0 | 1;
+      
       try {
-        // First update the status
-        await updateAttendeeStatus({
+        // First update locally for immediate UI feedback
+        dispatch(updateAttendeeLocally({
+          id: parseInt(attendeeId),
+          attendee_status: status,
+          event_id: eventId
+        }));
+        
+        // Then update on the server
+        const success = await updateAttendeeStatus({
           userId,
           eventId,
           attendeeId,
           status
+        }).catch((error: Error) => {
+          // If API call fails, revert the local change
+          console.error('API call failed:', error);
+          return false;
         });
         
-        // Then fetch the updated attendee details to get the new timestamp
-        await fetchAttendeeDetails({
-          userId,
-          eventId,
-          attendeeId
-        });
+        // If the server update failed, revert the local change
+        if (!success) {
+          // Revert to original status
+          dispatch(updateAttendeeLocally({
+            id: parseInt(attendeeId),
+            attendee_status: originalStatus,
+            event_id: eventId
+          }));
+          
+          // Show error message to user
+          console.error('Failed to update check-in status. Please check your internet connection.');
+          // You can replace this with a proper toast or notification component
+        }
       } catch (error) {
         console.error('Error during check-in process:', error);
+        
+        // Revert to original status on any error
+        dispatch(updateAttendeeLocally({
+          id: parseInt(attendeeId),
+          attendee_status: originalStatus,
+          event_id: eventId
+        }));
+        
+        // Show error message to user
+        console.error('Failed to update check-in status. Please check your internet connection.');
+        // You can replace this with a proper toast or notification component
       }
     }
   };
@@ -144,7 +184,7 @@ const MoreScreen = ({ route, navigation }) => {
     
     // Only show error if we're not loading and have a real error
     // This prevents the error view from flashing during initial load
-    if (error && !isLoadingDetails) {
+    if (error && !isLoadingDetails && attendeeDetails === null) {
       return (
         <View style={styles.filler}>
           <ErrorView handleRetry={fetchData} />
@@ -156,7 +196,7 @@ const MoreScreen = ({ route, navigation }) => {
     if (!attendeeDetails && !isLoadingDetails) {
       return (
         <View style={styles.filler}>
-          <ErrorView message="No attendee details found" handleRetry={fetchData} />
+          <LoadingView />
         </View>
       );
     }

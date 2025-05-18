@@ -15,11 +15,21 @@ import { selectIsLoading, selectError } from '../../redux/selectors/auth/authSel
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Define the navigation types
-type RootStackParamList = {
+export type RootStackParamList = {
   Tabs: { screen: string };
   Connexion: undefined;
   Menu: { screen: string };
-  // Add other screens as needed
+  Profil: undefined;
+  Events: undefined;
+  SessionAttendeesList: undefined;
+  More: undefined;
+  Badge: undefined;
+  ScanScreen: undefined;
+  Printers: undefined;
+  PaperFormat: undefined;
+  WebView: undefined;
+  Avenir: undefined;
+  Passees: undefined;
 };
 
 type MenuScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -43,6 +53,7 @@ const MenuScreen = () => {
       title: 'Menu',
       buttons: [
         {title: 'Event details', action: () => navigation.navigate('Menu', { screen: 'EventDetails' })},
+        {title: 'Profil', action: () => navigation.navigate('Profil')},
       ],
     },
     {

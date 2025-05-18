@@ -113,6 +113,7 @@ const baseFields = [
   {
     label: 'Nom:',
     value: firstName && lastName ? `${firstName} ${lastName}` : '-',
+    showButton: true,
   },
   {
     fieldKey: 'email',
@@ -189,20 +190,22 @@ const handleEditSubmit = async (newValue: string) => {
       <View style={styles.imageContainer}>
         <Image source={userIcon} style={styles.image} />
       </View>
-      <View style={styles.topButtonsContainer}>
-        <SmallButton
-              imageSource={Icons.Print}
-          pressHandler={Print}
-          backgroundColor={colors.green}
-          tintColor={colors.greyCream}
-        />
-        <SmallButton
-              imageSource={Icons.Scan}
-          pressHandler={See}
-          backgroundColor={colors.greyCream}
-          tintColor={colors.darkGrey}
-        />
-      </View>
+      {!isPartner && (
+        <View style={styles.topButtonsContainer}>
+          <SmallButton
+                imageSource={Icons.Print}
+            pressHandler={Print}
+            backgroundColor={colors.green}
+            tintColor={colors.greyCream}
+          />
+          <SmallButton
+                imageSource={Icons.Scan}
+            pressHandler={See}
+            backgroundColor={colors.greyCream}
+            tintColor={colors.darkGrey}
+          />
+        </View>
+      )}
       <View style={styles.container}>
       {baseFields
         .filter(field => {
@@ -215,7 +218,7 @@ const handleEditSubmit = async (newValue: string) => {
             key={index}
             label={field.label}
             value={field.value}
-            showButton={field.showButton}
+            showButton={isPartner ? field.fieldKey === '' : field.showButton}
             modifyHandle={field.fieldKey ? () => openEditModal(field.fieldKey) : undefined}
           />
       ))}

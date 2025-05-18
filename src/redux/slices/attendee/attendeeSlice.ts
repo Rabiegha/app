@@ -125,9 +125,25 @@ const attendeeSlice = createSlice({
 
     updateAttendeeLocally(state, action) {
         const updated = action.payload;
+        
+        // Update in the list
         state.list = state.list.map(attendee =>
           attendee.id === updated.id ? updated : attendee
         );
+        
+        // Also update the selectedAttendee if it's the same attendee
+        if (state.selectedAttendee && 
+            state.selectedAttendee.theAttendeeId === updated.id.toString()) {
+          
+          // Update the check-in status
+          state.selectedAttendee = {
+            ...state.selectedAttendee,
+            attendeeStatus: updated.attendee_status,
+            // Update the timestamp for check-in/out
+            attendeeStatusChangeDatetime: updated.attendee_status === 1 ? 
+              new Date().toLocaleString('fr-FR') : '-'
+          };
+        }
       },
   },
   extraReducers: (builder) => {
