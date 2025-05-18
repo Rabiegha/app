@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { View, Platform, StyleSheet } from 'react-native';
+import React, { useState, ReactElement } from 'react';
+import { View, Platform, StyleSheet, ViewStyle } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
+import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { TabBarIcon } from '../../components/navigation/TabBarIconComponent';
 import { ScanButton } from '../../components/navigation/scanButton';
 import ModalFilter from '../../components/elements/modals/ModalFilter';
@@ -11,18 +13,20 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
 
-function getScreenOptions(route, keyboardOffset) {
+function getScreenOptions(route: RouteProp<ParamListBase, string>, keyboardOffset: number): BottomTabNavigationOptions {
   const currentTab = TAB_SCREENS.find(tab => tab.name === route.name);
   const hideTabBar = currentTab?.hideTabBar || false;
 
+  const tabBarStyleArray: ViewStyle[] = [
+    styles.tabBarStyle,
+    {
+      bottom: keyboardOffset ? -keyboardOffset : 25,
+      ...(hideTabBar && { display: 'none' as const }),
+    }
+  ];
+  
   return {
-    tabBarStyle: [
-      styles.tabBarStyle,
-      {
-        bottom: keyboardOffset ? -keyboardOffset : 25,
-        ...(hideTabBar && { display: 'none' }),
-      }
-    ],
+    tabBarStyle: tabBarStyleArray,
     tabBarItemStyle: styles.tabBarItemStyle,
     tabBarActiveTintColor: colors.green,
     tabBarInactiveTintColor: colors.greyCream,
@@ -31,7 +35,7 @@ function getScreenOptions(route, keyboardOffset) {
   };
 }
 
-function TabNavigator() {
+function TabNavigator(): ReactElement {
   const { keyboardOffset } = useKeyboardOffset();
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
 
@@ -55,7 +59,9 @@ function TabNavigator() {
                 <TabBarIcon icon={icon} label={label} focused={focused} height={height} width={width} />
               ),
               tabBarButton: isMiddle
-                ? props => <ScanButton key={props.key} {...props} />
+                ? props => {
+                  return <ScanButton {...props} onPress={props.onPress || (() => {})} />;
+                }
                 : undefined,
             }}
           />
@@ -67,7 +73,7 @@ function TabNavigator() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<{tabBarStyle: ViewStyle, tabBarItemStyle: ViewStyle}>({
   tabBarStyle: {
     position: 'absolute',
     bottom: 30,

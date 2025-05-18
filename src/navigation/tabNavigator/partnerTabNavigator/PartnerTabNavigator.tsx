@@ -5,7 +5,7 @@ import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { TabBarIcon } from '../../../components/navigation/TabBarIconComponent';
 import { ScanButton } from '../../../components/navigation/scanButton';
 import ModalFilter from '../../../components/elements/modals/ModalFilter';
-import TAB_SCREENS from './PartnerTabScreensConfig.tsx';
+import TAB_SCREENS from './PartnerTabScreensConfig';
 import colors from '../../../assets/colors/colors';
 import useKeyboardOffset from '../../../hooks/keyboard/useKeyboardOffset';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -55,7 +55,9 @@ function PartnerTabNavigator() {
                 <TabBarIcon icon={icon} label={label} focused={focused} height={height} width={width} />
               ),
               tabBarButton: isMiddle
-                ? (props) => <ScanButton {...props} onPress={() => {}} />
+                  ? props => {
+                    return <ScanButton {...props} onPress={props.onPress || (() => {})} />;
+                  }
                 : undefined,
             }}
           />
