@@ -81,8 +81,6 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
         switch (scanType) {
           case ScanType.Partner:
             await new Promise(res => setTimeout(res, 1000));
-            await fetchCounts(attendee.attendee_id);
-            await new Promise(res => setTimeout(res, 1000));
             setModalVisible(true);
             break;
           case ScanType.Session:
