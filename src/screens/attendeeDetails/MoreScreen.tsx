@@ -76,8 +76,12 @@ const MoreScreen = ({ route, navigation }) => {
       fetchData();
       
       // Only clear data when navigating away, don't show error state
-      return () => {};
-    }, [fetchData])
+      return () => {
+        // Clear selected attendee when leaving the screen to ensure
+        // we don't see stale data when returning to this screen
+        dispatch(clearSelectedAttendee());
+      };
+    }, [fetchData, dispatch])
   );
 
   // Refresh when refresh trigger changes
@@ -175,7 +179,7 @@ const MoreScreen = ({ route, navigation }) => {
   /* ---------------------------------------------------------------- */
   const renderContent = () => {
     // Always show loading first when we're fetching data
-    if (isLoadingDetails) {
+    if (isLoadingDetails || !attendeeDetails) {
       return (
         <View style={styles.filler}>
           <LoadingView />
@@ -189,15 +193,6 @@ const MoreScreen = ({ route, navigation }) => {
       return (
         <View style={styles.filler}>
           <ErrorView handleRetry={fetchData} />
-        </View>
-      );
-    }
-
-    // Only show this if we're not loading and have no data
-    if (!attendeeDetails && !isLoadingDetails) {
-      return (
-        <View style={styles.filler}>
-          <LoadingView />
         </View>
       );
     }

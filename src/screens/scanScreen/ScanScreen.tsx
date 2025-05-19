@@ -25,15 +25,19 @@ type Props = {
 
   
 const ScanScreen = ({scanType: propScanType}: Props) => {
-
     const isFocused = useIsFocused();
     const navigation = useNavigation();
+    const route = useRoute<RouteProp<RootStackParamList, 'ScanScreen'>>();
+    const scanType = propScanType || route.params?.scanType || ScanType.Main;
     
     // Enhanced focus effect to properly reset scanner state
     useFocusEffect(
         useCallback(() => {
           // When screen gains focus
           scan.resetScanner();
+          
+          // The scan cooldown is now handled internally in the useScanLogic hook
+          // Session scans use a 2-second cooldown, other scan types use a 5-second cooldown
           
           // Handle back button press to ensure proper cleanup
           const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -50,7 +54,7 @@ const ScanScreen = ({scanType: propScanType}: Props) => {
             scan.forceResetScanState(); // Use our enhanced reset function
             backHandler.remove();
           };
-        }, [isFocused])
+        }, [isFocused, scanType])
       );
       
     // Additional effect to handle navigation events
@@ -65,9 +69,6 @@ const ScanScreen = ({scanType: propScanType}: Props) => {
       
 
   const cameraRef = useRef<RNCamera>(null);
-  // navigation is already defined above
-  const route = useRoute<RouteProp<RootStackParamList, 'ScanScreen'>>();
-  const scanType = propScanType || route.params?.scanType || ScanType.Main;  
   const userId = useSelector(selectCurrentUserId);
   const { status: printStatus, clearStatus } = usePrintStatus();
 
