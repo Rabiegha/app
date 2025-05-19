@@ -45,6 +45,10 @@ export default function usePastEvents() {
   ]);
 
   const clearData = useCallback(() => dispatch(clearPastEvents()), [dispatch]);
+  
+  const refreshEvents = useCallback(() => {
+    return dispatch(fetchPastEvents({userId, isEventFrom, isDemoMode}));
+  }, [dispatch, userId, isEventFrom, isDemoMode]);
 
-  return {events, loading, error, fetchPastEvents, clearData};
+  return {events, loading, error, clearData, refreshEvents};
 }

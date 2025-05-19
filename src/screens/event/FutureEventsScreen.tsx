@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {View, StyleSheet, StatusBar, Text, SectionList} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, StatusBar, Text, SectionList, RefreshControl} from 'react-native';
 import {useFocusEffect, useRoute, RouteProp, ParamListBase} from '@react-navigation/native';
 
 import ListEvents from '../../components/screens/events/ListEvents';
@@ -27,6 +27,7 @@ type FutureEventsRouteParams = {
 
 const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
   const route = useRoute<RouteProp<Record<string, FutureEventsRouteParams>, string>>();
+  const [refreshing, setRefreshing] = useState(false);
   
   // Get props either directly or from route params
   const searchQuery = props.searchQuery || route.params?.searchQuery || '';
@@ -35,7 +36,7 @@ const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
     // Default implementation if no handler is provided
   });
 
-  const {events, loading, error, clearData} = useFutureEvents();
+  const {events, loading, error, clearData, refreshEvents} = useFutureEvents();
   const {sections, eventsToday} = useFilteredAndSectionedEvents(
     events,
     searchQuery,
@@ -50,6 +51,15 @@ const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
 
   const handleRetry = () => {
     clearData();
+  };
+  
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refreshEvents();
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   if (loading) {
@@ -75,6 +85,9 @@ const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
       <SectionList
         sections={sections}
         keyExtractor={item => item.event_id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         renderItem={({item}) => (
           <ListEvents
             eventData={{

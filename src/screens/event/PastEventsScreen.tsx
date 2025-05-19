@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, StyleSheet, FlatList} from 'react-native';
+import React, {useState} from 'react';
+import {View, StyleSheet, FlatList, RefreshControl} from 'react-native';
 import {useFocusEffect, useRoute, RouteProp} from '@react-navigation/native';
 import ListEvents from '../../components/screens/events/ListEvents';
 import globalStyle from '../../assets/styles/globalStyle';
@@ -23,6 +23,7 @@ type PastEventsRouteParams = {
 
 const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
   const route = useRoute<RouteProp<Record<string, PastEventsRouteParams>, string>>();
+  const [refreshing, setRefreshing] = useState(false);
   
   // Get props either directly or from route params
   const searchQuery = props.searchQuery || route.params?.searchQuery || '';
@@ -31,7 +32,7 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
     // Default implementation if no handler is provided
   });
 
-  const {events, loading, error, clearData} = usePastEvents();
+  const {events, loading, error, clearData, refreshEvents} = usePastEvents();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -43,6 +44,15 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
   );
   const handleRetry = () => {
     clearData();
+  };
+  
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refreshEvents();
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   if (loading) {
@@ -66,6 +76,9 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
       <FlatList
         data={filteredEvents}
         keyExtractor={item => item.event_id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         renderItem={({item}) => (
           <ListEvents
             eventData={{

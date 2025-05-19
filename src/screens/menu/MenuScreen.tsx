@@ -52,8 +52,8 @@ const MenuScreen = () => {
     {
       title: 'Menu',
       buttons: [
-        {title: 'Event details', action: () => navigation.navigate('Menu', { screen: 'EventDetails' })},
         {title: 'Profil', action: () => navigation.navigate('Profil')},
+        {title: 'Event details', action: () => navigation.navigate('Menu', { screen: 'EventDetails' })},
       ],
     },
     {

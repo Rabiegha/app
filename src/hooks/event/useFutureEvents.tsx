@@ -49,6 +49,10 @@ export default function useFutureEvents() {
     () => dispatch(clearFutureEvents()),
     [dispatch],
   );
+  
+  const refreshEvents = useCallback(() => {
+    return dispatch(fetchFutureEvents({userId, isEventFromList, isDemoMode}));
+  }, [dispatch, userId, isEventFromList, isDemoMode]);
 
-  return {events, loading, error, clearData};
+  return {events, loading, error, clearData, refreshEvents};
 }
