@@ -109,7 +109,7 @@ const PrintersList = ({ refreshCallback }: PrintersListProps) => {
   // Filter printers based on search query and state
   const filteredPrinters = nodePrinters.filter(printer => {
     const matchesSearch = printer.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return printer.state === 'offline' && matchesSearch;
+    return printer.state === 'online' && matchesSearch;
   });
   
   // Keep the original filters for reference
