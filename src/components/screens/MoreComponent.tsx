@@ -63,6 +63,9 @@ const MoreComponent = ({
   // Determine if user is a partner
 const isPartner = userType?.toLowerCase() === 'partner';
 
+// Log for debugging
+console.log('User type:', userType, 'Is partner:', isPartner);
+
 
 const attendeeData = {
   first_name: firstName,
@@ -109,40 +112,47 @@ const baseFields = [
     label: 'Type:',
     value: type || '-',
     showButton: true,
+    hideForPartner: false,
   },
   {
     label: 'Nom:',
     value: firstName && lastName ? `${firstName} ${lastName}` : '-',
     showButton: true,
+    hideForPartner: false,
   },
   {
     fieldKey: 'email',
     label: 'Adresse mail:',
     value: email || '-',
     showButton: true,
+    hideForPartner: false,
   },
   {
     fieldKey: 'phone',
     label: 'Téléphone:',
     value: formattedPhone || '-',
     showButton: true,
+    hideForPartner: false,
   },
   {
     fieldKey: 'organization',
     label: 'Entreprise:',
     value: organization || '-',
     showButton: true,
+    hideForPartner: false,
   },
   {
     fieldKey: 'jobTitle',
     label: 'Job Title:',
     value: JobTitle || '-',
     showButton: true,
+    hideForPartner: false,
   },
   {
     label: 'Date de check-in:',
     value: parsedAttendeeStatus === 1 && attendeeStatusChangeDatetime && attendeeStatusChangeDatetime !== '-' ? 
       attendeeStatusChangeDatetime : '-',
+    hideForPartner: false,
   },
   {
     fieldKey: 'comment',
@@ -150,6 +160,7 @@ const baseFields = [
     value: commentaire || '-',
     showForPartnerOnly: true,
     showButton: true,
+    hideForPartner: false,
   },
 ];
 
@@ -183,6 +194,11 @@ const handleEditSubmit = async (newValue: string) => {
 
   
 
+  // For debugging - log the data being received
+  // console.log('Rendering MoreComponent with data:', {
+  //   firstName, lastName, email, phone, attendeeStatus, organization, JobTitle, commentaire
+  // });
+
   return (
     <ScrollView
     contentContainerStyle={styles.container}
@@ -209,19 +225,25 @@ const handleEditSubmit = async (newValue: string) => {
       <View style={styles.container}>
       {baseFields
         .filter(field => {
+          // For partners, hide fields marked as hideForPartner
           if (isPartner && field.hideForPartner) return false;
+          // For non-partners, hide fields marked as showForPartnerOnly
           if (!isPartner && field.showForPartnerOnly) return false;
           return true;
         })
-        .map((field, index) => (
-          <LabelValueComponent
-            key={index}
-            label={field.label}
-            value={field.value}
-            showButton={isPartner ? field.fieldKey === 'comment' : field.showButton}
-            modifyHandle={field.fieldKey ? () => openEditModal(field.fieldKey) : undefined}
-          />
-      ))}
+        .map((field, index) => {
+          // For debugging - log each field being rendered
+          // console.log(`Rendering field ${index}:`, field);
+          return (
+            <LabelValueComponent
+              key={index}
+              label={field.label}
+              value={field.value}
+              showButton={field.showButton && (isPartner ? field.fieldKey === '' : true)}
+              modifyHandle={field.fieldKey && field.showButton ? () => openEditModal(field.fieldKey) : undefined}
+            />
+          );
+        })}
 
         </View>
 

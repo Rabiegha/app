@@ -264,12 +264,15 @@ const AttendeeListScreen = () => {
     const success = await handleCheckIn(attendee.id.toString(), newStatus);
     
     if (success) {
-      setStatus('checkin_success');
-      
-      // Reset status after 2 seconds
-      setTimeout(() => {
-        if (setStatus) setStatus(null);
-      }, 2000);
+      // Only show success message when changing from not checked-in to checked-in
+      if (originalStatus === 0 && newStatus === 1) {
+        setStatus('checkin_success');
+        
+        // Reset status after 2 seconds
+        setTimeout(() => {
+          if (setStatus) setStatus(null);
+        }, 2000);
+      }
     } else {
       // Revert local changes if API update failed
       dispatch(updateAttendeeLocally({

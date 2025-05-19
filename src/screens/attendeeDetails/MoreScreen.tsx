@@ -15,7 +15,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
 
 import usePrintDocument from '../../printing/hooks/usePrintDocument';
-import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
+import { selectCurrentUserId, selectUserType } from '../../redux/selectors/auth/authSelectors';
 import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 import { useActiveEvent } from '../../utils/event/useActiveEvent';
@@ -26,6 +26,8 @@ const MoreScreen = ({ route, navigation }) => {
   /* Context & Redux                                                   */
   /* ---------------------------------------------------------------- */
   const userId = useSelector(selectCurrentUserId);
+  const userType = useSelector(selectUserType);
+  const isPartner = userType?.toLowerCase() === 'partner';
   const { eventId } = useActiveEvent();
   const dispatch = useAppDispatch();
   const { 
@@ -178,8 +180,15 @@ const MoreScreen = ({ route, navigation }) => {
   /* Render helpers                                                   */
   /* ---------------------------------------------------------------- */
   const renderContent = () => {
+    // console.log('Rendering content with state:', { 
+    //   isLoadingDetails, 
+    //   isPartner, 
+    //   hasAttendeeDetails: !!attendeeDetails,
+    //   error
+    // });
+    
     // Always show loading first when we're fetching data
-    if (isLoadingDetails || !attendeeDetails) {
+    if (isLoadingDetails && !attendeeDetails) {
       return (
         <View style={styles.filler}>
           <LoadingView />
@@ -190,9 +199,20 @@ const MoreScreen = ({ route, navigation }) => {
     // Only show error if we're not loading and have a real error
     // This prevents the error view from flashing during initial load
     if (error && !isLoadingDetails && attendeeDetails === null) {
+      // Check if this is a partner-specific error message
+      const isPartnerPermissionsError = typeof error === 'string' && 
+        error.includes('partner users') && 
+        error.includes('permissions');
+      
       return (
         <View style={styles.filler}>
-          <ErrorView handleRetry={fetchData} />
+          <ErrorView 
+            handleRetry={fetchData}
+            message={isPartnerPermissionsError ? 
+              'Partners do not have access to this attendee data. Please contact an administrator if you need this information.' : 
+              'An error occurred'
+            }
+          />
         </View>
       );
     }
@@ -214,6 +234,9 @@ const MoreScreen = ({ route, navigation }) => {
       urlBadgeImage: ''
     };
     
+    // Use the comment from route params if it exists, otherwise use from attendee details
+    const commentText = comment || details.commentaire || '';
+    
     return (
       <MoreComponent
         See={handleBadgePress}
@@ -224,7 +247,7 @@ const MoreScreen = ({ route, navigation }) => {
         JobTitle={details.jobTitle}
         attendeeStatus={details.attendeeStatus}
         organization={details.organization}
-        commentaire={comment}
+        commentaire={commentText}
         attendeeId={attendeeId}
         attendeeStatusChangeDatetime={details.attendeeStatusChangeDatetime}
         handleCheckinButton={handleCheckinButton}

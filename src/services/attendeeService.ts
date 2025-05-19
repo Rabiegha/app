@@ -1,6 +1,7 @@
 import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
 import mainApi from '../config/mainApi';
+import { BASE_URL } from '../config/config';
 import { 
   Attendee, 
   FetchAttendeesParams, 
@@ -18,27 +19,60 @@ export const fetchAttendees = async ({
   attendeeStatus
 }: FetchAttendeesParams): Promise<Attendee[]> => {
   try {
+    // Validate required parameters
+    if (!userId) {
+      console.warn('Missing userId in fetchAttendees');
+    }
+    if (!eventId) {
+      console.warn('Missing eventId in fetchAttendees');
+    }
+    if (!attendeeId) {
+      console.warn('Missing attendeeId in fetchAttendees');
+    }
+
     const params = cleanParams({
       current_user_login_details_id: userId,
       event_id: eventId,
       attendee_id: attendeeId,
       attendee_status: attendeeStatus
     });
-    if (__DEV__) {
-        console.log('Params sent to API:', params);
-      }
+    
+    console.log('Params sent to API:', params);
+    console.log('Full API URL:', `${BASE_URL}/ajax_get_event_attendee_details/?current_user_login_details_id=${userId}&event_id=${eventId}&attendee_id=${attendeeId}`);
 
-    const response = await mainApi.get('/ajax_get_event_attendee_details/', { params });
+    // Add a timeout to ensure the request doesn't hang
+    const response = await mainApi.get('/ajax_get_event_attendee_details/', { 
+      params,
+      timeout: 10000 // 10 second timeout
+    });
+    console.log('API response:', response.data);
+    console.log('API response status:', response.status);
+    console.log('API response headers:', response.headers);
 
-    if (!response.data || !response.data.event_attendee_details) {
-      throw new Error('Event attendee list not fetched');
+    if (!response.data) {
+      console.error('No data received from API');
+      return [];
     }
 
-    console.log('Attendee list fetched successfully');
+    if (!response.data.event_attendee_details) {
+      console.error('No event_attendee_details in response');
+      return [];
+    }
 
+    if (!Array.isArray(response.data.event_attendee_details)) {
+      console.error('event_attendee_details is not an array');
+      return [];
+    }
+
+    if (response.data.event_attendee_details.length === 0) {
+      console.warn('Empty attendee list returned');
+    } else {
+      console.log('Attendee list fetched successfully, count:', response.data.event_attendee_details.length);
+    }
 
     return response.data.event_attendee_details;
   } catch (error) {
+    console.error('Error in fetchAttendees:', error);
     handleApiError(error, 'Failed to fetch event attendee list');
     return []; 
   }
@@ -147,6 +181,9 @@ export const mapAttendeeToDetails = (attendee: Attendee) => {
     }
   }
 
+  // Ensure attendeeStatus is strictly 0 or 1
+  const attendeeStatus: 0 | 1 = attendee.attendee_status === 1 ? 1 : 0;
+  
   return {
     type: attendee.attendee_type_name || '-',
     lastName: attendee.last_name || '-',
@@ -158,7 +195,7 @@ export const mapAttendeeToDetails = (attendee: Attendee) => {
     theAttendeeId: String(attendee.id) || '-',
     commentaire: attendee.comment || '-',
     attendeeStatusChangeDatetime: formattedDate,
-    attendeeStatus: attendee.attendee_status === 1 ? 1 : 0,
+    attendeeStatus,
     urlBadgePdf: attendee.badge_pdf_url || '-',
     urlBadgeImage: attendee.badge_image_url || '-',
   };

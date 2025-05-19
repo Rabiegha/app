@@ -25,8 +25,10 @@ const globalStyle = StyleSheet.create({
     fontSize: 15,
     borderWidth: 1,
     borderColor: colors.grey,
-    height: 50,
-    lineHeight: 20,
+    height: Platform.OS === 'ios' ? 55 : 50,
+    lineHeight: Platform.OS === 'ios' ? undefined : 20,
+    textAlignVertical: 'center',
+    paddingVertical: Platform.OS === 'ios' ? 12 : 15,
   },
 });
 
