@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 import MainAttendeeListItem, { ListHandle } from '../../components/screens/attendees/mainAttendeeList/MainAttendeeList';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
@@ -307,7 +308,7 @@ const AttendeeListScreen = () => {
             title={eventName}
           />
         <View style={[styles.mainContent,     {
-          paddingTop: 35 ,
+          paddingTop: 35,
         },]}>
             <Search style={styles.search} onChange={setSearchQuery} value={searchQuery} />
             <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />

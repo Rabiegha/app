@@ -207,7 +207,7 @@ const AddAttendeesComponent = ({
           title={'Check-in'}
           checkedIcon={
             <Image
-              source={Icons.Checked}
+              source={Icons.NotChecked}
               resizeMode="contain"
               style={{
                 width: 20,
@@ -218,7 +218,7 @@ const AddAttendeesComponent = ({
           }
           uncheckedIcon={
             <Image
-              source={Icons.NotChecked}
+              source={Icons.Checked}
               resizeMode="contain"
               style={{
                 width: 20,
