@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import React, { useRef, useEffect } from 'react';
+import { View, StyleSheet, BackHandler } from 'react-native';
+import { RouteProp, useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
 import { RNCamera } from 'react-native-camera';
 import SessionStats from '../../components/screens/sessionAttendeeList/SessionStatsComponent';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
@@ -26,20 +26,46 @@ type Props = {
   
 const ScanScreen = ({scanType: propScanType}: Props) => {
 
+    const isFocused = useIsFocused();
+    const navigation = useNavigation();
+    
+    // Enhanced focus effect to properly reset scanner state
     useFocusEffect(
         useCallback(() => {
-          // Quand l'écran est focus
+          // When screen gains focus
           scan.resetScanner();
+          
+          // Handle back button press to ensure proper cleanup
+          const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            if (isFocused) {
+              scan.forceResetScanState();
+              navigation.goBack();
+              return true;
+            }
+            return false;
+          });
+          
           return () => {
-            // Quand on quitte l'écran (optionnel)
-            scan.resetScanner(); // utile aussi ici pour éviter les conflits
+            // When screen loses focus
+            scan.forceResetScanState(); // Use our enhanced reset function
+            backHandler.remove();
           };
-        }, [])
+        }, [isFocused])
       );
+      
+    // Additional effect to handle navigation events
+    useEffect(() => {
+      const unsubscribe = navigation.addListener('beforeRemove', () => {
+        // Ensure scan state is reset before navigation
+        scan.forceResetScanState();
+      });
+      
+      return unsubscribe;
+    }, [navigation]);
       
 
   const cameraRef = useRef<RNCamera>(null);
-  const navigation = useNavigation();
+  // navigation is already defined above
   const route = useRoute<RouteProp<RootStackParamList, 'ScanScreen'>>();
   const scanType = propScanType || route.params?.scanType || ScanType.Main;  
   const userId = useSelector(selectCurrentUserId);
@@ -106,7 +132,10 @@ const ScanScreen = ({scanType: propScanType}: Props) => {
       <MainScanComponent
         ref={cameraRef}
         onBarCodeRead={scan.onBarCodeRead}
-        goBack={navigation.goBack}
+        goBack={() => {
+          scan.forceResetScanState();
+          navigation.goBack();
+        }}
         attendeeName={scan.attendeeName}
         scanStatus={scan.scanStatus}
         sessionScanStats={sessionScanStats}

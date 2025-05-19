@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { handleScan } from '../utils/handleScan';
 import Toast from 'react-native-toast-message';
 import { useAddComment } from '../../../hooks/edit/useAddComment';
@@ -48,12 +48,26 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
     hasScanned.current = false;
   };
 
+  // Clean up function to reset scanner state when component unmounts
+  useEffect(() => {
+    return () => {
+      resetScanner();
+    };
+  }, []);
+
 
   const onBarCodeRead = async ({ data }) => {
-    if (hasScanned.current) return;
+    // Prevent processing if already scanning or if data is empty
+    if (hasScanned.current || !data) return;
     hasScanned.current = true;
+    
+    // Set a timeout to reset hasScanned if scan processing takes too long
+    const scanTimeoutId = setTimeout(() => {
+      hasScanned.current = false;
+    }, 5000); // 5 seconds safety timeout
 
-    await handleScan({
+    try {
+      await handleScan({
       data,
       scanType,
       userId,
@@ -119,6 +133,19 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
         }, 2000);
       },
     });
+    } catch (error) {
+      console.error('Error in barcode scanning:', error);
+      resetScanner();
+    } finally {
+      // Clear the safety timeout
+      clearTimeout(scanTimeoutId);
+    }
+  };
+
+  // Function to force reset the scanner state - can be called when navigating away
+  const forceResetScanState = () => {
+    hasScanned.current = false;
+    resetScanner();
   };
 
   return {
@@ -147,5 +174,6 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
     addCommentError,
     resetAddError,
     submitComment,
+    forceResetScanState,
   };
 };
