@@ -18,6 +18,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import {getNodePrinters} from '../../../services/printNodeService';
 import Icons from '../../../assets/images/icons';
 import ErrorView from '../../elements/view/ErrorView';
+import Search from '../../elements/Search';
 
 interface Printer {
   id: string;
@@ -26,7 +27,11 @@ interface Printer {
   description?: string;
 }
 
-const PrintersList = () => {
+interface PrintersListProps {
+  refreshCallback?: (refreshFunction: () => void) => void;
+}
+
+const PrintersList = ({ refreshCallback }: PrintersListProps) => {
   const [wifiPrinters, setWifiPrinters] = useState<Printer[]>([]);
   const [nodePrinters, setNodePrinters] = useState<Printer[]>([]);
   const dispatch = useDispatch();
@@ -35,6 +40,7 @@ const PrintersList = () => {
   const [loadingPrinter, setLoadingPrinter] = useState(false);
   const [refreshing, setRefreshing] = useState(false); 
   const [error, setError] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
 
   const selectedNodePrinter = useSelector(
@@ -45,10 +51,21 @@ const PrintersList = () => {
   const fetchPrinters = useCallback(async (withSpinner: boolean) => {
     if (withSpinner) setLoadingNodePrinters(true);
     setError(false);
+    
+    // Set a timeout to prevent infinite loading
     const timeout = setTimeout(() => {
       setLoadingNodePrinters(false);
+      setRefreshing(false);
       setError(true);
-    }, 10000); // timeout après 5s
+      Alert.alert(
+        'Timeout', 
+        'La récupération des imprimantes a pris trop de temps. Veuillez réessayer.',
+        [
+          {text: 'OK'},
+          {text: 'Réessayer', onPress: () => fetchPrinters(true)}
+        ]
+      );
+    }, 8000); // 8 second timeout
 
     try {
       const printersList = await getNodePrinters();
@@ -57,7 +74,14 @@ const PrintersList = () => {
     } catch (err) {
       clearTimeout(timeout);
       setError(true);
-      Alert.alert('Erreur', 'Impossible de récupérer les imprimantes.');
+      Alert.alert(
+        'Erreur', 
+        'Impossible de récupérer les imprimantes.',
+        [
+          {text: 'OK'},
+          {text: 'Réessayer', onPress: () => fetchPrinters(true)}
+        ]
+      );
     } finally {
       setLoadingNodePrinters(false);
       setRefreshing(false);
@@ -74,7 +98,21 @@ const PrintersList = () => {
     setRefreshing(true);
     fetchPrinters(false);                 // pas de spinner plein-écran
   };
+  
+  // Expose the refresh function to parent component if provided
+  useEffect(() => {
+    if (refreshCallback) {
+      refreshCallback(triggerRefresh);
+    }
+  }, [refreshCallback]);
 
+  // Filter printers based on search query and state
+  const filteredPrinters = nodePrinters.filter(printer => {
+    const matchesSearch = printer.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return printer.state === 'offline' && matchesSearch;
+  });
+  
+  // Keep the original filters for reference
   const onlinePrinters = nodePrinters.filter(
     printer => printer.state === 'online',
   );
@@ -84,14 +122,31 @@ const PrintersList = () => {
 
   const handleSelectNodePrinter = async (printer: Printer) => {
     setLoadingPrinter(true);
+    
+    // Set a timeout to prevent infinite loading
+    const selectionTimeout = setTimeout(() => {
+      setLoadingPrinter(false);
+      Alert.alert(
+        'Timeout', 
+        'La sélection de l\'imprimante a pris trop de temps. Veuillez réessayer.',
+        [{text: 'OK'}]
+      );
+    }, 8000); // 5 second timeout
+    
     try {
       if (selectedNodePrinter && selectedNodePrinter.name === printer.name) {
         await dispatch(deselectNodePrinterAsync()).unwrap();
       } else {
         await dispatch(selectNodePrinterAsync(printer)).unwrap();
       }
+      clearTimeout(selectionTimeout);
     } catch (error) {
-      Alert.alert('Error', 'Operation failed. Try again.');
+      clearTimeout(selectionTimeout);
+      Alert.alert(
+        'Erreur', 
+        'La sélection de l\'imprimante a échoué. Veuillez réessayer.',
+        [{text: 'OK'}]
+      );
     } finally {
       setLoadingPrinter(false);
     }
@@ -111,17 +166,51 @@ const PrintersList = () => {
     );
   }
   
+  // Function to highlight matching text in printer names
+  const highlightText = (text: string, highlight: string) => {
+    if (!highlight.trim()) {
+      return <Text>{text}</Text>;
+    }
+    
+    const regex = new RegExp(`(${highlight})`, 'gi');
+    const parts = text.split(regex);
+    
+    return (
+      <Text>
+        {parts.map((part, i) => {
+          const isHighlighted = part.toLowerCase() === highlight.toLowerCase();
+          return (
+            <Text
+              key={i}
+              style={{
+                backgroundColor: isHighlighted ? colors.detailsGreen + '40' : undefined,
+                fontWeight: isHighlighted ? '700' : '400',
+                color: isHighlighted ? colors.green : undefined,
+              }}>
+              {part}
+            </Text>
+          );
+        })}
+      </Text>
+    );
+  };
+
   return (
-    <View>
+    <View style={styles.mainContainer}>
       <Spinner
         visible={loadingNodePrinters || loadingPrinter}
         textContent="Loading..."
       />
-
-      {/* 🔁 Bouton de reload */}
-      <TouchableOpacity style={styles.imageContainee} onPress={triggerRefresh}>
-              <Image style={styles.reloadImage} source={Icons.refresh} />
-            </TouchableOpacity>
+      
+      {/* Reload functionality moved to header */}
+      
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <Search 
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+      </View>
 
       {/* Online Printers */}
       <View style={styles.container}>
@@ -131,13 +220,14 @@ const PrintersList = () => {
         </View>
         {loadingNodePrinters ? (
           <Text style={styles.status}>Loading printers...</Text>
-        ) : onlinePrinters.length > 0 ? (
+        ) : filteredPrinters.length > 0 ? (
           <FlatList
-            data={onlinePrinters}
+            data={filteredPrinters}
             keyExtractor={item => item.id.toString()}
             refreshing={refreshing} 
             onRefresh={triggerRefresh}
-            style={{ height: 230 }}
+            contentContainerStyle={styles.printersListContent}
+            style={styles.printersList}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => handleSelectNodePrinter(item)}
@@ -150,8 +240,8 @@ const PrintersList = () => {
                         : colors.greyCream,
                   },
                 ]}>
-                <Text
-                  style={[
+                <View>
+                  <Text style={[
                     styles.name,
                     {
                       color:
@@ -166,8 +256,9 @@ const PrintersList = () => {
                           : '400',
                     },
                   ]}>
-                  {item.name || 'Unknown Printer'}
-                </Text>
+                    {highlightText(item.name || 'Unknown Printer', searchQuery)}
+                  </Text>
+                </View>
                 <Text
                   style={[
                     styles.state,
@@ -189,52 +280,36 @@ const PrintersList = () => {
               </TouchableOpacity>
             )}
           />
+        ) : searchQuery ? (
+          <Text style={styles.emptyMessage}>No printers matching "{searchQuery}"</Text>
         ) : (
-          <Text style={styles.emptyMessage}>No online printers available</Text>
+          <Text style={styles.emptyMessage}>No printers available</Text>
         )}
       </View>
-
-      {/* Offline Printers */}
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <View style={styles.offlineIndicator} />
-          <Text style={styles.title}>Offline Printers</Text>
-        </View>
-        {loadingNodePrinters ? (
-          <Text style={styles.status}>Loading printers...</Text>
-        ) : offlinePrinters.length > 0 ? (
-          <FlatList
-            data={offlinePrinters}
-            keyExtractor={item => item.id.toString()}
-            style={{ height: 230 }}
-            renderItem={({ item }) => (
-              <View
-                style={[
-                  styles.printerList,
-                  {
-                    backgroundColor: colors.greyCream,
-                  },
-                ]}>
-                <Text style={[styles.name, { color: colors.grey }]}>
-                  {item.name || 'Unknown Printer'}
-                </Text>
-              </View>
-            )}
-          />
-        ) : (
-          <Text style={styles.emptyMessage}>No offline printers available</Text>
-        )}
-      </View>
+      
+      {/* We keep the offlinePrinters data for testing but don't display it */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+  },
+  searchContainer: {
+    paddingVertical: 10,
+    marginTop: 35, // Compensate for the negative margin in the Search component
+  },
   container: {
+    flex: 1,
     borderRadius: 5,
-    paddingHorizontal: 15,
     marginBottom: 15,
-    height: 350,
+  },
+  printersList: {
+    flex: 1,
+  },
+  printersListContent: {
+    paddingBottom: 100, // Add space at the bottom of the list
   },
   titleContainer: {
     flexDirection: 'row',

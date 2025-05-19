@@ -3,8 +3,7 @@ import AddAttendeesScreen from '../../screens/add/AddAttendeesScreen';
 import PrintScreen from '../../screens/print/PrintScreen';
 import MenuNavigator from './MenuNavigator';
 import EventDashboardStackNavigator from '../eventDashBoard/EventDashboardStack';
-import ScanScreen from '../../screens/scanScreen/ScanScreen';
-import { ScanType } from '../../components/commonScan/types/scan';
+import MainScanScreen from '../../screens/scanScreen/MainScanScreen';
 import Icons from '../../assets/images/icons';
 import { ComponentType } from 'react';
 
@@ -42,7 +41,7 @@ const tabScreensConfig: TabScreenConfig[] = [
   },
   {
     name: 'Scan',
-    component: () => <ScanScreen scanType={ScanType.Main} />,
+    component: MainScanScreen,
     icon: Icons.Scan,
     label: '',
     isMiddle: true,

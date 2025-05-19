@@ -1,48 +1,61 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {useEvent} from '../../context/EventContext';
+import React, {useEffect, useState, useCallback} from 'react';
+import {View, StyleSheet} from 'react-native';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
 import PrintersList from '../../components/screens/print/PrintersListComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
+import Icons from '../../assets/images/icons';
 
-const PrintersListScreen = ({route, navigation}) => {
+const PrintersListScreen = ({navigation}) => {
   const handleGoBack = () => {
     navigation.navigate('Print');
   };
-  const {triggerListRefresh} = useEvent();
+  
+  // Function to store the refresh function from the child component
+  const [refreshPrinters, setRefreshPrinters] = useState<(() => void) | null>(null);
+  
+  // Callback to receive the refresh function from the child component
+  const handleRefreshCallback = useCallback((refreshFunction: () => void) => {
+    setRefreshPrinters(() => refreshFunction);
+  }, []);
+  
+  // Handler for the refresh button in the header
+  const handleRefreshPress = () => {
+    if (refreshPrinters) {
+      refreshPrinters();
+    }
+  };
+  
   return (
-    <View style={globalStyle.backgroundWhite}>
+    <View style={[globalStyle.backgroundWhite, styles.screenContainer]}>
       <MainHeader
         title={'Imprimantes'}
         onLeftPress={handleGoBack}
+        onRightPress={handleRefreshPress}
+        RightIcon={Icons.refresh}
+        rightBottonColor={colors.green}
+        size={30}
       />
-      <View style={globalStyle.container}>
-        <PrintersList
-          firstName={undefined}
-          lastName={undefined}
-          email={undefined}
-        />
+      <View style={styles.contentContainer}>
+        <PrintersList refreshCallback={handleRefreshCallback} />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  screenContainer: {
     flex: 1,
-    marginLeft: 30,
-    marginRight: 30,
+  },
+  contentContainer: {
+    flex: 1,
+    marginHorizontal: 30,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
     color: colors.darkGrey,
-  },
-  itemName: {
-    fontSize: 18,
-    top: 50,
   },
 });
 

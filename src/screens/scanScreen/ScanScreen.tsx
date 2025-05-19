@@ -49,24 +49,20 @@ const ScanScreen = ({scanType: propScanType}: Props) => {
 
   const sessionScanStats =
     scanType === ScanType.Session ? (
-        scan.statsLoading ? (
-            <ActivityIndicator size="small" color="#999" style={{ marginTop: 20 }} />
-          ) : (
-            <>
-              <SessionStats
-                scannedCount={scan.totalCheckedIn}
-                totalCount={scan.capacity}
-                color={'#eee'}
-              />
-              <ProgressBar
-                progress={
-                  scan.capacity > 0
-                    ? (scan.totalCheckedIn / scan.capacity) * 100
-                    : 0
-                }
-              />
-            </>
-          )
+      <>
+        <SessionStats
+          scannedCount={scan.totalCheckedIn}
+          totalCount={scan.capacity}
+          color={'#eee'}
+        />
+        <ProgressBar
+          progress={
+            scan.capacity > 0
+              ? (scan.totalCheckedIn / scan.capacity) * 100
+              : 0
+          }
+        />
+      </>
     ) : null;
 
   const modal = getModalByScanType({

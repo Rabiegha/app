@@ -34,6 +34,7 @@ export type AttendeeDetails = {
   theAttendeeId: string;
   attendeeStatusChangeDatetime: string;
   urlBadgePdf: string;
+  urlBadgeImage: string;
 };
 
 // API Request Types

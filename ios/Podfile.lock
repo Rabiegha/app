@@ -1671,6 +1671,27 @@ PODS:
     - Yoga
   - RNCPicker (2.11.0):
     - React-Core
+  - RNFlashList (1.8.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNFS (2.20.0):
     - React-Core
   - RNGestureHandler (2.25.0):
@@ -1839,7 +1860,7 @@ PODS:
     - Yoga
   - RNShare (10.2.1):
     - React-Core
-  - RNSVG (15.11.2):
+  - RNSVG (15.12.0):
     - React-Core
   - SocketRocket (0.7.1)
   - Yoga (0.0.0)
@@ -1922,6 +1943,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
+  - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -2090,6 +2112,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-masked-view/masked-view"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
+  RNFlashList:
+    :path: "../node_modules/@shopify/flash-list"
   RNFS:
     :path: "../node_modules/react-native-fs"
   RNGestureHandler:
@@ -2119,7 +2143,7 @@ SPEC CHECKSUMS:
   lottie-react-native: 3fd634de5c0cc095d36687d1b92b7c242d6103e8
   MMKV: 3eacda84cd1c4fc95cf848d3ecb69d85ed56006c
   MMKVCore: 508b4d3a8ce031f1b5c8bd235f0517fb3f4c73a9
-  RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
+  RCT-Folly: 36fe2295e44b10d831836cc0d1daec5f8abcf809
   RCTDeprecation: b2eecf2d60216df56bc5e6be5f063826d3c1ee35
   RCTRequired: 78522de7dc73b81f3ed7890d145fa341f5bb32ea
   RCTTypeSafety: c135dd2bf50402d87fd12884cbad5d5e64850edd
@@ -2186,13 +2210,14 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
   RNCMaskedView: 6d4bf14f158d1a93484edf30850cbbd7ccbb8668
   RNCPicker: 4f6d5e8d107064be32dfc8f1bcb5a3741135db0b
+  RNFlashList: 4330dea6fb873d11d412eab5ac33b6ce4d26dd57
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 83e18e53d3388ac5cb165a1404bc3be1e4cbdad0
   RNPermissions: 5a2dafe37c8e0a3fa1d6e0783a1490b1b7fd92d6
   RNReanimated: 77fbbadab86861843d510f8c5fdd8395fa20870f
   RNScreens: 176178299cb4812e59b30a6b07c350450b926486
   RNShare: 0fad69ae2d71de9d1f7b9a43acf876886a6cb99c
-  RNSVG: 0358054e792868e3aee3cf1790ed39881fa26565
+  RNSVG: 391e26663066ed5450c2266f23f1368932e40076
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: afd04ff05ebe0121a00c468a8a3c8080221cb14c
 

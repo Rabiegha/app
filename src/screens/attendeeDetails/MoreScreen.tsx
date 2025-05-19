@@ -104,7 +104,8 @@ const MoreScreen = ({ route, navigation }) => {
     navigation.navigate('Badge', { 
       attendeeId, 
       eventId, 
-      badgePdfUrl: attendeeDetails?.urlBadgePdf 
+      badgePdfUrl: attendeeDetails?.urlBadgePdf || '',
+      badgeImageUrl: attendeeDetails?.urlBadgeImage || '',
     });
 
   const { printDocument } = usePrintDocument();
@@ -214,7 +215,8 @@ const MoreScreen = ({ route, navigation }) => {
       commentaire: '',
       attendeeStatusChangeDatetime: '',
       type: '',
-      urlBadgePdf: ''
+      urlBadgePdf: '',
+      urlBadgeImage: ''
     };
     
     return (

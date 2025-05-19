@@ -160,5 +160,6 @@ export const mapAttendeeToDetails = (attendee: Attendee) => {
     attendeeStatusChangeDatetime: formattedDate,
     attendeeStatus: attendee.attendee_status === 1 ? 1 : 0,
     urlBadgePdf: attendee.badge_pdf_url || '-',
+    urlBadgeImage: attendee.badge_image_url || '-',
   };
 };
