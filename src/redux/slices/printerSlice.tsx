@@ -5,7 +5,7 @@ const initialState = {
   selectedNodePrinter: null,
   defaultPrinter: null,
   printStatus: '',
-  autoPrint: false,
+  autoPrint: true,
   selectedOptions: {
     paperFormat: null,
     orientation: 'portrait',
