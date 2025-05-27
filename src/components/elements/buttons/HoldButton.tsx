@@ -1,14 +1,18 @@
 import React, {useState, useRef} from 'react';
 import {
   TouchableWithoutFeedback,
-  View,
   Text,
   StyleSheet,
-  Animated,
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
 import colors from '../../../assets/colors/colors';
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
+
 
 const HoldButton = ({
   title,

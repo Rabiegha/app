@@ -1,15 +1,16 @@
 import React, { useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
+import type { Swipeable as SwipeableType } from 'react-native-gesture-handler';
 import colors from '../../../../assets/colors/colors';
 
 // Keep track of the currently open swipeable
-let openSwipeableRef: Swipeable | null = null;
+let openSwipeableRef: SwipeableType | null = null;
 
 interface SwipeableAttendeeItemProps {
   children: React.ReactNode;
   isCheckedIn: boolean;
-  onSwipeableOpen?: (ref: React.RefObject<Swipeable | null>) => void;
+  onSwipeableOpen?: (ref: React.RefObject<SwipeableType | null>) => void;
   onPrintAndCheckIn: () => void;
   onToggleCheckIn: () => void;
 }
@@ -21,21 +22,21 @@ const SwipeableAttendeeItem: React.FC<SwipeableAttendeeItemProps> = ({
   onPrintAndCheckIn,
   onToggleCheckIn,
 }) => {
-  const swipeableRef = useRef<Swipeable>(null);
+  const swipeableRef = useRef<SwipeableType>(null);
 
   // Swipe actions (Print + Check)
   const renderRightActions = useCallback(
     (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>) => {
-      const action1TranslateX = dragX.interpolate({
-        inputRange: [-145, -80, 0],
-        outputRange: [0, 50, 100],
-        extrapolate: 'clamp',
+      // Using the old Animated API with Swipeable from react-native-gesture-handler
+      // instead of ReanimatedSwipeable which requires worklets
+      const trans1 = progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [100, 0],
       });
 
-      const action2TranslateX = dragX.interpolate({
-        inputRange: [-145, -80, 0],
-        outputRange: [0, 0, 50],
-        extrapolate: 'clamp',
+      const trans2 = progress.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: [50, 25, 0],
       });
 
       return (
@@ -43,7 +44,7 @@ const SwipeableAttendeeItem: React.FC<SwipeableAttendeeItemProps> = ({
           <Animated.View
             style={[
               styles.rightAction,
-              {transform: [{translateX: action1TranslateX}]},
+              { transform: [{ translateX: trans1 }] },
             ]}>
             <TouchableOpacity
               onPress={onPrintAndCheckIn}
@@ -58,7 +59,7 @@ const SwipeableAttendeeItem: React.FC<SwipeableAttendeeItemProps> = ({
           <Animated.View
             style={[
               styles.rightAction,
-              {transform: [{translateX: action2TranslateX}]},
+              { transform: [{ translateX: trans2 }] },
             ]}>
             <TouchableOpacity
               onPress={onToggleCheckIn}
@@ -78,7 +79,7 @@ const SwipeableAttendeeItem: React.FC<SwipeableAttendeeItemProps> = ({
   );
 
   return (
-    <Swipeable
+    <ReanimatedSwipeable
       ref={swipeableRef}
       renderRightActions={renderRightActions}
       friction={1}
@@ -96,7 +97,7 @@ const SwipeableAttendeeItem: React.FC<SwipeableAttendeeItemProps> = ({
       }}
     >
       {children}
-    </Swipeable>
+    </ReanimatedSwipeable>
   );
 };
 
