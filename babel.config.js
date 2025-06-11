@@ -3,12 +3,17 @@ module.exports = {
   plugins: [
     [
       'module-resolver',
-      'react-native-reanimated/plugin',
       {
         root: ['./src'],
         alias: {
           '@': './src',
         },
+      },
+    ],
+    [
+      'react-native-reanimated/plugin',
+      {
+        globals: ['__reanimatedWorkletProxy'],
       },
     ],
   ],

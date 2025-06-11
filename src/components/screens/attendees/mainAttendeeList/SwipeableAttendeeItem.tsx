@@ -1,16 +1,25 @@
-import React, { useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
-import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
-import type { Swipeable as SwipeableType } from 'react-native-gesture-handler';
+import React, { useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import colors from '../../../../assets/colors/colors';
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  Extrapolate,
+  SharedValue,
+  useAnimatedReaction,
+  runOnJS,
+  useSharedValue,
+  useDerivedValue,
+} from 'react-native-reanimated';
 
-// Keep track of the currently open swipeable
-let openSwipeableRef: SwipeableType | null = null;
+type SwipeableRefType = React.ElementRef<typeof ReanimatedSwipeable>;
+let openSwipeableRef: SwipeableRefType | null = null;
 
 interface SwipeableAttendeeItemProps {
   children: React.ReactNode;
   isCheckedIn: boolean;
-  onSwipeableOpen?: (ref: React.RefObject<SwipeableType | null>) => void;
+  onSwipeableOpen?: (ref: React.RefObject<SwipeableRefType | null>) => void;
   onPrintAndCheckIn: () => void;
   onToggleCheckIn: () => void;
 }
@@ -22,61 +31,87 @@ const SwipeableAttendeeItem: React.FC<SwipeableAttendeeItemProps> = ({
   onPrintAndCheckIn,
   onToggleCheckIn,
 }) => {
-  const swipeableRef = useRef<SwipeableType>(null);
+  const swipeableRef = useRef<SwipeableRefType>(null);
+  const progressShared = useSharedValue(0);
+  const hasClosedOtherSwipeable = useSharedValue(false);
 
-  // Swipe actions (Print + Check)
-  const renderRightActions = useCallback(
-    (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>) => {
-      // Using the old Animated API with Swipeable from react-native-gesture-handler
-      // instead of ReanimatedSwipeable which requires worklets
-      const trans1 = progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [100, 0],
-      });
+  const handleSwipeStart = () => {
+    if (openSwipeableRef && openSwipeableRef !== swipeableRef.current) {
+      try {
+        openSwipeableRef.close();
+      } catch (err) {
+        console.warn('Failed to close swipeable:', err);
+      }
+    }
+    openSwipeableRef = swipeableRef.current;
+    onSwipeableOpen?.(swipeableRef);
+  };
 
-      const trans2 = progress.interpolate({
-        inputRange: [0, 0.5, 1],
-        outputRange: [50, 25, 0],
-      });
+  useAnimatedReaction(
+    () => progressShared.value,
+    (current, prev) => {
+      if (
+        current > 0.01 &&
+        (prev ?? 0) <= 0.01 &&
+        !hasClosedOtherSwipeable.value
+      ) {
+        hasClosedOtherSwipeable.value = true;
+        runOnJS(handleSwipeStart)();
+      }
 
-      return (
-        <View style={styles.actionsContainer}>
-          <Animated.View
-            style={[
-              styles.rightAction,
-              { transform: [{ translateX: trans1 }] },
-            ]}>
-            <TouchableOpacity
-              onPress={onPrintAndCheckIn}
-              style={[
-                styles.rightActionButton,
-                {backgroundColor: colors.darkGrey, zIndex: 10},
-              ]}>
-              <Text style={styles.actionText}>Print</Text>
-            </TouchableOpacity>
-          </Animated.View>
-
-          <Animated.View
-            style={[
-              styles.rightAction,
-              { transform: [{ translateX: trans2 }] },
-            ]}>
-            <TouchableOpacity
-              onPress={onToggleCheckIn}
-              style={[
-                styles.rightActionButton,
-                {backgroundColor: isCheckedIn ? colors.red : colors.green},
-              ]}>
-              <Text style={[styles.actionText, {zIndex: 5}]}>
-                {isCheckedIn ? 'Uncheck' : 'Check'}
-              </Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
-      );
-    },
-    [isCheckedIn, onPrintAndCheckIn, onToggleCheckIn]
+      if (current <= 0.01) {
+        hasClosedOtherSwipeable.value = false;
+      }
+    }
   );
+
+  const renderRightActions = (progress: SharedValue<number>) => {
+    // ✅ Sync progress continuously
+    useDerivedValue(() => {
+      progressShared.value = progress.value;
+    });
+
+    const animatedStyle1 = useAnimatedStyle(() => ({
+      transform: [
+        {
+          translateX: interpolate(progress.value, [0, 1], [100, 0], Extrapolate.CLAMP),
+        },
+      ],
+    }));
+
+    const animatedStyle2 = useAnimatedStyle(() => ({
+      transform: [
+        {
+          translateX: interpolate(progress.value, [0, 0.5, 1], [50, 25, 0], Extrapolate.CLAMP),
+        },
+      ],
+    }));
+
+    return (
+      <View style={styles.actionsContainer}>
+        <Animated.View style={[styles.rightAction, animatedStyle1]}>
+          <TouchableOpacity
+            onPress={onPrintAndCheckIn}
+            style={[styles.rightActionButton, { backgroundColor: colors.darkGrey }]}
+          >
+            <Text style={styles.actionText}>Print</Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        <Animated.View style={[styles.rightAction, animatedStyle2]}>
+          <TouchableOpacity
+            onPress={onToggleCheckIn}
+            style={[
+              styles.rightActionButton,
+              { backgroundColor: isCheckedIn ? colors.red : colors.green },
+            ]}
+          >
+            <Text style={styles.actionText}>{isCheckedIn ? 'Uncheck' : 'Check'}</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    );
+  };
 
   return (
     <ReanimatedSwipeable
@@ -85,16 +120,6 @@ const SwipeableAttendeeItem: React.FC<SwipeableAttendeeItemProps> = ({
       friction={1}
       enableTrackpadTwoFingerGesture
       overshootRight={false}
-      onSwipeableWillOpen={() => {
-        // Close any previously opened Swipeable
-        if (openSwipeableRef && openSwipeableRef !== swipeableRef.current) {
-          openSwipeableRef.close();
-        }
-        openSwipeableRef = swipeableRef.current;
-        if (swipeableRef.current) {
-          onSwipeableOpen?.(swipeableRef);
-        }
-      }}
     >
       {children}
     </ReanimatedSwipeable>
