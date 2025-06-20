@@ -8,9 +8,26 @@ import FiltreDetailsComponent from './FiltreDetailsComponent';
 import RedBorderButton from '../elements/buttons/RedBorderButton'; // assume we can override styles
 import MainHeader from '../elements/header/MainHeader';
 
-const FiltreComponent = ({
+// Define the filter criteria type
+interface FilterCriteria {
+  status: string;
+  company: null;
+  // Add other filter properties if needed based on your application's requirements
+}
+
+// Define props interface for the component
+interface FiltreComponentProps {
+  initialFilter: FilterCriteria;
+  defaultFilter: FilterCriteria;
+  onApply: (filter: FilterCriteria) => void;
+  onCancel: () => void;
+  tout?: number | boolean;
+  checkedIn?: number | boolean;
+  notChechkedIn?: number | boolean;
+}
+
+const FiltreComponent: React.FC<FiltreComponentProps> = ({
   initialFilter,
-  defaultFilter,
   onApply,
   onCancel,
   tout,
@@ -71,6 +88,13 @@ const FiltreComponent = ({
 export default FiltreComponent;
 
 const styles = StyleSheet.create({
+  buttonsColumn: {
+    alignItems: 'center',
+    flexDirection: 'column',
+    marginBottom: 20,
+    marginTop: 20,
+    width: '100%',
+  },
   rootContainer: {
     flex: 1, 
     position: 'relative',
@@ -80,17 +104,5 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 20,
     width: '100%',
-  },
-  buttonsColumn: {
-    flexDirection: 'column',
-    // We can space them out as needed:
-    alignItems: 'center',
-    marginTop: 20,
-    width: '100%',
-    marginBottom: 20,
-  },
-  fullWidthButton: {
-    width: '100%', 
-    marginBottom: 15,
   },
 });

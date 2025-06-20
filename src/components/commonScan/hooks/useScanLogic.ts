@@ -73,7 +73,7 @@ export const useScanLogic = (scanType: ScanType, userId: string) => {
 
 
   // Optimized barcode read handler with debounce protection
-  const onBarCodeRead = useCallback(async ({ data }) => {
+  const onBarCodeRead = useCallback(async ({ data }: { data: string }) => {
     // Prevent processing if already scanning or if data is empty
     if (hasScanned.current || !data) return;
     

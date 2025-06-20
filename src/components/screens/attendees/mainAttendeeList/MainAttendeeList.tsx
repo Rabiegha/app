@@ -1,5 +1,4 @@
 import React, {
-  useContext,
   useDeferredValue,
   useEffect,
   useState,
@@ -65,6 +64,36 @@ function useAttendeeData(userId: string | null, eventId: string | null | undefin
   return { allAttendees, isLoadingList, error, refreshing, handleRefresh };
 }
 
+
+function normalizeText(text: string): string {
+  return text
+    .normalize("NFD") // décompose les lettres accentuées
+    .replace(/[\u0300-\u036f]/g, "") // supprime les accents
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " "); // remplace plusieurs espaces par un seul
+}
+
+function levenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+    }
+  }
+  return dp[m][n];
+}
+
+
 function useAttendeeFiltering(allAttendees: Attendee[], searchQuery: string, filterCriteria: FilterCriteria, isSearchByCompanyMode: boolean) {
   const deferredQuery = useDeferredValue(searchQuery);
   
@@ -83,15 +112,28 @@ function useAttendeeFiltering(allAttendees: Attendee[], searchQuery: string, fil
     // Apply search filter
     const q = deferredQuery.trim().toLowerCase();
     if (q) {
-      const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      const normalizedQuery = normalizeText(q);
+    
       filtered = filtered.filter(attendee => {
-        let fullText = `${attendee.first_name} ${attendee.last_name}`;
+        const names = [
+          `${attendee.first_name} ${attendee.last_name}`,
+          `${attendee.last_name} ${attendee.first_name}`,
+        ];
+    
         if (isSearchByCompanyMode && attendee.organization) {
-          fullText += ` ${attendee.organization}`;
+          names.push(`${attendee.organization}`);
+          names.push(`${attendee.first_name} ${attendee.last_name} ${attendee.organization}`);
         }
-        return regex.test(fullText);
+    
+        return names.some(name => {
+          const normalizedName = normalizeText(name);
+          const distance = levenshtein(normalizedQuery, normalizedName);
+          const maxAllowedDistance = Math.floor(normalizedQuery.length * 0.3); // tolérance de 30%
+          return normalizedName.includes(normalizedQuery) || distance <= maxAllowedDistance;
+        });
       });
     }
+    
 
     // Sort by check-in status
     filtered.sort((a, b) => a.attendee_status - b.attendee_status);
@@ -108,7 +150,6 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
   onToggleCheckIn
 }, ref) => {
   // Context and Redux
-  const dispatch = useDispatch();
   const event = useEvent();
   const eventId = event ? event.eventId : undefined;
   const userId = useSelector(selectCurrentUserId);
@@ -271,6 +312,9 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
     </View>
   );
 });
+
+// Add display name to the component
+MainAttendeeList.displayName = 'MainAttendeeList';
 
 // Styles
 const styles = StyleSheet.create({

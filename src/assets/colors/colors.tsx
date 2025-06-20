@@ -14,7 +14,9 @@ const colors = {
   detailsBlue: '#2E73B2',
   detailsGreen: '#77CB8F',
   detailOrange: '#E89F3C',
-  cyan: '#00b2b2'
+  cyan: '#00b2b2',
+  blackTransparent: '#00000080',
+  white: '#FFFFFF'
 };
 
 export default colors;

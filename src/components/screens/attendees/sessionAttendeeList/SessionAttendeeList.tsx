@@ -66,6 +66,10 @@ const SessionListAttendee = forwardRef<ListHandle, Props>(
   }
 );
 
+
+// Add display name to the component
+SessionListAttendee.displayName = 'SessionListAttendee';
+
 const styles = StyleSheet.create({
   list: {
     flex: 1,

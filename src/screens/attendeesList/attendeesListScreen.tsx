@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect, useContext } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Modal,
@@ -8,8 +8,10 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   SafeAreaView,
-  Platform,
 } from 'react-native';
+import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+
 import MainAttendeeListItem, { ListHandle } from '../../components/screens/attendees/mainAttendeeList/MainAttendeeList';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
 import ProgressText from '../../components/elements/progress/ProgressionText';
@@ -17,20 +19,15 @@ import MainHeader from '../../components/elements/header/MainHeader';
 import { useEvent } from '../../context/EventContext';
 import Search from '../../components/elements/Search';
 import FiltreComponent from '../../components/filtre/FiltreComponent';
-import { useSelector } from 'react-redux';
-import { useAppDispatch } from '../../redux/store';
-import { fetchAttendeesList, updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
+import { useAppDispatch, RootState } from '../../redux/store';
+import { updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
 import Icons from '../../assets/images/icons';
 import colors from '../../assets/colors/colors';
-
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePrintStatus } from '../../printing/context/PrintStatusContext';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import usePrintDocument from '../../printing/hooks/usePrintDocument';
-import { AuthContext } from '../../context/AuthContext';
 import { Attendee } from '../../types/attendee.types';
 import { useAttendee } from '../../hooks/attendee/useAttendee';
 
@@ -59,32 +56,17 @@ const AttendeeListScreen = () => {
   const { updateAttendeeStatus } = useAttendee();
   
   // Attendee data from Redux
-  const { list: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendee);
+  const { list: allAttendees } = useSelector((state: RootState) => state.attendee);
   
   // Registration data for stats
   const { totalAttendees, totalCheckedIn, totalNotCheckedIn, ratio, summary } = useRegistrationData({ refreshTrigger1: refreshTrigger });
   
-  // Fetch attendees when screen is focused
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchAttendeesData();
-  //     setRefreshTrigger(p => p + 1);
-  //   }, []),
-  // );
-  
-  // Fetch attendees data from API
-  // const fetchAttendeesData = async () => {
-  //   if (userId && eventId) {
-  //     await dispatch(fetchAttendeesList({ userId, eventId: eventId as string }));
-  //   }
-  // };
   
   // Direct refresh trigger for the child component
   const triggerChildRefresh = () => {
     listRef.current?.handleRefresh();
   };
 
-  const insets = useSafeAreaInsets();
 
   const openModal = () => {
     setModalVisible(true);
@@ -298,7 +280,7 @@ const AttendeeListScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
 
       <View style={{ flex: 1 }}>
           <MainHeader
@@ -310,7 +292,7 @@ const AttendeeListScreen = () => {
         <View style={[styles.mainContent,     {
           paddingTop: 35,
         },]}>
-            <Search style={styles.search} onChange={setSearchQuery} value={searchQuery} />
+            <Search onChange={setSearchQuery} value={searchQuery} />
             <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />
             <ProgressBar progress={ratio} />
 
@@ -384,43 +366,38 @@ const AttendeeListScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  printModal: {
-    flex: 1,
-    position: 'absolute',
-  },
-  modalView: {
-    width: 300,
-    backgroundColor: 'white',
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-  },
-  notification: {
-    zIndex: 50,
-  },
-  reloadImage: {
-    height: 30,
-    width: 30,
-    tintColor: colors.green,
-  },
   imageContainee: {
     height: 40,
-    width: 40,
-    zIndex: 20,
     marginBottom: 10,
-    marginLeft: 'auto', // ✅ Pushes the image to the right
+    marginLeft: 'auto',
+    width: 40,
+    zIndex: 20, // ✅ Pushes the image to the right
   },
   mainContent: {
     flex: 1,
     paddingHorizontal: 20,
     position : 'relative'
   },
+  modalOverlay: {
+    backgroundColor: colors.blackTransparent,
+    flex: 1,
+    justifyContent: 'flex-start',
+  },
+  modalView: {
+    backgroundColor: colors.white,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    top: 0,
+    width: 300,
+  },
+  reloadImage: {
+    height: 30,
+    tintColor: colors.green,
+    width: 30,
+  },
 });
 
 export default AttendeeListScreen;
+
+

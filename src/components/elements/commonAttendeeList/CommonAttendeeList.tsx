@@ -43,6 +43,10 @@ const CommonAttendeeList = forwardRef<ListHandle, Props>(
   }
 );
 
+
+// Add display name to the component
+CommonAttendeeList.displayName = 'CommonAttendeeList';
+
 const styles = StyleSheet.create({
   list: {
     flex: 1,
