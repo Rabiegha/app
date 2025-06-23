@@ -2,32 +2,50 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
+
 import { useAppDispatch } from '../../redux/store';
 import { updateAttendeeLocally, clearSelectedAttendee } from '../../redux/slices/attendee/attendeeSlice';
-
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
 import LoadingView from '../../components/elements/view/LoadingView';
 import ErrorView from '../../components/elements/view/ErrorView';
-
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
-
 import usePrintDocument from '../../printing/hooks/usePrintDocument';
-import { selectCurrentUserId, selectUserType } from '../../redux/selectors/auth/authSelectors';
+import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 import { useActiveEvent } from '../../utils/event/useActiveEvent';
 import { useAttendee } from '../../hooks/attendee/useAttendee';
 
-const MoreScreen = ({ route, navigation }) => {
+// Define the route params type
+type MoreScreenRouteParams = {
+  attendeeId: string;
+  comment?: string;
+  eventId?: string;
+};
+
+// Define the navigation stack param list type
+type RootStackParamList = {
+  More: MoreScreenRouteParams;
+  Badge: { attendeeId: string; eventId: string; badgePdfUrl: string; badgeImageUrl: string };
+  Edit: { attendeeId: string; eventId: string };
+};
+
+// Define the props type for the component
+type MoreScreenProps = {
+  route: RouteProp<RootStackParamList, 'More'>;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
+};
+
+const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   /* ---------------------------------------------------------------- */
   /* Context & Redux                                                   */
   /* ---------------------------------------------------------------- */
   const userId = useSelector(selectCurrentUserId);
-  const userType = useSelector(selectUserType);
-  const isPartner = userType?.toLowerCase() === 'partner';
   const { eventId } = useActiveEvent();
   const dispatch = useAppDispatch();
   const { 
@@ -73,8 +91,6 @@ const MoreScreen = ({ route, navigation }) => {
   // Refresh when coming back to this screen
   useFocusEffect(
     useCallback(() => {
-      // Set loading state to true immediately when screen is focused
-      // This will prevent showing error view during transition
       fetchData();
       
       // Only clear data when navigating away, don't show error state
@@ -115,7 +131,7 @@ const MoreScreen = ({ route, navigation }) => {
     });
 
   const { printDocument } = usePrintDocument();
-  const handlePrintDocument = () => {
+  const handlePrintAndCheckIn = () => {
     if (attendeeDetails?.urlBadgePdf) {
       printDocument(attendeeDetails.urlBadgePdf, undefined, true);
     }
@@ -180,13 +196,6 @@ const MoreScreen = ({ route, navigation }) => {
   /* Render helpers                                                   */
   /* ---------------------------------------------------------------- */
   const renderContent = () => {
-    // console.log('Rendering content with state:', { 
-    //   isLoadingDetails, 
-    //   isPartner, 
-    //   hasAttendeeDetails: !!attendeeDetails,
-    //   error
-    // });
-    
     // Always show loading first when we're fetching data
     if (isLoadingDetails && !attendeeDetails) {
       return (
@@ -251,7 +260,7 @@ const MoreScreen = ({ route, navigation }) => {
         attendeeId={attendeeId}
         attendeeStatusChangeDatetime={details.attendeeStatusChangeDatetime}
         handleCheckinButton={handleCheckinButton}
-        Print={handlePrintDocument}
+        PrintAndCheckIn={handlePrintAndCheckIn}
         loading={isUpdating}
         modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
         type={details.type}
@@ -290,15 +299,15 @@ const MoreScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  filler: { 
+    alignItems: 'center', 
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center', 
+  },
   profil: {
     flex: 1,
     minHeight: 500,
-  },
-  filler: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    height: '100%',
   },
 });
 

@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
+
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
-import FiltreDetailsComponent from './FiltreDetailsComponent';
 import RedBorderButton from '../elements/buttons/RedBorderButton'; // assume we can override styles
 import MainHeader from '../elements/header/MainHeader';
+
+import FiltreDetailsComponent from './FiltreDetailsComponent';
 
 // Define the filter criteria type
 interface FilterCriteria {

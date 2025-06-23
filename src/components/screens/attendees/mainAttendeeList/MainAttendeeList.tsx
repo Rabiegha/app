@@ -8,16 +8,19 @@ import React, {
   useCallback,
 } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useEvent } from '../../../../context/EventContext';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { useEvent } from '../../../../context/EventContext';
 import { selectCurrentUserId } from '../../../../redux/selectors/auth/authSelectors';
 import EmptyView from '../../../elements/view/EmptyView';
 import LoadingView from '../../../elements/view/LoadingView';
 import ErrorView from '../../../elements/view/ErrorView';
 import BaseFlatList from '../../../elements/list/BaseFlatList';
 import { Attendee } from '../../../../types/attendee.types';
-import { fetchAttendeesList } from '@/redux/slices/attendee/attendeeSlice';
+
 import MainAttendeeListItem from './MainAttendeeListItem';
+
+import { fetchAttendeesList } from '@/redux/slices/attendee/attendeeSlice';
 
 
 // Types
@@ -318,13 +321,13 @@ MainAttendeeList.displayName = 'MainAttendeeList';
 
 // Styles
 const styles = StyleSheet.create({
-  viewsContainer: {
-    flex: 1,
-  },
   listContainer: {
     flex: 1,
     height: '100%',
     width: '100%',
+  },
+  viewsContainer: {
+    flex: 1,
   },
 });
 

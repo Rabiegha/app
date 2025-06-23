@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import {ScrollView, StyleSheet, View, Image, Text} from 'react-native';
+import { useSelector } from 'react-redux';
+
 import LabelValueComponent from '../elements/LabelValueComponent';
 import LargeButton from '../elements/buttons/LargeButton';
 import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
 import Icons from '../../assets/images/icons';
-import HoldButton from '../elements/buttons/HoldButton';
 import { insertSpaceBetweenPairs } from '../../hooks/useFormat';
-import { useSelector } from 'react-redux';
 import { selectCurrentUserId, selectUserType } from '../../redux/selectors/auth/authSelectors';
 import { attendeeFieldConfig } from '../../utils/modify/attendeeFieldConfig';
 import ModifyFieldModal from '../elements/modals/ModifyFieldModal';
@@ -27,7 +27,7 @@ interface MoreComponentProps {
   commentaire: string;
   attendeeStatusChangeDatetime: string;
   See: () => void;
-  Print: () => void;
+  PrintAndCheckIn: () => void;
   handleCheckinButton: (status: 0 | 1) => Promise<void>;
   loading: boolean;
   modify: () => void;
@@ -47,10 +47,9 @@ const MoreComponent = ({
   commentaire,
   attendeeStatusChangeDatetime,
   See,
-  Print,
+  PrintAndCheckIn,
   handleCheckinButton,
   loading,
-  modify,
   type,
   onFieldUpdateSuccess,
 }: MoreComponentProps) => {
@@ -84,9 +83,9 @@ const [editValue, setEditValue] = useState('');
 const [modalVisible, setModalVisible] = useState(false);
 
 
-const { submitFieldUpdate, loading: updating, error, success } = useUpdateAttendeeField();
+const { submitFieldUpdate } = useUpdateAttendeeField();
 
-const openEditModal = (fieldKey: string) => {
+const openEditModal = (fieldKey: keyof typeof attendeeFieldConfig) => {
   if (
     !fieldKey ||
     !attendeeFieldConfig ||
@@ -107,7 +106,17 @@ const openEditModal = (fieldKey: string) => {
 
 
 
-const baseFields = [
+// Define the type for our field items
+type FieldItem = {
+  label: string;
+  value: string;
+  showButton?: boolean;
+  hideForPartner?: boolean;
+  showForPartnerOnly?: boolean;
+  fieldKey?: keyof typeof attendeeFieldConfig;
+};
+
+const baseFields: FieldItem[] = [
   {
     label: 'Type:',
     value: type || '-',
@@ -210,7 +219,7 @@ const handleEditSubmit = async (newValue: string) => {
         <View style={styles.topButtonsContainer}>
           <SmallButton
                 imageSource={Icons.Print}
-            pressHandler={Print}
+            pressHandler={PrintAndCheckIn}
             backgroundColor={colors.green}
             tintColor={colors.greyCream}
           />
@@ -239,8 +248,8 @@ const handleEditSubmit = async (newValue: string) => {
               key={index}
               label={field.label}
               value={field.value}
-              showButton={field.showButton && (isPartner ? field.fieldKey === '' : true)}
-              modifyHandle={field.fieldKey && field.showButton ? () => openEditModal(field.fieldKey) : undefined}
+              showButton={field.showButton && (isPartner ? false : true)}
+              modifyHandle={field.fieldKey && field.showButton ? () => openEditModal(field.fieldKey as keyof typeof attendeeFieldConfig) : undefined}
             />
           );
         })}
@@ -282,26 +291,22 @@ const handleEditSubmit = async (newValue: string) => {
 };
 
 const styles = StyleSheet.create({
+
   container: {
     alignItems: 'center',
     position: 'relative',
   },
+  image: {
+    borderRadius: 40,
+    height: 150,
+    width: 150,
+  },
   imageContainer: {
     marginBottom: 10,
-  },
-  image: {
-    width: 150,
-    height: 150,
-    borderRadius: 40,
   },
   topButtonsContainer: {
     flexDirection: 'row',
     marginBottom: 20,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    width: '100%',
-    bottom: 0,
   },
 });
 

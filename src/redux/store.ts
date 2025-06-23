@@ -11,7 +11,6 @@ import futureEventsReducer from './slices/event/futureEventsSlice';
 import authReducer from './slices/authSlice';
 import scanReducer from './slices/scanModeSlice';
 import searchSlice from './slices/searchModeSlice';
-import attendeesReducer from './slices/attendee/attendeesListSlice';
 import attendeeReducer from './slices/attendee/attendeeSlice';
 import sessionAttendeesReducer from './slices/attendee/sessionAttendeesListSlice';
 
@@ -48,7 +47,6 @@ const isSearchByCompanyModeConfig = {
 
 const rootReducer = combineReducers({
   printers: printerReducer,
-  attendees: attendeesReducer,
   attendee: attendeeReducer,
   sessionAttendees: sessionAttendeesReducer,
   scan: persistReducer(isKioskModePersistConfig, scanReducer),
