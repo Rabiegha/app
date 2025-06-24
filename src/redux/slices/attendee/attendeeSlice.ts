@@ -193,6 +193,9 @@ const attendeeSlice = createSlice({
       state.isLoadingList = false;
     },
     clearSelectedAttendee(state) {
+      // Définir isLoadingDetails à true avant d'effacer selectedAttendee
+      // pour s'assurer que le skeleton s'affiche immédiatement
+      state.isLoadingDetails = true;
       state.selectedAttendee = null;
     },
 
@@ -237,8 +240,11 @@ const attendeeSlice = createSlice({
       
       // Fetch details cases
       .addCase(fetchAttendeeDetails.pending, (state) => {
+        // Mettre isLoadingDetails à true mais ne pas effacer selectedAttendee
+        // pour éviter le flash du composant vide
         state.isLoadingDetails = true;
         state.error = null;
+        // Ne pas effacer selectedAttendee ici pour éviter le flash
       })
       .addCase(fetchAttendeeDetails.fulfilled, (state, action) => {
         state.selectedAttendee = action.payload;

@@ -10,7 +10,7 @@ import { useAppDispatch } from '../../redux/store';
 import { updateAttendeeLocally, clearSelectedAttendee } from '../../redux/slices/attendee/attendeeSlice';
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
-import LoadingView from '../../components/elements/view/LoadingView';
+import MoreComponentSkeleton from '../../components/elements/skeletons/MoreComponentSkeleton';
 import ErrorView from '../../components/elements/view/ErrorView';
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
@@ -69,11 +69,16 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   /* Local state                                                      */
   /* ---------------------------------------------------------------- */
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  // État pour forcer l'affichage du skeleton pendant un court instant
+  const [forceShowSkeleton, setForceShowSkeleton] = useState(true);
 
   /* ---------------------------------------------------------------- */
   /* Data fetching                                                    */
   /* ---------------------------------------------------------------- */
   const fetchData = useCallback(() => {
+    // Forcer l'affichage du skeleton avant de commencer le chargement
+    setForceShowSkeleton(true);
+    
     if (userId && eventId && attendeeId) {
       fetchAttendeeDetails({
         userId,
@@ -86,15 +91,26 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   // Fetch data on mount and when dependencies change
   useEffect(() => {
     fetchData();
+    
+    // Désactiver forceShowSkeleton après un délai pour permettre au composant de se stabiliser
+    const timer = setTimeout(() => {
+      setForceShowSkeleton(false);
+    }, 1000); // Maintenir le skeleton pendant 1 seconde minimum
+    
+    return () => clearTimeout(timer);
   }, [fetchData]);
 
   // Refresh when coming back to this screen
   useFocusEffect(
     useCallback(() => {
+      // Forcer l'affichage du skeleton avant de charger les données
+      setForceShowSkeleton(true);
       fetchData();
       
       // Only clear data when navigating away, don't show error state
       return () => {
+        // Forcer l'affichage du skeleton avant de quitter l'écran
+        setForceShowSkeleton(true);
         // Clear selected attendee when leaving the screen to ensure
         // we don't see stale data when returning to this screen
         dispatch(clearSelectedAttendee());
@@ -196,11 +212,12 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   /* Render helpers                                                   */
   /* ---------------------------------------------------------------- */
   const renderContent = () => {
-    // Always show loading first when we're fetching data
-    if (isLoadingDetails && !attendeeDetails) {
+    // Afficher le squelette de chargement si forceShowSkeleton est true ou si isLoadingDetails est true
+    // ou si les données ne sont pas encore disponibles
+    if (forceShowSkeleton || isLoadingDetails || !attendeeDetails) {
       return (
         <View style={styles.filler}>
-          <LoadingView />
+          <MoreComponentSkeleton />
         </View>
       );
     }
@@ -226,22 +243,8 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
       );
     }
 
-    // We've already checked for !attendeeDetails above, so we know it exists here
-    // But TypeScript still needs the null check, so we'll use a default empty object if needed
-    const details = attendeeDetails || {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      jobTitle: '',
-      attendeeStatus: 0,
-      organization: '',
-      commentaire: '',
-      attendeeStatusChangeDatetime: '',
-      type: '',
-      urlBadgePdf: '',
-      urlBadgeImage: ''
-    };
+    // À ce stade, nous savons que attendeeDetails existe et n'est pas null
+    const details = attendeeDetails;
     
     // Use the comment from route params if it exists, otherwise use from attendee details
     const commentText = comment || details.commentaire || '';
@@ -291,7 +294,6 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
           />
         )}
 
-        {/* The area below is where we swap in loading / error / data */}
         {renderContent()}
       </View>
     </View>

@@ -8,6 +8,7 @@ import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
 import Icons from '../../assets/images/icons';
+import MoreComponentSkeleton from '../elements/skeletons/MoreComponentSkeleton';
 import { insertSpaceBetweenPairs } from '../../hooks/useFormat';
 import { selectCurrentUserId, selectUserType } from '../../redux/selectors/auth/authSelectors';
 import { attendeeFieldConfig } from '../../utils/modify/attendeeFieldConfig';
@@ -74,7 +75,7 @@ const attendeeData = {
   organization,
   jobTitle: JobTitle,
   comment: commentaire,
-  typeId: 1, // ou récupéré depuis un autre endroit
+  typeId: 1,
 };
 
 
@@ -199,14 +200,6 @@ const handleEditSubmit = async (newValue: string) => {
     return false;
   }
 };
-
-
-  
-
-  // For debugging - log the data being received
-  // console.log('Rendering MoreComponent with data:', {
-  //   firstName, lastName, email, phone, attendeeStatus, organization, JobTitle, commentaire
-  // });
 
   return (
     <ScrollView
