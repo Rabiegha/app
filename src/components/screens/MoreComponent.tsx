@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {ScrollView, StyleSheet, View, Image, Text} from 'react-native';
+import {ScrollView, StyleSheet, View, Image} from 'react-native';
 import { useSelector } from 'react-redux';
 
 import LabelValueComponent from '../elements/LabelValueComponent';
@@ -8,7 +8,6 @@ import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
 import Icons from '../../assets/images/icons';
-import MoreComponentSkeleton from '../elements/skeletons/MoreComponentSkeleton';
 import { insertSpaceBetweenPairs } from '../../hooks/useFormat';
 import { selectCurrentUserId, selectUserType } from '../../redux/selectors/auth/authSelectors';
 import { attendeeFieldConfig } from '../../utils/modify/attendeeFieldConfig';
@@ -16,6 +15,8 @@ import ModifyFieldModal from '../elements/modals/ModifyFieldModal';
 import { useUpdateAttendeeField } from '../../hooks/edit/useUpdateAttendeeField';
 
 
+
+//Props types
 interface MoreComponentProps {
   firstName: string;
   lastName: string;
@@ -55,16 +56,22 @@ const MoreComponent = ({
   onFieldUpdateSuccess,
 }: MoreComponentProps) => {
 
+  //User state
+
   const userId = useSelector(selectCurrentUserId);
-  const formattedPhone = insertSpaceBetweenPairs(phone);
-  const parsedAttendeeStatus = Number(attendeeStatus);
+
+  //User type
   const userType = useSelector(selectUserType);
+
+  //Attendee status
+  const parsedAttendeeStatus = Number(attendeeStatus);
+
+  //Phone formatting
+  const formattedPhone = insertSpaceBetweenPairs(phone);
+
 
   // Determine if user is a partner
 const isPartner = userType?.toLowerCase() === 'partner';
-
-// Log for debugging
-console.log('User type:', userType, 'Is partner:', isPartner);
 
 
 const attendeeData = {
@@ -79,12 +86,14 @@ const attendeeData = {
 };
 
 
+//Edit modal
 const [editFieldKey, setEditFieldKey] = useState<string | null>(null);
 const [editValue, setEditValue] = useState('');
 const [modalVisible, setModalVisible] = useState(false);
 
 
 const { submitFieldUpdate } = useUpdateAttendeeField();
+
 
 const openEditModal = (fieldKey: keyof typeof attendeeFieldConfig) => {
   if (
@@ -99,7 +108,7 @@ const openEditModal = (fieldKey: keyof typeof attendeeFieldConfig) => {
 
   const config = attendeeFieldConfig[fieldKey];
   setEditFieldKey(fieldKey);
-  setEditValue(config.accessor(attendeeData));
+  setEditValue(String(config.accessor(attendeeData)));
   setModalVisible(true);
 };
 
@@ -197,6 +206,7 @@ const handleEditSubmit = async (newValue: string) => {
     }
     return success;
   } catch (err) {
+    console.error('Erreur lors de la mise à jour du champ:', err);
     return false;
   }
 };

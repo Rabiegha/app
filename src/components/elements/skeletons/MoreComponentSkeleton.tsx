@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+
 import colors from '../../../assets/colors/colors';
 
 const MoreComponentSkeleton = () => {
@@ -37,51 +38,51 @@ const MoreComponentSkeleton = () => {
 };
 
 const styles = StyleSheet.create({
+  button: {
+    borderRadius: 25,
+    height: 50,
+    marginHorizontal: 10,
+    width: 50,
+  },
   container: {
     alignItems: 'center',
-    width: '100%',
     paddingHorizontal: 20,
+    width: '100%',
   },
-  imageContainer: {
-    marginBottom: 10,
-    alignItems: 'center',
+  fieldContainer: {
+    marginVertical: 10,
+    width: '100%',
   },
   image: {
     borderRadius: 75,
     height: 150,
     width: 150,
   },
-  topButtonsContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    justifyContent: 'center',
-  },
-  button: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginHorizontal: 10,
-  },
-  fieldContainer: {
-    width: '100%',
-    marginVertical: 10,
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 10,
   },
   label: {
+    borderRadius: 4,
     height: 15,
-    width: '30%',
-    borderRadius: 4,
     marginBottom: 8,
-  },
-  value: {
-    height: 20,
-    width: '80%',
-    borderRadius: 4,
+    width: '30%',
   },
   largeButton: {
-    height: 50,
-    width: '80%',
     borderRadius: 25,
+    height: 50,
     marginTop: 20,
+    width: '80%',
+  },
+  topButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  value: {
+    borderRadius: 4,
+    height: 20,
+    width: '80%',
   },
 });
 

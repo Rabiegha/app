@@ -3,7 +3,23 @@ import { cleanParams } from '../utils/api/cleanParams';
 import { handleApiSuccess } from '../utils/api/handleApiSuccess';
 import mainApi from '../config/mainApi';
 
-export const addAttendee = async (attendeeData) => {
+interface AttendeeData {
+  current_user_login_details_id: string | number;
+  ems_secret_code: string;
+  attendee_type_id?: string | number;
+  salutation?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  organization?: string;
+  jobTitle?: string;
+  postal_address?: string;
+  status_id?: string | number;
+  attendee_status?: string | number;
+}
+
+export const addAttendee = async (attendeeData: AttendeeData) => {
   try {
     // Champs obligatoires
     const {
