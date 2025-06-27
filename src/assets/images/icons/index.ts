@@ -30,7 +30,7 @@ import Verifie from './Verifie.png';
 import Vu from './Vu.png';
 import checkedIn from './checkedIn.png';
 import closeButton from './closeButton.png';
-import notCheckedIn from './notCheckedIn.png';
+import notCheckedIn from './Not-checked.png';
 import refresh from './refresh.png';
 import totalAttendees from './totalAttendees.png';
 
