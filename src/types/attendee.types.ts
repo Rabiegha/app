@@ -58,3 +58,23 @@ export type UpdateAttendeeFieldParams = {
   field: string;
   value: string;
 };
+
+export type AddAttendeeParams = {
+  current_user_login_details_id: string;
+  ems_secret_code: string;
+  send_confirmation_mail_ems_yn: number;
+  generate_qrcode: number;
+  generate_badge: number;
+  send_badge_yn: number;
+  salutation: string;
+  send_badge_item: string;
+  attendee_type_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  organization: string;
+  jobTitle: string;
+  status_id: string;
+  attendee_status: string;
+};

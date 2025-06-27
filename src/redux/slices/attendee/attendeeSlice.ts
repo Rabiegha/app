@@ -4,7 +4,8 @@ import {
   AttendeeDetails,
   FetchAttendeesParams,
   UpdateAttendeeStatusParams,
-  UpdateAttendeeFieldParams
+  UpdateAttendeeFieldParams,
+  AddAttendeeParams
 } from '../../../types/attendee.types';
 import { 
   fetchAttendees, 
@@ -13,6 +14,7 @@ import {
   mapAttendeeToDetails
 } from '../../../services/attendeeService';
 import { RootState } from '../../store';
+import { addAttendee as addAttendeeService } from '../../../services/addAttendeeService';
 
 // Helper function to map API field names to selectedAttendee property names
 const mapFieldToSelectedAttendee = (field: string, value: string): Partial<AttendeeDetails> => {
@@ -159,6 +161,7 @@ export const updateAttendeeStatusThunk = createAsyncThunk(
       }
       return rejectWithValue('Update failed');
     } catch (error) {
+      console.error('Error updating attendee status:', error);
       return rejectWithValue('Update failed');
     }
   }
@@ -178,6 +181,25 @@ export const updateAttendeeFieldThunk = createAsyncThunk(
       // Provide more detailed error message if available
       const errorMessage = error instanceof Error ? error.message : 'Field update failed';
       return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+// Nouveau thunk pour ajouter un participant
+export const addAttendeeThunk = createAsyncThunk(
+  'attendees/addAttendee',
+  async (attendeeData: AddAttendeeParams, { rejectWithValue }) => {
+    try {
+      const result = await addAttendeeService(attendeeData);
+      
+      if (result && result.success && result.attendee) {
+        return result.attendee;
+      }
+      
+      return rejectWithValue(result?.message || 'Failed to add attendee');
+    } catch (error) {
+      console.error('Error adding attendee:', error);
+      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
     }
   }
 );
@@ -253,6 +275,21 @@ const attendeeSlice = createSlice({
       .addCase(fetchAttendeeDetails.rejected, (state, action) => {
         state.isLoadingDetails = false;
         state.error = action.error.message || 'Failed to fetch attendee details';
+      })
+      
+      // Add attendee cases
+      .addCase(addAttendeeThunk.pending, (state) => {
+        state.isUpdating = true;
+        state.error = null;
+      })
+      .addCase(addAttendeeThunk.fulfilled, (state, action: PayloadAction<Attendee>) => {
+        // Ajouter le nouveau participant au début de la liste
+        state.list = [action.payload, ...state.list];
+        state.isUpdating = false;
+      })
+      .addCase(addAttendeeThunk.rejected, (state, action) => {
+        state.isUpdating = false;
+        state.error = action.error.message || 'Failed to add attendee';
       })
       
       // Update status cases
