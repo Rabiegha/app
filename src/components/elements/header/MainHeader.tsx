@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import colors from '../../../assets/colors/colors';
 import Icons from '../../../assets/images/icons';
 
@@ -8,7 +9,7 @@ interface MainHeaderProps {
   onLeftPress: () => void;
   title?: string;
   onRightPress?: () => void;
-  RightIcon?: any; // Using any for image source type
+  RightIcon?: string; // Using any for image source type
   backgroundColor?: string;
   color?: string;
   leftButtonTintColor?: string;
@@ -47,28 +48,28 @@ const MainHeader = ({
 };
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    minHeight: 110,
-  },
   backButton: {
     padding: 10,
   },
-  title: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 18,
-    maxWidth: 200,
-    flexShrink: 2,
+  headerContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    minHeight: 110,
+    paddingBottom: 12,
+    paddingHorizontal: 20,
   },
   leftButton: {
-    width: 15,
     height: 23,
     tintColor: colors.green,
+    width: 15,
+  },
+  title: {
+    flexShrink: 2,
+    fontSize: 18,
+    fontWeight: 'bold',
+    maxWidth: 200,
+    textAlign: 'center',
   },
 });
 

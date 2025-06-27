@@ -1,24 +1,48 @@
 import React, {useState} from 'react';
-import {StatusBar, StyleSheet, View} from 'react-native';
+import {StatusBar, View} from 'react-native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message';
+
 import AddAttendeesComponent from '../../components/screens/AddAttendeesComponent';
-import {useFocusEffect} from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle';
 import {useEvent} from '../../context/EventContext';
 import colors from '../../assets/colors/colors';
-import FailComponent from '../../components/elements/notifications/FailComponent';
-import SuccessComponent from '../../components/elements/notifications/SuccessComponent';
 import {addAttendee} from '../../services/addAttendeeService';
 import useAttendeeTypeDropdown from '../../hooks/type/useAttendeeTypesDropdown';
-import Spinner from 'react-native-loading-spinner-overlay';
-import { useSelector } from 'react-redux';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import MainHeader from '../../components/elements/header/MainHeader';
-import Toast from 'react-native-toast-message';
 
+interface AttendeeData {
+  current_user_login_details_id: string;
+  ems_secret_code: string;
+  send_confirmation_mail_ems_yn: number;
+  generate_qrcode: number;
+  generate_badge: number;
+  send_badge_yn: number;
+  salutation: string;
+  send_badge_item: string;
+  attendee_type_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  organization: string;
+  jobTitle: string;
+  status_id: string;
+  attendee_status: string;
+}
 
-const AddAttendeesScreen = ({navigation}) => {
+const AddAttendeesScreen = () => {
+
+  //navigation
+  const navigation = useNavigation();
+
+  //focus effect
   useFocusEffect(
     React.useCallback(() => {
+      //set status bar
       StatusBar.setBarStyle('dark-content');
       return () => {};
     }, []),
@@ -34,7 +58,6 @@ const AddAttendeesScreen = ({navigation}) => {
   const [numeroTelephone, setNumeroTelephone] = useState('');
   const [societe, setSociete] = useState('');
   const [jobTitle, setJobTitle] = useState('');
-  const [success, setSuccess] = useState(null);
   const [CheckedIn, setCheckedIn] = useState('1');
   const [isChecked, setIsChecked] = useState(false);
   const [inputErrors, setInputErrors] = useState({});
@@ -44,6 +67,8 @@ const AddAttendeesScreen = ({navigation}) => {
   // Context + custom hooks
   const {secretCode, triggerListRefresh} = useEvent();
   const dropdownOptions = useAttendeeTypeDropdown();
+
+
 
   // Reset form fields
   const resetFields = () => {
@@ -57,7 +82,7 @@ const AddAttendeesScreen = ({navigation}) => {
     setInputErrors({});
   };
 
-  const resetInputError = field => {
+  const resetInputError = (field: string) => {
     setInputErrors(prevErrors => ({...prevErrors, [field]: false}));
   };
 
@@ -66,7 +91,7 @@ const AddAttendeesScreen = ({navigation}) => {
     // Start loading
     setLoading(true);
 
-    const errors = {};
+    const errors: Record<string, boolean> = {};
     // Validate each field and set errors
     if (!nom) {
       errors.nom = true;
@@ -94,7 +119,14 @@ const AddAttendeesScreen = ({navigation}) => {
     }
 
     // Build payload for the service
-    const attendeeData = {
+    // Ensure userId is not null before proceeding
+    if (!userId) {
+      setInputErrors({...inputErrors, userId: 'User ID is required'});
+      setLoading(false);
+      return;
+    }
+    
+    const attendeeData: AttendeeData = {
       current_user_login_details_id: userId,
       ems_secret_code: secretCode,
       send_confirmation_mail_ems_yn: 0,
@@ -114,27 +146,19 @@ const AddAttendeesScreen = ({navigation}) => {
       attendee_status: CheckedIn,
     };
 
-    try {
-      const response = await addAttendee(attendeeData);
-      if (response) {
-        setSuccess(true);
-        resetFields();
-        triggerListRefresh();
-            // ✅ Show success toast here
-        Toast.show({
-          type: 'customSuccess',
-          text1: 'Participant ajouté ',
-          text2: `${prenom} ${nom}`,
-        });
-      } else {
-        setSuccess(false);
-      }
-    } catch (error) {
-      setSuccess(false);
-    } finally {
-      // Always stop loading
-      setLoading(false);
+    const success = await addAttendee(attendeeData);
+
+    if (success) {
+      resetFields();
+      triggerListRefresh();
+      Toast.show({
+        type: 'customSuccess',
+        text1: 'Participant ajouté',
+        text2: `${prenom} ${nom}`,
+      });
     }
+  
+    setLoading(false);
   };
 
   // Toggle checked-in status
@@ -144,19 +168,13 @@ const AddAttendeesScreen = ({navigation}) => {
     setCheckedIn(newCheckedIn);
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => setSuccess(null);
-    }, []),
-  );
-
   // Navigate back
   const handleGoBack = () => {
     navigation.goBack();
   };
 
   return (
-    <View style={[globalStyle.backgroundWhite, styles.wrap]}>
+    <View style={globalStyle.backgroundWhite}>
       <MainHeader
         color={colors.darkGrey}
         onLeftPress={handleGoBack}
@@ -166,8 +184,7 @@ const AddAttendeesScreen = ({navigation}) => {
       <Spinner visible={loading} />
 
       <AddAttendeesComponent
-        onPress={handleEnregistrer}
-        style={[globalStyle.container, {marginTop: 50}]}
+        handleEnregistrer={handleEnregistrer}
         handleCheckboxPress={handleCheckboxPress}
         setNom={setNom}
         setPrenom={setPrenom}
@@ -175,7 +192,6 @@ const AddAttendeesScreen = ({navigation}) => {
         setNumeroTelephone={setNumeroTelephone}
         setSociete={setSociete}
         setJobTitle={setJobTitle}
-        setSuccess={setSuccess}
         nom={nom}
         prenom={prenom}
         email={email}
@@ -183,18 +199,15 @@ const AddAttendeesScreen = ({navigation}) => {
         societe={societe}
         jobTitle={jobTitle}
         isChecked={isChecked}
-        success={success}
         inputErrors={inputErrors}
         resetInputError={resetInputError}
         attendeeTypes={dropdownOptions}
         selectedAttendeeType={selectedAttendeeType}
-        setSelectedAttendeeType={setSelectedAttendeeType}
-      />
+        setSelectedAttendeeType={setSelectedAttendeeType} 
+        />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-});
 
 export default AddAttendeesScreen;

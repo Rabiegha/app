@@ -42,9 +42,7 @@ type MoreScreenProps = {
 };
 
 const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
-  /* ---------------------------------------------------------------- */
-  /* Context & Redux                                                   */
-  /* ---------------------------------------------------------------- */
+  /* Context & Redux  */
   const userId = useSelector(selectCurrentUserId);
   const { eventId } = useActiveEvent();
   const dispatch = useAppDispatch();
@@ -57,24 +55,25 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
     updateAttendeeStatus 
   } = useAttendee();
 
-  /* ---------------------------------------------------------------- */
-  /* Navigation params                                                */
-  /* ---------------------------------------------------------------- */
+  /* Navigation params */
+
   const {
     attendeeId,
     comment,
   } = route.params;
 
-  /* ---------------------------------------------------------------- */
-  /* Local state                                                      */
-  /* ---------------------------------------------------------------- */
+
+  /* Local state */
+
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+
   // État pour forcer l'affichage du skeleton pendant un court instant
   const [forceShowSkeleton, setForceShowSkeleton] = useState(true);
 
-  /* ---------------------------------------------------------------- */
-  /* Data fetching                                                    */
-  /* ---------------------------------------------------------------- */
+
+  /* Data fetching */
+
   const fetchData = useCallback(() => {
     // Forcer l'affichage du skeleton avant de commencer le chargement
     setForceShowSkeleton(true);
@@ -136,6 +135,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   /* ---------------------------------------------------------------- */
   /* Handlers                                                         */
   /* ---------------------------------------------------------------- */
+
   const handleBackPress = () => navigation.goBack();
 
   const handleBadgePress = () =>

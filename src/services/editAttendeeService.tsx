@@ -1,4 +1,3 @@
-import { BASE_URL } from '../config/config';
 import { handleApiError } from '../utils/api/handleApiError';
 import { handleApiSuccess } from '../utils/api/handleApiSuccess';
 import { cleanParams } from '../utils/api/cleanParams';

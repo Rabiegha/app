@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   View,
   ScrollView,
@@ -7,26 +7,49 @@ import {
   Text,
   StyleSheet,
   Image,
-  Alert,
 } from 'react-native';
-import globalStyle from '../../assets/styles/globalStyle';
-import SuccessComponent from '../elements/notifications/SuccessComponent';
-import FailComponent from '../elements/notifications/FailComponent';
+
+//components
 import {CheckBox} from 'react-native-elements';
-import colors from '../../assets/colors/colors';
-import Icons from '../../assets/images/icons';
-import {Picker} from '@react-native-picker/picker';
 import {Dropdown} from 'react-native-element-dropdown';
 
+//styles
+import globalStyle from '../../assets/styles/globalStyle';
+import colors from '../../assets/colors/colors';
+import Icons from '../../assets/images/icons';
+
+
+interface addAttendeesComponentProps {
+  handleEnregistrer: () => void;
+  handleCheckboxPress: () => void;
+  setNom: (text: string) => void;
+  setPrenom: (text: string) => void;
+  setEmail: (text: string) => void;
+  setSociete: (text: string) => void;
+  setJobTitle: (text: string) => void;
+  setNumeroTelephone: (text: string) => void;
+  nom: string;
+  prenom: string;
+  email: string;
+  societe: string;
+  jobTitle: string;
+  isChecked: boolean;
+  numeroTelephone: string;
+  inputErrors: Record<string, boolean>;
+  resetInputError: (field: string) => void;
+  attendeeTypes: Record<string, string>[];
+  selectedAttendeeType: string;
+  setSelectedAttendeeType: (value: string) => void;
+}
+
 const AddAttendeesComponent = ({
-  onPress,
+  handleEnregistrer ,
   handleCheckboxPress,
   setNom,
   setPrenom,
   setEmail,
   setSociete,
   setJobTitle,
-  setSuccess,
   setNumeroTelephone,
   nom,
   prenom,
@@ -34,26 +57,15 @@ const AddAttendeesComponent = ({
   societe,
   jobTitle,
   isChecked,
-  success,
   numeroTelephone,
   inputErrors,
   resetInputError,
   attendeeTypes,
   selectedAttendeeType,
   setSelectedAttendeeType,
-  attendeeColor,
-}) => {
-  useEffect(() => {
-/*     console.log('Success value:', success);
-    console.log('attendee types:', attendeeTypes);
-    console.log('attendee color:', attendeeColor); */
-  }, [success]);
+} :addAttendeesComponentProps) => {
 
   return (
-    <View
-      style={styles.wrapper}
-      contentContainerStyle={styles.contentContainer}>
-
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
@@ -134,7 +146,6 @@ const AddAttendeesComponent = ({
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
           data={attendeeTypes}
           search
           maxHeight={300}
@@ -203,28 +214,19 @@ const AddAttendeesComponent = ({
         />
         {/* Checked-in or not */}
         <CheckBox
-          style={globalStyle.checkBox}
           title={'Check-in'}
           checkedIcon={
             <Image
               source={Icons.NotChecked}
               resizeMode="contain"
-              style={{
-                width: 20,
-                height: 20,
-                tintColor: colors.darkGrey,
-              }}
+              style={styles.checkBoxImage}
             />
           }
           uncheckedIcon={
             <Image
               source={Icons.Checked}
               resizeMode="contain"
-              style={{
-                width: 20,
-                height: 20,
-                tintColor: colors.darkerGrey,
-              }}
+              style={styles.checkBoxImage}
             />
           }
           checked={isChecked}
@@ -232,99 +234,84 @@ const AddAttendeesComponent = ({
           containerStyle={styles.checkBoxContainer}
           textStyle={styles.checkBoxText}
         />
-
-        <TouchableOpacity style={styles.button} onPress={onPress}>
+        <TouchableOpacity style={styles.button} onPress={handleEnregistrer}>
           <Text style={styles.buttonText}>Enregistrer</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    top: 30,
-    flexGrow: 1,
-    padding: 20,
-    width: '100%',
-    height: 1000,
-  },
-  wrapper: {
-    top: 25,
-  },
   button: {
+    alignItems: 'center',
     backgroundColor: colors.green,
     borderRadius: 10,
+    color: colors.darkGrey,
+    marginTop: 20,
     padding: 15,
     width: '100%',
-    alignItems: 'center',
-    marginTop: 20,
-    color: 'black',
   },
   buttonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 16,
   },
   checkBoxContainer: {
-    backgroundColor: 'transparent',
+    alignSelf: 'flex-start',
+    borderWidth: 0,
+    marginBottom: 0,
     marginLeft: 0,
     marginRight: 0,
     marginTop: 20,
-    marginBottom: 0,
     padding: 0,
-    borderWidth: 0,
-    alignSelf: 'flex-start',
+  },
+  checkBoxImage: {
+    height: 20,
+    tintColor: colors.darkGrey,
+    width: 20,
   },
   checkBoxText: {
-    color: 'black',
+    color: colors.darkGrey,
     marginLeft: 10,
   },
-  contentContainer: {
-    paddingBottom: 300,
+  colorBox: {
+    borderRadius: 3,
+    height: 20,
+    marginRight: 10,
+    width: 5,
+  },
+  container: {
+    flexGrow: 1,
+    height: 1000,
+    padding: 20,
+    top: 30,
+    width: '100%',
   },
   error: {
     color: colors.red,
     fontSize: 10,
     margin: 0,
-    padding: 0,
     marginTop: 5,
-  },
-  notif: {
-    zIndex: 100,
-  },
-  picker: {
-    marginRight: -15,
-    marginTop: -30,
-    height: 50,
-  },
-  label: {
-    color: colors.darkGrey,
-  },
-  selectedTextStyle: {
-    fontSize: 16,
+    padding: 0,
   },
   inputSearchStyle: {
-    height: 40,
+    color: colors.darkGrey,
     fontSize: 16,
+    height: 40,
+  },
+  item: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  itemText: {
     color: colors.darkGrey,
   },
   placeholderStyle: {
     color: colors.grey,
   },
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
-  },
-  colorBox: {
-    width: 5,
-    height: 20,
-    marginRight: 10,
-    borderRadius: 3, // pour avoir des coins légèrement arrondis
-  },
-  itemText: {
-    color: colors.darkGrey,
+  selectedTextStyle: {
+    fontSize: 16,
   },
 });
 

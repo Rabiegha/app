@@ -87,8 +87,11 @@ const attendeeData = {
 
 
 //Edit modal
+
+
+
 const [editFieldKey, setEditFieldKey] = useState<string | null>(null);
-const [editValue, setEditValue] = useState('');
+const [editValue, setEditValue] = useState<string | null>('');
 const [modalVisible, setModalVisible] = useState(false);
 
 
@@ -283,7 +286,7 @@ const handleEditSubmit = async (newValue: string) => {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         label={attendeeFieldConfig[editFieldKey]?.label || ''}
-        initialValue={editValue}
+        initialValue={(editValue || '') as string}
         onSubmit={handleEditSubmit}
       />
 
