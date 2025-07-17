@@ -1,13 +1,12 @@
 // MoreScreen.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
 import { useAppDispatch } from '../../redux/store';
-import { updateAttendeeLocally, clearSelectedAttendee } from '../../redux/slices/attendee/attendeeSlice';
+import { updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
 import MoreComponentSkeleton from '../../components/elements/skeletons/MoreComponentSkeleton';
@@ -68,16 +67,12 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
 
-  // État pour forcer l'affichage du skeleton pendant un court instant
-  const [forceShowSkeleton, setForceShowSkeleton] = useState(true);
 
 
   /* Data fetching */
 
   const fetchData = useCallback(() => {
-    // Forcer l'affichage du skeleton avant de commencer le chargement
-    setForceShowSkeleton(true);
-    
+
     if (userId && eventId && attendeeId) {
       fetchAttendeeDetails({
         userId,
@@ -90,32 +85,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   // Fetch data on mount and when dependencies change
   useEffect(() => {
     fetchData();
-    
-    // Désactiver forceShowSkeleton après un délai pour permettre au composant de se stabiliser
-    const timer = setTimeout(() => {
-      setForceShowSkeleton(false);
-    }, 1000); // Maintenir le skeleton pendant 1 seconde minimum
-    
-    return () => clearTimeout(timer);
   }, [fetchData]);
-
-  // Refresh when coming back to this screen
-  useFocusEffect(
-    useCallback(() => {
-      // Forcer l'affichage du skeleton avant de charger les données
-      setForceShowSkeleton(true);
-      fetchData();
-      
-      // Only clear data when navigating away, don't show error state
-      return () => {
-        // Forcer l'affichage du skeleton avant de quitter l'écran
-        setForceShowSkeleton(true);
-        // Clear selected attendee when leaving the screen to ensure
-        // we don't see stale data when returning to this screen
-        dispatch(clearSelectedAttendee());
-      };
-    }, [fetchData, dispatch])
-  );
 
   // Refresh when refresh trigger changes
   useEffect(() => {
@@ -132,9 +102,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
 
   const { status: printStatus, clearStatus } = usePrintStatus();
 
-  /* ---------------------------------------------------------------- */
-  /* Handlers                                                         */
-  /* ---------------------------------------------------------------- */
+  /* Handlers */
 
   const handleBackPress = () => navigation.goBack();
 
@@ -208,13 +176,13 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
     }
   };
 
-  /* ---------------------------------------------------------------- */
-  /* Render helpers                                                   */
-  /* ---------------------------------------------------------------- */
+  /* Render helpers */
+
+  const testing = true;
   const renderContent = () => {
     // Afficher le squelette de chargement si forceShowSkeleton est true ou si isLoadingDetails est true
     // ou si les données ne sont pas encore disponibles
-    if (forceShowSkeleton || isLoadingDetails || !attendeeDetails) {
+    if (isLoadingDetails || !attendeeDetails || testing) {
       return (
         <View style={styles.filler}>
           <MoreComponentSkeleton />
@@ -272,9 +240,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
     );
   };
 
-  /* ---------------------------------------------------------------- */
-  /* JSX                                                              */
-  /* ---------------------------------------------------------------- */
+  /* JSX */
   return (
     <View style={globalStyle.backgroundWhite}>
       <MainHeader

@@ -1,15 +1,13 @@
 import React from 'react';
-import {View, Alert, StyleSheet, Platform} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import Share from 'react-native-share';
 import BadgeComponent from '../../components/screens/BadgeComponent';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
-import {useEvent} from '../../context/EventContext';
 import MainHeader from '../../components/elements/header/MainHeader';
 
 const BadgeScreen = ({route, navigation}) => {
-  const {triggerListRefresh} = useEvent();
-  const {eventId, attendeeId, firstName, lastName, badgePdfUrl, badgeImageUrl} = route.params;
+  const {badgePdfUrl, badgeImageUrl} = route.params;
   console.log('MoreScreen route.params:', route.params);
 
   const image = badgeImageUrl;

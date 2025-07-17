@@ -35,7 +35,6 @@ const mapFieldToSelectedAttendee = (field: string, value: string): Partial<Atten
     case 'comment':
       return { commentaire: value };
     default:
-      // Return an empty object if the field doesn't map to any property
       return {};
   }
 };
