@@ -9,7 +9,6 @@ import { useAppDispatch } from '../../redux/store';
 import { updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
-import MoreComponentSkeleton from '../../components/elements/skeletons/MoreComponentSkeleton';
 import ErrorView from '../../components/elements/view/ErrorView';
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
@@ -125,6 +124,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
     if (userId && eventId && attendeeId && attendeeDetails) {
       // Store the original status to revert if needed
       const originalStatus = attendeeDetails.attendeeStatus as 0 | 1;
+      console.log('originalStatus', originalStatus)
       
       try {
         // First update locally for immediate UI feedback
@@ -178,18 +178,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
 
   /* Render helpers */
 
-  const testing = true;
   const renderContent = () => {
-    // Afficher le squelette de chargement si forceShowSkeleton est true ou si isLoadingDetails est true
-    // ou si les données ne sont pas encore disponibles
-    if (isLoadingDetails || !attendeeDetails || testing) {
-      return (
-        <View style={styles.filler}>
-          <MoreComponentSkeleton />
-        </View>
-      );
-    }
-    
     // Only show error if we're not loading and have a real error
     // This prevents the error view from flashing during initial load
     if (error && !isLoadingDetails && attendeeDetails === null) {
@@ -213,32 +202,36 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
 
     // À ce stade, nous savons que attendeeDetails existe et n'est pas null
     const details = attendeeDetails;
+
+    console.log('details status', details?.attendeeStatus)
     
     // Use the comment from route params if it exists, otherwise use from attendee details
-    const commentText = comment || details.commentaire || '';
+    const commentText = comment || details?.commentaire || '';
+
     
     return (
       <MoreComponent
         See={handleBadgePress}
-        firstName={details.firstName}
-        lastName={details.lastName}
-        email={details.email}
-        phone={details.phone}
-        JobTitle={details.jobTitle}
-        attendeeStatus={details.attendeeStatus}
-        organization={details.organization}
+        firstName={details?.firstName || ''}
+        lastName={details?.lastName || ''}
+        email={details?.email || ''}
+        phone={details?.phone || ''}
+        JobTitle={details?.jobTitle || ''}
+        attendeeStatus={details?.attendeeStatus ?? ''}
+        organization={details?.organization || ''}
         commentaire={commentText}
         attendeeId={attendeeId}
-        attendeeStatusChangeDatetime={details.attendeeStatusChangeDatetime}
+        attendeeStatusChangeDatetime={details?.attendeeStatusChangeDatetime || ''}
         handleCheckinButton={handleCheckinButton}
         PrintAndCheckIn={handlePrintAndCheckIn}
         loading={isUpdating}
         modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
-        type={details.type}
-        onFieldUpdateSuccess={triggerRefresh}
-      />
+        type={details?.type || ''}
+        onFieldUpdateSuccess={triggerRefresh} 
+        isLoadingDetails={isLoadingDetails}      />
     );
   };
+
 
   /* JSX */
   return (

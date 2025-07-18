@@ -95,15 +95,15 @@ export const updateAttendeeStatus = async ({
       attendee_status: status,
     });
 
+    // Try sending parameters in the request body instead of as query parameters
     const response = await mainApi.post(
       '/update_event_attendee_attendee_status/',
-      null,
-      { params }
+      params  // Send params as the request body
     );
 
     if (__DEV__) {
-        console.log('Params sent to API:', params);
-      }
+      console.log('Params sent to API:', params);
+    }
 
     return response.data?.status === true;
   } catch (error) {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {ScrollView, StyleSheet, View, Image} from 'react-native';
 import { useSelector } from 'react-redux';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 import LabelValueComponent from '../elements/LabelValueComponent';
 import LargeButton from '../elements/buttons/LargeButton';
@@ -13,6 +14,7 @@ import { selectCurrentUserId, selectUserType } from '../../redux/selectors/auth/
 import { attendeeFieldConfig } from '../../utils/modify/attendeeFieldConfig';
 import ModifyFieldModal from '../elements/modals/ModifyFieldModal';
 import { useUpdateAttendeeField } from '../../hooks/edit/useUpdateAttendeeField';
+
 
 
 
@@ -32,6 +34,7 @@ interface MoreComponentProps {
   PrintAndCheckIn: () => void;
   handleCheckinButton: (status: 0 | 1) => Promise<void>;
   loading: boolean;
+  isLoadingDetails: boolean;
   modify: () => void;
   type: string;
   onFieldUpdateSuccess?: () => void;
@@ -52,6 +55,7 @@ const MoreComponent = ({
   PrintAndCheckIn,
   handleCheckinButton,
   loading,
+  isLoadingDetails,
   type,
   onFieldUpdateSuccess,
 }: MoreComponentProps) => {
@@ -64,7 +68,10 @@ const MoreComponent = ({
   const userType = useSelector(selectUserType);
 
   //Attendee status
-  const parsedAttendeeStatus = Number(attendeeStatus);
+  // Explicitly convert attendeeStatus to number to avoid type issues
+  const parsedAttendeeStatus = typeof attendeeStatus === 'string' ? parseInt(attendeeStatus, 10) : attendeeStatus;
+
+  console.log('parsedAttendeeStatus', parsedAttendeeStatus)
 
   //Phone formatting
   const formattedPhone = insertSpaceBetweenPairs(phone);
@@ -74,24 +81,20 @@ const MoreComponent = ({
 const isPartner = userType?.toLowerCase() === 'partner';
 
 
+// Make sure this structure matches the Attendee interface in attendeeFieldConfig.ts
 const attendeeData = {
-  first_name: firstName,
-  last_name: lastName,
   email,
   phone,
   organization,
   jobTitle: JobTitle,
   comment: commentaire,
-  typeId: 1,
 };
 
 
 //Edit modal
-
-
-
 const [editFieldKey, setEditFieldKey] = useState<string | null>(null);
-const [editValue, setEditValue] = useState<string | null>('');
+// Explicitly define editValue as string type only
+const [editValue, setEditValue] = useState<string>('');
 const [modalVisible, setModalVisible] = useState(false);
 
 
@@ -111,7 +114,11 @@ const openEditModal = (fieldKey: keyof typeof attendeeFieldConfig) => {
 
   const config = attendeeFieldConfig[fieldKey];
   setEditFieldKey(fieldKey);
-  setEditValue(String(config.accessor(attendeeData)));
+  
+  // Get the value from the accessor and explicitly convert to string
+  // This ensures we're always passing a string to setEditValue
+  const rawValue = config.accessor(attendeeData);
+  setEditValue(String(rawValue));
   setModalVisible(true);
 };
 
@@ -173,7 +180,7 @@ const baseFields: FieldItem[] = [
   {
     label: 'Date de check-in:',
     value: parsedAttendeeStatus === 1 && attendeeStatusChangeDatetime && attendeeStatusChangeDatetime !== '-' ? 
-      attendeeStatusChangeDatetime : '-',
+      String(attendeeStatusChangeDatetime) : '-',
     hideForPartner: false,
   },
   {
@@ -185,6 +192,35 @@ const baseFields: FieldItem[] = [
     hideForPartner: false,
   },
 ];
+
+const testing = false;
+//Render skeleton or content
+const renderSkeletonOrContent = (label: string, value: string, showButton?: boolean, fieldKey?: keyof typeof attendeeFieldConfig) => {
+  if (isLoadingDetails || testing) {
+    return (
+      <View style={{ width: '100%', marginBottom: 15 }}>
+        <SkeletonPlaceholder>
+          <SkeletonPlaceholder.Item width={100} height={15} borderRadius={4} marginBottom={5} />
+          <SkeletonPlaceholder.Item width="80%" height={20} borderRadius={4} />
+        </SkeletonPlaceholder>
+      </View>
+    );
+  }
+
+  return (
+    <LabelValueComponent
+      label={label}
+      value={value}
+      showButton={showButton && (isPartner ? false : true)}
+      modifyHandle={
+        fieldKey && showButton
+          ? () => openEditModal(fieldKey)
+          : undefined
+      }
+    />
+  );
+};
+
 
 
 const handleEditSubmit = async (newValue: string) => {
@@ -218,6 +254,7 @@ const handleEditSubmit = async (newValue: string) => {
     <ScrollView
     contentContainerStyle={styles.container}
     showsVerticalScrollIndicator={false}>
+      <View style={styles.topContainer}>
       <View style={styles.imageContainer}>
         <Image source={userIcon} style={styles.image} />
       </View>
@@ -225,18 +262,20 @@ const handleEditSubmit = async (newValue: string) => {
         <View style={styles.topButtonsContainer}>
           <SmallButton
                 imageSource={Icons.Print}
-            pressHandler={PrintAndCheckIn}
-            backgroundColor={colors.green}
-            tintColor={colors.greyCream}
-          />
+                pressHandler={PrintAndCheckIn}
+                backgroundColor={colors.green}
+                tintColor={colors.greyCream}
+              />
           <SmallButton
                 imageSource={Icons.Scan}
-            pressHandler={See}
-            backgroundColor={colors.greyCream}
-            tintColor={colors.darkGrey}
-          />
+                pressHandler={See}
+                backgroundColor={colors.greyCream}
+                tintColor={colors.darkGrey}
+              />
         </View>
       )}
+      </View>
+
       <View style={styles.container}>
       {baseFields
         .filter(field => {
@@ -246,24 +285,32 @@ const handleEditSubmit = async (newValue: string) => {
           if (!isPartner && field.showForPartnerOnly) return false;
           return true;
         })
-        .map((field, index) => {
+        .map((field) => {
           // For debugging - log each field being rendered
           // console.log(`Rendering field ${index}:`, field);
-          return (
-            <LabelValueComponent
-              key={index}
-              label={field.label}
-              value={field.value}
-              showButton={field.showButton && (isPartner ? false : true)}
-              modifyHandle={field.fieldKey && field.showButton ? () => openEditModal(field.fieldKey as keyof typeof attendeeFieldConfig) : undefined}
-            />
+          return renderSkeletonOrContent(
+            field.label,
+            field.value,
+            field.showButton,
+            field.fieldKey
           );
         })}
 
         </View>
+      {modalVisible && editFieldKey && (
+        <ModifyFieldModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        label={attendeeFieldConfig[editFieldKey]?.label || ''}
+        initialValue={editValue || ''}
+        onSubmit={handleEditSubmit}
+      />
 
-      {!isPartner && (
-        <>
+      )}
+
+{!isPartner && (
+  <View style={styles.bottomContainer}>
+     <>
           {parsedAttendeeStatus === 0 ? (
             <LargeButton
               title="Check-in"
@@ -280,26 +327,18 @@ const handleEditSubmit = async (newValue: string) => {
             />
           )}
         </>
+  </View>
+       
       )}
-      {modalVisible && editFieldKey && (
-        <ModifyFieldModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        label={attendeeFieldConfig[editFieldKey]?.label || ''}
-        initialValue={(editValue || '') as string}
-        onSubmit={handleEditSubmit}
-      />
-
-      )}
-
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-
+  bottomContainer: {
+    marginBottom: 20,
+  },
   container: {
-    alignItems: 'center',
     position: 'relative',
   },
   image: {
@@ -313,6 +352,9 @@ const styles = StyleSheet.create({
   topButtonsContainer: {
     flexDirection: 'row',
     marginBottom: 20,
+  },
+  topContainer: {
+    alignItems: 'center',
   },
 });
 

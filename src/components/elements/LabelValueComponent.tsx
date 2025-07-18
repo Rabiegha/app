@@ -1,6 +1,7 @@
 // LabelValueComponent.tsx
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+
 import colors from '../../assets/colors/colors';
 import Icons from '../../assets/images/icons'
 
@@ -26,9 +27,9 @@ const LabelValueComponent = ({label, value, value2, showButton, modifyHandle}: L
         <>
           <TouchableOpacity
             onPress={modifyHandle}
-            style={[styles.editButton]}>
-            <Image source={Icons.Modifier} style={styles.buttonImage} />
-      </TouchableOpacity>
+            style={styles.editButton}>
+              <Image source={Icons.Modifier} style={styles.buttonImage} />
+          </TouchableOpacity>
         </>
       )}
     </View>
@@ -36,39 +37,39 @@ const LabelValueComponent = ({label, value, value2, showButton, modifyHandle}: L
 };
 
 const styles = StyleSheet.create({
+  buttonImage: {
+    height: 30,
+    tintColor: colors.darkGrey,
+    width: 25,
+    zIndex: 2,
+  },
   container: {
-    marginBottom: 12,
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 12,
   },
   content: {
     flexDirection: 'column',
     flex: 1,
     marginBottom: 5
   },
+  editButton: {
+    height: 23,
+    marginRight: 17,
+    width: 15,
+    zIndex: 2,
+
+  },
   label: {
+    color: colors.darkGrey,
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
-    color: colors.darkGrey,
   },
   value: {
-    fontSize: 12,
     color: colors.darkGrey,
-  },
-  buttonImage: {
-    width: 25,
-    height: 30,
-    tintColor: colors.darkGrey,
-    zIndex: 2,
-  },
-  editButton: {
-    marginRight: 17,
-    width: 15,
-    height: 23,
-    zIndex: 2,
-
+    fontSize: 12,
   },
 });
 
