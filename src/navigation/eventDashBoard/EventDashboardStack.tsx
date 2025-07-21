@@ -6,7 +6,7 @@ import EventDashboardScreen from '../../screens/eventDashboard/EventDashboardScr
 
 const Stack = createNativeStackNavigator();
 
-const EventDashboardStackNavigator = ({ searchQuery }) => {
+const EventDashboardStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {/* Tabs inside the stack */}
