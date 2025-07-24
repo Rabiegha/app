@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, StatusBar, Text, SectionList, RefreshControl} from 'react-native';
-import {useFocusEffect, useRoute, RouteProp, ParamListBase} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {View, StyleSheet, Text, SectionList, RefreshControl} from 'react-native';
+import {useFocusEffect, useRoute, RouteProp} from '@react-navigation/native';
 
 import ListEvents from '../../components/screens/events/ListEvents';
 import colors from '../../assets/colors/colors';
 import globalStyle from '../../assets/styles/globalStyle';
-
 import useFilteredAndSectionedEvents from '../../hooks/event/useFilteredAndSectionedEvents';
 import ErrorView from '../../components/elements/view/ErrorView';
 import LoadingView from '../../components/elements/view/LoadingView';
@@ -124,21 +123,21 @@ const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 30,
-    paddingHorizontal: 20,
     flex: 1,
-  },
-  sectionHeader: {
-    backgroundColor: 'white',
-  },
-  sectionHeaderText: {
-    paddingVertical: 10,
-    fontSize: 21,
-    fontWeight: '800',
-    color: colors.darkGrey,
+    paddingHorizontal: 20,
+    paddingTop: 30,
   },
   futureSectionHeader: {
     marginTop: 20,
+  },
+  sectionHeader: {
+    backgroundColor: colors.white,
+  },
+  sectionHeaderText: {
+    color: colors.darkGrey,
+    fontSize: 21,
+    fontWeight: '800',
+    paddingVertical: 10,
   },
 });
 

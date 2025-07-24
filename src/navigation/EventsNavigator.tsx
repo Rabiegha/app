@@ -3,6 +3,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import EventPasseesScreen from '../screens/event/PastEventsScreen';
 import EventAvenirScreen from '../screens/event/FutureEventsScreen';
 import colors from '../assets/colors/colors';
+import CustomTabBar from '../components/navigation/CustomTabBar';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -10,6 +11,7 @@ export default function TabsNavigator({searchQuery, onEventSelect}) {
   return (
     <Tab.Navigator
       initialRouteName="A venir"
+      tabBar={props => <CustomTabBar {...props} />}
       screenOptions={{
         tabBarActiveTintColor: colors.green,
         tabBarInactiveTintColor: colors.grey,

@@ -4,14 +4,20 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import EventDetailsPerTypeScreen from '../../screens/eventDetails/EventDetailsPerTypeScreen';
 import EventDetailsScreen from '../../screens/eventDetails/EventDetailsScreen';
 
-const stack = createNativeStackNavigator();
+// Define the type for the EventDetails navigation stack
+export type EventDetailsStackParamList = {
+  EventDetailsScreen: undefined;
+  EventDetailsPerTypeScreen: { state: string | null; total: number | null };
+};
+
+const Stack = createNativeStackNavigator<EventDetailsStackParamList>();
 
 export default function EventDetailsNavigator() {
   return (
-    <stack.Navigator
+    <Stack.Navigator
       screenOptions={{headerShown: false}}>
-      <stack.Screen name="EventDetails" component={EventDetailsScreen} />
-      <stack.Screen name="EventDetailsPerType" component={EventDetailsPerTypeScreen} />
-    </stack.Navigator>
+      <Stack.Screen name="EventDetailsScreen" component={EventDetailsScreen} />
+      <Stack.Screen name="EventDetailsPerTypeScreen" component={EventDetailsPerTypeScreen} />
+    </Stack.Navigator>
   );
 }

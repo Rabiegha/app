@@ -1,14 +1,15 @@
 import { FlatList, StyleSheet, RefreshControl, View, Text, TouchableOpacity, Image } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
+
 import globalStyle from '../../assets/styles/globalStyle';
 import ListCard from '../../components/elements/ListCard';
-import { useSelector } from 'react-redux';
 import { useEvent } from '../../context/EventContext';
 import { getSessionsList } from '../../services/getSessionsListService';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import LoadingView from '../../components/elements/view/LoadingView';
 import ErrorView from '../../components/elements/view/ErrorView';
-import { useNavigation } from '@react-navigation/native';
 import { useSessionSelector } from '../../utils/session/useSessionSelector';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
 import colors from '../../assets/colors/colors';
@@ -20,7 +21,7 @@ import SessionFilterModal from '../../components/screens/eventDashboard/SessionF
 import { SessionStatus, getSessionStatus, sortSessionsByStatus } from '../../utils/date/sessionDateUtils';
 
 const SessionOverviewScreen = () => {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [allSessions, setAllSessions] = useState<Session[]>([]);
   const { eventId } = useEvent();
@@ -266,7 +267,7 @@ const SessionOverviewScreen = () => {
         }
       />
     
-      <FloatingSearchButton onPress={handleOpenFilterModal} />
+      <FloatingSearchButton onPress={handleOpenFilterModal} icon={Icons.Rechercher} />
     
       <SessionFilterModal
         visible={filterModalVisible}
@@ -282,70 +283,70 @@ const SessionOverviewScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 30,
+  button: {
+    backgroundColor: colors.green,
+    borderRadius: 5,
+    marginTop: 10,
+    padding: 10,
     paddingHorizontal: 20,
   },
+  buttonTexte: {color: colors.white},
+  container: {
+    paddingHorizontal: 20,
+    paddingTop: 30,
+  },
   emptyContainer: {
-    flex: 1,
     alignItems: 'center',
+    flex: 1,
     height: '100%',
   },
   emptyText: {
-    fontSize: 16,
     color: colors.darkGrey,
+    fontSize: 16,
     textAlign: 'center',
   },
-  button: {
+  filterChip: {
+    alignItems: 'center',
     backgroundColor: colors.green,
-    padding: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 10,
+    borderRadius: 20,
+    flexDirection: 'row',
+    marginBottom: 8,
+    marginRight: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
-  resetButton: {
-    backgroundColor: colors.darkGrey,
-    marginTop: 10,
+  filterChipIcon: {
+    height: 12,
+    tintColor: colors.white,
+    width: 12,
   },
-  buttonTexte: {color: 'white'},
-  searchBar: {
-    marginTop: 10,
-    marginBottom: 15,
-  },
-  resetSearchButton: {
-    alignSelf: 'flex-end',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  resetSearchButtonText: {
-    color: colors.green,
-    fontSize: 14,
+  filterChipText: {
+    color: colors.white,
+    fontSize: 12,
+    marginRight: 5,
   },
   filterChipsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: 10,
   },
-  filterChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.green,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    marginRight: 8,
-    marginBottom: 8,
+  resetButton: {
+    backgroundColor: colors.darkGrey,
+    marginTop: 10,
   },
-  filterChipText: {
-    color: 'white',
-    marginRight: 5,
-    fontSize: 12,
+  resetSearchButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
-  filterChipIcon: {
-    width: 12,
-    height: 12,
-    tintColor: 'white',
+  resetSearchButtonText: {
+    color: colors.green,
+    fontSize: 14,
+  },
+  searchBar: {
+    marginBottom: 15,
+    marginTop: 10,
   },
 });
 

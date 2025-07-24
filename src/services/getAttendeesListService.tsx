@@ -32,8 +32,6 @@ export const fetchAttendeesList = async (
       console.log('Full API response:', response.data);
       throw new Error('Event attendee list not fetched');
     }
-
-    console.log('Attendee list fetched successfully');
     return response.data.event_attendee_details;
   } catch (error) {
     handleApiError(error, 'Failed to fetch event attendee list');

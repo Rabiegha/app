@@ -1,15 +1,17 @@
 import React, { useState, ReactElement } from 'react';
-import { View, Platform, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { TabBarIcon } from '../../components/navigation/TabBarIconComponent';
 import { ScanButton } from '../../components/navigation/scanButton';
 import ModalFilter from '../../components/elements/modals/ModalFilter';
-import TAB_SCREENS from './tabScreensConfig';
 import colors from '../../assets/colors/colors';
 import useKeyboardOffset from '../../hooks/keyboard/useKeyboardOffset';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import TAB_SCREENS from './tabScreensConfig';
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +43,6 @@ function TabNavigator(): ReactElement {
 
   const insets = useSafeAreaInsets();
 
-  const openFilterModal = () => setFilterModalVisible(true);
   const closeFilterModal = () => setFilterModalVisible(false);
 
   return (
@@ -59,8 +60,19 @@ function TabNavigator(): ReactElement {
                 <TabBarIcon icon={icon} label={label} focused={focused} height={height} width={width} />
               ),
               tabBarButton: isMiddle
-                ? props => {
-                  return <ScanButton {...props} onPress={props.onPress || (() => {})} />;
+                ? (props) => {
+                  // Utiliser un composant personnalisé pour éviter le problème de clé
+                  return (
+                    <ScanButton onPress={props.onPress || (() => {})}>
+                      <TabBarIcon 
+                        icon={icon} 
+                        label="" 
+                        focused={false} 
+                        height={24} 
+                        width={24} 
+                      />
+                    </ScanButton>
+                  );
                 }
                 : undefined,
             }}
@@ -74,24 +86,24 @@ function TabNavigator(): ReactElement {
 }
 
 const styles = StyleSheet.create<{tabBarStyle: ViewStyle, tabBarItemStyle: ViewStyle}>({
+  tabBarItemStyle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   tabBarStyle: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20,
-    right: 20,
-    height: 70,
     backgroundColor: colors.darkGrey,
     borderRadius: 20,
+    bottom: 30,
     elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 5 },
-    shadowRadius: 5,
+    height: 70,
+    left: 20,
     paddingBottom: 0,
-  },
-  tabBarItemStyle: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: 'absolute',
+    right: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
 });
 

@@ -1,13 +1,15 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, Image, View, Platform } from 'react-native';
-import Icons from '../../../assets/images/icons';
+import { TouchableOpacity, StyleSheet, Image, View, Platform, ImageSourcePropType } from 'react-native';
+
 import colors from '../../../assets/colors/colors';
 
 interface FloatingSearchButtonProps {
   onPress: () => void;
+  icon?: ImageSourcePropType;
+  size?: number;
 }
 
-const FloatingSearchButton = ({ onPress }: FloatingSearchButtonProps) => {
+const FloatingButton = ({ onPress, icon, size = 24 }: FloatingSearchButtonProps) => {
   return (
     <View style={styles.buttonContainer}>
       <TouchableOpacity
@@ -16,8 +18,8 @@ const FloatingSearchButton = ({ onPress }: FloatingSearchButtonProps) => {
         activeOpacity={0.8}
       >
         <Image
-          source={Icons.Rechercher}
-          style={styles.searchIcon}
+          source={icon}
+          style={[styles.searchIcon, {height: size, width: size}]}
           resizeMode="contain"
         />
       </TouchableOpacity>
@@ -27,11 +29,11 @@ const FloatingSearchButton = ({ onPress }: FloatingSearchButtonProps) => {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    position: 'absolute',
     bottom: 120,
+    height: 70,
+    position: 'absolute',
     right: 20,
     width: 70,
-    height: 70,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -46,19 +48,17 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   floatingButton: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 35,
-    backgroundColor: colors.green,
-    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.green,
+    borderRadius: 35,
+    height: '100%',
+    justifyContent: 'center',
     overflow: 'hidden',
+    width: '100%',
   },
   searchIcon: {
-    width: 24,
-    height: 24,
-    tintColor: 'white',
+    tintColor: colors.white,
   },
 });
 
-export default FloatingSearchButton;
+export default FloatingButton;

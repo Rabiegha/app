@@ -33,6 +33,7 @@ const EventDetailsComponent = ({
   totalAttendeesAction,
   checkedInAction,
   notCheckedOInAction,
+
 }: EventDetailsPerTypeComponentProps) => {
   const data: EventDetailItem[] = [
     {
@@ -53,7 +54,7 @@ const EventDetailsComponent = ({
       backgroundColor: colors.detailOrange,
       label: 'Not Checked In',
       value: totalNotCheckedIn,
-      source: Icons.notCheckedIn,
+      source: Icons.notAttended,
       action: notCheckedOInAction,
     },
   ];

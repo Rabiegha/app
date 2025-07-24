@@ -97,7 +97,6 @@ export const EventProvider = ({children}: EventProviderProps) => {
     if (storedEvent) {
       const parsed = JSON.parse(storedEvent);
       setEventDetails(parsed);
-      console.log('Loaded persisted event details:', parsed);
     }
   }, []);
 
@@ -125,14 +124,6 @@ export const EventProvider = ({children}: EventProviderProps) => {
     setEventDetails(eventData);
     storage.set('eventDetails', JSON.stringify(eventData));
 
-    console.log('Event details updated:', {
-      secretCode: newSecretCode,
-      eventId: newEventId,
-      eventName: newEventName,
-      eventLogo: newEventLogo,
-    });
-
-
   };
 
   const updateSessionDetails = ({
@@ -159,7 +150,6 @@ export const EventProvider = ({children}: EventProviderProps) => {
 
   const clearSessionDetails = () => {
     setSessionDetails(null);
-    console.log('Session details cleared');
   };
 
 

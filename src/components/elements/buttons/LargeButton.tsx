@@ -1,6 +1,7 @@
 // LargeButton.tsx
 import React from 'react';
-import {TouchableOpacity, Text, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
+import {TouchableOpacity, Text, StyleSheet, ActivityIndicator} from 'react-native';
+
 import colors from '../../../assets/colors/colors';
 
 interface LargeButtonProps {
@@ -23,23 +24,20 @@ const LargeButton = ({title, onPress, backgroundColor, loading = false}: LargeBu
       )}
     </TouchableOpacity>
   );
-};
-
-const {width} = Dimensions.get('window');
+}
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.green,
-    padding: 10,
-    borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 20,
+    backgroundColor: colors.green,
+    borderRadius: 10,
     height: 50,
+    justifyContent: 'center',
     marginBottom: 7,
+    padding: 10,
   },
   buttonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 15,
     fontWeight: 'bold',
   },

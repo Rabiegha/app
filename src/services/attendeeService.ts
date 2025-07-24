@@ -45,9 +45,6 @@ export const fetchAttendees = async ({
       params,
       timeout: 10000 // 10 second timeout
     });
-    console.log('API response:', response.data);
-    console.log('API response status:', response.status);
-    console.log('API response headers:', response.headers);
 
     if (!response.data) {
       console.error('No data received from API');
@@ -67,7 +64,6 @@ export const fetchAttendees = async ({
     if (response.data.event_attendee_details.length === 0) {
       console.warn('Empty attendee list returned');
     } else {
-      console.log('Attendee list fetched successfully, count:', response.data.event_attendee_details.length);
     }
 
     return response.data.event_attendee_details;

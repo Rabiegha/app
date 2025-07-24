@@ -1,6 +1,10 @@
 import React from 'react';
 import {ActivityIndicator, StyleSheet, Text, View, SafeAreaView} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+import {EventDetailsStackParamList} from '../../navigation/tabNavigator/EventDetailsNavigator';
+
 import globalStyle from '../../assets/styles/globalStyle';
 import EventDetailsComponent from '../../components/screens/EventDetailsComponent';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';
@@ -8,7 +12,7 @@ import MainHeader from '../../components/elements/header/MainHeader';
 import colors from '../../assets/colors/colors';
 
 const EventDetailsScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<EventDetailsStackParamList>>();
   const {summary, loading, error} = useRegistrationData({refreshTrigger1: 1});
   const totalAttendees = summary.totalAttendees;
   const totalCheckedIn = summary.totalCheckedIn;
@@ -37,8 +41,8 @@ const EventDetailsScreen = () => {
         state = null;
         total = null;
     }
-    // @ts-ignore - Navigation typing workaround
-    navigation.navigate('EventDetailsPerType', {state, total});
+
+    navigation.navigate('EventDetailsPerTypeScreen', {state, total});
   };
 
   return (
@@ -71,23 +75,23 @@ const EventDetailsScreen = () => {
 
 // Define styles for the component with proper type safety
 const styles = StyleSheet.create({
-  headerWrapper: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.greyCream,
-    paddingVertical: 8,
-  },
   contentContainer: {
+    backgroundColor: 'white',
     flex: 1,
+    paddingBottom: 16,
     paddingHorizontal: 20,
     paddingTop: 24,
-    paddingBottom: 16,
-    backgroundColor: 'white',
   },
   errorText: {
     color: colors.red,
     fontSize: 16,
-    textAlign: 'center',
     marginTop: 20,
+    textAlign: 'center',
+  },
+  headerWrapper: {
+    borderBottomColor: colors.greyCream,
+    borderBottomWidth: 1,
+    paddingVertical: 8,
   },
 });
 

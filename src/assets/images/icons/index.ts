@@ -30,9 +30,10 @@ import Verifie from './Verifie.png';
 import Vu from './Vu.png';
 import checkedIn from './checkedIn.png';
 import closeButton from './closeButton.png';
-import notCheckedIn from './Not-checked.png';
 import refresh from './refresh.png';
 import totalAttendees from './totalAttendees.png';
+import stats from './Stats.png';
+import notAttended from './notAttended.png';
 
 // Export all icons as a single object
 const Icons = {
@@ -67,9 +68,10 @@ const Icons = {
   Vu,
   checkedIn,
   closeButton,
-  notCheckedIn,
   refresh,
   totalAttendees,
+  stats,
+  notAttended,
 };
 
 export default Icons;

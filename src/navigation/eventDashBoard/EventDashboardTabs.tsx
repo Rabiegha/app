@@ -4,13 +4,15 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import colors from '../../assets/colors/colors';
 import AttendeeOverviewScreen from '../../screens/eventDashboard/AttendeeOverviewScreen';
 import SessionOverviewScreen from '../../screens/eventDashboard/SessionOverviewScreen';
+import CustomTabBar from '../../components/navigation/CustomTabBar';
 
 const Tab = createMaterialTopTabNavigator();
 
-const EventDashboarTabsdNavigator = ({searchQuery}: {searchQuery: string}) => {
+const EventDashboardTabsNavigator = ({searchQuery}: {searchQuery: string}) => {
   return (
     <Tab.Navigator
       initialRouteName="Guest Lists"
+      tabBar={props => <CustomTabBar {...props} />}
       screenOptions={{
         tabBarActiveTintColor: colors.green,
         tabBarInactiveTintColor: colors.grey,
@@ -54,4 +56,4 @@ const EventDashboarTabsdNavigator = ({searchQuery}: {searchQuery: string}) => {
   );
 }
 
-export default EventDashboarTabsdNavigator;
+export default EventDashboardTabsNavigator;

@@ -18,8 +18,6 @@ export const registrationSummaryDetails = async (userId, eventId) => {
       console.log('Full API response:', response.data);
       throw new Error(response.data?.message || 'Registration summary details not fetched');
     }
-
-    console.log('Registration summary details fetched successfully for user:', userId);
     return response.data;
   } catch (error) {
     handleApiError(error, 'Failed to fetch registration summary details');

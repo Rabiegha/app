@@ -68,7 +68,7 @@ const ConnexionComponent = ({
           />
         </TouchableOpacity>
       </View>
-      <View style={{alignItems: 'center', width: '100%'}}>
+      <View style={styles.buttonContainer}>
         <LargeButton
           title="Connexion"
           onPress={handleLogin}
@@ -108,6 +108,9 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     tintColor: colors.green,
+  },
+  buttonContainer: {
+    width: '100%',
   },
 });
 

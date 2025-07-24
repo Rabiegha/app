@@ -30,8 +30,6 @@ export const fetchPartnerAttendeesList = async (
     if (!response.data || !response.data.status || !response.data.data) {
       throw new Error('Event attendee list not fetched');
     }
-
-    console.log('Attendee list fetched successfully, count:', response.data.data.length);
     return response.data.data;
   } catch (error) {
     handleApiError(error, 'Failed to fetch event attendee list');

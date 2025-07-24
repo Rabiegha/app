@@ -17,9 +17,6 @@ export const useEventSelector = () => {
         newEventName: event_name,
         newNiceStartDate: nice_start_datetime,
         });
-        if(__DEV__){
-            console.log('new event', event_name);
-        }
     };
     return selectEvent;
 };

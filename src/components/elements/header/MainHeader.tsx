@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, ImageSourcePropType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import colors from '../../../assets/colors/colors';
@@ -9,7 +9,7 @@ interface MainHeaderProps {
   onLeftPress: () => void;
   title?: string;
   onRightPress?: () => void;
-  RightIcon?: string; // Using any for image source type
+  RightIcon?: ImageSourcePropType | null; // Using proper type for image source
   backgroundColor?: string;
   color?: string;
   leftButtonTintColor?: string;
@@ -21,7 +21,7 @@ const MainHeader = ({
   onLeftPress, 
   title, 
   onRightPress, 
-  RightIcon = null, 
+  RightIcon = undefined, 
   backgroundColor = 'white', 
   color = colors.darkGrey, 
   leftButtonTintColor = colors.green, 

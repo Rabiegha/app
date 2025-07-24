@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, FlatList, RefreshControl} from 'react-native';
-import {useFocusEffect, useRoute, RouteProp} from '@react-navigation/native';
+import {useRoute, RouteProp} from '@react-navigation/native';
+
 import ListEvents from '../../components/screens/events/ListEvents';
 import globalStyle from '../../assets/styles/globalStyle';
 import usePastEvents from '../../hooks/event/usePastEvents';
@@ -34,14 +35,6 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
 
   const {events, loading, error, clearData, refreshEvents} = usePastEvents();
 
-  useFocusEffect(
-    React.useCallback(() => {
-      clearData();
-      console.log('the error', error);
-      console.log('the loading', loading);
-      console.log('the events', events);
-    }, [clearData]),
-  );
   const handleRetry = () => {
     clearData();
   };
@@ -99,9 +92,9 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 30,
-    paddingHorizontal: 20,
     flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 30,
   },
 });
 

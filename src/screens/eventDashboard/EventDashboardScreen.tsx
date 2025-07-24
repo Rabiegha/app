@@ -1,7 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Platform, StatusBar} from 'react-native';
-import {NavigationContainer, useFocusEffect, useNavigation} from '@react-navigation/native';
-import Search from '../../components/elements/Search';
+import React, {useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 import globalStyle from '../../assets/styles/globalStyle';
 import {useEvent} from '../../context/EventContext';
@@ -10,9 +9,9 @@ import EventDashBoardTabsNavigator from '../../navigation/eventDashBoard/EventDa
 import EventDachboardTopComponent from '../../components/screens/eventDashboard/eventDachboardTop';
 import MainHeader from '../../components/elements/header/MainHeader';
 
-const EventDashboardScreen = ({}) => {
+const EventDashboardScreen = () => {
   const navigation = useNavigation();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery] = useState('');
 
   const {eventName: eventName, niceStartDate:eventDetails, eventLogo: eventImage } = useEvent();
 

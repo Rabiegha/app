@@ -1,6 +1,7 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {AuthContext} from '../context/AuthContext';
+import {useSelector} from 'react-redux';
+
 import ConnexionScreen from '../screens/auth/ConnexionScreen';
 import EventsScreen from '../screens/event/EventsScreen';
 import MoreScreen from '../screens/attendeeDetails/MoreScreen';
@@ -10,15 +11,35 @@ import PaperFormat from '../screens/print/PaperFormatScreen';
 import WebViewScreen from '../screens/menu/WebViewScreen';
 import FutureEventsScreen from '../screens/event/FutureEventsScreen';
 import PastEventsScreen from '../screens/event/PastEventsScreen';
-import TabNavigator from './tabNavigator/TabNavigator';
-import {useSelector} from 'react-redux';
 import {selectCurrentUserId, selectUserType} from '../redux/selectors/auth/authSelectors';
 import SessionAttendeesListScreen from '../screens/sessionAttendeesList/SessionAttendeesListScreen';
-import PartnerTabNavigator from './tabNavigator/partnerTabNavigator/PartnerTabNavigator';
 import ScanScreen from '../screens/scanScreen/ScanScreen';
 import ProfileScreen from '../screens/profil/Profil';
 
-const Stack = createNativeStackNavigator();
+import PartnerTabNavigator from './tabNavigator/partnerTabNavigator/PartnerTabNavigator';
+import TabNavigator from './tabNavigator/TabNavigator';
+import EventDetailsNavigator from './tabNavigator/EventDetailsNavigator';
+import EventDetailsPerTypeScreen from '@/screens/eventDetails/EventDetailsPerTypeScreen';
+
+// Define the navigation stack param list type
+export type RootStackParamList = {
+  Connexion: undefined;
+  Events: undefined;
+  Tabs: undefined;
+  SessionAttendeesList: undefined;
+  More: { attendeeId: string; comment?: string; eventId?: string };
+  Badge: { attendeeId: string; eventId: string; badgePdfUrl: string; badgeImageUrl: string };
+  ScanScreen: undefined;
+  Printers: undefined;
+  PaperFormat: undefined;
+  WebView: undefined;
+  Avenir: undefined;
+  Passees: undefined;
+  Profil: undefined;
+  EventDetailsNavigator: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
   const userId = useSelector(selectCurrentUserId);
@@ -45,6 +66,7 @@ function AppNavigator() {
       <Stack.Screen name="Avenir" component={FutureEventsScreen} />
       <Stack.Screen name="Passees" component={PastEventsScreen} />
       <Stack.Screen name="Profil" component={ProfileScreen} />
+      <Stack.Screen name="EventDetailsNavigator" component={EventDetailsNavigator} />
     </Stack.Navigator>
   );
 }

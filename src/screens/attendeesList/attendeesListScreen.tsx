@@ -11,7 +11,9 @@ import {
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import { RootStackParamList } from '../../navigation/AppNavigator';
 import MainAttendeeListItem, { ListHandle } from '../../components/screens/attendees/mainAttendeeList/MainAttendeeList';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
 import ProgressText from '../../components/elements/progress/ProgressionText';
@@ -30,6 +32,8 @@ import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 import usePrintDocument from '../../printing/hooks/usePrintDocument';
 import { Attendee } from '../../types/attendee.types';
 import { useAttendee } from '../../hooks/attendee/useAttendee';
+
+import FloatingSearchButton from '@/components/screens/eventDashboard/FloatingSearchButton';
 
 const defaultFilterCriteria = {
   status: 'all',
@@ -50,7 +54,7 @@ const AttendeeListScreen = () => {
   
   // Redux and API related hooks
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { printDocument } = usePrintDocument();
   const { status: printStatus, clearStatus, setStatus } = usePrintStatus();
   const { updateAttendeeStatus } = useAttendee();
@@ -280,18 +284,16 @@ const AttendeeListScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
+    <SafeAreaView style={styles.safeArea}>
 
-      <View style={{ flex: 1 }}>
+      <View style={styles.container}>
           <MainHeader
             onLeftPress={handleLeftPress}
             onRightPress={openModal}
             RightIcon={Icons.Filtre}
             title={eventName}
           />
-        <View style={[styles.mainContent,     {
-          paddingTop: 35,
-        },]}>
+        <View style={styles.mainContent}>
             <Search onChange={setSearchQuery} value={searchQuery} />
             <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />
             <ProgressBar progress={ratio} />
@@ -330,7 +332,7 @@ const AttendeeListScreen = () => {
             <Modal animationType="none" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
               <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={closeModal}>
                 <TouchableWithoutFeedback>
-                  <Animated.View style={[styles.modalView, { transform: [{ translateX: modalAnimation }] }]}>
+                  <Animated.View style={[styles.modalView, styles.modalTransform, {transform: [{translateX: modalAnimation}]}]}>
                     <FiltreComponent
                       initialFilter={filterCriteria}
                       defaultFilter={defaultFilterCriteria}
@@ -351,6 +353,8 @@ const AttendeeListScreen = () => {
               </TouchableOpacity>
             </Modal>
 
+            <FloatingSearchButton onPress={() => navigation.navigate('EventDetailsNavigator')} icon={Icons.stats} size={44} />
+
               {/* 🖨️ Print modal */}
             {printStatus && (
               <CheckinPrintModal
@@ -366,22 +370,29 @@ const AttendeeListScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   imageContainee: {
     height: 40,
     marginBottom: 10,
     marginLeft: 'auto',
     width: 40,
-    zIndex: 20, // ✅ Pushes the image to the right
+    zIndex: 20
   },
   mainContent: {
     flex: 1,
     paddingHorizontal: 20,
-    position : 'relative'
+    paddingTop: 35,
+    position: 'relative',
   },
   modalOverlay: {
     backgroundColor: colors.blackTransparent,
     flex: 1,
     justifyContent: 'flex-start',
+  },
+  modalTransform: {
+    // Empty style to maintain the reference in the component
   },
   modalView: {
     backgroundColor: colors.white,
@@ -396,8 +407,10 @@ const styles = StyleSheet.create({
     tintColor: colors.green,
     width: 30,
   },
+  safeArea: {
+    backgroundColor: colors.white,
+    flex: 1
+  },
 });
 
 export default AttendeeListScreen;
-
-

@@ -56,7 +56,18 @@ function PartnerTabNavigator() {
               ),
               tabBarButton: isMiddle
                   ? props => {
-                    return <ScanButton {...props} onPress={props.onPress || (() => {})} />;
+                    // Utiliser un composant personnalisé pour éviter le problème de clé
+                    return (
+                      <ScanButton onPress={props.onPress || (() => {})}>
+                        <TabBarIcon 
+                          icon={icon} 
+                          label="" 
+                          focused={false} 
+                          height={24} 
+                          width={24} 
+                        />
+                      </ScanButton>
+                    );
                   }
                 : undefined,
             }}

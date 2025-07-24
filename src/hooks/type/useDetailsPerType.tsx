@@ -1,8 +1,9 @@
 // useLiveData.ts
 
 import {useState, useEffect} from 'react';
-import {useEvent} from '../../context/EventContext';
 import {useSelector} from 'react-redux';
+
+import {useEvent} from '../../context/EventContext';
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
 import { fetchDetailsByType } from '../../services/getDetailsPerTypeService';
 
@@ -35,6 +36,7 @@ const useDetailsPerType = () => {
         } else {
           throw new Error('Error fetching data');
         }
+        console.log('response detals per type', response);
       } catch (err) {
         if (isMounted) {
           setError(err.message);
