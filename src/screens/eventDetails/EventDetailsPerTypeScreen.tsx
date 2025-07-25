@@ -68,12 +68,24 @@ const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; tot
         color: validColor
       };
     });
+
+
+
+  console.log('✅ DATA:', data);
+  console.log('✅ Enhanced Data (after adding color):', enhancedData);
     
     
     // Filter out any items with falsy y values to avoid empty slices
     const validItems: DataItem[] = enhancedData.filter(item => {
       return item.y && typeof item.y === 'number' && item.y > 0;
     });
+
+
+    seriesArr.forEach((val, idx) => {
+      console.log(`Slice ${idx} => y: ${val}, color: ${sliceColorArr[idx]}`);
+    });
+    
+    console.log('✅ Valid Items (with y > 0):', validItems);
     
     // Only populate series and sliceColor arrays from valid data
     if (validItems.length > 0) {
@@ -91,7 +103,7 @@ const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; tot
       series: seriesArr,
       sliceColor: sliceColorArr
     };
-  }, [data]); // Only recalculate when data changes
+  }, [data]);
   
 
   // The useEffect hook now has a stable dependency
@@ -99,7 +111,7 @@ const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; tot
     if (series.length > 0) {
       console.log('Chart data prepared', series.length, 'segments');
     }
-  }, [series.length]); // More stable dependency
+  }, [series.length]);
 
   return (
     <View style={globalStyle.backgroundWhite}>

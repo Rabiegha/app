@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
-import colors from '../../assets/colors/colors';
+import React, {} from 'react';
+import {StyleSheet, View, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
+
+import colors from '../../assets/colors/colors';
 
 const EventDetailsComponent = ({data}) => {
   return (
@@ -25,40 +26,40 @@ const EventDetailsComponent = ({data}) => {
 };
 const styles = StyleSheet.create({
   itemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 30,
+    alignItems: 'center',
     backgroundColor: colors.greyCream,
     borderRadius: 16,
-    width: '100%',
+    flexDirection: 'row',
     height: 50,
+    justifyContent: 'space-between',
     marginBottom: 10,
+    paddingHorizontal: 30,
+    width: '100%',
+  },
+  label: {
+    color: colors.darkGrey,
+    fontSize: 16,
+    fontWeight: '800',
+    marginLeft: 10,
+  },
+  left: {
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   point: {
     borderRadius: 20,
-    width: 10,
     height: 10,
+    width: 10,
   },
-  left: {
-    justifyContent: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  label: {
-    fontWeight: '800',
+  title: {
     fontSize: 16,
-    marginLeft: 10,
-    color: colors.darkGrey,
+    fontWeight: '800',
+    marginBottom: 20,
+    marginLeft: 30,
   },
   value: {
     color: colors.green,
-  },
-  title: {
-    marginLeft: 30,
-    marginBottom: 20,
-    fontWeight: '800',
-    fontSize: 16,
   },
 });
 
