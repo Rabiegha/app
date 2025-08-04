@@ -1,4 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+// Using direct imports for hooks from react package
+import {useEffect, useMemo} from 'react';
+// Import React as a namespace (automatic JSX support)
+import * as React from 'react/jsx-runtime';
 import {
   ActivityIndicator,
   Text,
@@ -7,7 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import PieChart from 'react-native-pie-chart';
+import { PieChart } from 'react-native-chart-kit';
 
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
@@ -15,12 +18,17 @@ import EventDetailsPerTypeComponent from '../../components/screens/EventDetailsP
 import useDetailsPerType from '../../hooks/type/useDetailsPerType';
 import MainHeader from '../../components/elements/header/MainHeader';
 
+import { VictoryPie } from 'victory-native';
+import Svg, { G } from 'react-native-svg';
+
+
 const widthAndHeight = 230;
 
 interface DataItem {
   y: number;
-  background_color?: string;
+  background_color: string;
   color?: string;
+  label: string;
   [key: string]: any;
 }
 
@@ -50,55 +58,48 @@ const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; tot
 
   // Use useMemo to process data and avoid unnecessary recalculations
   const { series, sliceColor } = useMemo(() => {
-    // Start with empty arrays
-    const seriesArr: number[] = [];
-    const sliceColorArr: string[] = [];
+    console.log('🔍 Raw DATA:', data);
     
-    // Process data only if we have items
-    const enhancedData: DataItem[] = data.map((item: DataItem) => {
-      const validColor =
-        (typeof item.color === 'string' && item.color.trim() !== '')
-          ? item.color
-          : (typeof item.background_color === 'string' && item.background_color.trim() !== '')
-            ? item.background_color
-            : colors.grey;
-    
-      return {
-        ...item,
-        color: validColor
-      };
-    });
-
-
-
-  console.log('✅ DATA:', data);
-  console.log('✅ Enhanced Data (after adding color):', enhancedData);
-    
-    
-    // Filter out any items with falsy y values to avoid empty slices
-    const validItems: DataItem[] = enhancedData.filter(item => {
-      return item.y && typeof item.y === 'number' && item.y > 0;
-    });
-
-
-    seriesArr.forEach((val, idx) => {
-      console.log(`Slice ${idx} => y: ${val}, color: ${sliceColorArr[idx]}`);
-    });
-    
-    console.log('✅ Valid Items (with y > 0):', validItems);
-    
-    // Only populate series and sliceColor arrays from valid data
-    if (validItems.length > 0) {
-      // Create series and sliceColor arrays simultaneously to ensure they match
-      validItems.forEach(item => {
-        // Only add items that have both y value and a color
-        if (item.y && item.color) {
-          seriesArr.push(item.y);
-          sliceColorArr.push(item.color);
-        }
-      });
+    // Return empty arrays if no data
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      console.log('❌ No valid data provided');
+      return { series: [], sliceColor: [] };
     }
-
+    
+    // Process and validate data
+    const processedData: Array<{value: number, color: string}> = [];
+    
+    data.forEach((item: DataItem, index: number) => {
+      console.log(`📊 Processing item ${index}:`, item);
+      
+      // Validate y value
+      const yValue = typeof item.y === 'number' ? item.y : parseFloat(item.y);
+      if (isNaN(yValue) || yValue <= 0) {
+        console.log(`⚠️ Skipping item ${index}: invalid y value (${item.y})`);
+        return;
+      }
+      
+      // Determine color
+      let itemColor = colors.grey; // default fallback
+      
+      if (typeof item.color === 'string' && item.color.trim() !== '') {
+        itemColor = item.color.trim();
+      } else if (typeof item.background_color === 'string' && item.background_color.trim() !== '') {
+        itemColor = item.background_color.trim();
+      }
+      
+      console.log(`✅ Adding item ${index}: value=${yValue}, color=${itemColor}`);
+      processedData.push({ value: yValue, color: itemColor });
+    });
+    
+    // Extract series and colors
+    const seriesArr = processedData.map(item => item.value);
+    const sliceColorArr = processedData.map(item => item.color);
+    
+    console.log('📈 Final series:', seriesArr);
+    console.log('🎨 Final colors:', sliceColorArr);
+    console.log('🔢 Arrays length match:', seriesArr.length === sliceColorArr.length);
+    
     return {
       series: seriesArr,
       sliceColor: sliceColorArr
@@ -131,19 +132,77 @@ const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; tot
             ) : (
               <View>
                 <View style={styles.chartContainer}>
-                  {series.length > 0 && sliceColor.length > 0 && series.length === sliceColor.length ? (
-                    <PieChart
-                      widthAndHeight={widthAndHeight}
-                      series={series}
-                      sliceColor={sliceColor as string[]}
-                      coverRadius={0.75}
-                      coverFill={'#FFF'}
-                    />
-                  ) : (
-                    <View style={[styles.chartContainer, styles.noDataContainer]}>
-                      <Text style={styles.noDataText}>No data available</Text>
-                    </View>
-                  )}
+                  {(() => {
+                    // Additional validation before rendering
+                    const isValidData = series.length > 0 && 
+                                      sliceColor.length > 0 && 
+                                      series.length === sliceColor.length &&
+                                      series.every((val: number) => typeof val === 'number' && !isNaN(val) && val > 0) &&
+                                      sliceColor.every((color: string) => typeof color === 'string' && color.trim() !== '');
+                    
+                    console.log('🎯 Chart validation:', {
+                      seriesLength: series.length,
+                      colorsLength: sliceColor.length,
+                      lengthMatch: series.length === sliceColor.length,
+                      validSeries: series.every((val: number) => typeof val === 'number' && !isNaN(val) && val > 0),
+                      validColors: sliceColor.every((color: string) => typeof color === 'string' && color.trim() !== ''),
+                      isValidData
+                    });
+                    
+                    if (isValidData) {
+                      try {
+                        // Use react-native-chart-kit PieChart instead
+                        const chartData = series.map((value: number, index: number) => ({
+                          name: `Item ${index + 1}`,
+                          population: value,
+                          color: sliceColor[index],
+                          legendFontColor: '#7F7F7F',
+                          legendFontSize: 15,
+                        }));
+                        
+                        return (
+                          <View style={styles.donutWrapper}>
+                            <Svg width={widthAndHeight} height={widthAndHeight}>
+                              <G>
+                                <VictoryPie
+                                  standalone={false}
+                                  width={widthAndHeight}
+                                  height={widthAndHeight}
+                                  innerRadius={70} // 👈 trou central
+                                  data={series.map((val: number, index: number) => ({
+                                    x: `Item ${index + 1}`,
+                                    y: val,
+                                  }))}
+                                  colorScale={sliceColor}
+                                  labels={() => null} // pas de labels autour
+                                />
+                              </G>
+                            </Svg>
+                          </View>
+                        
+
+                        );
+                      } catch (error) {
+                        console.error('🚨 PieChart render error:', error);
+                        return (
+                          <View style={[styles.chartContainer, styles.noDataContainer]}>
+                            <Text style={styles.noDataText}>Chart render error</Text>
+                          </View>
+                        );
+                      }
+                    } else {
+                      return (
+                        <View style={[styles.chartContainer, styles.noDataContainer]}>
+                          <Text style={styles.noDataText}>
+                            {series.length === 0 ? 'No data available' : 
+                             series.length !== sliceColor.length ? `Data mismatch: ${series.length} vs ${sliceColor.length}` :
+                             !series.every((val: number) => typeof val === 'number' && !isNaN(val) && val > 0) ? 'Invalid series values' :
+                             'Invalid color format'}
+                          </Text>
+                        </View>
+                      );
+                    }
+                  })()}
                   <View style={styles.chartText}>
                     <Text style={styles.titleTotalText}>
                       Total des enregistrements
@@ -151,7 +210,13 @@ const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; tot
                     <Text style={styles.totalText}>{total}</Text>
                   </View>
                 </View>
-                <EventDetailsPerTypeComponent data={data} />
+                {data && Array.isArray(data) && data.length > 0 ? (
+                  <EventDetailsPerTypeComponent data={data.map(item => ({
+                    label: item.label || `Item ${item.name || ''}`,
+                    y: item.y || item.value || 0,
+                    background_color: item.background_color || item.color || '#cccccc'
+                  }))} />
+                ) : null}
               </View>
             )}
           </View>
@@ -190,6 +255,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: 'center',
   },
+  pieWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: widthAndHeight + 30,
+    marginTop: 20,
+    marginBottom: 20,
+  },
   screenWrapper: {
     flex: 1,
   },
@@ -204,6 +276,11 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  donutWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 30,
   },
 });
 

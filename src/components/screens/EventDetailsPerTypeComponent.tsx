@@ -1,14 +1,20 @@
-import React, {} from 'react';
+import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
 import colors from '../../assets/colors/colors';
 
-const EventDetailsComponent = ({data}) => {
+interface DataItem {
+  label: string;
+  y: number;
+  background_color: string;
+}
+
+const EventDetailsPerTypeComponent: React.FC<{data: DataItem[]}> = ({data}) => {
   return (
     <ScrollView>
       <Text style={styles.title}>Participants par type</Text>
-      {data.map((item, index) => {
+      {data && data.length > 0 ? data.map((item, index) => {
         return (
           <View key={index} style={styles.itemContainer}>
             <View style={styles.left}>
@@ -20,7 +26,11 @@ const EventDetailsComponent = ({data}) => {
             <Text style={styles.value}>{item.y}</Text>
           </View>
         );
-      })}
+      }) : (
+        <View style={styles.itemContainer}>
+          <Text style={styles.label}>No data available</Text>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -63,4 +73,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventDetailsComponent;
+export default EventDetailsPerTypeComponent;
