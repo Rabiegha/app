@@ -6,7 +6,7 @@ import HelpScreen from '../../screens/menu/HelpScreen';
 import AboutScreen from '../../screens/menu/AboutScreen';
 import SearchSettingsScreen from '../../screens/settings/SearchSettingsScreen';
 import ScanSettingsScreen from '../../screens/settings/ScanSettingsScreen';
-import EventDetailsScreen from '../../screens/eventDetails/EventDetailsScreen';
+import EventDetailsNavigator from '../tabNavigator/EventDetailsNavigator';
 
 const MenuStack = createNativeStackNavigator();
 
@@ -17,7 +17,7 @@ export default function MenuNavigator() {
       <MenuStack.Screen name="Help" component={HelpScreen} />
       <MenuStack.Screen name="About" component={AboutScreen} />
       <MenuStack.Screen name="SearchSettings" component={SearchSettingsScreen} />
-      <MenuStack.Screen name="EventDetailsNavigator" component={EventDetailsScreen} />
+      <MenuStack.Screen name="EventDetailsNavigator" component={EventDetailsNavigator} />
       <MenuStack.Screen name="ScanSettings" component={ScanSettingsScreen} />
     </MenuStack.Navigator>
   );

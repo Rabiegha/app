@@ -11,7 +11,7 @@ import { logoutThunk } from '../../redux/thunks/auth/logoutThunk';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../redux/store';
 import MainHeader from '../../components/elements/header/MainHeader';
-import { selectIsLoading, selectError } from '../../redux/selectors/auth/authSelectors';
+import { selectIsLoading } from '../../redux/selectors/auth/authSelectors';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Define the navigation types
@@ -30,13 +30,13 @@ export type RootStackParamList = {
   WebView: undefined;
   Avenir: undefined;
   Passees: undefined;
+  EventDetailsNavigator: undefined;
 };
 
 type MenuScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const MenuScreen = () => {
   const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
   const navigation = useNavigation<MenuScreenNavigationProp>();
 
   useFocusEffect(
@@ -53,7 +53,7 @@ const MenuScreen = () => {
       title: 'Menu',
       buttons: [
         {title: 'Profil', action: () => navigation.navigate('Profil')},
-        {title: 'Event details', action: () => navigation.navigate('Menu', { screen: 'EventDetailsNavigator' })},
+        {title: 'Event details', action: () => navigation.navigate('EventDetailsNavigator')},
       ],
     },
     {

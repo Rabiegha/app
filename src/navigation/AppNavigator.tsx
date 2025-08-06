@@ -19,7 +19,6 @@ import ProfileScreen from '../screens/profil/Profil';
 import PartnerTabNavigator from './tabNavigator/partnerTabNavigator/PartnerTabNavigator';
 import TabNavigator from './tabNavigator/TabNavigator';
 import EventDetailsNavigator from './tabNavigator/EventDetailsNavigator';
-import EventDetailsPerTypeScreen from '@/screens/eventDetails/EventDetailsPerTypeScreen';
 
 // Define the navigation stack param list type
 export type RootStackParamList = {

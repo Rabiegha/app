@@ -12,7 +12,7 @@ import MainHeader from '../../components/elements/header/MainHeader';
 import colors from '../../assets/colors/colors';
 
 const EventDetailsScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<EventDetailsStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<EventDetailsStackParamList, 'EventDetailsScreen'>>();
   const {summary, loading, error} = useRegistrationData({refreshTrigger1: 1});
   const totalAttendees = summary.totalAttendees;
   const totalCheckedIn = summary.totalCheckedIn;
@@ -42,6 +42,7 @@ const EventDetailsScreen = () => {
         total = null;
     }
 
+    // Properly navigate to the screen within the same navigator
     navigation.navigate('EventDetailsPerTypeScreen', {state, total});
   };
 
@@ -76,7 +77,7 @@ const EventDetailsScreen = () => {
 // Define styles for the component with proper type safety
 const styles = StyleSheet.create({
   contentContainer: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     flex: 1,
     paddingBottom: 16,
     paddingHorizontal: 20,

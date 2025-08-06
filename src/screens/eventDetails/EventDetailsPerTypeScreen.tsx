@@ -10,37 +10,41 @@ import {
   ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import { PieChart } from 'react-native-chart-kit';
+import {NativeStackScreenProps, NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { VictoryPie } from 'victory-native';
+import Svg, { G } from 'react-native-svg';
 
+import {EventDetailsStackParamList} from '../../navigation/tabNavigator/EventDetailsNavigator';
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
 import EventDetailsPerTypeComponent from '../../components/screens/EventDetailsPerTypeComponent';
 import useDetailsPerType from '../../hooks/type/useDetailsPerType';
 import MainHeader from '../../components/elements/header/MainHeader';
 
-import { VictoryPie } from 'victory-native';
-import Svg, { G } from 'react-native-svg';
 
 
-const widthAndHeight = 230;
+const widthAndHeight = 260;
 
 interface DataItem {
   y: number;
   background_color: string;
   color?: string;
   label: string;
-  [key: string]: any;
+  [key: string]: number | string | undefined;
 }
 
-const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; total: number}}}) => {
-  const navigation = useNavigation();
+type Props = NativeStackScreenProps<EventDetailsStackParamList, 'EventDetailsPerTypeScreen'>;
+
+const EventDetailsPerTypeScreen = ({route}: Props) => {
+  const navigation = useNavigation<NativeStackNavigationProp<EventDetailsStackParamList, 'EventDetailsPerTypeScreen'>>();
   const {details, loading, error} = useDetailsPerType();
 
   const goBack = () => {
     navigation.goBack();
   };
 
-  const {state, total} = route.params;
+  // Extract params and provide fallbacks for potentially null values
+  const {state = '', total = 0} = route.params;
 
   // Use useMemo for data selection to stabilize dependencies
   const data = useMemo<DataItem[]>(() => {
@@ -151,15 +155,6 @@ const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; tot
                     
                     if (isValidData) {
                       try {
-                        // Use react-native-chart-kit PieChart instead
-                        const chartData = series.map((value: number, index: number) => ({
-                          name: `Item ${index + 1}`,
-                          population: value,
-                          color: sliceColor[index],
-                          legendFontColor: '#7F7F7F',
-                          legendFontSize: 15,
-                        }));
-                        
                         return (
                           <View style={styles.donutWrapper}>
                             <Svg width={widthAndHeight} height={widthAndHeight}>
@@ -168,7 +163,7 @@ const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; tot
                                   standalone={false}
                                   width={widthAndHeight}
                                   height={widthAndHeight}
-                                  innerRadius={70} // 👈 trou central
+                                  innerRadius={115} // 👈 trou central
                                   data={series.map((val: number, index: number) => ({
                                     x: `Item ${index + 1}`,
                                     y: val,
@@ -213,7 +208,7 @@ const EventDetailsPerTypeScreen = ({route}: {route: {params: {state: string; tot
                 {data && Array.isArray(data) && data.length > 0 ? (
                   <EventDetailsPerTypeComponent data={data.map(item => ({
                     label: item.label || `Item ${item.name || ''}`,
-                    y: item.y || item.value || 0,
+                    y: Number(item.y || item.value || 0),
                     background_color: item.background_color || item.color || '#cccccc'
                   }))} />
                 ) : null}
@@ -242,6 +237,11 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
   },
+  donutWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 30,
+  },
   list: {
     marginBottom: 50,
   },
@@ -255,19 +255,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: 'center',
   },
-  pieWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: widthAndHeight + 30,
-    marginTop: 20,
-    marginBottom: 20,
-  },
   screenWrapper: {
     flex: 1,
   },
   titleTotalText: {
     color: colors.darkGrey,
-    fontSize: 13,
+    fontSize: 17,
     textAlign: 'center',
     width: 140,
   },
@@ -276,11 +269,6 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  donutWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 30,
   },
 });
 
