@@ -238,12 +238,15 @@ const PrintComponent = ({navigateBack}: PrintComponentProps) => {
           onValueChange={valueIndex => handleSelectDpi(valueIndex)} // Update the value on change
         />
       </View>
-      <LargeButton
-        title={'Appliquer'}
-        onPress={navigateBack}
-        backgroundColor={colors.green}
-        loading={undefined}
-      />
+      <View style={styles.buttonContainer}>
+        <LargeButton
+          title={'Appliquer'}
+          onPress={navigateBack}
+          backgroundColor={colors.green}
+          loading={undefined}
+        />
+      </View>
+
     </View>
   );
 };
@@ -298,6 +301,11 @@ const styles = StyleSheet.create({
     width: 60,
     marginTop: 10,
     marginBottom: 10,
+  },
+  buttonContainer: {
+    marginTop: 20,
+    paddingHorizontal: 0,
+    width: '100%',
   },
 });
 

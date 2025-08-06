@@ -12,7 +12,6 @@ const AppliquerButton = ({onPress, Titre}) => {
   );
 };
 
-const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   button: {

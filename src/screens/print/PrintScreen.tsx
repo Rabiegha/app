@@ -29,20 +29,5 @@ const PrintScreen = ({route, navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    marginLeft: 30,
-    marginRight: 30,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  itemName: {
-    fontSize: 18,
-    top: 50,
-  },
-});
 
 export default PrintScreen;

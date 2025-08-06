@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 7,
     padding: 10,
+    width: '100%',
   },
   buttonText: {
     color: colors.white,
