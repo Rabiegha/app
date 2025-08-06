@@ -2,13 +2,15 @@ import { handleApiError } from '../utils/api/handleApiError';
 import { cleanParams } from '../utils/api/cleanParams';
 import mainApi from '../config/mainApi';
 
-export const updateAttendeeStatus = async (updatedAttendee, userId) => {
+import { UpdateAttendeeStatusParams } from '@/types/attendee.types';
+
+export const updateAttendeeStatus = async (updatedAttendee: UpdateAttendeeStatusParams, userId: string) => {                    
   try {
     const params = cleanParams({
       current_user_login_details_id: userId,
-      event_id: updatedAttendee.event_id,
-      attendee_id: updatedAttendee.id,
-      attendee_status: updatedAttendee.attendee_status,
+      event_id: updatedAttendee.eventId,
+      attendee_id: updatedAttendee.attendeeId,
+      attendee_status: updatedAttendee.status,
     });
 
     await mainApi.post(

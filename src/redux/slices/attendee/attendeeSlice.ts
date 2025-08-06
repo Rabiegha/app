@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+
 import { 
   Attendee, 
   AttendeeDetails,
@@ -9,12 +10,13 @@ import {
 } from '../../../types/attendee.types';
 import { 
   fetchAttendees, 
-  updateAttendeeStatus, 
   updateAttendeeField,
   mapAttendeeToDetails
 } from '../../../services/attendeeService';
 import { RootState } from '../../store';
 import { addAttendee as addAttendeeService } from '../../../services/addAttendeeService';
+
+import { updateAttendeeStatus } from '@/services/updateAttendeeStatusService';
 
 // Helper function to map API field names to selectedAttendee property names
 const mapFieldToSelectedAttendee = (field: string, value: string): Partial<AttendeeDetails> => {
@@ -32,6 +34,9 @@ const mapFieldToSelectedAttendee = (field: string, value: string): Partial<Atten
       return { organization: value };
     case 'job_title':
       return { jobTitle: value };
+    case 'attendee_status':
+      return { attendeeStatus: value };
+
     case 'comment':
       return { commentaire: value };
     default:
@@ -312,6 +317,7 @@ const attendeeSlice = createSlice({
             attendeeStatus: status
           };
         }
+        console.log('selected attendee', state.selectedAttendee);
         
         state.isUpdating = false;
       })

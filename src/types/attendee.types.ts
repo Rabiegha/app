@@ -6,7 +6,7 @@ export type Attendee = {
   phone?: string;
   organization?: string;
   designation?: string;
-  attendee_status: 0 | 1;
+  attendee_status: string;
   badge_pdf_url?: string;
   badge_image_url?: string;
   attendee_type_name?: string;
@@ -30,7 +30,7 @@ export type AttendeeDetails = {
   organization: string;
   jobTitle: string;
   commentaire: string;
-  attendeeStatus: 0 | 1;
+  attendeeStatus: string;
   theAttendeeId: string;
   attendeeStatusChangeDatetime: string;
   urlBadgePdf: string;
@@ -42,7 +42,7 @@ export type FetchAttendeesParams = {
   userId: string;
   eventId: string;
   attendeeId?: string;
-  attendeeStatus?: 0 | 1;
+  attendeeStatus?: string;
 };
 
 export type UpdateAttendeeStatusParams = {

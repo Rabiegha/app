@@ -64,6 +64,7 @@ export const fetchAttendees = async ({
     if (response.data.event_attendee_details.length === 0) {
       console.warn('Empty attendee list returned');
     } else {
+      console.log('Attendee list received from API:', response.data.event_attendee_details);
     }
 
     return response.data.event_attendee_details;
@@ -147,7 +148,7 @@ export const updateAttendeeField = async ({
 export const mapAttendeeToDetails = (attendee: Attendee) => {
   // Use the nice formatted date if available, otherwise format the raw date
   let formattedDate = '-';
-  if (attendee.attendee_status === 1) {
+  if (attendee.attendee_status === '1') {
     if (attendee.nice_attendee_status_change_datetime && 
         attendee.nice_attendee_status_change_datetime !== '-') {
       // Clean up the format from API which has escaped slashes and extra spaces

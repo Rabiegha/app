@@ -1,18 +1,20 @@
 // MenuScreen.tsx
 import React from 'react';
 import {View, StyleSheet, StatusBar, ScrollView, Alert} from 'react-native';
+import {CommonActions, useFocusEffect, useNavigation} from '@react-navigation/native';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { useSelector } from 'react-redux';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import colors from '../../assets/colors/colors';
 import LogOutButton from '../../components/elements/buttons/LogOutButton';
-import {CommonActions, useFocusEffect, useNavigation} from '@react-navigation/native';
 import globalStyle from '../../assets/styles/globalStyle';
 import MenuListComponent from '../../components/screens/MenuListComponent';
-import Spinner from 'react-native-loading-spinner-overlay';
 import { logoutThunk } from '../../redux/thunks/auth/logoutThunk';
-import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../redux/store';
 import MainHeader from '../../components/elements/header/MainHeader';
 import { selectIsLoading } from '../../redux/selectors/auth/authSelectors';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 
 // Define the navigation types
 export type RootStackParamList = {
@@ -146,7 +148,6 @@ export default MenuScreen;
 
 const styles = StyleSheet.create({
   container: {
-    // Use flex instead of fixed height for better responsiveness
     flex: 1,
     minHeight: 1000,
   },

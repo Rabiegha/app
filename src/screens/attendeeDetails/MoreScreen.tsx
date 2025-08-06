@@ -123,7 +123,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   const handleCheckinButton = async (status: 0 | 1) => {
     if (userId && eventId && attendeeId && attendeeDetails) {
       // Store the original status to revert if needed
-      const originalStatus = attendeeDetails.attendeeStatus as 0 | 1;
+      const originalStatus = attendeeDetails.attendeeStatus;
       console.log('originalStatus', originalStatus)
       
       try {
