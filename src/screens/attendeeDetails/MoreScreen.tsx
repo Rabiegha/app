@@ -1,5 +1,5 @@
 // MoreScreen.tsx
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -203,7 +203,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
     // À ce stade, nous savons que attendeeDetails existe et n'est pas null
     const details = attendeeDetails;
 
-    console.log('details status', details?.attendeeStatus)
+    console.log('details attendeeStatusChangeDatetime', details?.attendeeStatusChangeDatetime)
     
     // Use the comment from route params if it exists, otherwise use from attendee details
     const commentText = comment || details?.commentaire || '';

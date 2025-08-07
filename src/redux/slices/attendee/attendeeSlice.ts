@@ -50,7 +50,8 @@ const mapFieldToSelectedAttendee = (field: string, value: string): Partial<Atten
       return { jobTitle: value };
     case 'attendee_status':
       return { attendeeStatus: value };
-
+    case 'attendee_status_change_datetime':
+      return { attendeeStatusChangeDatetime: value };
     case 'comment':
       return { commentaire: value };
     default:
@@ -155,7 +156,7 @@ export const fetchAttendeeDetails = createAsyncThunk(
           theAttendeeId: params.attendeeId || '',
           commentaire: '',
           attendeeStatusChangeDatetime: '',
-          attendeeStatus: 0 as 0 | 1,
+          attendeeStatus: '',
           urlBadgePdf: '',
           urlBadgeImage: ''
         };

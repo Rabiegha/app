@@ -1,3 +1,4 @@
+// @ts-expect-error - Suppressing TypeScript error for React 19 hooks import
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -7,10 +8,12 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import { useRoute, useNavigation, RouteProp, useFocusEffect } from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Hooks
+import { useSelector } from 'react-redux';
+
 import { useDeviceInfo } from '../../hooks/badge/useDeviceInfo';
 import { useBadgeWebView } from '../../hooks/badge/useBadgeWebView';
 
@@ -22,11 +25,12 @@ import { renderBadgeContent } from '../../utils/badge/badgeRenderer';
 import { editAttendee } from '../../services/editAttendeeService';
 
 // Types
-import { BadgePreviewStackParamList, AttendeeData } from '../../types/badge/badge.types';
+import { BadgePreviewStackParamList } from '../../types/badge/badge.types';
+
 import MainHeader from '@/components/elements/header/MainHeader';
 import usePrintDocument from '@/printing/hooks/usePrintDocument';
 import { RootState } from '@/redux/store';
-import { useSelector } from 'react-redux';
+import colors from '@/assets/colors/colors';
 
 type BadgePreviewScreenRouteProp = RouteProp<BadgePreviewStackParamList, 'BadgePreviewScreen'>;
 type BadgePreviewScreenNavigationProp = NativeStackNavigationProp<BadgePreviewStackParamList, 'BadgePreviewScreen'>;
@@ -44,7 +48,6 @@ const BadgePreviewScreen: React.FC = () => {
   // Custom hooks
   const { isTablet } = useDeviceInfo();
   const {
-    isLoading,
     hasError,
     webViewError,
     handleWebViewLoad,
@@ -67,19 +70,20 @@ const BadgePreviewScreen: React.FC = () => {
   const handlePrint = async () => {
     let printSuccess = false;
     
-    if (attendeesData.badge_url && 
-        typeof attendeesData.badge_url === 'string' && 
-        attendeesData.badge_url.trim() !== '') {
+    if (attendeesData.badge_pdf_url && 
+        typeof attendeesData.badge_pdf_url === 'string' && 
+        attendeesData.badge_pdf_url.trim() !== '') {
       try {
         // Print the badge right away
-        await printDocument(attendeesData.badge_url, undefined, true);
+        await printDocument(attendeesData.badge_pdf_url, undefined, true);
+        console.log('Badge sent', {badge_url: attendeesData.badge_pdf_url});
         printSuccess = true;
       } catch (printError) {
         console.error('Error printing badge:', printError);
         // Handle error - could show an alert or update UI state
       }
     } else {
-      console.error('Badge PDF URL is empty or invalid:', attendeesData.badge_url);
+      console.error('Badge PDF URL is empty or invalid:', attendeesData.badge_pdf_url);
       // Handle missing PDF URL - could show an alert
     }
     
@@ -128,7 +132,7 @@ const BadgePreviewScreen: React.FC = () => {
         console.log('Badge regenerated successfully:', response);
         
         // Force refresh of the badge image by updating the refresh key
-        setRefreshKey(prev => prev + 1);
+        setRefreshKey((prev: number) => prev + 1);
         
         // Show success message
         Alert.alert('Succès', 'Le badge a été régénéré avec succès');
@@ -190,149 +194,89 @@ const BadgePreviewScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  headerInfo: {
-    backgroundColor: '#fff',
+  actionButtons: {
+    backgroundColor: colors.white,
+    borderTopColor: colors.grey,
+    borderTopWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
   },
-  headerInfoTablet: {
+  actionButtonsTablet: {
+    alignSelf: 'center',
+    maxWidth: 600,
     paddingHorizontal: 32,
     paddingVertical: 20,
-  },
-  attendeeName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
+    width: '100%',
   },
   attendeeEmail: {
+    color: colors.darkerGrey,
     fontSize: 16,
-    color: '#666',
     marginBottom: 2,
   },
+  attendeeName: {
+    color: colors.darkerGrey,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
   attendeeOrganization: {
+    color: colors.darkerGrey,
     fontSize: 14,
-    color: '#888',
     fontStyle: 'italic',
   },
   badgeContainer: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    elevation: 2,
     flex: 1,
     margin: 16,
-    backgroundColor: '#fff',
-    borderRadius: 8,
     overflow: 'hidden',
-    elevation: 2,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
   badgeContainerTablet: {
+    alignSelf: 'center',
     margin: 32,
     maxWidth: 600,
-    alignSelf: 'center',
-  },
-  webView: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: '#666',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 32,
-  },
-  errorTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#d32f2f',
-    marginBottom: 8,
-  },
-  errorMessage: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  retryButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  retryButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  noBadgeContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 32,
-  },
-  noBadgeText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#666',
-    marginBottom: 8,
-  },
-  noBadgeSubtext: {
-    fontSize: 14,
-    color: '#888',
-    textAlign: 'center',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    padding: 16,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    justifyContent: 'space-around',
-  },
-  actionButtonsTablet: {
-    paddingHorizontal: 32,
-    paddingVertical: 20,
-    maxWidth: 600,
-    alignSelf: 'center',
-    width: '100%',
   },
   button: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginHorizontal: 4,
     alignItems: 'center',
-  },
-  printButton: {
-    backgroundColor: '#4CAF50',
-  },
-  modifyButton: {
-    backgroundColor: '#FF9800',
-  },
-  regenerateButton: {
-    backgroundColor: '#2196F3',
+    borderRadius: 8,
+    flex: 1,
+    marginHorizontal: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   buttonText: {
-    color: '#fff',
+    color: colors.white,
     fontSize: 16,
     fontWeight: '600',
+  },
+  container: {
+    backgroundColor: colors.white,
+    flex: 1,
+  },
+  headerInfo: {
+    backgroundColor: colors.white,
+    borderBottomColor: colors.greyCream,
+    borderBottomWidth: 1,
+    padding: 16,
+  },
+  headerInfoTablet: {
+    paddingHorizontal: 32,
+    paddingVertical: 20,
+  },
+  modifyButton: {
+    backgroundColor: colors.yellow,
+  },
+  printButton: {
+    backgroundColor: colors.green,
+  },
+  regenerateButton: {
+    backgroundColor: colors.blue,
   },
 });
 

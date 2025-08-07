@@ -10,6 +10,7 @@ export interface AttendeeData {
   badge_url?: string;
   badge_html?: string;
   badge_image_url?: string;
+  badge_pdf_url?: string;
 }
 
 export interface BadgePreviewParams {

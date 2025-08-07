@@ -179,7 +179,7 @@ const baseFields: FieldItem[] = [
   },
   {
     label: 'Date de check-in:',
-    value: parsedAttendeeStatus === 1 && attendeeStatusChangeDatetime && attendeeStatusChangeDatetime !== '-' ? 
+    value: (parsedAttendeeStatus === 1 || attendeeStatus === "1") && attendeeStatusChangeDatetime && attendeeStatusChangeDatetime !== '-' ? 
       String(attendeeStatusChangeDatetime) : '-',
     hideForPartner: false,
   },

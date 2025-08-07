@@ -34,9 +34,37 @@ interface AttendeeData {
   jobTitle: string;
   status_id: string;
   attendee_status: string;
+  id?: string;
+  job_title?: string;
+  badge_url?: string;
 }
 
 type AddAttendeesScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+// Temporary attendee data for simulating BadgePreviewScreen navigation
+const tempAttendeeData = {
+  id: '12345',
+  first_name: 'Jean',
+  last_name: 'Dupont',
+  email: 'jean.dupont@example.com',
+  phone: '+33612345678',
+  organization: 'Acme Corporation',
+  job_title: 'Directeur Marketing',
+  attendee_type_id: '2',
+  badge_url: 'https://ems.choyou.fr/uploads/badges/349/197940.jpg?t=1754555975844',
+  // Additional fields that might be needed
+  current_user_login_details_id: 'user123',
+  ems_secret_code: 'event456',
+  send_confirmation_mail_ems_yn: 0,
+  generate_qrcode: 1,
+  generate_badge: 1,
+  send_badge_yn: 0,
+  salutation: 'M.',
+  send_badge_item: '',
+  status_id: '2',
+  attendee_status: '1',
+  jobTitle: 'Directeur Marketing'
+};
 
 const AddAttendeesScreen = () => {
 
@@ -214,8 +242,8 @@ const AddAttendeesScreen = () => {
         setSelectedAttendeeType={setSelectedAttendeeType} 
         />
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('BadgePreviewScreen', { attendeesData })}
+        <TouchableOpacity style={{position: 'absolute', bottom: 150, right: 20, zIndex: 1}}
+          onPress={() => navigation.navigate('BadgePreviewScreen', { attendeesData: tempAttendeeData })}
         >
           <Text> PREVIEW</Text>
         </TouchableOpacity>

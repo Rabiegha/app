@@ -311,6 +311,7 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   selectedTextStyle: {
+    color: colors.darkGrey,
     fontSize: 16,
   },
 });
