@@ -68,8 +68,8 @@ function TabNavigator(): ReactElement {
                         icon={icon} 
                         label="" 
                         focused={false} 
-                        height={24} 
-                        width={24} 
+                        height={50} 
+                        width={50} 
                       />
                     </ScanButton>
                   );

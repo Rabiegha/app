@@ -15,8 +15,22 @@ import {
 } from '../../../services/attendeeService';
 import { RootState } from '../../store';
 import { addAttendee as addAttendeeService } from '../../../services/addAttendeeService';
+import { editAttendee } from '../../../services/editAttendeeService';
 
 import { updateAttendeeStatus } from '@/services/updateAttendeeStatusService';
+
+// Interface for edit attendee parameters
+export interface EditAttendeeParams {
+  userId: string;
+  attendeeId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone?: string;
+  organization?: string;
+  jobTitle?: string;
+  typeId?: string;
+}
 
 // Helper function to map API field names to selectedAttendee property names
 const mapFieldToSelectedAttendee = (field: string, value: string): Partial<AttendeeDetails> => {
@@ -208,6 +222,47 @@ export const addAttendeeThunk = createAsyncThunk(
   }
 );
 
+// Thunk pour modifier un participant
+export const editAttendeeThunk = createAsyncThunk(
+  'attendees/editAttendee',
+  async (attendeeData: EditAttendeeParams, { rejectWithValue }) => {
+    try {
+      const result = await editAttendee(attendeeData);
+      
+      console.log('Edit attendee service result:', result);
+      
+      // Check for success based on different possible response formats
+      const isSuccess = result && (
+        result.success === true ||
+        result.success === 1 ||
+        (typeof result === 'string' && result.includes('successfully')) ||
+        (result.message && result.message.includes('successfully'))
+      );
+      
+      if (isSuccess) {
+        console.log('✅ Edit attendee successful');
+        // Retourner les données mises à jour
+        return {
+          id: parseInt(attendeeData.attendeeId, 10),
+          first_name: attendeeData.first_name,
+          last_name: attendeeData.last_name,
+          email: attendeeData.email,
+          phone: attendeeData.phone || '',
+          organization: attendeeData.organization || '',
+          job_title: attendeeData.jobTitle || '',
+          attendee_type_id: attendeeData.typeId ? parseInt(attendeeData.typeId, 10) : 0,
+        };
+      }
+      
+      console.log('❌ Edit attendee failed:', result);
+      return rejectWithValue(result?.message || 'Failed to edit attendee');
+    } catch (error) {
+      console.error('Error editing attendee:', error);
+      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+    }
+  }
+);
+
 // Slice
 const attendeeSlice = createSlice({
   name: 'attendees',
@@ -361,6 +416,41 @@ const attendeeSlice = createSlice({
       .addCase(updateAttendeeFieldThunk.rejected, (state, action) => {
         state.isUpdating = false;
         state.error = action.error.message || 'Failed to update attendee field';
+      })
+      
+      // Edit attendee cases
+      .addCase(editAttendeeThunk.pending, (state) => {
+        state.isUpdating = true;
+        state.error = null;
+      })
+      .addCase(editAttendeeThunk.fulfilled, (state, action) => {
+        const updatedAttendee = action.payload;
+        
+        // Update in list
+        state.list = state.list.map(attendee => 
+          attendee.id.toString() === updatedAttendee.id.toString()
+            ? { ...attendee, ...updatedAttendee }
+            : attendee
+        );
+        
+        // Update selected attendee if it's the same one
+        if (state.selectedAttendee && state.selectedAttendee.theAttendeeId === updatedAttendee.id.toString()) {
+          state.selectedAttendee = {
+            ...state.selectedAttendee,
+            firstName: updatedAttendee.first_name,
+            lastName: updatedAttendee.last_name,
+            email: updatedAttendee.email,
+            phone: updatedAttendee.phone || '',
+            organization: updatedAttendee.organization || '',
+            jobTitle: updatedAttendee.job_title || '',
+          };
+        }
+        
+        state.isUpdating = false;
+      })
+      .addCase(editAttendeeThunk.rejected, (state, action) => {
+        state.isUpdating = false;
+        state.error = action.error.message || 'Failed to edit attendee';
       });
   },
 });

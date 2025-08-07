@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {StatusBar, View} from 'react-native';
+import {StatusBar, Text, TouchableOpacity, View} from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
@@ -13,6 +14,7 @@ import {addAttendee} from '../../services/addAttendeeService';
 import useAttendeeTypeDropdown from '../../hooks/type/useAttendeeTypesDropdown';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import MainHeader from '../../components/elements/header/MainHeader';
+import type {RootStackParamList} from '../../navigation/AppNavigator';
 
 interface AttendeeData {
   current_user_login_details_id: string;
@@ -34,10 +36,12 @@ interface AttendeeData {
   attendee_status: string;
 }
 
+type AddAttendeesScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 const AddAttendeesScreen = () => {
 
   //navigation
-  const navigation = useNavigation();
+  const navigation = useNavigation<AddAttendeesScreenNavigationProp>();
 
   //focus effect
   useFocusEffect(
@@ -147,6 +151,7 @@ const AddAttendeesScreen = () => {
     };
 
     const success = await addAttendee(attendeeData);
+    const attendeesData = success?.attendee_details;
 
     if (success) {
       resetFields();
@@ -155,6 +160,9 @@ const AddAttendeesScreen = () => {
         type: 'customSuccess',
         text1: 'Participant ajouté',
         text2: `${prenom} ${nom}`,
+      });
+      navigation.navigate('BadgePreviewScreen', {
+        attendeesData,
       });
     }
   
@@ -205,6 +213,12 @@ const AddAttendeesScreen = () => {
         selectedAttendeeType={selectedAttendeeType}
         setSelectedAttendeeType={setSelectedAttendeeType} 
         />
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('BadgePreviewScreen', { attendeesData })}
+        >
+          <Text> PREVIEW</Text>
+        </TouchableOpacity>
     </View>
   );
 };

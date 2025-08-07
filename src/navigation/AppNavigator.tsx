@@ -19,6 +19,8 @@ import ProfileScreen from '../screens/profil/Profil';
 import PartnerTabNavigator from './tabNavigator/partnerTabNavigator/PartnerTabNavigator';
 import TabNavigator from './tabNavigator/TabNavigator';
 import EventDetailsNavigator from './tabNavigator/EventDetailsNavigator';
+import BadgePreviewScreen from '@/screens/attendeeDetails/BadgePreviewScreen';
+import ModifyBadgeScreen from '@/screens/attendeeDetails/ModifyBadgeScreen';
 
 // Define the navigation stack param list type
 export type RootStackParamList = {
@@ -28,6 +30,7 @@ export type RootStackParamList = {
   SessionAttendeesList: undefined;
   More: { attendeeId: string; comment?: string; eventId?: string };
   Badge: { attendeeId: string; eventId: string; badgePdfUrl: string; badgeImageUrl: string };
+  BadgePreviewScreen: { attendeesData: any };
   ScanScreen: undefined;
   Printers: undefined;
   PaperFormat: undefined;
@@ -66,6 +69,8 @@ function AppNavigator() {
       <Stack.Screen name="Passees" component={PastEventsScreen} />
       <Stack.Screen name="Profil" component={ProfileScreen} />
       <Stack.Screen name="EventDetailsNavigator" component={EventDetailsNavigator} />
+      <Stack.Screen name="BadgePreviewScreen" component={BadgePreviewScreen} />
+      <Stack.Screen name="ModifyBadge" component={ModifyBadgeScreen} />
     </Stack.Navigator>
   );
 }
