@@ -125,8 +125,8 @@ export const fetchAttendeeDetails = createAsyncThunk(
           // Use the parameters that worked in Postman
           const backupParams = {
             userId: params.userId, // Keep the same user ID
-            eventId: '531', // Use the event ID that worked in Postman
-            attendeeId: '187465', // Use the attendee ID that worked in Postman
+            eventId: params.eventId, // Use the event ID that worked in Postman
+            attendeeId: params.attendeeId, // Use the attendee ID that worked in Postman
             attendeeStatus: params.attendeeStatus
           };
           

@@ -122,6 +122,7 @@ export const updateAttendeeField = async ({
     const params = cleanParams({
       current_user_login_details_id: userId,
       attendee_id: attendeeId,
+      generate_badge: 1,
       [field]: value
     });
 
@@ -148,7 +149,7 @@ export const updateAttendeeField = async ({
 export const mapAttendeeToDetails = (attendee: Attendee) => {
   // Use the nice formatted date if available, otherwise format the raw date
   let formattedDate = '-';
-  if (attendee.attendee_status === '1') {
+  if (attendee.attendee_status === 1) {
     if (attendee.nice_attendee_status_change_datetime && 
         attendee.nice_attendee_status_change_datetime !== '-') {
       // Clean up the format from API which has escaped slashes and extra spaces
@@ -156,7 +157,7 @@ export const mapAttendeeToDetails = (attendee: Attendee) => {
       let cleanedDate = attendee.nice_attendee_status_change_datetime;
       
       // Replace escaped slashes with normal slashes
-      cleanedDate = cleanedDate.split('\/').join('/');
+      cleanedDate = cleanedDate.split('/').join('/');
       
       // Fix any extra spaces
       cleanedDate = cleanedDate.trim();
@@ -165,6 +166,8 @@ export const mapAttendeeToDetails = (attendee: Attendee) => {
       formattedDate = cleanedDate;
     } else if (attendee.attendee_status_change_datetime) {
       try {
+
+        
         // Only try to parse if it's not the default "0000-00-00 00:00:00" format
         if (attendee.attendee_status_change_datetime !== '0000-00-00 00:00:00') {
           const date = new Date(attendee.attendee_status_change_datetime);
@@ -182,18 +185,18 @@ export const mapAttendeeToDetails = (attendee: Attendee) => {
   const attendeeStatus: 0 | 1 = attendee.attendee_status === 1 ? 1 : 0;
   
   return {
-    type: attendee.attendee_type_name || '-',
-    lastName: attendee.last_name || '-',
-    firstName: attendee.first_name || '-',
-    email: attendee.email || '-',
-    phone: attendee.phone || '-',
-    organization: attendee.organization || '-',
-    jobTitle: attendee.designation || '-',
-    theAttendeeId: String(attendee.id) || '-',
-    commentaire: attendee.comment || '-',
+    type: attendee.attendee_type_name,
+    lastName: attendee.last_name,
+    firstName: attendee.first_name,
+    email: attendee.email,
+    phone: attendee.phone,
+    organization: attendee.organization,
+    jobTitle: attendee.designation,
+    theAttendeeId: String(attendee.id),
+    commentaire: attendee.comment,
     attendeeStatusChangeDatetime: formattedDate,
     attendeeStatus,
-    urlBadgePdf: attendee.badge_pdf_url || '-',
-    urlBadgeImage: attendee.badge_image_url || '-',
+    urlBadgePdf: attendee.badge_pdf_url,
+    urlBadgeImage: attendee.badge_image_url,
   };
 };

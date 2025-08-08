@@ -9,7 +9,6 @@ import colors from '../../assets/colors/colors';
 import SmallButton from '../elements/buttons/SmallButton';
 import userIcon from '../../assets/images/user.png';
 import Icons from '../../assets/images/icons';
-import { insertSpaceBetweenPairs } from '../../hooks/useFormat';
 import { selectCurrentUserId, selectUserType } from '../../redux/selectors/auth/authSelectors';
 import { attendeeFieldConfig } from '../../utils/modify/attendeeFieldConfig';
 import ModifyFieldModal from '../elements/modals/ModifyFieldModal';
@@ -60,24 +59,20 @@ const MoreComponent = ({
   onFieldUpdateSuccess,
 }: MoreComponentProps) => {
 
-  //User state
+//User state
 
-  const userId = useSelector(selectCurrentUserId);
+const userId = useSelector(selectCurrentUserId);
 
-  //User type
-  const userType = useSelector(selectUserType);
+//User type
+const userType = useSelector(selectUserType);
 
-  //Attendee status
-  // Explicitly convert attendeeStatus to number to avoid type issues
-  const parsedAttendeeStatus = typeof attendeeStatus === 'string' ? parseInt(attendeeStatus, 10) : attendeeStatus;
-
-  console.log('parsedAttendeeStatus', parsedAttendeeStatus)
-
-  //Phone formatting
-  const formattedPhone = insertSpaceBetweenPairs(phone);
+//Attendee status
+// Explicitly convert attendeeStatus to number to avoid type issues
+const parsedAttendeeStatus = typeof attendeeStatus === 'string' ? parseInt(attendeeStatus, 10) : attendeeStatus;
 
 
-  // Determine if user is a partner
+
+// Determine if user is a partner
 const isPartner = userType?.toLowerCase() === 'partner';
 
 
@@ -88,6 +83,8 @@ const attendeeData = {
   organization,
   jobTitle: JobTitle,
   comment: commentaire,
+  firstName,
+  lastName,
 };
 
 
@@ -113,7 +110,7 @@ const openEditModal = (fieldKey: keyof typeof attendeeFieldConfig) => {
   }
 
   const config = attendeeFieldConfig[fieldKey];
-  setEditFieldKey(fieldKey);
+  setEditFieldKey(String(fieldKey));
   
   // Get the value from the accessor and explicitly convert to string
   // This ensures we're always passing a string to setEditValue
@@ -144,8 +141,16 @@ const baseFields: FieldItem[] = [
     hideForPartner: false,
   },
   {
+    fieldKey: 'firstName',
+    label: 'Prénom:',
+    value: firstName || '-',
+    showButton: true,
+    hideForPartner: false,
+  },
+  {
+    fieldKey: 'lastName',
     label: 'Nom:',
-    value: firstName && lastName ? `${firstName} ${lastName}` : '-',
+    value: lastName || '-',
     showButton: true,
     hideForPartner: false,
   },
@@ -159,7 +164,7 @@ const baseFields: FieldItem[] = [
   {
     fieldKey: 'phone',
     label: 'Téléphone:',
-    value: formattedPhone || '-',
+    value: phone || '-',
     showButton: true,
     hideForPartner: false,
   },
@@ -179,7 +184,7 @@ const baseFields: FieldItem[] = [
   },
   {
     label: 'Date de check-in:',
-    value: (parsedAttendeeStatus === 1 || attendeeStatus === "1") && attendeeStatusChangeDatetime && attendeeStatusChangeDatetime !== '-' ? 
+    value: (parsedAttendeeStatus === 1) && attendeeStatusChangeDatetime && attendeeStatusChangeDatetime !== '-' ? 
       String(attendeeStatusChangeDatetime) : '-',
     hideForPartner: false,
   },
@@ -193,12 +198,12 @@ const baseFields: FieldItem[] = [
   },
 ];
 
-const testing = false;
+const testing = true;
 //Render skeleton or content
 const renderSkeletonOrContent = (label: string, value: string, showButton?: boolean, fieldKey?: keyof typeof attendeeFieldConfig) => {
   if (isLoadingDetails || testing) {
     return (
-      <View style={{ width: '100%', marginBottom: 15 }}>
+      <View style={styles.skeletonContainer}>
         <SkeletonPlaceholder>
           <SkeletonPlaceholder.Item width={100} height={15} borderRadius={4} marginBottom={5} />
           <SkeletonPlaceholder.Item width="80%" height={20} borderRadius={4} />
@@ -348,6 +353,10 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     marginBottom: 10,
+  },
+  skeletonContainer: {
+     marginBottom: 15, 
+     width: '100%'
   },
   topButtonsContainer: {
     flexDirection: 'row',

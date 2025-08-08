@@ -14,11 +14,11 @@ export const insertSpaceBetweenPairs = (str) => {
     if (removePlus) {
       return str.match(/.{1,2}/g)?.join(' ') || '';
     } else {
-      var firstThreeChars = str.slice(0, 3);
-      var fourthChar = str.slice(3, 4);
-      var restOfChars = str.slice(4);
+      const firstThreeChars = str.slice(0, 3);
+      const fourthChar = str.slice(3, 4);
+      const restOfChars = str.slice(4);
 
-      var stringWithSpaces = restOfChars.match(/.{1,2}/g)?.join(' ') || '';
+      const stringWithSpaces = restOfChars.match(/.{1,2}/g)?.join(' ') || '';
 
       return firstThreeChars + ' ' + fourthChar + ' ' + stringWithSpaces;
     }

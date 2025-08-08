@@ -6,6 +6,8 @@ interface Attendee {
   jobTitle?: string;
   designation?: string;
   phone?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 // Define the field config type to make it indexable with string keys
@@ -45,5 +47,15 @@ export const attendeeFieldConfig: AttendeeFieldConfigType = {
     label: 'Téléphone',
     fieldName: 'phone',
     accessor: (a: Attendee) => a.phone || '',
+  },
+  firstName: {
+    label: 'Prénom',
+    fieldName: 'firstName',
+    accessor: (a: Attendee) => a.firstName || '',
+  },
+  lastName: {
+    label: 'Nom',
+    fieldName: 'lastName',
+    accessor: (a: Attendee) => a.lastName || '',
   },
 };

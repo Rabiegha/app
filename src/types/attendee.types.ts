@@ -6,7 +6,7 @@ export type Attendee = {
   phone?: string;
   organization?: string;
   designation?: string;
-  attendee_status: string;
+  attendee_status: number;
   badge_pdf_url?: string;
   badge_image_url?: string;
   attendee_type_name?: string;

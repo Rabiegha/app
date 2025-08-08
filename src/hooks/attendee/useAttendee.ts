@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+
+import { useAppDispatch } from '../../redux/store';
 import { 
   fetchAttendeesList, 
   fetchAttendeeDetails as fetchAttendeeDetailsAction,
@@ -9,6 +11,7 @@ import {
 } from '../../redux/slices/attendee/attendeeSlice';
 import { RootState } from '../../redux/store';
 import { 
+  Attendee,
   FetchAttendeesParams, 
   UpdateAttendeeStatusParams,
   UpdateAttendeeFieldParams
@@ -18,7 +21,7 @@ import {
  * Custom hook for working with attendee data
  */
 export const useAttendee = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   
   // Select state from Redux
   const { 
@@ -31,7 +34,7 @@ export const useAttendee = () => {
   } = useSelector((state: RootState) => state.attendee);
 
   // Fetch attendees list
-  const fetchAttendees = useCallback((params: FetchAttendeesParams) => {
+  const fetchAttendees = useCallback((params: FetchAttendeesParams): Promise<Attendee[]> => {
     return dispatch(fetchAttendeesList(params)).unwrap();
   }, [dispatch]);
 
