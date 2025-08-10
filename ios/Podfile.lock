@@ -1296,7 +1296,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-pager-view (6.8.1):
+  - react-native-pager-view (6.8.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1317,7 +1317,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context (5.5.0):
+  - react-native-safe-area-context (5.4.1):
     - React-Core
   - react-native-slider (4.5.7):
     - DoubleConversion
@@ -1340,7 +1340,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-webview (13.15.0):
+  - react-native-webview (13.13.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1648,7 +1648,7 @@ PODS:
     - React-logger (= 0.78.0)
     - React-perflogger (= 0.78.0)
     - React-utils (= 0.78.0)
-  - RNCAsyncStorage (2.2.0):
+  - RNCAsyncStorage (2.1.2):
     - React-Core
   - RNCMaskedView (0.3.2):
     - DoubleConversion
@@ -1671,9 +1671,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNCPicker (2.11.1):
+  - RNCPicker (2.11.0):
     - React-Core
-  - RNFlashList (1.8.3):
+  - RNFlashList (1.8.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1696,7 +1696,7 @@ PODS:
     - Yoga
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.26.0):
+  - RNGestureHandler (2.25.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2205,10 +2205,10 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 663bc64e3a96c5fc91081923ae7481adc1359a78
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-mmkv: 637830702ab3cb525fface3eab763ad9cee00617
-  react-native-pager-view: a762fae0dc3312d2a9380f00fc081e14967da4c3
-  react-native-safe-area-context: 5754906243db98dcf24f62bddd5f63acf7b4d508
+  react-native-pager-view: 88e496cd8fb58755e633e376c420ac075608d7af
+  react-native-safe-area-context: 583e6d44b8500e4d4738119118d1fc01d754bfc0
   react-native-slider: e84c034a5575b8aee6275b1e0089fd28fc907d6f
-  react-native-webview: 3113f47b24b228a7dec250da41a8426481540be4
+  react-native-webview: af6774e34b542209d861eba069bd0ec684a569f9
   React-NativeModulesApple: 16fbd5b040ff6c492dacc361d49e63cba7a6a7a1
   React-perflogger: ab51b7592532a0ea45bf6eed7e6cae14a368b678
   React-performancetimeline: bc2e48198ec814d578ac8401f65d78a574358203
@@ -2237,12 +2237,12 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: f2e81d80afd71a8058589e19d8a134243fa53f17
   ReactCodegen: a63a0ab6ae824aef2e8c744981edd718b16eb9f2
   ReactCommon: 3d39389f8e2a2157d5c999f8fba57bd1c8f226f0
-  RNCAsyncStorage: 23e56519cc41d3bade3c8d4479f7760cb1c11996
+  RNCAsyncStorage: addfc2cb6511dbe199c56c6b26ede383b6c38919
   RNCMaskedView: 6d4bf14f158d1a93484edf30850cbbd7ccbb8668
-  RNCPicker: 55f4c211f69edb5c7a0faf85933e36c3621ebf64
-  RNFlashList: 9f51bc9dfd6f8de406735fa4ac886d1ca365cf67
+  RNCPicker: 4f6d5e8d107064be32dfc8f1bcb5a3741135db0b
+  RNFlashList: c98bfe4206d4aafb6e082a1e40e841d1eb241b37
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNGestureHandler: 2a91f7b1b8b8becd98f497dac61642efc3a3cd76
+  RNGestureHandler: 83e18e53d3388ac5cb165a1404bc3be1e4cbdad0
   RNPermissions: 5a2dafe37c8e0a3fa1d6e0783a1490b1b7fd92d6
   RNReanimated: 77fbbadab86861843d510f8c5fdd8395fa20870f
   RNScreens: 6f4f971a12c1421989b73ef92b6b31363c9d8d86
@@ -2254,4 +2254,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 9a918a042e7ab31925b847ee61a19b0fa5a8f904
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2
