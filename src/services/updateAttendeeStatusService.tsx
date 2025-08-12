@@ -4,10 +4,10 @@ import mainApi from '../config/mainApi';
 
 import { UpdateAttendeeStatusParams } from '@/types/attendee.types';
 
-export const updateAttendeeStatus = async (updatedAttendee: UpdateAttendeeStatusParams, userId: string) => {                    
+export const updateAttendeeStatus = async (updatedAttendee: UpdateAttendeeStatusParams) => {                    
   try {
     const params = cleanParams({
-      current_user_login_details_id: userId,
+      current_user_login_details_id: updatedAttendee.userId,
       event_id: updatedAttendee.eventId,
       attendee_id: updatedAttendee.attendeeId,
       attendee_status: updatedAttendee.status,

@@ -49,7 +49,7 @@ const mapFieldToSelectedAttendee = (field: string, value: string): Partial<Atten
     case 'job_title':
       return { jobTitle: value };
     case 'attendee_status':
-      return { attendeeStatus: value };
+      return { attendeeStatus: Number(value) };
     case 'attendee_status_change_datetime':
       return { attendeeStatusChangeDatetime: value };
     case 'comment':
@@ -67,6 +67,7 @@ interface AttendeeState {
   isLoadingDetails: boolean;
   isUpdating: boolean;
   error: string | null;
+  loadingAttendeeId: string | null;
 }
 
 // Initial state
@@ -77,6 +78,7 @@ const initialState: AttendeeState = {
   isLoadingDetails: false,
   isUpdating: false,
   error: null,
+  loadingAttendeeId: null,
 };
 
 // Thunks
@@ -156,7 +158,7 @@ export const fetchAttendeeDetails = createAsyncThunk(
           theAttendeeId: params.attendeeId || '',
           commentaire: '',
           attendeeStatusChangeDatetime: '',
-          attendeeStatus: '',
+          attendeeStatus: 0,
           urlBadgePdf: '',
           urlBadgeImage: ''
         };
@@ -174,6 +176,12 @@ export const updateAttendeeStatusThunk = createAsyncThunk(
   'attendees/updateStatus',
   async (params: UpdateAttendeeStatusParams, { rejectWithValue }) => {
     try {
+      // Make sure we have the eventId parameter
+      if (!params.eventId) {
+        console.error('eventId is required for updating attendee status');
+        return rejectWithValue('eventId is required');
+      }
+      
       const success = await updateAttendeeStatus(params);
       if (success) {
         return { attendeeId: params.attendeeId, status: params.status };
@@ -321,20 +329,23 @@ const attendeeSlice = createSlice({
       })
       
       // Fetch details cases
-      .addCase(fetchAttendeeDetails.pending, (state) => {
+      .addCase(fetchAttendeeDetails.pending, (state, action) => {
         // Mettre isLoadingDetails à true mais ne pas effacer selectedAttendee
         // pour éviter le flash du composant vide
         state.isLoadingDetails = true;
         state.error = null;
+        state.loadingAttendeeId = action.meta.arg.attendeeId || null;
         // Ne pas effacer selectedAttendee ici pour éviter le flash
       })
       .addCase(fetchAttendeeDetails.fulfilled, (state, action) => {
         state.selectedAttendee = action.payload;
         state.isLoadingDetails = false;
+        state.loadingAttendeeId = null;
       })
       .addCase(fetchAttendeeDetails.rejected, (state, action) => {
         state.isLoadingDetails = false;
         state.error = action.error.message || 'Failed to fetch attendee details';
+        state.loadingAttendeeId = null;
       })
       
       // Add attendee cases

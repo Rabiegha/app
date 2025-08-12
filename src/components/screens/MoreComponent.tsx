@@ -33,7 +33,7 @@ interface MoreComponentProps {
   PrintAndCheckIn: () => void;
   handleCheckinButton: (status: 0 | 1) => Promise<void>;
   loading: boolean;
-  isLoadingDetails: boolean;
+  isLoading: boolean;
   modify: () => void;
   type: string;
   onFieldUpdateSuccess?: () => void;
@@ -54,7 +54,7 @@ const MoreComponent = ({
   PrintAndCheckIn,
   handleCheckinButton,
   loading,
-  isLoadingDetails,
+  isLoading,
   type,
   onFieldUpdateSuccess,
 }: MoreComponentProps) => {
@@ -201,7 +201,7 @@ const baseFields: FieldItem[] = [
 const testing = false;
 //Render skeleton or content
 const renderSkeletonOrContent = (label: string, value: string, showButton?: boolean, fieldKey?: keyof typeof attendeeFieldConfig) => {
-  if (isLoadingDetails || testing) {
+  if (isLoading|| testing) {
     return (
       <View style={styles.skeletonContainer}>
         <SkeletonPlaceholder>
@@ -265,7 +265,7 @@ const handleEditSubmit = async (newValue: string) => {
       </View>
       {!isPartner && (
         <View style={styles.topButtonsContainer}>
-          {isLoadingDetails || testing ? (
+          {isLoading || testing ? (
             <SkeletonPlaceholder>
             <SkeletonPlaceholder.Item
               width={100}
@@ -327,7 +327,7 @@ const handleEditSubmit = async (newValue: string) => {
       {!isPartner && (
         <View style={styles.bottomContainer}>
 
-          {isLoadingDetails || testing ? (
+          {isLoading || testing ? (
             <SkeletonPlaceholder>
             <SkeletonPlaceholder.Item
               width="100%"

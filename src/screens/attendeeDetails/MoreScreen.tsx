@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
 import { useAppDispatch } from '../../redux/store';
-import { updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
+import { clearSelectedAttendee, updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
 import ErrorView from '../../components/elements/view/ErrorView';
@@ -44,19 +44,15 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   const userId = useSelector(selectCurrentUserId);
   const { eventId } = useActiveEvent();
   const dispatch = useAppDispatch();
-  const [isLoadingAttendeeDetails, setIsLoadingAttendeeDetails] = useState(true);
   const { 
     attendeeDetails, 
     isLoadingDetails, 
+    loadingAttendeeId,
     isUpdating, 
     error,
     fetchAttendeeDetails, 
     updateAttendeeStatus 
   } = useAttendee();
-
-  useEffect(() => {
-    setIsLoadingAttendeeDetails(isLoadingDetails);
-  }, [isLoadingDetails]);
 
   /* Navigation params */
 
@@ -78,13 +74,14 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   const fetchData = useCallback(() => {
 
     if (userId && eventId && attendeeId) {
+      dispatch(clearSelectedAttendee());
       fetchAttendeeDetails({
         userId,
         eventId,
         attendeeId
       });
     }
-  }, [userId, eventId, attendeeId, fetchAttendeeDetails]);
+  }, [userId, eventId, attendeeId, fetchAttendeeDetails, dispatch]);
 
   // Fetch data on mount and when dependencies change
   useEffect(() => {
@@ -181,12 +178,20 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
     }
   };
 
+  //should load skeleton
+
+  const shouldShowSkeleton =
+  isLoadingDetails ||
+  loadingAttendeeId === attendeeId || 
+  attendeeDetails?.theAttendeeId !== attendeeId;
+  
+
   /* Render helpers */
 
   const renderContent = () => {
     // Only show error if we're not loading and have a real error
     // This prevents the error view from flashing during initial load
-    if (error && !isLoadingAttendeeDetails && attendeeDetails === null) {
+    if (true && !shouldShowSkeleton && attendeeDetails === null) {
       // Check if this is a partner-specific error message
       const isPartnerPermissionsError = typeof error === 'string' && 
         error.includes('partner users') && 
@@ -222,7 +227,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
         email={details?.email || ''}
         phone={details?.phone || ''}
         JobTitle={details?.jobTitle || ''}
-        attendeeStatus={details?.attendeeStatus ?? ''}
+        attendeeStatus={details?.attendeeStatus ?? 0}
         organization={details?.organization || ''}
         commentaire={commentText}
         attendeeId={attendeeId}
@@ -233,7 +238,8 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
         modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
         type={details?.type || ''}
         onFieldUpdateSuccess={triggerRefresh} 
-        isLoadingDetails={isLoadingAttendeeDetails}      />
+        isLoading={shouldShowSkeleton}
+        />
     );
   };
 

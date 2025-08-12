@@ -181,22 +181,22 @@ export const mapAttendeeToDetails = (attendee: Attendee) => {
     }
   }
 
-  // Ensure attendeeStatus is strictly 0 or 1
-  const attendeeStatus: 0 | 1 = attendee.attendee_status === 1 ? 1 : 0;
+  // Use attendeeStatus as a number (0 or 1)
+  const attendeeStatus: number = attendee.attendee_status === 1 ? 1 : 0;
   
   return {
-    type: attendee.attendee_type_name,
+    type: attendee.attendee_type_name || '',
     lastName: attendee.last_name,
     firstName: attendee.first_name,
-    email: attendee.email,
-    phone: attendee.phone,
-    organization: attendee.organization,
-    jobTitle: attendee.designation,
+    email: attendee.email || '',
+    phone: attendee.phone || '',
+    organization: attendee.organization || '',
+    jobTitle: attendee.designation || '',
     theAttendeeId: String(attendee.id),
-    commentaire: attendee.comment,
+    commentaire: attendee.comment || '',
     attendeeStatusChangeDatetime: formattedDate,
     attendeeStatus,
-    urlBadgePdf: attendee.badge_pdf_url,
-    urlBadgeImage: attendee.badge_image_url,
+    urlBadgePdf: attendee.badge_pdf_url || '',
+    urlBadgeImage: attendee.badge_image_url || '',
   };
 };

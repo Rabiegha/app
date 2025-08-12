@@ -30,7 +30,7 @@ export type AttendeeDetails = {
   organization: string;
   jobTitle: string;
   commentaire: string;
-  attendeeStatus: string;
+  attendeeStatus: number;
   theAttendeeId: string;
   attendeeStatusChangeDatetime: string;
   urlBadgePdf: string;
@@ -42,7 +42,7 @@ export type FetchAttendeesParams = {
   userId: string;
   eventId: string;
   attendeeId?: string;
-  attendeeStatus?: string;
+  attendeeStatus?: number;
 };
 
 export type UpdateAttendeeStatusParams = {

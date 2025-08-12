@@ -29,6 +29,7 @@ export const useAttendee = () => {
     selectedAttendee, 
     isLoadingList,
     isLoadingDetails,
+    loadingAttendeeId,
     isUpdating,
     error 
   } = useSelector((state: RootState) => state.attendee);
@@ -64,6 +65,7 @@ export const useAttendee = () => {
     attendeeDetails: selectedAttendee,
     isLoadingList,
     isLoadingDetails,
+    loadingAttendeeId,
     isUpdating,
     error,
     
