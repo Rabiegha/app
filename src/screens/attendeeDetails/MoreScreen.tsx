@@ -44,6 +44,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   const userId = useSelector(selectCurrentUserId);
   const { eventId } = useActiveEvent();
   const dispatch = useAppDispatch();
+  const [isLoadingAttendeeDetails, setIsLoadingAttendeeDetails] = useState(true);
   const { 
     attendeeDetails, 
     isLoadingDetails, 
@@ -52,6 +53,10 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
     fetchAttendeeDetails, 
     updateAttendeeStatus 
   } = useAttendee();
+
+  useEffect(() => {
+    setIsLoadingAttendeeDetails(isLoadingDetails);
+  }, [isLoadingDetails]);
 
   /* Navigation params */
 
@@ -181,7 +186,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   const renderContent = () => {
     // Only show error if we're not loading and have a real error
     // This prevents the error view from flashing during initial load
-    if (error && !isLoadingDetails && attendeeDetails === null) {
+    if (error && !isLoadingAttendeeDetails && attendeeDetails === null) {
       // Check if this is a partner-specific error message
       const isPartnerPermissionsError = typeof error === 'string' && 
         error.includes('partner users') && 
@@ -228,7 +233,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
         modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
         type={details?.type || ''}
         onFieldUpdateSuccess={triggerRefresh} 
-        isLoadingDetails={isLoadingDetails}      />
+        isLoadingDetails={isLoadingAttendeeDetails}      />
     );
   };
 

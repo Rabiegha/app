@@ -198,7 +198,7 @@ const baseFields: FieldItem[] = [
   },
 ];
 
-const testing = true;
+const testing = false;
 //Render skeleton or content
 const renderSkeletonOrContent = (label: string, value: string, showButton?: boolean, fieldKey?: keyof typeof attendeeFieldConfig) => {
   if (isLoadingDetails || testing) {
@@ -265,22 +265,33 @@ const handleEditSubmit = async (newValue: string) => {
       </View>
       {!isPartner && (
         <View style={styles.topButtonsContainer}>
+          {isLoadingDetails || testing ? (
+            <SkeletonPlaceholder>
+            <SkeletonPlaceholder.Item
+              width={100}
+              height={50}
+              borderRadius={8}
+            />
+          </SkeletonPlaceholder>
+          ) : (
+          <>
           <SmallButton
-                imageSource={Icons.Print}
-                pressHandler={PrintAndCheckIn}
-                backgroundColor={colors.green}
-                tintColor={colors.greyCream}
-              />
+            imageSource={Icons.Print}
+            pressHandler={PrintAndCheckIn}
+            backgroundColor={colors.green}
+            tintColor={colors.greyCream} />
           <SmallButton
-                imageSource={Icons.Scan}
-                pressHandler={See}
-                backgroundColor={colors.greyCream}
-                tintColor={colors.darkGrey}
-              />
+              imageSource={Icons.Scan}
+              pressHandler={See}
+              backgroundColor={colors.greyCream}
+              tintColor={colors.darkGrey} />
+    </>
+          )}
         </View>
       )}
       </View>
 
+      <>
       <View style={styles.container}>
       {baseFields
         .filter(field => {
@@ -300,8 +311,8 @@ const handleEditSubmit = async (newValue: string) => {
             field.fieldKey
           );
         })}
-
         </View>
+      </>
       {modalVisible && editFieldKey && (
         <ModifyFieldModal
         visible={modalVisible}
@@ -313,26 +324,37 @@ const handleEditSubmit = async (newValue: string) => {
 
       )}
 
-{!isPartner && (
-  <View style={styles.bottomContainer}>
-     <>
-          {parsedAttendeeStatus === 0 ? (
-            <LargeButton
-              title="Check-in"
-              onPress={() => handleCheckinButton(1)}
-              backgroundColor={colors.green}
-              loading={loading}
+      {!isPartner && (
+        <View style={styles.bottomContainer}>
+
+          {isLoadingDetails || testing ? (
+            <SkeletonPlaceholder>
+            <SkeletonPlaceholder.Item
+              width="100%"
+              height={50}
+              borderRadius={8}
             />
+          </SkeletonPlaceholder>
           ) : (
-            <LargeButton
-              title="Undo Check-in"
-              onPress={() => handleCheckinButton(0)}
-              backgroundColor={colors.red}
-              loading={loading}
-            />
+            <>
+                {parsedAttendeeStatus === 0 ? (
+                  <LargeButton
+                    title="Check-in"
+                    onPress={() => handleCheckinButton(1)}
+                    backgroundColor={colors.green}
+                    loading={loading}
+                  />
+                ) : (
+                  <LargeButton
+                    title="Undo Check-in"
+                    onPress={() => handleCheckinButton(0)}
+                    backgroundColor={colors.red}
+                    loading={loading}
+                  />
+                )}
+              </>
           )}
-        </>
-  </View>
+        </View>
        
       )}
     </ScrollView>
@@ -355,12 +377,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   skeletonContainer: {
-     marginBottom: 15, 
+     marginBottom: 18, 
      width: '100%'
   },
   topButtonsContainer: {
     flexDirection: 'row',
+    justifyContent: 'center',
     marginBottom: 20,
+    width: '100%',
   },
   topContainer: {
     alignItems: 'center',
