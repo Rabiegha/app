@@ -1,7 +1,7 @@
 // hooks/edit/useUpdateAttendeeField.ts
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { updateAttendeeFieldThunk } from '../../redux/slices/attendee/attendeeSlice';
+import { updateAttendeeFieldThunk } from '../../features/attendee';
 import { AppDispatch } from '../../redux/store';
 
 

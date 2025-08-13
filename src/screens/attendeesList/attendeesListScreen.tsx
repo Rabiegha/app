@@ -22,7 +22,7 @@ import { useEvent } from '../../context/EventContext';
 import Search from '../../components/elements/Search';
 import FiltreComponent from '../../components/filtre/FiltreComponent';
 import { useAppDispatch, RootState } from '../../redux/store';
-import { updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
+import { updateAttendeeLocally } from '../../features/attendee';
 import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
 import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 import useRegistrationData from '../../hooks/registration/useRegistrationData';

@@ -6,14 +6,15 @@ import {persistStore, persistReducer} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 
+import sessionAttendeesReducer from '../features/attendee/slices/sessionAttendeesListSlice';
+import {attendeeReducer} from '../features/attendee';
+
 import printerReducer from './slices/printerSlice';
 import pastEventsReducer from './slices/event/pastEventsSlice';
 import futureEventsReducer from './slices/event/futureEventsSlice';
 import authReducer from './slices/authSlice';
 import scanReducer from './slices/scanModeSlice';
 import searchSlice from './slices/searchModeSlice';
-import attendeeReducer from './slices/attendee/attendeeSlice';
-import sessionAttendeesReducer from './slices/attendee/sessionAttendeesListSlice';
 
 // pastEvents
 const pastEventsPersistConfig = {

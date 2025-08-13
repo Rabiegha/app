@@ -1,12 +1,12 @@
 // MoreScreen.tsx
 import React, { useEffect, useCallback, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
 import { useAppDispatch } from '../../redux/store';
-import { clearSelectedAttendee, updateAttendeeLocally } from '../../redux/slices/attendee/attendeeSlice';
+import { updateAttendeeLocally } from '../../features/attendee';
 import MoreComponent from '../../components/screens/MoreComponent';
 import MainHeader from '../../components/elements/header/MainHeader';
 import ErrorView from '../../components/elements/view/ErrorView';
@@ -62,6 +62,9 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   } = route.params;
 
 
+  const hasDetailsForThis = attendeeDetails?.theAttendeeId === attendeeId;
+
+
   /* Local state */
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -74,19 +77,21 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   const fetchData = useCallback(() => {
 
     if (userId && eventId && attendeeId) {
-      dispatch(clearSelectedAttendee());
+
       fetchAttendeeDetails({
         userId,
         eventId,
         attendeeId
       });
     }
-  }, [userId, eventId, attendeeId, fetchAttendeeDetails, dispatch]);
+  }, [userId, eventId, attendeeId, fetchAttendeeDetails]);
 
-  // Fetch data on mount and when dependencies change
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
 
   // Refresh when refresh trigger changes
   useEffect(() => {
@@ -180,10 +185,9 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
 
   //should load skeleton
 
-  const shouldShowSkeleton =
-  isLoadingDetails ||
-  loadingAttendeeId === attendeeId || 
-  attendeeDetails?.theAttendeeId !== attendeeId;
+  const shouldShowSkeleton = !hasDetailsForThis && (isLoadingDetails || loadingAttendeeId === attendeeId);
+
+
   
 
   /* Render helpers */

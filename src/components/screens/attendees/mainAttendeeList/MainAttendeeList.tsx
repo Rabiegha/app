@@ -20,13 +20,14 @@ import { Attendee } from '../../../../types/attendee.types';
 
 import MainAttendeeListItem from './MainAttendeeListItem';
 
-import { fetchAttendeesList } from '@/redux/slices/attendee/attendeeSlice';
+import { fetchAttendeesList } from '@/features/attendee';
+import { RootState } from '@/redux/store';
 
 
 // Types
 interface FilterCriteria {
   status: string;
-  [key: string]: any;
+  [key: string]: string;
 }
 
 type Props = {
@@ -34,7 +35,7 @@ type Props = {
   onTriggerRefresh?: () => void;
   filterCriteria: FilterCriteria;
   onShowNotification?: () => void;
-  summary?: any;
+  summary?: string;
   // Business logic handlers from parent - now required
   onUpdateAttendee: (attendee: Attendee) => Promise<void>;
   onPrintAndCheckIn: (attendee: Attendee) => Promise<void>;
@@ -49,7 +50,7 @@ export type ListHandle = {
 function useAttendeeData(userId: string | null, eventId: string | null | undefined, onRefresh?: () => void) {
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(false);
-  const { list: allAttendees, isLoadingList, error } = useSelector((state: any) => state.attendee);
+  const { list: allAttendees, isLoadingList, error } = useSelector((state: RootState) => state.attendee);
   
   const handleRefresh = useCallback(async () => {
     if (!userId || !eventId) return;
@@ -148,7 +149,6 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
   searchQuery, 
   onTriggerRefresh, 
   filterCriteria,
-  onUpdateAttendee,
   onPrintAndCheckIn,
   onToggleCheckIn
 }, ref) => {
@@ -227,17 +227,6 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
     setOpenSwipeable(swipeable);
   }, [openSwipeable]);
   
-  // Close swipeable after update
-  const handleAttendeeUpdate = useCallback(async (attendee: Attendee) => {
-    await onUpdateAttendee(attendee);
-    openSwipeable?.current?.close();
-    
-    // Update local checked-in state
-    setCheckedInMap(prev => ({
-      ...prev,
-      [attendee.id]: attendee.attendee_status === 1
-    }));
-  }, [onUpdateAttendee, openSwipeable]);
 
 
   // Load more items when scrolling

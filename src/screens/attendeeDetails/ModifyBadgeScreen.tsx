@@ -19,7 +19,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import MainHeader from '@/components/elements/header/MainHeader';
 
 // Redux
-import { editAttendeeThunk, EditAttendeeParams } from '../../redux/slices/attendee/attendeeSlice';
+import { editAttendeeThunk, EditAttendeeParams } from '../../features/attendee';
 import { AppDispatch } from '../../redux/store';
 
 // Types

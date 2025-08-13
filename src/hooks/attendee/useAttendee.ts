@@ -8,7 +8,7 @@ import {
   updateAttendeeStatusThunk,
   updateAttendeeFieldThunk,
   clearSelectedAttendee
-} from '../../redux/slices/attendee/attendeeSlice';
+} from '../../features/attendee';
 import { RootState } from '../../redux/store';
 import { 
   Attendee,

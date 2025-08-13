@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchSessionAttendees } from '../../thunks/attendee/sessionAttendeesThunk';
+
+import { fetchSessionAttendees } from '../thunks/sessionAttendeesThunk';
 
 const sessionAttendeesSlice = createSlice({
   name: 'sessionAttendees',
-  initialState: { data: [], isLoading: false, error: null },
+  initialState: { data: [], isLoading: false, error: null as string | null },
   reducers: {},
   extraReducers: builder => {
     builder
@@ -15,7 +16,7 @@ const sessionAttendeesSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(fetchSessionAttendees.rejected, (state, action) => {
-        state.error = action.error.message;
+        state.error = action.error.message || null;
         state.isLoading = false;
       });
   }

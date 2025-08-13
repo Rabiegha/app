@@ -78,3 +78,27 @@ export type AddAttendeeParams = {
   status_id: string;
   attendee_status: string;
 };
+
+// Interface for edit attendee parameters
+export interface EditAttendeeParams {
+  userId: string;
+  attendeeId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone?: string;
+  organization?: string;
+  jobTitle?: string;
+  typeId?: string;
+}
+
+// State type
+export interface AttendeeState {
+  list: Attendee[];
+  selectedAttendee: AttendeeDetails | null;
+  isLoadingList: boolean;
+  isLoadingDetails: boolean;
+  isUpdating: boolean;
+  error: string | null;
+  loadingAttendeeId: string | null;
+}
