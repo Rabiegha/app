@@ -1,6 +1,7 @@
 // hooks/edit/useUpdateAttendeeField.ts
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+
 import { updateAttendeeFieldThunk } from '../../features/attendee';
 import { AppDispatch } from '../../redux/store';
 
@@ -45,7 +46,7 @@ export const useUpdateAttendeeField = () => {
         return false;
       }
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
       return false;
     } finally {
       setLoading(false);

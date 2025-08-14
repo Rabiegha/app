@@ -14,7 +14,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { RootStackParamList } from '../../navigation/AppNavigator';
-import MainAttendeeListItem, { ListHandle } from '../../components/screens/attendees/mainAttendeeList/MainAttendeeList';
 import ProgressBar from '../../components/elements/progress/ProgressBar';
 import ProgressText from '../../components/elements/progress/ProgressionText';
 import MainHeader from '../../components/elements/header/MainHeader';
@@ -32,6 +31,7 @@ import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 import usePrintDocument from '../../printing/hooks/usePrintDocument';
 import { Attendee } from '../../types/attendee.types';
 import { useAttendee } from '../../hooks/attendee/useAttendee';
+import MainAttendeeList from '../../components/screens/attendees/mainAttendeeList/MainAttendeeList';
 
 import FloatingSearchButton from '@/components/screens/eventDashboard/FloatingSearchButton';
 
@@ -306,7 +306,7 @@ const AttendeeListScreen = () => {
             </TouchableOpacity>
             {/* 📋 Liste des participants */}
 
-              <MainAttendeeListItem
+              <MainAttendeeList
                 ref={listRef}
                 searchQuery={searchQuery}
                 onShowNotification={() => {

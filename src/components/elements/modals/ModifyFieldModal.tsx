@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Modal,
   View,
@@ -9,8 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import colors from '../../../assets/colors/colors';
+import Spinner from 'react-native-loading-spinner-overlay';
 
+import colors from '@/assets/colors/colors';
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -24,6 +25,7 @@ const ModifyFieldModal = ({ visible, onClose, label, initialValue, onSubmit }: P
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const closeTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // ✅ Reset value when modal reopens with a new field
   useEffect(() => {
@@ -32,32 +34,46 @@ const ModifyFieldModal = ({ visible, onClose, label, initialValue, onSubmit }: P
       setError('');
       setSuccess(false);
     }
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
   }, [visible, initialValue]);
 
-  const handleSubmit = async () => {
+  const unchanged = value.trim() === (initialValue ?? '').trim();
+
+  const handleSubmit = useCallback(async () => {
+
+    if (loading || success) return; // guard double taps
+    
     setLoading(true);
     setError('');
+
+    const start = Date.now();
+    const MIN_SPIN_MS = 350;
+
     try {
       const result = await onSubmit(value);
       if (result) {
         setSuccess(true);
-        setTimeout(onClose, 1500);
+        closeTimerRef.current = setTimeout(onClose, 1500);
       } else {
         setError('Une erreur est survenue.');
       }
     } catch (err) {
-      setError('Erreur inattendue.');
+      setError('Erreur inattendue.' + err);
     } finally {
-      setLoading(false);
+      const elapsed = Date.now() - start;
+      const wait = Math.max(0, MIN_SPIN_MS - elapsed);
+      setTimeout(() => setLoading(false), wait);
     }
-  };
+  }, [value, onSubmit, onClose, loading, success]);
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
+      <Spinner visible={loading} />
       <View style={styles.overlay}>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalContainer}>
           <Text style={styles.title}>Modifier le {label}</Text>
-
           <TextInput
             style={styles.input}
             value={value}
@@ -80,10 +96,10 @@ const ModifyFieldModal = ({ visible, onClose, label, initialValue, onSubmit }: P
 
             <TouchableOpacity
               onPress={handleSubmit}
-              style={[styles.button, styles.confirm]}
-              disabled={loading || success}
+              style={[styles.button, styles.confirm, loading || unchanged ? {backgroundColor: colors.lightGreen} : null]}
+              disabled={loading || success || unchanged}
             >
-              <Text style={styles.buttonText}>{loading ? '...' : 'Enregistrer'}</Text>
+              <Text style={styles.buttonText}>Enregistrer</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -93,39 +109,19 @@ const ModifyFieldModal = ({ visible, onClose, label, initialValue, onSubmit }: P
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingTop: 60,
-    paddingHorizontal: 20,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: colors.darkGrey,
-  },
-  input: {
-    backgroundColor: colors.greyCream,
+  button: {
     borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
-    color: colors.darkGrey,
-    minHeight: 120,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 30,
   },
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+  buttonText: {
+    color: colors.white,
+    fontWeight: 'bold',
   },
   cancel: {
     backgroundColor: colors.red,
@@ -133,19 +129,39 @@ const styles = StyleSheet.create({
   confirm: {
     backgroundColor: colors.green,
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  success: {
-    marginTop: 15,
-    color: colors.green,
-    fontWeight: 'bold',
-  },
   error: {
-    marginTop: 15,
     color: colors.red,
     fontWeight: 'bold',
+    marginTop: 15,
+  },
+  input: {
+    backgroundColor: colors.greyCream,
+    borderRadius: 10,
+    color: colors.darkGrey,
+    fontSize: 16,
+    minHeight: 120,
+    padding: 15,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+  },
+  overlay: {
+    backgroundColor: colors.white,
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 60,
+  },
+  success: {
+    color: colors.green,
+    fontWeight: 'bold',
+    marginTop: 15,
+  },
+  title: {
+    color: colors.darkGrey,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
 });
 

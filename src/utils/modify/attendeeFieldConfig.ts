@@ -50,12 +50,12 @@ export const attendeeFieldConfig: AttendeeFieldConfigType = {
   },
   firstName: {
     label: 'Prénom',
-    fieldName: 'firstName',
+    fieldName: 'first_name',
     accessor: (a: Attendee) => a.firstName || '',
   },
   lastName: {
     label: 'Nom',
-    fieldName: 'lastName',
+    fieldName: 'last_name',
     accessor: (a: Attendee) => a.lastName || '',
   },
 };

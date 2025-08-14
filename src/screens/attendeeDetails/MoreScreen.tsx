@@ -147,7 +147,8 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
           eventId,
           attendeeId,
           status
-        }).catch((error: Error) => {
+        })
+        .catch((error: Error) => {
           // If API call fails, revert the local change
           console.error('API call failed:', error);
           return false;
