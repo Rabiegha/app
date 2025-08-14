@@ -22,6 +22,7 @@ import MainAttendeeListItem from './MainAttendeeListItem';
 
 import { fetchAttendeesList } from '@/features/attendee';
 import { RootState } from '@/redux/store';
+import { useAttendee } from '@/hooks/attendee/useAttendee';
 
 
 // Types
@@ -45,28 +46,6 @@ type Props = {
 export type ListHandle = {
   handleRefresh: () => void;
 };
-
-// Custom hooks
-function useAttendeeData(userId: string | null, eventId: string | null | undefined, onRefresh?: () => void) {
-  const dispatch = useDispatch();
-  const [refreshing, setRefreshing] = useState(false);
-  const { list: allAttendees, isLoadingList, error } = useSelector((state: RootState) => state.attendee);
-  
-  const handleRefresh = useCallback(async () => {
-    if (!userId || !eventId) return;
-    
-    setRefreshing(true);
-    await dispatch(fetchAttendeesList({ userId, eventId }) as any);
-    setRefreshing(false);
-    onRefresh?.();
-  }, [userId, eventId, dispatch, onRefresh]);
-  
-  useEffect(() => {
-    handleRefresh();
-  }, [userId, eventId]);
-  
-  return { allAttendees, isLoadingList, error, refreshing, handleRefresh };
-}
 
 
 function normalizeText(text: string): string {
@@ -157,6 +136,10 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
   const eventId = event ? event.eventId : undefined;
   const userId = useSelector(selectCurrentUserId);
   
+
+  //refreshing
+  const [refreshing, setRefreshing] = useState(false);
+  
   // Local state
   const [visibleCount, setVisibleCount] = useState(20);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -170,12 +153,33 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
   
   // Use custom hooks for data fetching and filtering
   const { 
-    allAttendees, 
+    fetchAttendees,
+    attendees: allAttendees, 
     isLoadingList, 
     error, 
-    refreshing, 
-    handleRefresh 
-  } = useAttendeeData(userId, eventId, onTriggerRefresh);
+  } = useAttendee();
+
+
+  const handleRefresh = useCallback(async () => {
+    if (!userId || !eventId) return;
+    if (refreshing) return; // guard against concurrent refreshes
+  
+    setRefreshing(true);
+    try {
+      await fetchAttendees({
+        userId,
+        eventId,
+        // optional: keep list in sync with status filter
+        attendeeStatus:
+          filterCriteria?.status === 'checked-in' ? 1 :
+          filterCriteria?.status === 'not-checked-in' ? 0 :
+          undefined,
+      });
+      onTriggerRefresh?.();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [userId, eventId, fetchAttendees, refreshing, onTriggerRefresh, filterCriteria?.status]);
   
   // Expose refresh method to parent via ref
   useImperativeHandle(ref, () => ({
