@@ -1,11 +1,13 @@
 import React, {
   useDeferredValue,
   useEffect,
+  useLayoutEffect,
   useState,
   useMemo,
   useImperativeHandle,
   forwardRef,
   useCallback,
+  useRef,
 } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,9 +22,9 @@ import { Attendee } from '../../../../types/attendee.types';
 
 import MainAttendeeListItem from './MainAttendeeListItem';
 
-import { fetchAttendeesList } from '@/features/attendee';
-import { RootState } from '@/redux/store';
 import { useAttendee } from '@/hooks/attendee/useAttendee';
+import { clearAttendees } from '@/features/attendee';
+import { useAppDispatch } from '@/redux/store';
 
 
 // Types
@@ -134,7 +136,9 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
   // Context and Redux
   const event = useEvent();
   const eventId = event ? event.eventId : undefined;
+  const attendeesRefreshKey = event ? event.attendeesRefreshKey : 0;
   const userId = useSelector(selectCurrentUserId);
+  const dispatch = useAppDispatch();
   
 
   //refreshing
@@ -146,6 +150,7 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
   const [openSwipeable, setOpenSwipeable] = useState<React.RefObject<any> | null>(null);
   const [checkedInMap, setCheckedInMap] = useState<Record<string | number, boolean>>({});
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const [renderState, setRenderState] = useState<'loading' | 'ready' | 'error'>('loading');
   
   // Configuration
   const isSearchByCompanyMode = true;
@@ -158,6 +163,33 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
     isLoadingList, 
     error, 
   } = useAttendee();
+
+  // Clear data and fetch when event changes
+  useEffect(() => {
+    if (!userId || !eventId) return;
+
+    // Always clear previous data first
+    dispatch(clearAttendees());
+    setRenderState('loading');
+
+    const fetchData = async () => {
+      try {
+        await fetchAttendees({
+          userId,
+          eventId,
+          attendeeStatus:
+            filterCriteria?.status === 'checked-in' ? 1 :
+            filterCriteria?.status === 'not-checked-in' ? 0 :
+            undefined,
+        });
+        setRenderState('ready');
+      } catch (error) {
+        setRenderState('error');
+      }
+    };
+    
+    fetchData();
+  }, [userId, eventId, attendeesRefreshKey, filterCriteria?.status, fetchAttendees, dispatch]);
 
 
   const handleRefresh = useCallback(async () => {
@@ -208,7 +240,7 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
   
   // Filter and process attendee data
   const totalFilteredData = useAttendeeFiltering(
-    allAttendees, 
+    renderState === 'ready' ? allAttendees : [], 
     debouncedSearchQuery, 
     filterCriteria || { status: '' }, 
     isSearchByCompanyMode
@@ -257,8 +289,8 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
     openSwipeable?.current?.close();
   }, [onPrintAndCheckIn, openSwipeable]);
 
-  // Render based on loading/error state
-  if (isLoadingList) {
+  // Render based on state
+  if (renderState === 'loading' || isLoadingList) {
     return (
       <View style={styles.viewsContainer}>
         <LoadingView />
@@ -266,7 +298,7 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
     );
   }
 
-  if (error) {
+  if (renderState === 'error' || error) {
     return (
       <View style={styles.viewsContainer}>
         <ErrorView handleRetry={handleRefresh} />
@@ -274,7 +306,7 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
     );
   }
 
-  // Main list render
+  // Main list render - only when we have confirmed data
   return (
     <View style={styles.listContainer}>
       <BaseFlatList<Attendee>

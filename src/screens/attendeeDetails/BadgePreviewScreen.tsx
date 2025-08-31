@@ -1,4 +1,3 @@
-// @ts-expect-error - Suppressing TypeScript error for React 19 hooks import
 import React, { useEffect, useState } from 'react';
 import {
   View,

@@ -30,6 +30,7 @@ type MoreScreenRouteParams = {
 type RootStackParamList = {
   More: MoreScreenRouteParams;
   Badge: { attendeeId: string; eventId: string; badgePdfUrl: string; badgeImageUrl: string };
+  BadgePreviewScreen: { attendeesData: any };
   Edit: { attendeeId: string; eventId: string };
 };
 
@@ -113,12 +114,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   const handleBackPress = () => navigation.goBack();
 
   const handleBadgePress = () =>
-    navigation.navigate('Badge', { 
-      attendeeId, 
-      eventId, 
-      badgePdfUrl: attendeeDetails?.urlBadgePdf || '',
-      badgeImageUrl: attendeeDetails?.urlBadgeImage || '',
-    });
+    navigation.navigate('BadgePreviewScreen', { attendeesData: attendeeDetails });
 
   const { printDocument } = usePrintDocument();
   const handlePrintAndCheckIn = () => {
