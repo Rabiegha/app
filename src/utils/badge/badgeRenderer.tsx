@@ -41,7 +41,7 @@ export const renderBadgeContent = ({
   }
 
   // Get the badge image URL - prioritize badge_image_url, then badge_url
-  const baseImageUrl = attendeeData.badge_image_url || attendeeData.badge_url || attendeeData.urlBadgeImage;
+  const baseImageUrl = attendeeData.badge_image_url || attendeeData.badge_url;
 
   if (baseImageUrl) {
     // Cache-busting using attendee data hash and refresh key

@@ -31,6 +31,23 @@ import usePrintDocument from '@/printing/hooks/usePrintDocument';
 import { RootState } from '@/redux/store';
 import colors from '@/assets/colors/colors';
 
+// Data normalization function to handle both snake_case and camelCase formats
+const normalizeAttendeeData = (data: any) => {
+  return {
+    id: data.id,
+    first_name: data.first_name || data.firstName,
+    last_name: data.last_name || data.lastName,
+    email: data.email,
+    phone: data.phone,
+    organization: data.organization,
+    job_title: data.job_title || data.jobTitle,
+    attendee_type_id: data.attendee_type_id,
+    badge_url: data.badge_url,
+    badge_pdf_url: data.badge_pdf_url || data.urlBadgePdf,
+    badge_image_url: data.badge_image_url || data.urlBadgeImage,
+  };
+};
+
 type BadgePreviewScreenRouteProp = RouteProp<BadgePreviewStackParamList, 'BadgePreviewScreen'>;
 type BadgePreviewScreenNavigationProp = NativeStackNavigationProp<BadgePreviewStackParamList, 'BadgePreviewScreen'>;
 
@@ -43,7 +60,9 @@ const BadgePreviewScreen: React.FC = () => {
   // State for forcing badge refresh after regeneration
   const [refreshKey, setRefreshKey] = useState(0);
   
-  const { attendeesData } = route.params;
+  const { attendeesData: rawAttendeesData } = route.params;
+  // Normalize the data to handle both snake_case and camelCase formats
+  const attendeesData = normalizeAttendeeData(rawAttendeesData);
   // Custom hooks
   const { isTablet } = useDeviceInfo();
   const {
