@@ -284,7 +284,8 @@ const handleEditSubmit = async (newValue: string) => {
               imageSource={Icons.Scan}
               pressHandler={See}
               backgroundColor={colors.greyCream}
-              tintColor={colors.darkGrey} />
+              tintColor={colors.darkGrey}
+              disabled={true} />
     </>
           )}
         </View>

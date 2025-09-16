@@ -5,6 +5,7 @@ import { RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
+import { AttendeeData } from '../../types/badge/badge.types';
 import { useAppDispatch } from '../../redux/store';
 import { updateAttendeeLocally } from '../../features/attendee';
 import MoreComponent from '../../components/screens/MoreComponent';
@@ -30,7 +31,7 @@ type MoreScreenRouteParams = {
 type RootStackParamList = {
   More: MoreScreenRouteParams;
   Badge: { attendeeId: string; eventId: string; badgePdfUrl: string; badgeImageUrl: string };
-  BadgePreviewScreen: { attendeesData: any };
+  BadgePreviewScreen: { attendeesData: AttendeeData[] };
   Edit: { attendeeId: string; eventId: string };
 };
 
@@ -113,8 +114,24 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
 
   const handleBackPress = () => navigation.goBack();
 
-  const handleBadgePress = () =>
-    navigation.navigate('BadgePreviewScreen', { attendeesData: attendeeDetails });
+  const handleBadgePress = () => {
+    if (attendeeDetails) {
+      // Transform AttendeeDetails to AttendeeData format
+      const attendeeData: AttendeeData = {
+        id: attendeeDetails.theAttendeeId,
+        first_name: attendeeDetails.firstName,
+        last_name: attendeeDetails.lastName,
+        email: attendeeDetails.email,
+        phone: attendeeDetails.phone,
+        organization: attendeeDetails.organization,
+        job_title: attendeeDetails.jobTitle,
+        badge_pdf_url: attendeeDetails.urlBadgePdf,
+        badge_image_url: attendeeDetails.urlBadgeImage,
+      };
+      
+      navigation.navigate('BadgePreviewScreen', { attendeesData: [attendeeData] });
+    }
+  };
 
   const { printDocument } = usePrintDocument();
   const handlePrintAndCheckIn = () => {
@@ -165,14 +182,14 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
         }
       } catch (error) {
         console.error('Error during check-in process:', error);
-        
+
         // Revert to original status on any error
         dispatch(updateAttendeeLocally({
           id: parseInt(attendeeId),
           attendee_status: originalStatus,
           event_id: eventId
         }));
-        
+  
         // Show error message to user
         console.error('Failed to update check-in status. Please check your internet connection.');
         // You can replace this with a proper toast or notification component
@@ -181,18 +198,47 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   };
 
   //should load skeleton
+  // Show skeleton when:
+  // 1. We don't have the correct data for this attendee AND we're currently loading this specific attendee
+  // 2. OR we have no attendee data at all and we're loading
+  const shouldShowSkeleton = (!hasDetailsForThis && loadingAttendeeId === attendeeId) || 
+                            (!attendeeDetails && isLoadingDetails);
 
-  const shouldShowSkeleton = !hasDetailsForThis && (isLoadingDetails || loadingAttendeeId === attendeeId);
 
 
-  
 
   /* Render helpers */
 
   const renderContent = () => {
+    // Show skeleton if we should show it OR if we have wrong attendee data
+    if (shouldShowSkeleton || (attendeeDetails && !hasDetailsForThis)) {
+      return (
+        <MoreComponent
+          See={() => {}}
+          firstName=""
+          lastName=""
+          email=""
+          phone=""
+          JobTitle=""
+          attendeeStatus={0}
+          organization=""
+          commentaire=""
+          attendeeId={attendeeId}
+          attendeeStatusChangeDatetime=""
+          handleCheckinButton={async () => {}}
+          PrintAndCheckIn={() => {}}
+          loading={false}
+          modify={() => {}}
+          type=""
+          onFieldUpdateSuccess={() => {}} 
+          isLoading={true}
+        />
+      );
+    }
+
     // Only show error if we're not loading and have a real error
     // This prevents the error view from flashing during initial load
-    if (true && !shouldShowSkeleton && attendeeDetails === null) {
+    if (error && !shouldShowSkeleton && attendeeDetails === null) {
       // Check if this is a partner-specific error message
       const isPartnerPermissionsError = typeof error === 'string' && 
         error.includes('partner users') && 
@@ -219,7 +265,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
     // Use the comment from route params if it exists, otherwise use from attendee details
     const commentText = comment || details?.commentaire || '';
 
-    
+
     return (
       <MoreComponent
         See={handleBadgePress}

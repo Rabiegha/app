@@ -106,12 +106,13 @@ export const fetchAttendeesList = createAsyncThunk(
           return rejectWithValue('eventId is required');
         }
         
-        const success = await updateAttendeeStatus(params);
-        if (success) {
+        const response = await updateAttendeeStatus(params);
+        console.log('Attendee status update result:', response);
+        if (response && response.status === true) {
           console.log('Attendee status updated successfully');
           return { attendeeId: params.attendeeId, status: params.status };
         }
-        console.log('Attendee status update failed');
+        console.log('Attendee status update failed', response);
         return rejectWithValue('Update failed');
       } catch (error) {
         console.error('Error updating attendee status:', error);

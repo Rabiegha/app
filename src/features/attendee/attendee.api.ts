@@ -7,6 +7,7 @@ import {
   Attendee, 
   FetchAttendeesParams, 
   UpdateAttendeeStatusParams,
+  UpdateAttendeeStatusResponse,
   UpdateAttendeeFieldParams,
   AddAttendeeData,
   EditAttendeeData
@@ -88,7 +89,7 @@ export const updateAttendeeStatus = async ({
   eventId,
   attendeeId,
   status
-}: UpdateAttendeeStatusParams): Promise<boolean> => {
+}: UpdateAttendeeStatusParams): Promise<UpdateAttendeeStatusResponse> => {
   try {
     const params = cleanParams({
       current_user_login_details_id: userId,
@@ -97,10 +98,10 @@ export const updateAttendeeStatus = async ({
       attendee_status: status,
     });
 
-    // Try sending parameters in the request body instead of as query parameters
     const response = await mainApi.post(
       '/update_event_attendee_attendee_status/',
-      params
+      null,
+      { params }
     );
 
     if (__DEV__) {
@@ -110,7 +111,7 @@ export const updateAttendeeStatus = async ({
       }
     }
 
-    return response.data?.status === true;
+    return response.data;
     
   } catch (error) {
     handleApiError(error, 'Failed to update attendee status');

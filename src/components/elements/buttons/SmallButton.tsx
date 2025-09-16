@@ -1,6 +1,7 @@
 // CustomButton.ts
 import React from 'react';
-import {TouchableOpacity, StyleSheet, Dimensions, Image} from 'react-native';
+import {TouchableOpacity, StyleSheet, Image} from 'react-native';
+
 import colors from '../../../assets/colors/colors';
 
 const SmallButton = ({
@@ -8,13 +9,25 @@ const SmallButton = ({
   pressHandler,
   backgroundColor,
   tintColor,
+  disabled = false,
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, {tintColor}, {backgroundColor}]}
-      onPress={pressHandler}>
+      style={[
+        styles.button, 
+        {backgroundColor: disabled ? colors.lightGrey : backgroundColor},
+        disabled && styles.disabled
+      ]}
+      onPress={disabled ? undefined : pressHandler}
+      disabled={disabled}>
       {imageSource && (
-        <Image source={imageSource} style={[styles.image, {tintColor}]} />
+        <Image 
+          source={imageSource} 
+          style={[
+            styles.image, 
+            {tintColor: disabled ? colors.grey : tintColor}
+          ]} 
+        />
       )}
     </TouchableOpacity>
   );
@@ -22,17 +35,20 @@ const SmallButton = ({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center',
-    width: 55,
-    marginHorizontal: 8,
+    borderRadius: 10,
     height: 45,
+    justifyContent: 'center',
     marginBottom: 10,
+    marginHorizontal: 8,
+    width: 55,
+  },
+  disabled: {
+    opacity: 0.5,
   },
   image: {
-    width: 28,
     height: 28,
+    width: 28,
   },
 });
 

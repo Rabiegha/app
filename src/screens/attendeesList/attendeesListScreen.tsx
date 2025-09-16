@@ -285,87 +285,84 @@ const AttendeeListScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-
       <View style={styles.container}>
-          <MainHeader
-            onLeftPress={handleLeftPress}
-            onRightPress={openModal}
-            RightIcon={Icons.Filtre}
-            title={eventName}
-          />
+        <MainHeader
+          onLeftPress={handleLeftPress}
+          onRightPress={openModal}
+          RightIcon={Icons.Filtre}
+          title={eventName}
+        />
         <View style={styles.mainContent}>
-            <Search onChange={setSearchQuery} value={searchQuery} />
-            <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />
-            <ProgressBar progress={ratio} />
+          <Search onChange={setSearchQuery} value={searchQuery} />
+          <ProgressText totalCheckedAttendees={totalCheckedIn} totalAttendees={totalAttendees} />
+          <ProgressBar progress={ratio} />
 
+          {/* 🔁 Bouton de reload */}
+{/*           <TouchableOpacity style={styles.imageContainee} onPress={triggerChildRefresh}>
+            <Image style={styles.reloadImage} source={Icons.refresh} />
+          </TouchableOpacity> */}
+          {/* 📋 Liste des participants */}
 
+          <MainAttendeeList
+            ref={listRef}
+            searchQuery={searchQuery}
+            onShowNotification={() => {
+              setStatus('checkin_success');
+              // Reset status after 2 seconds
+              setTimeout(() => {
+                if (setStatus) setStatus(null);
+              }, 2000);
+            }}
+            filterCriteria={filterCriteria}
+            onTriggerRefresh={handleTriggerRefresh}
+            summary={summary}
+            // Pass down the business logic handlers
+            onUpdateAttendee={async (attendee) => {
+            await handleUpdateAttendee(attendee);
+          }}
+          onPrintAndCheckIn={handlePrintAndCheckIn}
+          onToggleCheckIn={handleToggleCheckIn}
+          />
 
-                {/* 🔁 Bouton de reload */}
-            <TouchableOpacity style={styles.imageContainee} onPress={triggerChildRefresh}>
-              <Image style={styles.reloadImage} source={Icons.refresh} />
+          {/* 🧾 Modal de filtre */}
+          <Modal animationType="none" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
+            <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={closeModal}>
+              <TouchableWithoutFeedback>
+                <Animated.View style={[styles.modalView, styles.modalTransform, {transform: [{translateX: modalAnimation}]}]}>
+                  <FiltreComponent
+                    initialFilter={filterCriteria}
+                    defaultFilter={defaultFilterCriteria}
+                    onApply={(newFilter) => {
+                      setFilterCriteria(newFilter);
+                      closeModal();
+                    }}
+                    onCancel={() => {
+                      setFilterCriteria(defaultFilterCriteria);
+                      closeModal();
+                    }}
+                    tout={totalAttendees}
+                    checkedIn={totalCheckedIn}
+                    notChechkedIn={totalNotCheckedIn}
+                  />
+                </Animated.View>
+              </TouchableWithoutFeedback>
             </TouchableOpacity>
-            {/* 📋 Liste des participants */}
+          </Modal>
 
-              <MainAttendeeList
-                ref={listRef}
-                searchQuery={searchQuery}
-                onShowNotification={() => {
-                  setStatus('checkin_success');
-                  // Reset status after 2 seconds
-                  setTimeout(() => {
-                    if (setStatus) setStatus(null);
-                  }, 2000);
-                }}
-                filterCriteria={filterCriteria}
-                onTriggerRefresh={handleTriggerRefresh}
-                summary={summary}
-                // Pass down the business logic handlers
-                onUpdateAttendee={async (attendee) => {
-                await handleUpdateAttendee(attendee);
-              }}
-              onPrintAndCheckIn={handlePrintAndCheckIn}
-              onToggleCheckIn={handleToggleCheckIn}
-              />
-
-
-            {/* 🧾 Modal de filtre */}
-            <Modal animationType="none" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
-              <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={closeModal}>
-                <TouchableWithoutFeedback>
-                  <Animated.View style={[styles.modalView, styles.modalTransform, {transform: [{translateX: modalAnimation}]}]}>
-                    <FiltreComponent
-                      initialFilter={filterCriteria}
-                      defaultFilter={defaultFilterCriteria}
-                      onApply={(newFilter) => {
-                        setFilterCriteria(newFilter);
-                        closeModal();
-                      }}
-                      onCancel={() => {
-                        setFilterCriteria(defaultFilterCriteria);
-                        closeModal();
-                      }}
-                      tout={totalAttendees}
-                      checkedIn={totalCheckedIn}
-                      notChechkedIn={totalNotCheckedIn}
-                    />
-                  </Animated.View>
-                </TouchableWithoutFeedback>
-              </TouchableOpacity>
-            </Modal>
-
-            <FloatingSearchButton onPress={() => navigation.navigate('EventDetailsNavigator')} icon={Icons.stats} size={44} />
-
-              {/* 🖨️ Print modal */}
-            {printStatus && (
-              <CheckinPrintModal
-                visible={true}
-                status={printStatus}
-                onClose={clearStatus}
-              />
-            )}
-          </View>
+          {/* 🖨️ Print modal */}
+          {printStatus && (
+            <CheckinPrintModal
+              visible={true}
+              status={printStatus}
+              onClose={clearStatus}
+            />
+          )}
         </View>
-      </SafeAreaView>
+      </View>
+      
+      {/* Floating button positioned outside mainContent to stay fixed */}
+      <FloatingSearchButton onPress={() => navigation.navigate('EventDetailsNavigator')} icon={Icons.stats} size={44} />
+    </SafeAreaView>
   );
 };
 

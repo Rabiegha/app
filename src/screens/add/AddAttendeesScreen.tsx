@@ -242,11 +242,11 @@ const AddAttendeesScreen = () => {
         setSelectedAttendeeType={setSelectedAttendeeType} 
         />
 
-        <TouchableOpacity style={{position: 'absolute', bottom: 150, right: 20, zIndex: 1}}
+{/*         <TouchableOpacity style={{position: 'absolute', bottom: 150, right: 20, zIndex: 1}}
           onPress={() => navigation.navigate('BadgePreviewScreen', { attendeesData: tempAttendeeData })}
         >
           <Text> PREVIEW</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
     </View>
   );
 };

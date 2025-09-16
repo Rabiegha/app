@@ -82,7 +82,7 @@ android {
         applicationId "com.choyou.attendeeApplication"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 56
+        versionCode 59
         versionName "2.2"
 
         missingDimensionStrategy 'react-native-camera', 'mlkit'

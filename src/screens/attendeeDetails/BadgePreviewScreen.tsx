@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// eslint-disable-next-line import/order
+import { CommonActions } from '@react-navigation/native';
 
 // Hooks
 import { useSelector } from 'react-redux';
@@ -24,19 +26,28 @@ import { renderBadgeContent } from '../../utils/badge/badgeRenderer';
 import { editAttendee } from '../../services/editAttendeeService';
 
 // Types
-import { BadgePreviewStackParamList } from '../../types/badge/badge.types';
+import { BadgePreviewStackParamList, AttendeeData } from '../../types/badge/badge.types';
 
 import MainHeader from '@/components/elements/header/MainHeader';
 import usePrintDocument from '@/printing/hooks/usePrintDocument';
 import { RootState } from '@/redux/store';
 import colors from '@/assets/colors/colors';
 
+// Type for handling both snake_case and camelCase formats
+type RawAttendeeData = AttendeeData & {
+  firstName?: string;
+  lastName?: string;
+  jobTitle?: string;
+  urlBadgePdf?: string;
+  urlBadgeImage?: string;
+};
+
 // Data normalization function to handle both snake_case and camelCase formats
-const normalizeAttendeeData = (data: any) => {
+const normalizeAttendeeData = (data: RawAttendeeData): AttendeeData => {
   return {
     id: data.id,
-    first_name: data.first_name || data.firstName,
-    last_name: data.last_name || data.lastName,
+    first_name: data.first_name || data.firstName || '',
+    last_name: data.last_name || data.lastName || '',
     email: data.email,
     phone: data.phone,
     organization: data.organization,
@@ -59,10 +70,12 @@ const BadgePreviewScreen: React.FC = () => {
   
   // State for forcing badge refresh after regeneration
   const [refreshKey, setRefreshKey] = useState(0);
-  
-  const { attendeesData: rawAttendeesData } = route.params;
-  // Normalize the data to handle both snake_case and camelCase formats
-  const attendeesData = normalizeAttendeeData(rawAttendeesData);
+  // State for attendee data that can be updated after regeneration
+  const [attendeesData, setAttendeesData] = useState(() => {
+    const { attendeesData: rawAttendeesData } = route.params;
+    // Normalize the data to handle both snake_case and camelCase formats
+    return normalizeAttendeeData(rawAttendeesData);
+  });
   // Custom hooks
   const { isTablet } = useDeviceInfo();
   const {
@@ -133,13 +146,6 @@ const BadgePreviewScreen: React.FC = () => {
         const regenerateParams = {
           userId: userInfo.user_id,
           attendeeId: attendeesData.id,
-          first_name: attendeesData.first_name,
-          last_name: attendeesData.last_name,
-          email: attendeesData.email || 'attendee@example.com',
-          phone: attendeesData.phone || '',
-          organization: attendeesData.organization || '',
-          jobTitle: attendeesData.job_title || '',
-          typeId: attendeesData.attendee_type_id || '',
         };
         
         console.log('Regenerating badge with params:', regenerateParams);
@@ -149,13 +155,25 @@ const BadgePreviewScreen: React.FC = () => {
         
         console.log('Badge regenerated successfully:', response);
         
+        // Update attendee data with new badge URLs from the response
+        if (response && response.data) {
+          const updatedData = normalizeAttendeeData(response.data);
+          setAttendeesData(updatedData);
+          console.log('Updated attendee data with new badge URLs:', {
+            old_pdf_url: attendeesData.badge_pdf_url,
+            new_pdf_url: updatedData.badge_pdf_url,
+            old_image_url: attendeesData.badge_image_url,
+            new_image_url: updatedData.badge_image_url
+          });
+        }
+        
         // Force refresh of the badge image by updating the refresh key
         setRefreshKey((prev: number) => prev + 1);
         
         // Show success message
         Alert.alert('Succès', 'Le badge a été régénéré avec succès');
         
-        // The badge image will be refreshed with the new refreshKey
+        // The badge image will be refreshed with the new refreshKey and print will use new PDF URL
         
       } catch (error) {
         console.error('Error regenerating badge:', error);
@@ -168,7 +186,17 @@ const BadgePreviewScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-        <MainHeader onLeftPress={() => navigation.goBack()} title="Badge Preview"/>
+        <MainHeader onLeftPress={() => navigation.dispatch(
+          CommonActions.navigate({
+            name: 'Tabs',
+            params: {
+              screen: 'EventDashboard',
+              params: {
+                screen: 'AttendeesList'
+              }
+            }
+          })
+        )} title="Badge Preview"/>
       {/* Informations du participant */}
       <View style={[styles.headerInfo, isTablet && styles.headerInfoTablet]}>
         <Text style={styles.attendeeName}>

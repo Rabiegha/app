@@ -45,6 +45,12 @@ export type Attendee = {
     attendeeStatus?: number;
   };
   
+  // API Response Types
+  export type UpdateAttendeeStatusResponse = {
+    status: boolean;
+    message: string;
+  };
+
   export type UpdateAttendeeStatusParams = {
     userId: string;
     eventId: string;

@@ -46,7 +46,16 @@ export const fetchDocumentAsBase64 = async (
   }
 
   try {
-    const response = await fetch(url);
+    // Add cache-busting headers and timestamp to prevent caching issues
+    const cacheBustUrl = `${url}${url.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+    const response = await fetch(cacheBustUrl, {
+      method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
     if (!response.ok) {
       throw new Error(`Échec de récupération du document: ${response.statusText}`);
     }
