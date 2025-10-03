@@ -14,7 +14,7 @@ import ErrorView from '../../components/elements/view/ErrorView';
 import globalStyle from '../../assets/styles/globalStyle';
 import colors from '../../assets/colors/colors';
 import usePrintDocument from '../../printing/hooks/usePrintDocument';
-import { selectCurrentUserId } from '../../redux/selectors/auth/authSelectors';
+import { selectCurrentUserId, selectUserType } from '../../redux/selectors/auth/authSelectors';
 import CheckinPrintModal from '../../components/elements/modals/CheckinPrintModal';
 import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 import { useActiveEvent } from '../../utils/event/useActiveEvent';
@@ -44,6 +44,7 @@ type MoreScreenProps = {
 const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   /* Context & Redux  */
   const userId = useSelector(selectCurrentUserId);
+  const userType = useSelector(selectUserType);
   const { eventId } = useActiveEvent();
   const dispatch = useAppDispatch();
   const { 
@@ -53,8 +54,16 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
     isUpdating, 
     error,
     fetchAttendeeDetails, 
-    updateAttendeeStatus 
+    updateAttendeeStatus,
+    // Partner attendees
+    partnerAttendeeDetails,
+    isLoadingPartnerDetails,
+    partnerError,
+    fetchPartnerAttendeeDetails
   } = useAttendee();
+
+  // Determine if user is a partner
+  const isPartner = userType?.toLowerCase() === 'partner';
 
   /* Navigation params */
 
@@ -64,7 +73,10 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   } = route.params;
 
 
-  const hasDetailsForThis = attendeeDetails?.theAttendeeId === attendeeId;
+  // Check if we have the correct details for this attendee (partner or regular)
+  const hasDetailsForThis = isPartner 
+    ? partnerAttendeeDetails?.attendeeId === attendeeId
+    : attendeeDetails?.theAttendeeId === attendeeId;
 
 
   /* Local state */
@@ -77,16 +89,24 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   /* Data fetching */
 
   const fetchData = useCallback(() => {
-
     if (userId && eventId && attendeeId) {
-
-      fetchAttendeeDetails({
-        userId,
-        eventId,
-        attendeeId
-      });
+      if (isPartner) {
+        // Use partner attendee service for partners
+        fetchPartnerAttendeeDetails({
+          userId,
+          eventId,
+          attendeeId
+        });
+      } else {
+        // Use regular attendee service for non-partners
+        fetchAttendeeDetails({
+          userId,
+          eventId,
+          attendeeId
+        });
+      }
     }
-  }, [userId, eventId, attendeeId, fetchAttendeeDetails]);
+  }, [userId, eventId, attendeeId, isPartner, fetchAttendeeDetails, fetchPartnerAttendeeDetails]);
 
 
   useFocusEffect(
@@ -201,8 +221,9 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   // Show skeleton when:
   // 1. We don't have the correct data for this attendee AND we're currently loading this specific attendee
   // 2. OR we have no attendee data at all and we're loading
-  const shouldShowSkeleton = (!hasDetailsForThis && loadingAttendeeId === attendeeId) || 
-                            (!attendeeDetails && isLoadingDetails);
+  const shouldShowSkeleton = isPartner
+    ? (!hasDetailsForThis && isLoadingPartnerDetails) || (!partnerAttendeeDetails && isLoadingPartnerDetails)
+    : (!hasDetailsForThis && loadingAttendeeId === attendeeId) || (!attendeeDetails && isLoadingDetails);
 
 
 
@@ -211,7 +232,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
 
   const renderContent = () => {
     // Show skeleton if we should show it OR if we have wrong attendee data
-    if (shouldShowSkeleton || (attendeeDetails && !hasDetailsForThis)) {
+    if (shouldShowSkeleton || (isPartner ? (partnerAttendeeDetails && !hasDetailsForThis) : (attendeeDetails && !hasDetailsForThis))) {
       return (
         <MoreComponent
           See={() => {}}
@@ -236,13 +257,17 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
       );
     }
 
+    // Handle errors for both partner and regular users
+    const currentError = isPartner ? partnerError : error;
+    const currentDetails = isPartner ? partnerAttendeeDetails : attendeeDetails;
+    
     // Only show error if we're not loading and have a real error
     // This prevents the error view from flashing during initial load
-    if (error && !shouldShowSkeleton && attendeeDetails === null) {
+    if (currentError && !shouldShowSkeleton && currentDetails === null) {
       // Check if this is a partner-specific error message
-      const isPartnerPermissionsError = typeof error === 'string' && 
-        error.includes('partner users') && 
-        error.includes('permissions');
+      const isPartnerPermissionsError = typeof currentError === 'string' && 
+        currentError.includes('partner users') && 
+        currentError.includes('permissions');
       
       return (
         <View style={styles.filler}>
@@ -257,33 +282,68 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
       );
     }
 
-    // À ce stade, nous savons que attendeeDetails existe et n'est pas null
-    const details = attendeeDetails;
+    // Get the appropriate details based on user type
+    const details = isPartner ? partnerAttendeeDetails : attendeeDetails;
 
-    console.log('details attendeeStatusChangeDatetime', details?.attendeeStatusChangeDatetime)
-    
     // Use the comment from route params if it exists, otherwise use from attendee details
-    const commentText = comment || details?.commentaire || '';
+    // Handle different comment field names for partner vs regular attendees
+    let commentText = comment || '';
+    if (!commentText && details) {
+      if (isPartner && 'comment' in details) {
+        commentText = details.comment || '';
+      } else if (!isPartner && 'commentaire' in details) {
+        commentText = details.commentaire || '';
+      }
+    }
 
+    // Map data to component props based on user type
+    const componentProps = isPartner && details && 'attendeeTypeName' in details ? {
+      // Partner attendee props
+      firstName: details.firstName || '',
+      lastName: details.lastName || '',
+      email: details.email || '',
+      phone: details.phone || '',
+      JobTitle: details.jobTitle || '',
+      attendeeStatus: 0, // Partners don't have check-in status
+      organization: details.organization || '',
+      commentaire: commentText,
+      attendeeStatusChangeDatetime: details.createdOn || '', // Use creation date for partners
+      type: details.attendeeTypeName || '',
+    } : details && 'attendeeStatus' in details ? {
+      // Regular attendee props
+      firstName: details.firstName || '',
+      lastName: details.lastName || '',
+      email: details.email || '',
+      phone: details.phone || '',
+      JobTitle: details.jobTitle || '',
+      attendeeStatus: details.attendeeStatus ?? 0,
+      organization: details.organization || '',
+      commentaire: commentText,
+      attendeeStatusChangeDatetime: details.attendeeStatusChangeDatetime || '',
+      type: details.type || '',
+    } : {
+      // Fallback empty props
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      JobTitle: '',
+      attendeeStatus: 0,
+      organization: '',
+      commentaire: commentText,
+      attendeeStatusChangeDatetime: '',
+      type: '',
+    };
 
     return (
       <MoreComponent
         See={handleBadgePress}
-        firstName={details?.firstName || ''}
-        lastName={details?.lastName || ''}
-        email={details?.email || ''}
-        phone={details?.phone || ''}
-        JobTitle={details?.jobTitle || ''}
-        attendeeStatus={details?.attendeeStatus ?? 0}
-        organization={details?.organization || ''}
-        commentaire={commentText}
+        {...componentProps}
         attendeeId={attendeeId}
-        attendeeStatusChangeDatetime={details?.attendeeStatusChangeDatetime || ''}
         handleCheckinButton={handleCheckinButton}
         PrintAndCheckIn={handlePrintAndCheckIn}
         loading={isUpdating}
         modify={() => navigation.navigate('Edit', { attendeeId, eventId })}
-        type={details?.type || ''}
         onFieldUpdateSuccess={triggerRefresh} 
         isLoading={shouldShowSkeleton}
         />

@@ -3,9 +3,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { 
   Attendee, 
   AttendeeDetails,
-  AttendeeState
+  AttendeeState,
+  PartnerAttendee,
+  PartnerAttendeeDetails
 } from './attendee.types';
-import { addAttendeeThunk, editAttendeeThunk, fetchAttendeeDetails, fetchAttendeesList, updateAttendeeFieldThunk, updateAttendeeStatusThunk } from './attendee.thunks';
+import { addAttendeeThunk, editAttendeeThunk, fetchAttendeeDetails, fetchAttendeesList, updateAttendeeFieldThunk, updateAttendeeStatusThunk, fetchPartnerAttendeesListThunk, fetchPartnerAttendeeDetailsThunk } from './attendee.thunks';
 
 // Helper function to map API field names to selectedAttendee property names
 const mapFieldToSelectedAttendee = (field: string, value: string): Partial<AttendeeDetails> => {
@@ -45,6 +47,13 @@ const initialState: AttendeeState = {
   isUpdating: false,
   error: null,
   loadingAttendeeId: null,
+  
+  // Partner attendees states
+  partnerList: [],
+  selectedPartnerAttendee: null,
+  isLoadingPartnerList: false,
+  isLoadingPartnerDetails: false,
+  partnerError: null,
 };
 
 // Slice
@@ -62,6 +71,17 @@ const attendeeSlice = createSlice({
       // pour s'assurer que le skeleton s'affiche immédiatement
       state.isLoadingDetails = true;
       state.selectedAttendee = null;
+    },
+
+    // Partner attendees reducers
+    clearPartnerAttendees(state) {
+      state.partnerList = [];
+      state.partnerError = null;
+      state.isLoadingPartnerList = false;
+    },
+    clearSelectedPartnerAttendee(state) {
+      state.isLoadingPartnerDetails = true;
+      state.selectedPartnerAttendee = null;
     },
 
     updateAttendeeLocally(state, action) {
@@ -238,9 +258,43 @@ const attendeeSlice = createSlice({
       .addCase(editAttendeeThunk.rejected, (state, action) => {
         state.isUpdating = false;
         state.error = action.error.message || 'Failed to edit attendee';
+      })
+
+      // Partner attendees list cases
+      .addCase(fetchPartnerAttendeesListThunk.pending, (state) => {
+        state.isLoadingPartnerList = true;
+        state.partnerError = null;
+      })
+      .addCase(fetchPartnerAttendeesListThunk.fulfilled, (state, action: PayloadAction<PartnerAttendee[]>) => {
+        state.partnerList = action.payload;
+        state.isLoadingPartnerList = false;
+      })
+      .addCase(fetchPartnerAttendeesListThunk.rejected, (state, action) => {
+        state.isLoadingPartnerList = false;
+        state.partnerError = action.error.message || 'Failed to fetch partner attendees';
+      })
+
+      // Partner attendee details cases
+      .addCase(fetchPartnerAttendeeDetailsThunk.pending, (state) => {
+        state.isLoadingPartnerDetails = true;
+        state.partnerError = null;
+      })
+      .addCase(fetchPartnerAttendeeDetailsThunk.fulfilled, (state, action: PayloadAction<PartnerAttendeeDetails>) => {
+        state.selectedPartnerAttendee = action.payload;
+        state.isLoadingPartnerDetails = false;
+      })
+      .addCase(fetchPartnerAttendeeDetailsThunk.rejected, (state, action) => {
+        state.isLoadingPartnerDetails = false;
+        state.partnerError = action.error.message || 'Failed to fetch partner attendee details';
       });
   },
 });
 
-export const { clearAttendees, clearSelectedAttendee, updateAttendeeLocally } = attendeeSlice.actions;
+export const { 
+  clearAttendees, 
+  clearSelectedAttendee, 
+  updateAttendeeLocally,
+  clearPartnerAttendees,
+  clearSelectedPartnerAttendee
+} = attendeeSlice.actions;
 export default attendeeSlice.reducer;

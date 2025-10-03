@@ -107,6 +107,13 @@ export type Attendee = {
     isUpdating: boolean;
     error: string | null;
     loadingAttendeeId: string | null;
+    
+    // Partner attendees states
+    partnerList: PartnerAttendee[];
+    selectedPartnerAttendee: PartnerAttendeeDetails | null;
+    isLoadingPartnerList: boolean;
+    isLoadingPartnerDetails: boolean;
+    partnerError: string | null;
   }
 
   export interface AddAttendeeData {
@@ -136,3 +143,64 @@ export type Attendee = {
     jobTitle?: string;
     typeId?: string;
   }
+
+  // Types pour les attendees partenaires
+  export type PartnerAttendee = {
+    id: string;
+    guid_id: string;
+    event_id: string;
+    attendee_id: string;
+    comment?: string;
+    created_by: string;
+    created_on: string;
+    nice_created_on: string;
+    event_name: string;
+    event_type_id: string;
+    event_type_name: string;
+    attendee_type_id: string;
+    salutation?: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone?: string;
+    organization: string;
+    designation: string;
+    attendee_name: string;
+    attendee_type_name: string;
+    user_type_id: string;
+    company_id: string;
+    partner_name: string;
+    partner_email: string;
+    partner_user_type_name: string;
+    partner_company_name: string;
+  };
+
+  export type FetchPartnerAttendeesParams = {
+    userId: string;
+    eventId: string;
+    attendeeId?: string | null; // null pour récupérer toute la liste
+  };
+
+  // Type pour les détails mappés des attendees partenaires
+  export type PartnerAttendeeDetails = {
+    id: string;
+    attendeeId: string;
+    eventId: string;
+    eventName: string;
+    eventTypeName: string;
+    firstName: string;
+    lastName: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    organization: string;
+    jobTitle: string;
+    attendeeTypeName: string;
+    partnerName: string;
+    partnerEmail: string;
+    partnerCompanyName: string;
+    partnerUserTypeName: string;
+    comment: string;
+    createdOn: string;
+    createdBy: string;
+  };

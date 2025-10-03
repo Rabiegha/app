@@ -3,27 +3,27 @@ import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
   TouchableWithoutFeedback,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
 import colors from '../../../assets/colors/colors';
 import {ListItemProps} from '../../../types/listItem.types';
 
 // Define the navigation type
 type RootStackParamList = {
-  More: { attendeeId: number; comment: string };
+  More: { attendeeId: string; comment: string };
   // Add other screens as needed
 };
 
-const CommonListItem = React.memo(({item, searchQuery = ''}: ListItemProps) => {
+const CommonListItem = React.memo(({item, searchQuery = ''}: Omit<ListItemProps, 'onUpdateAttendee'> & Partial<Pick<ListItemProps, 'onUpdateAttendee'>>) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isSearchByCompanyMode = true;
 
-  const highlightSearch = (text: string, query: string) => {
+  const highlightSearch = (text: string, query: string): React.ReactNode => {
     const safeQuery = (query || '').trim();
-    if (!safeQuery) return [text];
+    if (!safeQuery) return text;
 
     const regex = new RegExp(`(${safeQuery})`, 'gi');
     const parts = text.split(regex);
@@ -46,13 +46,11 @@ const CommonListItem = React.memo(({item, searchQuery = ''}: ListItemProps) => {
       isSearchByCompanyMode && item.organization && searchQuery.trim() !== '';
 
     if (shouldShowCompany) {
-      const companyHighlighted = highlightSearch(item.organization, searchQuery);
+      const companyHighlighted = highlightSearch(item.organization || '', searchQuery);
       return (
         <View style={styles.nameRow}>
           <Text style={styles.nameText}>{nameHighlighted}</Text>
-          <Text style={styles.companyParen}> (</Text>
-          <Text style={styles.companyText}>{companyHighlighted}</Text>
-          <Text style={styles.companyParen}>)</Text>
+          <Text style={styles.companyText}> ({companyHighlighted})</Text>
         </View>
       );
     }
@@ -66,7 +64,7 @@ const CommonListItem = React.memo(({item, searchQuery = ''}: ListItemProps) => {
 
   const handleItemPress = () => {
     navigation.navigate('More', {
-      attendeeId: item.id,
+      attendeeId: String(item.id), // Convert to string to match MoreScreen expectations
       comment: item.comment || '',
     });
   };
@@ -80,46 +78,43 @@ const CommonListItem = React.memo(({item, searchQuery = ''}: ListItemProps) => {
   );
 });
 
+CommonListItem.displayName = 'CommonListItem';
+
 export default CommonListItem;
 
 const styles = StyleSheet.create({
-  listItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    alignItems: 'center',
-    backgroundColor: colors.greyCream,
-    borderRadius: 10,
-    marginBottom: 10,
-    height: 70,
-    overflow: 'hidden',
+  companyText: {
+    color: colors.grey,
+    fontSize: 12,
+    fontStyle: 'italic',
+    marginLeft: 4,
   },
   contentContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'center',
     padding: 10,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-  },
-  nameText: {
-    fontSize: 16,
-    color: colors.darkGrey,
-  },
-  companyParen: {
-    fontSize: 12,
-    color: colors.grey,
-    fontStyle: 'italic',
-  },
-  companyText: {
-    fontSize: 12,
-    color: colors.grey,
-    fontStyle: 'italic',
   },
   highlight: {
     color: colors.green,
     fontWeight: 'bold',
+  },
+  listItemContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.greyCream,
+    borderRadius: 10,
+    flexDirection: 'row',
+    height: 70,
+    marginBottom: 10,
+    overflow: 'hidden',
+  },
+  nameRow: {
+    alignItems: 'baseline',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  nameText: {
+    color: colors.darkGrey,
+    fontSize: 16,
+    fontWeight: '500',
   },
 });

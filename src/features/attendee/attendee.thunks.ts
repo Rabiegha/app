@@ -3,8 +3,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import { RootState } from "../../redux/store";
 
-import { editAttendee, fetchAttendees, mapAttendeeToDetails, updateAttendeeField, updateAttendeeStatus, addAttendee as addAttendeeService } from "./attendee.api";
-import { AddAttendeeParams, Attendee, EditAttendeeParams, FetchAttendeesParams, UpdateAttendeeFieldParams, UpdateAttendeeStatusParams } from "./attendee.types";
+import { editAttendee, fetchAttendees, mapAttendeeToDetails, updateAttendeeField, updateAttendeeStatus, addAttendee as addAttendeeService, fetchPartnerAttendeesList, fetchPartnerAttendeeDetails, mapPartnerAttendeeToDetails } from "./attendee.api";
+import { AddAttendeeParams, Attendee, EditAttendeeParams, FetchAttendeesParams, UpdateAttendeeFieldParams, UpdateAttendeeStatusParams, FetchPartnerAttendeesParams } from "./attendee.types";
 
 export const fetchAttendeesList = createAsyncThunk(
     'attendees/fetchList',
@@ -195,6 +195,57 @@ export const fetchAttendeesList = createAsyncThunk(
       } catch (error) {
         console.error('Error editing attendee:', error);
         return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      }
+    }
+  );
+
+  // Thunk pour récupérer la liste des attendees partenaires
+  export const fetchPartnerAttendeesListThunk = createAsyncThunk(
+    'attendees/fetchPartnerAttendeesList',
+    async (params: Omit<FetchPartnerAttendeesParams, 'attendeeId'>, { rejectWithValue }) => {
+      try {
+        console.log('Fetching partner attendees list with params:', params);
+        const partnerAttendees = await fetchPartnerAttendeesList(params);
+        
+        if (partnerAttendees && partnerAttendees.length > 0) {
+          console.log(`✅ Partner attendees list fetched successfully: ${partnerAttendees.length} items`);
+          return partnerAttendees;
+        }
+        
+        console.log('No partner attendees found');
+        return [];
+      } catch (error) {
+        console.error('Error fetching partner attendees list:', error);
+        return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch partner attendees list');
+      }
+    }
+  );
+
+  // Thunk pour récupérer les détails d'un attendee partenaire spécifique
+  export const fetchPartnerAttendeeDetailsThunk = createAsyncThunk(
+    'attendees/fetchPartnerAttendeeDetails',
+    async (params: FetchPartnerAttendeesParams, { rejectWithValue }) => {
+      try {
+        console.log('Fetching partner attendee details with params:', params);
+        
+        if (!params.attendeeId) {
+          return rejectWithValue('attendeeId is required for fetching partner attendee details');
+        }
+        
+        const partnerAttendee = await fetchPartnerAttendeeDetails(params);
+        
+        if (partnerAttendee) {
+          // Utiliser le mapper pour formater les données
+          const mappedDetails = mapPartnerAttendeeToDetails(partnerAttendee);
+          console.log('✅ Partner attendee details fetched and mapped successfully:', mappedDetails);
+          return mappedDetails;
+        }
+        
+        console.log('Partner attendee not found');
+        return rejectWithValue('Partner attendee not found');
+      } catch (error) {
+        console.error('Error fetching partner attendee details:', error);
+        return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch partner attendee details');
       }
     }
   );

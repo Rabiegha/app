@@ -10,7 +10,9 @@ import {
   UpdateAttendeeStatusResponse,
   UpdateAttendeeFieldParams,
   AddAttendeeData,
-  EditAttendeeData
+  EditAttendeeData,
+  PartnerAttendee,
+  FetchPartnerAttendeesParams
 } from './attendee.types';
 
 import { handleApiSuccess } from '@/utils/api/handleApiSuccess';
@@ -299,4 +301,157 @@ export const addAttendee = async (attendeeData: AddAttendeeData) => {
   } catch (error) {
     handleApiError(error, 'Failed to add attendee');
   }
+};
+
+/**
+ * Fetch all partner attendees for an event
+ */
+export const fetchPartnerAttendeesList = async ({
+  userId,
+  eventId
+}: Omit<FetchPartnerAttendeesParams, 'attendeeId'>): Promise<PartnerAttendee[]> => {
+  try {
+    // Validate required parameters
+    if (!userId) {
+      throw new Error('Missing userId in fetchPartnerAttendeesList');
+    }
+    if (!eventId) {
+      throw new Error('Missing eventId in fetchPartnerAttendeesList');
+    }
+
+    const params = cleanParams({
+      current_user_login_details_id: userId,
+      event_id: eventId,
+      // attendee_id est omis pour récupérer toute la liste
+    });
+    
+    if (__DEV__) {
+      console.log('Fetching partner attendees list with params:', params);
+      console.log('Full API URL:', `${BASE_URL}/ajax_get_event_partner_attendee_details/?current_user_login_details_id=${userId}&event_id=${eventId}`);
+    }
+
+    const response = await mainApi.get('/ajax_get_event_partner_attendee_details/', { 
+      params,
+      timeout: 10000 // 10 second timeout
+    });
+
+    if (!response.data) {
+      console.error('No data received from partner attendees API');
+      return [];
+    }
+
+    if (!response.data.status) {
+      console.error('API returned status false:', response.data);
+      return [];
+    }
+
+    if (!Array.isArray(response.data.data)) {
+      console.error('Partner attendees data is not an array:', response.data);
+      return [];
+    }
+
+    if (__DEV__) {
+      console.log(`Partner attendees list received: ${response.data.data.length} items`);
+    }
+
+    return response.data.data;
+  } catch (error) {
+    console.error('Error in fetchPartnerAttendeesList:', error);
+    handleApiError(error, 'Failed to fetch partner attendees list');
+    return []; 
+  }
+};
+
+/**
+ * Fetch specific partner attendee details
+ */
+export const fetchPartnerAttendeeDetails = async ({
+  userId,
+  eventId,
+  attendeeId
+}: FetchPartnerAttendeesParams): Promise<PartnerAttendee | null> => {
+  try {
+    // Validate required parameters
+    if (!userId) {
+      throw new Error('Missing userId in fetchPartnerAttendeeDetails');
+    }
+    if (!eventId) {
+      throw new Error('Missing eventId in fetchPartnerAttendeeDetails');
+    }
+    if (!attendeeId) {
+      throw new Error('Missing attendeeId in fetchPartnerAttendeeDetails');
+    }
+
+    const params = cleanParams({
+      current_user_login_details_id: userId,
+      event_id: eventId,
+      attendee_id: attendeeId,
+    });
+    
+    if (__DEV__) {
+      console.log('Fetching partner attendee details with params:', params);
+      console.log('Full API URL:', `${BASE_URL}/ajax_get_event_partner_attendee_details/?current_user_login_details_id=${userId}&event_id=${eventId}&attendee_id=${attendeeId}`);
+    }
+
+    const response = await mainApi.get('/ajax_get_event_partner_attendee_details/', { 
+      params,
+      timeout: 10000 // 10 second timeout
+    });
+
+    if (!response.data) {
+      console.error('No data received from partner attendee details API');
+      return null;
+    }
+
+    if (!response.data.status) {
+      console.error('API returned status false:', response.data);
+      return null;
+    }
+
+    if (!Array.isArray(response.data.data) || response.data.data.length === 0) {
+      console.warn('No partner attendee details found for attendeeId:', attendeeId);
+      return null;
+    }
+
+    // Retourne le premier élément car on cherche un attendee spécifique
+    const attendeeDetails = response.data.data[0];
+    
+    if (__DEV__) {
+      console.log('Partner attendee details received:', attendeeDetails);
+    }
+
+    return attendeeDetails;
+  } catch (error) {
+    console.error('Error in fetchPartnerAttendeeDetails:', error);
+    handleApiError(error, 'Failed to fetch partner attendee details');
+    return null; 
+  }
+};
+
+/**
+ * Map partner attendee data to frontend display format
+ */
+export const mapPartnerAttendeeToDetails = (partnerAttendee: PartnerAttendee) => {
+  return {
+    id: partnerAttendee.id,
+    attendeeId: partnerAttendee.attendee_id,
+    eventId: partnerAttendee.event_id,
+    eventName: partnerAttendee.event_name,
+    eventTypeName: partnerAttendee.event_type_name,
+    firstName: partnerAttendee.first_name,
+    lastName: partnerAttendee.last_name,
+    fullName: partnerAttendee.attendee_name,
+    email: partnerAttendee.email,
+    phone: partnerAttendee.phone || '',
+    organization: partnerAttendee.organization,
+    jobTitle: partnerAttendee.designation,
+    attendeeTypeName: partnerAttendee.attendee_type_name,
+    partnerName: partnerAttendee.partner_name,
+    partnerEmail: partnerAttendee.partner_email,
+    partnerCompanyName: partnerAttendee.partner_company_name,
+    partnerUserTypeName: partnerAttendee.partner_user_type_name,
+    comment: partnerAttendee.comment || '',
+    createdOn: partnerAttendee.nice_created_on,
+    createdBy: partnerAttendee.created_by,
+  };
 };
