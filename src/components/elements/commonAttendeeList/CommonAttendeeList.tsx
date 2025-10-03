@@ -1,11 +1,13 @@
 import React, {forwardRef} from 'react';
 import {StyleSheet, View} from 'react-native';
+
 import EmptyView from '../../elements/view/EmptyView';
 import LoadingView from '../../elements/view/LoadingView';
 import ErrorView from '../../elements/view/ErrorView';
 import BaseFlatList from '../../elements/list/BaseFlatList';
-import CommonListItem from './CommonAttendeeListItem';
 import { Attendee } from '../../../types/attendee.types.ts';
+
+import CommonListItem from './CommonAttendeeListItem';
 
 type Props = {
   searchQuery: string;
@@ -21,7 +23,7 @@ export type ListHandle = {
 };
 
 const CommonAttendeeList = forwardRef<ListHandle, Props>(
-  ({searchQuery, handleRefresh, refreshing, attendees, isLoading, error}, ref) => {
+  ({searchQuery, handleRefresh, refreshing, attendees, isLoading, error}) => {
     if (isLoading) return <LoadingView />;
     if (error) return <ErrorView handleRetry={handleRefresh} />;
 

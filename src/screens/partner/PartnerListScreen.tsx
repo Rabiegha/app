@@ -1,46 +1,77 @@
 import React, {useState} from 'react';
 import {
-    Text,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import colors from '../../assets/colors/colors';
-import {useNavigation, useFocusEffect, useRoute, NavigationProp, ParamListBase, RouteProp} from '@react-navigation/native';
-import globalStyle from '../../assets/styles/globalStyle';
+import {useNavigation, useFocusEffect, NavigationProp, ParamListBase} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
+
+import colors from '../../assets/colors/colors';
+import globalStyle from '../../assets/styles/globalStyle';
 import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
-import {useActiveEvent} from '../../utils/event/useActiveEvent';
 import Icons from '../../assets/images/icons';
 import MainHeader from '../../components/elements/header/MainHeader';
 import CommonAttendeeList from '../../components/elements/commonAttendeeList/CommonAttendeeList';
-import useFetchPartnerAttendeeList from '../../hooks/attendee/useFetchPartnerList';
+import { useAttendee } from '../../hooks/attendee/useAttendee';
 import { useEvent } from '../../context/EventContext';
+import { PartnerAttendee } from '../../features/attendee/attendee.types';
+import { Attendee } from '../../types/attendee.types';
 
 interface EventContextType {
-  eventId: number;
+  eventId: string;
   eventName: string;
 }
 
+// Fonction pour mapper PartnerAttendee vers Attendee
+const mapPartnerAttendeeToAttendee = (partnerAttendee: PartnerAttendee): Attendee => {
+  return {
+    id: parseInt(partnerAttendee.attendee_id),
+    first_name: partnerAttendee.first_name,
+    last_name: partnerAttendee.last_name,
+    email: partnerAttendee.email,
+    phone: partnerAttendee.phone,
+    organization: partnerAttendee.organization,
+    designation: partnerAttendee.designation,
+    attendee_status: 1, // Par défaut, les attendees partenaires sont considérés comme présents
+    attendee_type_name: partnerAttendee.attendee_type_name,
+    attendee_type_id: parseInt(partnerAttendee.attendee_type_id),
+    event_id: parseInt(partnerAttendee.event_id),
+    comment: partnerAttendee.comment,
+  };
+};
+
 const PartnerAttendeesListScreen = () => {
-  const route = useRoute<RouteProp<ParamListBase, string>>();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const [refreshing, setRefreshing] = useState(false);
 
   const userId = useSelector(selectCurrentUserId);
   const {eventId, eventName} = useEvent() as EventContextType;
-  const {attendees, isLoading, error, fetchData} = useFetchPartnerAttendeeList(userId, eventId);
+  const {
+    partnerAttendees,
+    isLoadingPartnerList,
+    partnerError,
+    fetchPartnerAttendeesList
+  } = useAttendee();
 
   useFocusEffect(
     React.useCallback(() => {
-      handleRefresh();
+      if (userId && eventId) {
+        handleRefresh();
+      }
     }, [userId, eventId])
   );
 
   const handleRefresh = async () => {
+    if (!userId || !eventId) return;
+    
     try {
       setRefreshing(true);
-      await fetchData();
+      await fetchPartnerAttendeesList({
+        userId: userId,
+        eventId: eventId
+      });
+    } catch (error) {
+      console.error('Error refreshing partner attendees:', error);
     } finally {
       setRefreshing(false);
     }
@@ -65,9 +96,9 @@ const PartnerAttendeesListScreen = () => {
 
         <CommonAttendeeList
           searchQuery={''}
-          attendees={attendees}
-          isLoading={isLoading}
-          error={error}
+          attendees={partnerAttendees.map(mapPartnerAttendeeToAttendee)}
+          isLoading={isLoadingPartnerList}
+          error={!!partnerError}
           handleRefresh={handleRefresh}
           refreshing={refreshing}
         />
