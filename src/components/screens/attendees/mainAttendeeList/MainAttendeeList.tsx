@@ -164,7 +164,7 @@ const MainAttendeeList = forwardRef<ListHandle, Props>(({
     error, 
   } = useAttendee();
 
-  // Clear data and fetch when event changes
+  // Clear data and fetch when event changes or when refresh is triggered
   useEffect(() => {
     if (!userId || !eventId) return;
 

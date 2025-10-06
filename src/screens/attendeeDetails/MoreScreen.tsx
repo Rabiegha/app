@@ -3,6 +3,7 @@ import React, { useEffect, useCallback, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import { AttendeeData } from '../../types/badge/badge.types';
@@ -47,6 +48,7 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
   const userType = useSelector(selectUserType);
   const { eventId } = useActiveEvent();
   const dispatch = useAppDispatch();
+  const insets = useSafeAreaInsets();
   const { 
     attendeeDetails, 
     isLoadingDetails, 
@@ -360,7 +362,13 @@ const MoreScreen = ({ route, navigation }: MoreScreenProps) => {
         onLeftPress={handleBackPress}
       />
 
-      <View style={[globalStyle.container, styles.profil]}>
+      <View style={[
+        globalStyle.container, 
+        styles.profil,
+        { 
+          paddingBottom: Math.max(insets.bottom, 16)
+        }
+      ]}>
         {/* Print status modal stays available at all times */}
         {/* 🖨️ Print modal */}
         {printStatus && (
