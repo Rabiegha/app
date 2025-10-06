@@ -10,6 +10,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
@@ -48,6 +49,7 @@ const ModifyBadgeScreen: React.FC = () => {
   const route = useRoute<ModifyBadgeScreenRouteProp>();
   const navigation = useNavigation<ModifyBadgeScreenNavigationProp>();
   const dispatch = useDispatch<AppDispatch>();
+  const insets = useSafeAreaInsets();
   
   const { attendeesData } = route.params;
   const { userInfo } = useSelector((state: RootState) => state.auth);
@@ -297,7 +299,13 @@ const ModifyBadgeScreen: React.FC = () => {
         </View>
       </ScrollView>
 
-      <View style={styles.buttonContainer}>
+      <View style={[
+        styles.buttonContainer,
+        { 
+          paddingBottom: Math.max(insets.bottom, 16),
+          marginBottom: 16
+        }
+      ]}>
         <TouchableOpacity
           style={[styles.button, styles.cancelButton]}
           onPress={handleAnnuler}
