@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 // eslint-disable-next-line import/order
@@ -65,6 +66,7 @@ type BadgePreviewScreenNavigationProp = NativeStackNavigationProp<BadgePreviewSt
 const BadgePreviewScreen: React.FC = () => {
   const route = useRoute<BadgePreviewScreenRouteProp>();
   const navigation = useNavigation<BadgePreviewScreenNavigationProp>();
+  const insets = useSafeAreaInsets();
 
   const { userInfo } = useSelector((state: RootState) => state.auth);
   
@@ -222,7 +224,14 @@ const BadgePreviewScreen: React.FC = () => {
       </View>
 
       {/* Boutons d'action */}
-      <View style={[styles.actionButtons, isTablet && styles.actionButtonsTablet]}>
+      <View style={[
+        styles.actionButtons, 
+        isTablet && styles.actionButtonsTablet,
+        { 
+          paddingBottom: Math.max(insets.bottom, 16),
+          marginBottom: 16
+        }
+      ]}>
         <TouchableOpacity style={[styles.button, styles.printButton]} onPress={handlePrint}>
           <Text style={styles.buttonText}>Imprimer</Text>
         </TouchableOpacity>
