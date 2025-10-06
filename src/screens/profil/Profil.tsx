@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginBottom: 80,
-    width: '90%',
+    marginHorizontal: 20,
   }
 });
 
