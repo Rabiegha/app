@@ -1,11 +1,13 @@
 import {createSlice} from '@reduxjs/toolkit';
+
 import {fetchPastEvents} from '../../thunks/event/fetchPastEventsThunk';
+import {Event} from '../../../types/event.types';
 
 const initialState = {
-  events: null,
+  events: null as Event[] | null,
   loading: false,
-  error: null,
-  timeStamp: null,
+  error: null as string | null,
+  timeStamp: null as number | null,
 };
 
 const pastEventsSlice = createSlice({
@@ -16,7 +18,7 @@ const pastEventsSlice = createSlice({
       state.events = null;
 /*       state.timeStamp = null; */
       state.error = null;
-      state.loading = null;
+      state.loading = false;
     },
   },
   extraReducers: builder => {
@@ -32,7 +34,7 @@ const pastEventsSlice = createSlice({
       })
       .addCase(fetchPastEvents.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to fetch past events';
+        state.error = action.payload as string || 'Failed to fetch past events';
       });
   },
 });

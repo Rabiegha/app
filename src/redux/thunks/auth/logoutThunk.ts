@@ -27,7 +27,6 @@ export const logoutThunk = createAsyncThunk<
     const controller = new AbortController();
     const timeout = setTimeout(() => {
       controller.abort();
-      return thunkAPI.rejectWithValue('Logout timeout exceeded');
     }, 10000);
 
     try {
@@ -41,8 +40,16 @@ export const logoutThunk = createAsyncThunk<
         thunkAPI.dispatch(clearPastEvents());
         thunkAPI.dispatch(clearFutureEvents());
         
-        // Clear persisted state
-        await persistor.purge();
+        // Clear persisted state with timeout
+        try {
+          await Promise.race([
+            persistor.purge(),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Purge timeout')), 3000))
+          ]);
+        } catch (purgeError) {
+          console.warn('Persistor purge failed or timed out:', purgeError);
+          // Continue anyway, the user will be logged out
+        }
         return;
       } else {
         return thunkAPI.rejectWithValue('Logout failed');

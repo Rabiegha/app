@@ -11,7 +11,7 @@ import {
   selectPastEventsError,
   selectPastEventsTimeStamp,
 } from '../../redux/selectors/event/pastEventsSelectors';
-import {selectCurrentUserId} from '../../redux/selectors/auth/authSelectors';
+import {selectCurrentUserId, selectIsLoading} from '../../redux/selectors/auth/authSelectors';
 
 export default function usePastEvents() {
   const expirationTimeInMillis = 24 * 60 * 60 * 1000;
@@ -20,6 +20,7 @@ export default function usePastEvents() {
   const error = useSelector(selectPastEventsError);
   const timeStamp = useSelector(selectPastEventsTimeStamp);
   const userId = useSelector(selectCurrentUserId);
+  const isAuthLoading = useSelector(selectIsLoading);
   const {isDemoMode} = useContext(AuthContext) as any;
 
   const dispatch = useAppDispatch();
@@ -27,9 +28,23 @@ export default function usePastEvents() {
   useEffect(() => {
     const currentTime = Date.now();
 
+    // Don't fetch events if user is not logged in, during logout, or no userId available
+    if (!userId && !isDemoMode) {
+      console.log('usePastEvents: Skipping API call - no userId and not in demo mode');
+      return;
+    }
+    
+    if (isAuthLoading) {
+      console.log('usePastEvents: Skipping API call - auth is loading');
+      return;
+    }
+
     if (!loading && !error) {
       if (!events || currentTime - (timeStamp || 0) > expirationTimeInMillis) {
-        dispatch(fetchPastEvents({userId, isDemoMode}));
+        // Only dispatch if we have a valid userId or are in demo mode
+        if (userId || isDemoMode) {
+          dispatch(fetchPastEvents({userId: userId!, isDemoMode}));
+        }
       }
     }
   }, [
@@ -41,13 +56,29 @@ export default function usePastEvents() {
     loading,
     error,
     expirationTimeInMillis,
+    isAuthLoading,
   ]);
 
   const clearData = useCallback(() => dispatch(clearPastEvents()), [dispatch]);
   
   const refreshEvents = useCallback(() => {
-    return dispatch(fetchPastEvents({userId, isDemoMode}));
-  }, [dispatch, userId, isDemoMode]);
+    // Don't refresh events if user is not logged in, during logout, or no userId available
+    if (!userId && !isDemoMode) {
+      console.log('usePastEvents refreshEvents: Skipping API call - no userId and not in demo mode');
+      return Promise.resolve();
+    }
+    
+    if (isAuthLoading) {
+      console.log('usePastEvents refreshEvents: Skipping API call - auth is loading');
+      return Promise.resolve();
+    }
+    
+    // Only dispatch if we have a valid userId or are in demo mode
+    if (userId || isDemoMode) {
+      return dispatch(fetchPastEvents({userId: userId!, isDemoMode}));
+    }
+    return Promise.resolve();
+  }, [dispatch, userId, isDemoMode, isAuthLoading]);
 
   return {events, loading, error, clearData, refreshEvents};
 }

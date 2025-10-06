@@ -1,11 +1,13 @@
 import {createSlice} from '@reduxjs/toolkit';
+
 import {fetchFutureEvents} from '../../thunks/event/fetchFutureEventsThunk';
+import {Event} from '../../../types/event.types';
 
 const initialState = {
-  events: null,
+  events: null as Event[] | null,
   loading: false,
-  error: null,
-  timeStamp: null,
+  error: null as string | null,
+  timeStamp: null as number | null,
 };
 
 const futureEventsSlice = createSlice({
@@ -16,7 +18,7 @@ const futureEventsSlice = createSlice({
       state.events = null;
 /*       state.timeStamp = null; */
       state.error = null;
-      state.loading = null;
+      state.loading = false;
     },
     testSetLoading: (state, action) => {
       state.loading = action.payload;

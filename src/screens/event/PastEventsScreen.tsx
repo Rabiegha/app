@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, FlatList, RefreshControl} from 'react-native';
+import {StyleSheet, FlatList, RefreshControl} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useFocusEffect, useRoute, RouteProp} from '@react-navigation/native';
 
 import ListEvents from '../../components/screens/events/ListEvents';
@@ -25,6 +26,7 @@ type PastEventsRouteParams = {
 const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
   const route = useRoute<RouteProp<Record<string, PastEventsRouteParams>, string>>();
   const [refreshing, setRefreshing] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   
   // Get props either directly or from route params
   const searchQuery = props.searchQuery || route.params?.searchQuery || '';
@@ -35,9 +37,17 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
 
   const {events, loading, error, clearData, refreshEvents} = usePastEvents();
 
+  // Reset clearing state when data loads
+  React.useEffect(() => {
+    if (!loading && events) {
+      setIsClearing(false);
+    }
+  }, [loading, events]);
+
   // Clear data and adjust status bar on focus
   useFocusEffect(
     React.useCallback(() => {
+      setIsClearing(true);
       clearData();
     }, [clearData]),
   );
@@ -55,16 +65,17 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
     }
   };
 
-  if (loading) {
+  // Show loading if we're clearing data or if we have no data at all (first load)
+  if (isClearing || (loading && (!events || events.length === 0))) {
     return <LoadingView />;
   }
-  if (error) {
+  
+  if (error && (!events || events.length === 0)) {
     return <ErrorView handleRetry={handleRetry} />;
   }
-  if (events) {
-    if (events.length === 0) {
-      return <EmptyView handleRetry={handleRetry} text={undefined}/>;
-    }
+  
+  if (events && events.length === 0 && !loading) {
+    return <EmptyView handleRetry={handleRetry} text={undefined}/>;
   }
 
   const filteredEvents = (events ?? []).filter((event: Event) =>
@@ -72,13 +83,15 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
   );
 
   return (
-    <View style={[styles.container, globalStyle.backgroundWhite]}>
+    <SafeAreaView style={[styles.container, globalStyle.backgroundWhite]} edges={['bottom']}>
       <FlatList
         data={filteredEvents}
         keyExtractor={item => item.event_id.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={styles.listContainer}
         renderItem={({item}) => (
           <ListEvents
             eventData={{
@@ -93,7 +106,7 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
           />
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -102,6 +115,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 30,
+  },
+  listContainer: {
+    paddingBottom: 20,
   },
 });
 

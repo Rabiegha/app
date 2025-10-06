@@ -42,12 +42,16 @@ const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(logoutThunk.fulfilled, state => {
-      Object.assign(state, initialState); // quick reset
+      state.isLoading = false;
+      state.currentUserId = null;
+      state.userType = null;
+      state.userInfo = null;
+      state.error = null;
     });
     builder.addCase(logoutThunk.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload ? action.payload : 'Logout failed';
-      Object.assign(state, initialState); // quick reset
+      // Don't reset user data on logout error, keep them logged in
     });
   },
 });

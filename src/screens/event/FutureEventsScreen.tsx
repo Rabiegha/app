@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Text, SectionList, RefreshControl} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useFocusEffect, useRoute, RouteProp} from '@react-navigation/native';
 
 import ListEvents from '../../components/screens/events/ListEvents';
@@ -27,6 +28,7 @@ type FutureEventsRouteParams = {
 const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
   const route = useRoute<RouteProp<Record<string, FutureEventsRouteParams>, string>>();
   const [refreshing, setRefreshing] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   
   // Get props either directly or from route params
   const searchQuery = props.searchQuery || route.params?.searchQuery || '';
@@ -41,9 +43,17 @@ const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
     searchQuery,
   );
 
+  // Reset clearing state when data loads
+  React.useEffect(() => {
+    if (!loading && events) {
+      setIsClearing(false);
+    }
+  }, [loading, events]);
+
   // Clear data and adjust status bar on focus
   useFocusEffect(
     React.useCallback(() => {
+      setIsClearing(true);
       clearData();
     }, [clearData]),
   );
@@ -61,18 +71,17 @@ const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
     }
   };
 
-  if (loading) {
+  // Show loading if we're clearing data or if we have no data at all (first load)
+  if (isClearing || (loading && (!events || events.length === 0))) {
     return <LoadingView />;
   }
 
-  if (error) {
+  if (error && (!events || events.length === 0)) {
     return <ErrorView handleRetry={handleRetry} />;
   }
 
-  if (events) {
-    if (events.length === 0) {
-      return <EmptyView handleRetry={handleRetry} text={undefined}/>;
-    }
+  if (events && events.length === 0 && !loading) {
+    return <EmptyView handleRetry={handleRetry} text={undefined}/>;
   }
 
   const handleSelectEvent = (event: Event) => {
@@ -80,13 +89,15 @@ const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
   };
 
   return (
-    <View style={[styles.container, globalStyle.backgroundWhite]}>
+    <SafeAreaView style={[styles.container, globalStyle.backgroundWhite]} edges={['bottom']}>
       <SectionList
         sections={sections}
         keyExtractor={item => item.event_id.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={styles.listContainer}
         renderItem={({item}) => (
           <ListEvents
             eventData={{
@@ -117,7 +128,7 @@ const FutureEventsScreen: React.FC<FutureEventsScreenProps> = (props) => {
           );
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -126,6 +137,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 30,
+  },
+  listContainer: {
+    paddingBottom: 20,
   },
   futureSectionHeader: {
     marginTop: 20,
