@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, FlatList, RefreshControl} from 'react-native';
-import {useRoute, RouteProp} from '@react-navigation/native';
+import {useFocusEffect, useRoute, RouteProp} from '@react-navigation/native';
 
 import ListEvents from '../../components/screens/events/ListEvents';
 import globalStyle from '../../assets/styles/globalStyle';
@@ -34,6 +34,13 @@ const PastEventsScreen: React.FC<PastEventsScreenProps> = (props) => {
   });
 
   const {events, loading, error, clearData, refreshEvents} = usePastEvents();
+
+  // Clear data and adjust status bar on focus
+  useFocusEffect(
+    React.useCallback(() => {
+      clearData();
+    }, [clearData]),
+  );
 
   const handleRetry = () => {
     clearData();

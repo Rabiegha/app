@@ -1,9 +1,11 @@
-import axios from 'axios';
-import {BASE_URL} from '../../../config/config';
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {persistor} from '../../store';
+import axios from 'axios';
+
+import {BASE_URL} from '../../../config/config';
 import {LogoutResponse} from '../../../types/auth.types';
-import {RootState} from '../../store';
+import {persistor, RootState} from '../../store';
+import {clearPastEvents} from '../../slices/event/pastEventsSlice';
+import {clearFutureEvents} from '../../slices/event/futureEventsSlice';
 
 export const logoutThunk = createAsyncThunk<
   void,
@@ -35,6 +37,10 @@ export const logoutThunk = createAsyncThunk<
       clearTimeout(timeout);
 
       if (response.data.status) {
+        // Clear events data before purging persistor
+        thunkAPI.dispatch(clearPastEvents());
+        thunkAPI.dispatch(clearFutureEvents());
+        
         // Clear persisted state
         await persistor.purge();
         return;

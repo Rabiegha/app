@@ -1,7 +1,9 @@
-import {useSelector, useDispatch} from 'react-redux';
+import {useCallback, useContext, useEffect} from 'react';
+import {useSelector} from 'react-redux';
+
 import {clearPastEvents} from '../../redux/slices/event/pastEventsSlice';
 import {fetchPastEvents} from '../../redux/thunks/event/fetchPastEventsThunk';
-import {useCallback, useContext, useEffect} from 'react';
+import {useAppDispatch} from '../../redux/store';
 import {AuthContext} from '../../context/AuthContext';
 import {
   selectPastEvents,
@@ -17,38 +19,35 @@ export default function usePastEvents() {
   const loading = useSelector(selectPastEventsLoading);
   const error = useSelector(selectPastEventsError);
   const timeStamp = useSelector(selectPastEventsTimeStamp);
-  const isEventFrom = 0;
-
   const userId = useSelector(selectCurrentUserId);
-  const {isDemoMode} = useContext(AuthContext);
+  const {isDemoMode} = useContext(AuthContext) as any;
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const currentTime = Date.now();
 
     if (!loading && !error) {
       if (!events || currentTime - (timeStamp || 0) > expirationTimeInMillis) {
-        dispatch(fetchPastEvents({userId, isEventFrom, isDemoMode}));
+        dispatch(fetchPastEvents({userId, isDemoMode}));
       }
     }
   }, [
     dispatch,
-    fetchPastEvents,
     userId,
-    isEventFrom,
     events,
     isDemoMode,
     timeStamp,
     loading,
     error,
+    expirationTimeInMillis,
   ]);
 
   const clearData = useCallback(() => dispatch(clearPastEvents()), [dispatch]);
   
   const refreshEvents = useCallback(() => {
-    return dispatch(fetchPastEvents({userId, isEventFrom, isDemoMode}));
-  }, [dispatch, userId, isEventFrom, isDemoMode]);
+    return dispatch(fetchPastEvents({userId, isDemoMode}));
+  }, [dispatch, userId, isDemoMode]);
 
   return {events, loading, error, clearData, refreshEvents};
 }
