@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux';
 
 import { useDeviceInfo } from '../../hooks/badge/useDeviceInfo';
 import { useBadgeWebView } from '../../hooks/badge/useBadgeWebView';
+import { usePrintStatus } from '../../printing/context/PrintStatusContext';
 
 // Utils
 import { showPrintAlert, showModifyAlert, showRegenerateAlert } from '../../utils/badge/badgeActions';
@@ -31,6 +32,7 @@ import { BadgePreviewStackParamList, AttendeeData } from '../../types/badge/badg
 
 import MainHeader from '@/components/elements/header/MainHeader';
 import usePrintDocument from '@/printing/hooks/usePrintDocument';
+import CheckinPrintModal from '@/components/elements/modals/CheckinPrintModal';
 import { RootState } from '@/redux/store';
 import colors from '@/assets/colors/colors';
 
@@ -88,6 +90,7 @@ const BadgePreviewScreen: React.FC = () => {
     handleRetry,
     resetState,
   } = useBadgeWebView();
+  const { status: printStatus, clearStatus } = usePrintStatus();
 
   useEffect(() => {
     // Configuration initiale si nécessaire
@@ -101,27 +104,20 @@ const BadgePreviewScreen: React.FC = () => {
   //PRINT
   const { printDocument } = usePrintDocument();
   const handlePrint = async () => {
-    let printSuccess = false;
-    
     if (attendeesData.badge_pdf_url && 
         typeof attendeesData.badge_pdf_url === 'string' && 
         attendeesData.badge_pdf_url.trim() !== '') {
       try {
-        // Print the badge right away
+        // Print the badge - this will automatically show the modal via printStatus
         await printDocument(attendeesData.badge_pdf_url, undefined, true);
         console.log('Badge sent', {badge_url: attendeesData.badge_pdf_url});
-        printSuccess = true;
       } catch (printError) {
         console.error('Error printing badge:', printError);
-        // Handle error - could show an alert or update UI state
+        // Error status will be handled by the modal via printStatus
       }
     } else {
       console.error('Badge PDF URL is empty or invalid:', attendeesData.badge_pdf_url);
-      // Handle missing PDF URL - could show an alert
-    }
-    
-    // Fallback to original alert if direct printing fails
-    if (!printSuccess) {
+      // Fallback to original alert if no valid PDF URL
       showPrintAlert();
     }
   };
@@ -244,6 +240,15 @@ const BadgePreviewScreen: React.FC = () => {
           <Text style={styles.buttonText}>Régénérer</Text>
         </TouchableOpacity>
       </View>
+
+      {/* 🖨️ Print modal */}
+      {printStatus && (
+        <CheckinPrintModal
+          visible={true}
+          status={printStatus}
+          onClose={clearStatus}
+        />
+      )}
     </SafeAreaView>
   );
 };
